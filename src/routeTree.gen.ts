@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -24,6 +25,11 @@ import { Route as AppDermaRouteImport } from './routes/app.derma'
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapaRoute = MapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/app': typeof AppRouteWithChildren
+  '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/app': typeof AppRouteWithChildren
+  '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/app'
+    | '/mapa'
     | '/onboarding'
     | '/app/derma'
     | '/app/missoes'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/mapa'
     | '/onboarding'
     | '/app/derma'
     | '/app/missoes'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/app'
+    | '/mapa'
     | '/onboarding'
     | '/app/derma'
     | '/app/missoes'
@@ -161,6 +173,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AppRoute: typeof AppRouteWithChildren
+  MapaRoute: typeof MapaRoute
   OnboardingRoute: typeof OnboardingRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
 }
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mapa': {
+      id: '/mapa'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof MapaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -271,6 +291,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AppRoute: AppRouteWithChildren,
+  MapaRoute: MapaRoute,
   OnboardingRoute: OnboardingRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
 }
