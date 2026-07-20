@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MapaRouteImport } from './routes/mapa'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -30,6 +31,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const MapaRoute = MapaRouteImport.update({
   id: '/mapa',
   path: '/mapa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
   '/app/derma': typeof AppDermaRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
   '/app/derma': typeof AppDermaRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
   '/app/derma': typeof AppDermaRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/app'
+    | '/auth'
     | '/mapa'
     | '/onboarding'
     | '/app/derma'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/auth'
     | '/mapa'
     | '/onboarding'
     | '/app/derma'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/app'
+    | '/auth'
     | '/mapa'
     | '/onboarding'
     | '/app/derma'
@@ -173,6 +185,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRoute
   MapaRoute: typeof MapaRoute
   OnboardingRoute: typeof OnboardingRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       path: '/mapa'
       fullPath: '/mapa'
       preLoaderRoute: typeof MapaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -291,6 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRoute,
   MapaRoute: MapaRoute,
   OnboardingRoute: OnboardingRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
