@@ -537,6 +537,30 @@ function BodyMap({ regioes }: { regioes: string[] }) {
 
 function Vsl({ nome, onContinue }: { nome?: string; onContinue: () => void }) {
   const [playing, setPlaying] = useState(false);
+  const VSL_SECONDS = 180; // 3 minutes simulated
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    if (!playing) return;
+    const start = Date.now();
+    const marked = new Set<number>();
+    const id = setInterval(() => {
+      const e = (Date.now() - start) / 1000;
+      setElapsed(e);
+      const pct = Math.min(100, Math.round((e / VSL_SECONDS) * 100));
+      [25, 50, 75, 100].forEach((m) => {
+        if (pct >= m && !marked.has(m)) {
+          marked.add(m);
+          track("vsl_progress", { percent: m });
+        }
+      });
+      if (pct >= 100) clearInterval(id);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [playing]);
+
+  const pct = Math.min(100, Math.round((elapsed / VSL_SECONDS) * 100));
+
   return (
     <div>
       <p className="text-sm font-bold uppercase tracking-wide text-coral">Vídeo · 3 min</p>
