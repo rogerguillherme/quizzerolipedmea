@@ -1,11 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldCheck, HeartPulse, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, ShieldCheck, HeartPulse, MessageCircle, Clock } from "lucide-react";
+import { getQuiz } from "../lib/quiz-store";
+import { track } from "../lib/analytics";
 
 export const Route = createFileRoute("/")({
   component: Landing,
 });
 
 function Landing() {
+  const [resume, setResume] = useState<null | { nome?: string }>(null);
+
+  useEffect(() => {
+    track("landing_view");
+    const q = getQuiz();
+    // Consider quiz "in progress" if any answer beyond nome exists but likely not finished.
+    if (
+      q.nome &&
+      (q.tempoSintomas || q.regioes || q.hormonal) &&
+      !q.impactoEmocional
+    ) {
+      setResume({ nome: q.nome });
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-hero-sapphire">
       <header className="mx-auto flex max-w-md items-center justify-between px-5 pt-6">
@@ -21,6 +39,26 @@ function Landing() {
       </header>
 
       <main className="mx-auto max-w-md px-5 pb-24 pt-8">
+        {resume && (
+          <Link
+            to="/onboarding"
+            className="mb-5 flex items-center gap-3 rounded-2xl border border-sapphire-200 bg-sapphire-50 p-4 text-left"
+          >
+            <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
+              <Clock className="size-5" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-primary">
+                {resume.nome ? `${resume.nome}, seu Mapa está pela metade` : "Seu Mapa está pela metade"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Continuar de onde você parou — leva 1 minuto.
+              </p>
+            </div>
+            <ArrowRight className="size-4 text-primary" />
+          </Link>
+        )}
+
         <span className="inline-flex items-center gap-2 rounded-full bg-sapphire-100 px-3 py-1 text-xs font-semibold text-sapphire-800">
           <ShieldCheck className="size-3.5" /> Avaliação gratuita · 2 minutos
         </span>
