@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Lock, FileText, Video, MessagesSquare, Stethoscope, Sparkles } from "lucide-react";
+import { track } from "../lib/analytics";
 
 export const Route = createFileRoute("/app/derma")({
   component: Derma,
