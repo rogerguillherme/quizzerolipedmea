@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, Play, Sparkles } from "lucide-react";
 import { getQuiz, setQuiz, setApp, type QuizAnswers } from "../lib/quiz-store";
+import { track } from "../lib/analytics";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
