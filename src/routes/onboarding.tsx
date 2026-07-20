@@ -584,6 +584,14 @@ function Vsl({ nome, onContinue }: { nome?: string; onContinue: () => void }) {
         <div className="absolute bottom-3 left-3 rounded-md bg-black/40 px-2 py-0.5 text-[11px] font-semibold text-white">
           Gabriela Rosado · CRN 10582
         </div>
+        {playing && (
+          <div className="absolute inset-x-0 bottom-0 h-1 bg-black/30">
+            <div
+              className="h-full bg-coral transition-all duration-500"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        )}
       </button>
 
       <ul className="mt-6 space-y-2 text-sm text-foreground">
