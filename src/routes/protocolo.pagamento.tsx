@@ -222,6 +222,31 @@ function Checkout() {
           </div>
         </div>
 
+        {/* Payment error */}
+        {erro && (
+          <div className="mt-6 rounded-2xl border-2 border-destructive/40 bg-destructive/5 p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="mt-0.5 size-5 shrink-0 text-destructive" />
+              <div className="flex-1">
+                <p className="text-sm font-bold text-destructive">Não deu certo agora</p>
+                <p className="mt-1 text-sm text-foreground">{erro.mensagem}</p>
+                <button
+                  onClick={() => {
+                    setMetodo(erro.sugerir);
+                    setErro(null);
+                  }}
+                  className="mt-3 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-primary-foreground"
+                >
+                  Trocar para {erro.sugerir === "pix" ? "Pix" : "Cartão"} e tentar de novo
+                </button>
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  Seus dados continuam preenchidos — não precisa começar de novo.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Guarantee */}
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-sapphire-200 bg-sapphire-50 p-4">
           <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
