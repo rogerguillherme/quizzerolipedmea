@@ -1,5 +1,7 @@
-import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
-import { Activity, ListChecks, MessageCircle, Lock, User } from "lucide-react";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { Activity, ListChecks, MessageCircle, Lock, User, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -7,6 +9,36 @@ export const Route = createFileRoute("/app")({
 
 function AppLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      if (!data.session) {
+        navigate({ to: "/auth" });
+        return;
+      }
+      setReady(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (!session) navigate({ to: "/auth" });
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, [navigate]);
+
+  if (!ready) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background">
+        <Loader2 className="size-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
 
   const tabs: { to: string; label: string; icon: typeof Activity; exact?: boolean }[] = [
     { to: "/app", label: "Radar", icon: Activity, exact: true },
