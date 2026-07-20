@@ -28,9 +28,18 @@ const MapaInput = z.object({
 
 export type MapaInputType = z.infer<typeof MapaInput>;
 
+export type Habito = {
+  chave: "alimentacao" | "sono" | "agua" | "movimento" | "estresse";
+  label: string;
+  score: number; // 0-100
+};
+
 export type Diagnostico = {
   estagioProvavel: "Estágio 1" | "Estágio 2" | "Estágio 3" | "Indeterminado";
+  perfil: string; // ex: "Rotina Desorganizada"
   resumo: string;
+  primeiraMissao: string; // ex: "Trocar o café da manhã"
+  habitos: Habito[]; // exatamente 5, na ordem: alimentacao, sono, agua, movimento, estresse
   pontosChave: string[];
   proximosPassos: string[];
   gatilhos: string[];
@@ -40,21 +49,31 @@ const SYSTEM_PROMPT = `Você é uma assistente clínica da nutricionista Gabriel
 Sua função é ler as respostas do "Mapa do Lipedema" de uma mulher e devolver uma leitura acolhedora, técnica e humana — nunca fria.
 
 Regras invioláveis:
-- NÃO faz diagnóstico médico. Diga sempre que é uma leitura educacional e sugere avaliação clínica.
-- Tom: acolhedor, direto, sem infantilizar. Fale com ela, não sobre ela. Use o primeiro nome quando fizer sentido.
-- Português do Brasil, mulher adulta 25–55 anos, cansada de ser desacreditada.
+- NÃO faz diagnóstico médico. É leitura educacional; sugira avaliação clínica quando fizer sentido.
+- Tom: acolhedor, direto, sem infantilizar. Fale com ela, não sobre ela.
+- Português do Brasil, mulher adulta 25–55 anos.
 - Nunca prometa cura, emagrecimento ou resultado estético.
-- Nunca use jargão médico sem tradução.
 - Baseie-se nas respostas. Se algo está ausente, não invente.
 
-Devolva EXCLUSIVAMENTE um JSON válido, sem markdown, sem texto antes ou depois, no formato:
+Devolva EXCLUSIVAMENTE um JSON válido, sem markdown, no formato:
 {
   "estagioProvavel": "Estágio 1" | "Estágio 2" | "Estágio 3" | "Indeterminado",
-  "resumo": "3-4 frases falando diretamente com ela sobre o que o Mapa mostra.",
-  "pontosChave": ["até 5 bullets curtos, cada um até 140 caracteres"],
-  "gatilhos": ["até 3 bullets sobre fatores hormonais/genéticos/inflamatórios identificados"],
-  "proximosPassos": ["3 bullets acionáveis do que a Gabriela costuma orientar como primeiro passo"]
-}`;
+  "perfil": "2 palavras descrevendo o perfil dela. Ex: 'Rotina Desorganizada', 'Corpo Inflamado', 'Ciclo Instável', 'Fome Emocional', 'Sono Fragmentado'.",
+  "resumo": "2-3 frases falando diretamente com ela sobre o que o Mapa mostra.",
+  "primeiraMissao": "1 frase curta e concreta (máx 40 caracteres) — o primeiro passo. Ex: 'Trocar o café da manhã'.",
+  "habitos": [
+    {"chave":"alimentacao","label":"Alimentação","score": 0-100},
+    {"chave":"sono","label":"Sono","score": 0-100},
+    {"chave":"agua","label":"Água","score": 0-100},
+    {"chave":"movimento","label":"Movimento","score": 0-100},
+    {"chave":"estresse","label":"Estresse","score": 0-100}
+  ],
+  "pontosChave": ["até 5 bullets, cada um até 140 caracteres"],
+  "gatilhos": ["até 3 bullets sobre fatores hormonais/genéticos/inflamatórios"],
+  "proximosPassos": ["3 bullets acionáveis"]
+}
+
+Para o score dos hábitos: 0 = totalmente desregulado, 100 = ótimo. Interprete conforme respostas.`;
 
 export const submitMapa = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => MapaInput.parse(input))
@@ -94,8 +113,17 @@ Devolva o JSON conforme instruções.`;
       console.error("[submitMapa] Falha ao gerar diagnóstico:", err);
       diagnostico = {
         estagioProvavel: "Indeterminado",
+        perfil: "Mapa em Análise",
         resumo:
           "Seu Mapa foi registrado. Vou te chamar no WhatsApp para revisar as respostas com calma e montar a leitura personalizada com a Gabriela.",
+        primeiraMissao: "Abrir a conversa no WhatsApp",
+        habitos: [
+          { chave: "alimentacao", label: "Alimentação", score: 50 },
+          { chave: "sono", label: "Sono", score: 50 },
+          { chave: "agua", label: "Água", score: 50 },
+          { chave: "movimento", label: "Movimento", score: 50 },
+          { chave: "estresse", label: "Estresse", score: 50 },
+        ],
         pontosChave: [
           "Suas respostas foram salvas com segurança.",
           "A leitura completa vai chegar pelo WhatsApp em instantes.",
