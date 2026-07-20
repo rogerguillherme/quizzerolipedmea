@@ -77,31 +77,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#1B3A57" },
-      { title: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
+      { name: "theme-color", content: "#0B2A4A" },
+      { title: "Zero Lipedema — plataforma da Nutri Gabriela Rosado" },
       {
         name: "description",
         content:
-          "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura personalizada feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue no seu WhatsApp.",
+          "Mapa do Lipedema gratuito, Protocolo 7 Dias e Método Derma de 90 dias com a nutricionista Gabriela Rosado (CRN 10582). Acompanhamento humano e IA no WhatsApp.",
       },
       { name: "author", content: "Zero Lipedema · Gabriela Rosado CRN 10582" },
-      { property: "og:title", content: "Mapa do Lipedema — leitura gratuita" },
+      { property: "og:title", content: "Zero Lipedema — cuidado real para quem tem lipedema" },
       {
         property: "og:description",
         content:
-          "6 perguntas, uma leitura personalizada do seu lipedema e o primeiro passo do protocolo — direto no seu WhatsApp.",
+          "Descubra em 2 minutos o retrato do seu lipedema e comece o Protocolo 7 Dias gratuito com a Nutri Gabriela.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Zero Lipedema" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/png", href: "/__l5e/assets-v1/0470e9df-7d83-4485-aea3-38b131cddaea/logo-zero-lipedema.png" },
+      { rel: "apple-touch-icon", href: "/__l5e/assets-v1/0470e9df-7d83-4485-aea3-38b131cddaea/logo-zero-lipedema.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&display=swap",
       },
     ],
   }),

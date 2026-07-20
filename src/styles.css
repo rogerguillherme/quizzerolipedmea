@@ -5,15 +5,17 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Zero Lipedema — Sapphire clinical design system.
- * Deep prussian/sapphire tonal blue, warm off-white surfaces,
- * coral accent reserved for primary CTAs and celebrations.
+ * Zero Lipedema — 100% azul design system.
+ * Deep navy (#0B2A4A) para headlines, azul vibrante (#2C6FEA) para CTAs,
+ * fundo off-white azulado (#F5F8FD), cards em brand-soft (#EAF1FB).
+ * Display serif Fraunces + body Nunito.
  */
 
 @theme inline {
   --font-sans:
     "Nunito", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Nunito", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    "Fraunces", "Nunito", ui-serif, Georgia, "Times New Roman", serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -44,7 +46,13 @@
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
 
-  /* Custom brand tokens */
+  /* Brand — 100% blue */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-deep: var(--brand-deep);
+
+  /* Legacy sapphire tokens — mantidos para compatibilidade com componentes existentes */
   --color-sapphire-50: var(--sapphire-50);
   --color-sapphire-100: var(--sapphire-100);
   --color-sapphire-200: var(--sapphire-200);
@@ -52,83 +60,86 @@
   --color-sapphire-600: var(--sapphire-600);
   --color-sapphire-800: var(--sapphire-800);
   --color-sapphire-900: var(--sapphire-900);
-  --color-coral: var(--coral);
-  --color-coral-foreground: var(--coral-foreground);
-  --color-coral-soft: var(--coral-soft);
-  --color-gold: var(--gold);
+  /* Coral aposentado — aliases mantidos para não quebrar imports antigos */
+  --color-coral: var(--brand);
+  --color-coral-foreground: var(--brand-foreground);
+  --color-coral-soft: var(--brand-soft);
+  --color-gold: var(--brand-soft);
 }
 
 :root {
-  --radius: 0.9rem;
+  --radius: 1rem;
 
-  /* Warm off-white background, not clinical white */
-  --background: oklch(0.985 0.008 85);
-  --foreground: oklch(0.22 0.05 240);
+  /* Off-white levemente azulado — como no material de referência */
+  --background: oklch(0.982 0.008 240);
+  --foreground: oklch(0.22 0.06 250);
 
-  /* Cards: very pale sapphire tint */
-  --card: oklch(0.995 0.006 230);
-  --card-foreground: oklch(0.22 0.05 240);
-  --popover: oklch(0.995 0.006 230);
-  --popover-foreground: oklch(0.22 0.05 240);
+  /* Cards: branco quase puro com hint azul */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.06 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.06 250);
 
-  /* Primary: deep sapphire/prussian ~ #1B3A57 */
-  --primary: oklch(0.32 0.06 240);
-  --primary-foreground: oklch(0.985 0.008 85);
+  /* Primary: navy profundo #0B2A4A (headlines) */
+  --primary: oklch(0.26 0.08 255);
+  --primary-foreground: oklch(0.99 0.005 240);
 
-  --secondary: oklch(0.94 0.02 230);
-  --secondary-foreground: oklch(0.28 0.06 240);
+  --secondary: oklch(0.94 0.025 245);
+  --secondary-foreground: oklch(0.28 0.08 255);
 
-  --muted: oklch(0.955 0.012 230);
-  --muted-foreground: oklch(0.48 0.04 240);
+  --muted: oklch(0.955 0.015 240);
+  --muted-foreground: oklch(0.5 0.04 250);
 
-  --accent: oklch(0.92 0.03 235);
-  --accent-foreground: oklch(0.28 0.06 240);
+  --accent: oklch(0.92 0.04 245);
+  --accent-foreground: oklch(0.28 0.08 255);
 
   --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.99 0.01 85);
 
-  --border: oklch(0.9 0.02 230);
-  --input: oklch(0.92 0.02 230);
-  --ring: oklch(0.5 0.08 235);
+  --border: oklch(0.9 0.025 240);
+  --input: oklch(0.93 0.02 240);
+  --ring: oklch(0.55 0.16 258);
 
-  /* Sapphire tonal scale */
-  --sapphire-50: oklch(0.97 0.012 235);
-  --sapphire-100: oklch(0.93 0.025 235);
-  --sapphire-200: oklch(0.85 0.04 235);
-  --sapphire-400: oklch(0.58 0.08 235);
-  --sapphire-600: oklch(0.42 0.08 238);
-  --sapphire-800: oklch(0.28 0.06 240);
-  --sapphire-900: oklch(0.2 0.05 240);
+  /* BRAND — 100% blue */
+  --brand: oklch(0.55 0.18 258);            /* #2C6FEA azul vibrante — CTAs */
+  --brand-foreground: oklch(0.99 0.005 240);
+  --brand-soft: oklch(0.94 0.045 250);      /* #EAF1FB cards suaves */
+  --brand-deep: oklch(0.26 0.08 255);       /* #0B2A4A navy headlines */
 
-  /* CTA azul brilhante — todo o app é azul */
-  --coral: oklch(0.55 0.16 245);
-  --coral-foreground: oklch(0.99 0.008 240);
-  --coral-soft: oklch(0.92 0.05 240);
-  --gold: oklch(0.85 0.06 235);
+  /* Sapphire scale (compat) */
+  --sapphire-50: oklch(0.97 0.015 245);
+  --sapphire-100: oklch(0.94 0.045 250);
+  --sapphire-200: oklch(0.86 0.06 250);
+  --sapphire-400: oklch(0.6 0.12 258);
+  --sapphire-600: oklch(0.42 0.13 258);
+  --sapphire-800: oklch(0.28 0.08 255);
+  --sapphire-900: oklch(0.2 0.06 250);
 }
 
 .dark {
-  --background: oklch(0.18 0.03 240);
-  --foreground: oklch(0.97 0.012 235);
-  --card: oklch(0.24 0.045 240);
-  --card-foreground: oklch(0.97 0.012 235);
-  --popover: oklch(0.24 0.045 240);
-  --popover-foreground: oklch(0.97 0.012 235);
-  --primary: oklch(0.85 0.04 235);
-  --primary-foreground: oklch(0.2 0.05 240);
-  --secondary: oklch(0.28 0.05 240);
-  --secondary-foreground: oklch(0.97 0.012 235);
-  --muted: oklch(0.26 0.04 240);
-  --muted-foreground: oklch(0.72 0.03 235);
-  --accent: oklch(0.3 0.05 240);
-  --accent-foreground: oklch(0.97 0.012 235);
+  --background: oklch(0.16 0.03 250);
+  --foreground: oklch(0.97 0.012 240);
+  --card: oklch(0.22 0.045 252);
+  --card-foreground: oklch(0.97 0.012 240);
+  --popover: oklch(0.22 0.045 252);
+  --popover-foreground: oklch(0.97 0.012 240);
+  --primary: oklch(0.85 0.05 245);
+  --primary-foreground: oklch(0.2 0.06 250);
+  --secondary: oklch(0.28 0.05 252);
+  --secondary-foreground: oklch(0.97 0.012 240);
+  --muted: oklch(0.26 0.04 250);
+  --muted-foreground: oklch(0.72 0.03 245);
+  --accent: oklch(0.3 0.05 252);
+  --accent-foreground: oklch(0.97 0.012 240);
   --destructive: oklch(0.65 0.2 25);
-  --destructive-foreground: oklch(0.97 0.012 235);
+  --destructive-foreground: oklch(0.97 0.012 240);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.6 0.08 235);
-  --coral: oklch(0.7 0.14 245);
-  --coral-foreground: oklch(0.15 0.03 240);
+  --ring: oklch(0.65 0.14 258);
+  --brand: oklch(0.68 0.16 258);
+  --brand-foreground: oklch(0.15 0.03 250);
+  --brand-soft: oklch(0.3 0.06 252);
+  --brand-deep: oklch(0.85 0.05 245);
 }
 
 @layer base {
@@ -146,12 +157,32 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  .font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.02em;
+  }
 }
 
+@utility font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+}
+
+@utility bg-hero-blue {
+  background:
+    radial-gradient(120% 80% at 0% 0%, oklch(0.94 0.045 250) 0%, transparent 60%),
+    radial-gradient(120% 80% at 100% 100%, oklch(0.88 0.08 258 / 0.45) 0%, transparent 55%),
+    var(--color-background);
+}
+
+/* Legacy alias — some routes still reference bg-hero-sapphire */
 @utility bg-hero-sapphire {
   background:
-    radial-gradient(120% 80% at 0% 0%, oklch(0.93 0.03 240) 0%, transparent 60%),
-    radial-gradient(120% 80% at 100% 100%, oklch(0.88 0.06 245 / 0.4) 0%, transparent 55%),
+    radial-gradient(120% 80% at 0% 0%, oklch(0.94 0.045 250) 0%, transparent 60%),
+    radial-gradient(120% 80% at 100% 100%, oklch(0.88 0.08 258 / 0.45) 0%, transparent 55%),
     var(--color-background);
 }
 
@@ -159,5 +190,28 @@
   background-color: var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  box-shadow: 0 1px 2px oklch(0.28 0.06 240 / 0.04), 0 8px 24px -12px oklch(0.28 0.06 240 / 0.12);
+  box-shadow:
+    0 1px 2px oklch(0.28 0.08 255 / 0.04),
+    0 8px 24px -12px oklch(0.28 0.08 255 / 0.14);
+}
+
+@utility card-brand {
+  background-color: var(--color-brand-soft);
+  border: 1px solid oklch(0.86 0.06 250);
+  border-radius: var(--radius-xl);
+}
+
+@utility btn-brand {
+  background-color: var(--color-brand);
+  color: var(--color-brand-foreground);
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  transition: opacity 0.2s ease;
+  box-shadow:
+    0 1px 2px oklch(0.26 0.08 255 / 0.1),
+    0 8px 20px -8px oklch(0.55 0.18 258 / 0.45);
+}
+
+@utility btn-brand-hover {
+  opacity: 0.92;
 }
