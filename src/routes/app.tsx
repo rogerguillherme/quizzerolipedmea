@@ -8,12 +8,12 @@ export const Route = createFileRoute("/app")({
 function AppLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const tabs = [
+  const tabs: { to: string; label: string; icon: typeof Activity; exact?: boolean }[] = [
     { to: "/app", label: "Radar", icon: Activity, exact: true },
     { to: "/app/missoes", label: "Missões", icon: ListChecks },
     { to: "/app/whatsapp", label: "WhatsApp", icon: MessageCircle },
     { to: "/app/derma", label: "Método", icon: Lock },
-  ] as const;
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-24">
