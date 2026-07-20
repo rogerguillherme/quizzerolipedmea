@@ -1,7 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Lock,
   BarChart3,
   Users,
   AlertTriangle,
@@ -10,7 +9,9 @@ import {
   MessageCircle,
   Send,
   Search,
+  Loader2,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   getEvents,
   getLeads,
@@ -31,21 +32,46 @@ export const Route = createFileRoute("/admin")({
   }),
 });
 
-const ADMIN_KEY = "zl:admin";
-// Demo-only gate. Replace with real auth before production.
-const DEMO_PASSWORD = "gabriela2026";
-
 function Admin() {
-  const [authed, setAuthed] = useState(false);
+  const navigate = useNavigate();
+  const [checking, setChecking] = useState(true);
   const [tab, setTab] = useState<"funil" | "leads" | "fila">("funil");
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    setAuthed(localStorage.getItem(ADMIN_KEY) === "1");
-    seedAdminDemoIfEmpty();
-  }, []);
+    let mounted = true;
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!mounted) return;
+      if (!data.session) {
+        navigate({ to: "/auth" });
+        return;
+      }
+      const { data: role } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.session.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (!role) {
+        await supabase.auth.signOut();
+        navigate({ to: "/auth" });
+        return;
+      }
+      seedAdminDemoIfEmpty();
+      setChecking(false);
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [navigate]);
 
-  if (!authed) return <Login onOk={() => setAuthed(true)} />;
+  if (checking) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background">
+        <Loader2 className="size-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,9 +84,9 @@ function Admin() {
             <p className="text-lg font-extrabold text-primary">Zero Lipedema</p>
           </div>
           <button
-            onClick={() => {
-              localStorage.removeItem(ADMIN_KEY);
-              setAuthed(false);
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/auth" });
             }}
             className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-semibold text-primary"
           >
