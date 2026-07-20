@@ -667,91 +667,142 @@ function Resultado({
     });
   }
 
+  const habitos = diagnostico.habitos ?? [];
+
   return (
-    <div>
-      <div className="flex items-center gap-2">
-        <Sparkles className="size-5 text-primary" />
-        <p className="text-sm font-bold uppercase tracking-wide text-primary">
-          Seu Mapa está pronto
-        </p>
-      </div>
-      <h1 className="mt-2 text-2xl font-extrabold leading-tight text-primary">
-        {primeiroNome
-          ? `${primeiroNome}, aqui está a leitura do seu caso`
-          : "Aqui está a leitura do seu caso"}
-      </h1>
+    <div className="-mx-5 -mt-4">
+      {/* Card superior — perfil em gradiente azul */}
+      <div className="relative overflow-hidden rounded-b-[40px] bg-gradient-to-br from-[#2C6FEA] to-[#0B2A4A] px-8 pb-12 pt-10">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative z-10">
+          <span className="block text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
+            Seu Perfil
+          </span>
+          <h1
+            className="mt-3 text-4xl leading-[1.05] tracking-tight text-white"
+            style={{ fontFamily: "'Fraunces', serif", fontWeight: 400 }}
+          >
+            {diagnostico.perfil || "Mapa em Análise"}
+          </h1>
+          <p className="mt-4 text-[15px] leading-relaxed text-white/90">
+            {diagnostico.resumo}
+          </p>
 
-      <div className="card-clinical mt-5 p-5">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-sapphire-600">
-          Estágio provável
-        </p>
-        <p className="mt-1 text-xl font-extrabold text-primary">
-          {diagnostico.estagioProvavel}
-        </p>
-        <p className="mt-3 text-[15px] leading-snug text-foreground">
-          {diagnostico.resumo}
-        </p>
-      </div>
-
-      {diagnostico.pontosChave?.length > 0 && (
-        <Section title="Pontos-chave do seu Mapa">
-          {diagnostico.pontosChave.map((p, i) => (
-            <Bullet2 key={i} text={p} />
-          ))}
-        </Section>
-      )}
-
-      {diagnostico.gatilhos?.length > 0 && (
-        <Section title="Gatilhos que identifiquei">
-          {diagnostico.gatilhos.map((p, i) => (
-            <Bullet2 key={i} text={p} />
-          ))}
-        </Section>
-      )}
-
-      {diagnostico.proximosPassos?.length > 0 && (
-        <Section title="Próximos passos">
-          {diagnostico.proximosPassos.map((p, i) => (
-            <Bullet2 key={i} text={p} />
-          ))}
-        </Section>
-      )}
-
-      <div className="mt-8 rounded-2xl border border-sapphire-200 bg-sapphire-50 p-5">
-        <div className="flex items-start gap-3">
-          <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
-            <MessageCircle className="size-5" />
-          </div>
-          <div>
-            <p className="text-base font-bold text-primary">
-              Receba seu Mapa completo no WhatsApp
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Toque abaixo para abrir a conversa. A Gabriela envia o acesso ao
-              app Mapa do Lipedema — grátis — e o primeiro passo do protocolo.
-            </p>
+          <div className="mt-7 rounded-2xl border border-white/20 bg-white/10 p-5 shadow-lg backdrop-blur-md">
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-white/80">
+              Primeira Missão
+            </span>
+            <h3
+              className="mt-1 text-lg tracking-tight text-white"
+              style={{ fontFamily: "'Fraunces', serif", fontWeight: 500 }}
+            >
+              {diagnostico.primeiraMissao}
+            </h3>
           </div>
         </div>
-
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={onWhatsappClick}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-coral px-5 py-4 text-base font-bold text-coral-foreground shadow-lg shadow-primary/20 transition-transform active:scale-[0.98]"
-        >
-          <MessageCircle className="size-5" /> Receber meu Mapa no WhatsApp
-        </a>
-
-        <p className="mt-2 text-center text-[11px] text-muted-foreground">
-          Você será redirecionada ao WhatsApp. Sem custo.
-        </p>
       </div>
 
-      <p className="mt-8 text-center text-[11px] leading-relaxed text-muted-foreground">
-        Leitura educacional. Não substitui avaliação médica. Gabriela Rosado —
-        CRN 10582.
-      </p>
+      {/* Radar dos hábitos */}
+      <div className="bg-white px-8 pb-2 pt-8">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-[#0B2A4A]">
+            Radar dos seus hábitos
+          </h2>
+          <div className="h-1 w-10 rounded-full bg-[#2C6FEA]/20" />
+        </div>
+
+        <div className="space-y-5">
+          {habitos.map((h) => (
+            <div key={h.chave} className="space-y-2">
+              <div className="flex justify-between text-xs font-semibold uppercase tracking-wider text-[#0B2A4A]/60">
+                <span>{h.label}</span>
+                <span className="text-[#2C6FEA]">{h.score}%</span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-[#EAF1FB]">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#2C6FEA] to-[#0B2A4A]"
+                  style={{ width: `${Math.max(0, Math.min(100, h.score))}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Detalhes clínicos leves */}
+      <div className="px-8 pt-4">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-[#2C6FEA]">
+          Estágio provável
+        </p>
+        <p
+          className="mt-1 text-xl tracking-tight text-[#0B2A4A]"
+          style={{ fontFamily: "'Fraunces', serif", fontWeight: 500 }}
+        >
+          {diagnostico.estagioProvavel}
+        </p>
+
+        {diagnostico.pontosChave?.length > 0 && (
+          <Section title="Pontos-chave do seu Mapa">
+            {diagnostico.pontosChave.map((p, i) => (
+              <Bullet2 key={i} text={p} />
+            ))}
+          </Section>
+        )}
+
+        {diagnostico.gatilhos?.length > 0 && (
+          <Section title="Gatilhos que identifiquei">
+            {diagnostico.gatilhos.map((p, i) => (
+              <Bullet2 key={i} text={p} />
+            ))}
+          </Section>
+        )}
+
+        {diagnostico.proximosPassos?.length > 0 && (
+          <Section title="Próximos passos">
+            {diagnostico.proximosPassos.map((p, i) => (
+              <Bullet2 key={i} text={p} />
+            ))}
+          </Section>
+        )}
+
+        {/* CTA WhatsApp */}
+        <div className="mt-8 rounded-2xl border border-[#EAF1FB] bg-[#F5F8FD] p-5">
+          <div className="flex items-start gap-3">
+            <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#2C6FEA] text-white">
+              <MessageCircle className="size-5" />
+            </div>
+            <div className="min-w-0">
+              <p
+                className="text-base tracking-tight text-[#0B2A4A]"
+                style={{ fontFamily: "'Fraunces', serif", fontWeight: 500 }}
+              >
+                Receba seu Mapa completo no WhatsApp
+              </p>
+              <p className="mt-1 text-sm text-[#0B2A4A]/70">
+                A Gabriela envia o acesso ao app Mapa do Lipedema — grátis — e o primeiro passo do protocolo.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onWhatsappClick}
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2C6FEA] px-5 py-4 text-base font-semibold text-white shadow-lg shadow-[#2C6FEA]/25 transition-transform active:scale-[0.98]"
+          >
+            <MessageCircle className="size-5" /> Receber meu Mapa no WhatsApp
+          </a>
+
+          <p className="mt-2 text-center text-[11px] text-[#0B2A4A]/60">
+            Você será redirecionada ao WhatsApp. Sem custo.
+          </p>
+        </div>
+
+        <p className="mt-8 text-center text-[11px] leading-relaxed text-[#0B2A4A]/60">
+          Leitura educacional. Não substitui avaliação médica. Gabriela Rosado — CRN 10582.
+        </p>
+      </div>
     </div>
   );
 }
@@ -765,19 +816,19 @@ function Section({
 }) {
   return (
     <div className="mt-6">
-      <p className="text-xs font-bold uppercase tracking-wide text-sapphire-600">
+      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#2C6FEA]">
         {title}
       </p>
-      <div className="mt-2 space-y-2">{children}</div>
+      <div className="mt-3 space-y-2">{children}</div>
     </div>
   );
 }
 
 function Bullet2({ text }: { text: string }) {
   return (
-    <div className="card-clinical flex items-start gap-3 p-3">
-      <span className="mt-1 inline-block size-1.5 shrink-0 rounded-full bg-primary" />
-      <p className="text-[15px] leading-snug text-foreground">{text}</p>
+    <div className="flex items-start gap-3 rounded-2xl border border-[#EAF1FB] bg-white p-3">
+      <span className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full bg-[#2C6FEA]" />
+      <p className="text-[15px] leading-snug text-[#0B2A4A]">{text}</p>
     </div>
   );
 }
