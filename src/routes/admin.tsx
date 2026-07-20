@@ -153,46 +153,6 @@ function FilaBadge() {
   );
 }
 
-function Login({ onOk }: { onOk: () => void }) {
-  const [v, setV] = useState("");
-  const [erro, setErro] = useState(false);
-  return (
-    <div className="grid min-h-screen place-items-center bg-hero-sapphire px-5">
-      <div className="card-clinical w-full max-w-sm p-6">
-        <div className="grid size-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
-          <Lock className="size-5" />
-        </div>
-        <h1 className="mt-4 text-xl font-extrabold text-primary">Acesso da Gabriela</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Área interna. As usuárias do app não veem este painel.
-        </p>
-        <input
-          type="password"
-          value={v}
-          onChange={(e) => setV(e.target.value)}
-          placeholder="Senha"
-          className="mt-5 w-full rounded-xl border border-input bg-card px-4 py-3 outline-none focus:border-ring focus:ring-2 focus:ring-ring"
-        />
-        {erro && <p className="mt-2 text-xs text-destructive">Senha não confere.</p>}
-        <button
-          onClick={() => {
-            if (v === DEMO_PASSWORD) {
-              localStorage.setItem(ADMIN_KEY, "1");
-              onOk();
-            } else setErro(true);
-          }}
-          className="mt-4 w-full rounded-xl bg-coral px-5 py-3 font-bold text-coral-foreground"
-        >
-          Entrar
-        </button>
-        <p className="mt-3 text-[11px] text-muted-foreground">
-          Demo: senha <code className="rounded bg-muted px-1">gabriela2026</code>.
-          Trocar por autenticação real antes de produção.
-        </p>
-      </div>
-    </div>
-  );
-}
 
 // ---------- Funnel ---------------------------------------------------------
 
