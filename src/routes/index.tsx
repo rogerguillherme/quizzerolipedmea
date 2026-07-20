@@ -1,27 +1,38 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowRight, ShieldCheck, HeartPulse, MessageCircle, Clock } from "lucide-react";
-import { getQuiz } from "../lib/quiz-store";
+import { useEffect } from "react";
+import {
+  ArrowRight,
+  ShieldCheck,
+  Sparkles,
+  MessageCircle,
+  Activity,
+  HeartHandshake,
+} from "lucide-react";
 import { track } from "../lib/analytics";
 
 export const Route = createFileRoute("/")({
   component: Landing,
+  head: () => ({
+    meta: [
+      { title: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
+      {
+        name: "description",
+        content:
+          "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura gratuita feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue pelo WhatsApp.",
+      },
+      { property: "og:title", content: "Mapa do Lipedema — leitura gratuita" },
+      {
+        property: "og:description",
+        content:
+          "6 perguntas, um Mapa personalizado do seu caso e o primeiro passo do protocolo — direto no seu WhatsApp.",
+      },
+    ],
+  }),
 });
 
 function Landing() {
-  const [resume, setResume] = useState<null | { nome?: string }>(null);
-
   useEffect(() => {
     track("landing_view");
-    const q = getQuiz();
-    // Consider quiz "in progress" if any answer beyond nome exists but likely not finished.
-    if (
-      q.nome &&
-      (q.tempoSintomas || q.regioes || q.hormonal) &&
-      !q.impactoEmocional
-    ) {
-      setResume({ nome: q.nome });
-    }
   }, []);
 
   return (
@@ -33,76 +44,80 @@ function Landing() {
           </div>
           <div className="leading-tight">
             <p className="text-sm font-bold text-primary">Zero Lipedema</p>
-            <p className="text-[11px] text-muted-foreground">Gabriela Rosado · CRN 10582</p>
+            <p className="text-[11px] text-muted-foreground">
+              Gabriela Rosado · CRN 10582
+            </p>
           </div>
         </div>
+        <span className="rounded-full bg-sapphire-100 px-2.5 py-1 text-[10px] font-bold text-sapphire-800">
+          Gratuito
+        </span>
       </header>
 
-      <main className="mx-auto max-w-md px-5 pb-24 pt-8">
-        {resume && (
-          <Link
-            to="/onboarding"
-            className="mb-5 flex items-center gap-3 rounded-2xl border border-sapphire-200 bg-sapphire-50 p-4 text-left"
-          >
-            <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
-              <Clock className="size-5" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-primary">
-                {resume.nome ? `${resume.nome}, seu Mapa está pela metade` : "Seu Mapa está pela metade"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Continuar de onde você parou — leva 1 minuto.
-              </p>
-            </div>
-            <ArrowRight className="size-4 text-primary" />
-          </Link>
-        )}
-
+      <main className="mx-auto max-w-md px-5 pb-16 pt-8">
         <span className="inline-flex items-center gap-2 rounded-full bg-sapphire-100 px-3 py-1 text-xs font-semibold text-sapphire-800">
-          <ShieldCheck className="size-3.5" /> Avaliação gratuita · 2 minutos
+          <Sparkles className="size-3.5" /> Leitura personalizada em 2 minutos
         </span>
 
         <h1 className="mt-4 text-3xl font-extrabold leading-tight text-primary sm:text-4xl">
-          Descubra o mapa do seu lipedema — sem cobrança, sem consultório frio.
+          Descubra o Mapa do seu Lipedema — direto no seu WhatsApp.
         </h1>
 
         <p className="mt-3 text-base text-muted-foreground">
-          Se você já tentou dieta e treino e o inchaço, a dor e o formato das pernas
-          continuam iguais, o problema não é força de vontade. Vamos entender juntas.
+          Se dieta e treino nunca resolveram, o problema não é você. Responda 6
+          perguntas e receba a leitura do seu caso, feita pela IA da Gabriela
+          Rosado, com o primeiro passo do protocolo.
         </p>
 
         <Link
-          to="/onboarding"
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-coral px-5 py-4 text-base font-bold text-coral-foreground shadow-lg shadow-coral/20 transition-transform active:scale-[0.98]"
+          to="/mapa"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-coral px-5 py-4 text-base font-bold text-coral-foreground shadow-lg shadow-primary/20 transition-transform active:scale-[0.98]"
         >
-          Começar meu Mapa gratuito <ArrowRight className="size-5" />
+          Fazer meu Mapa gratuito <ArrowRight className="size-5" />
         </Link>
 
         <p className="mt-2 text-center text-xs text-muted-foreground">
-          Sem login antes do resultado
+          Sem cadastro. Sem cobrança. Sem julgamento.
         </p>
 
         <div className="mt-10 space-y-3">
           <FeatureRow
-            icon={<HeartPulse className="size-5" />}
-            title="Mapa do Lipedema"
-            desc="6 perguntas rápidas montam uma leitura visual do seu caso."
+            icon={<Activity className="size-5" />}
+            title="1. Mapa do Lipedema (grátis)"
+            desc="Leitura clínica do seu estágio, gatilhos hormonais e regiões afetadas."
           />
           <FeatureRow
-            icon={<MessageCircle className="size-5" />}
-            title="Acompanhamento no WhatsApp"
-            desc="Cadência diária guiada por IA treinada no método da Gabriela."
+            icon={<HeartHandshake className="size-5" />}
+            title="2. Protocolo de 7 dias"
+            desc="Refeições substitutas, chás e checklist diário — para reduzir inchaço e dor."
           />
           <FeatureRow
             icon={<ShieldCheck className="size-5" />}
-            title="Baseado em evidência clínica"
-            desc="Nutrição funcional, autocuidado vascular e educação hormonal."
+            title="3. Acompanhamento completo"
+            desc="Plano alimentar personalizado, análise de exames e feedback no WhatsApp."
           />
         </div>
 
+        <div className="mt-10 card-clinical p-5">
+          <div className="flex items-start gap-3">
+            <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-sapphire-100 text-sapphire-800">
+              <MessageCircle className="size-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-primary">
+                Tudo acontece no seu WhatsApp
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Depois do Mapa, você recebe o acesso ao app pelo WhatsApp e
+                continua a jornada quando fizer sentido para você.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <p className="mt-10 text-center text-[11px] leading-relaxed text-muted-foreground">
-          Conteúdo educacional de estilo de vida. Não substitui avaliação médica.
+          Conteúdo educacional de estilo de vida. Não substitui avaliação
+          médica. Gabriela Rosado — CRN 10582.
         </p>
       </main>
     </div>

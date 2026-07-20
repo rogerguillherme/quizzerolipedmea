@@ -78,18 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#1B3A57" },
-      { title: "Zero Lipedema — Método Derma com Gabriela Rosado" },
+      { title: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
       {
         name: "description",
         content:
-          "Um caminho clínico para mulheres com lipedema. Comece pelo Mapa gratuito, avance no Desafio de 7 dias e acesse o Método Derma de 90 dias.",
+          "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura personalizada feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue no seu WhatsApp.",
       },
-      { name: "author", content: "Zero Lipedema" },
-      { property: "og:title", content: "Zero Lipedema — Método Derma" },
+      { name: "author", content: "Zero Lipedema · Gabriela Rosado CRN 10582" },
+      { property: "og:title", content: "Mapa do Lipedema — leitura gratuita" },
       {
         property: "og:description",
         content:
-          "Avaliação gratuita, desafio de 7 dias e protocolo de 90 dias com a nutricionista Gabriela Rosado (CRN 10582).",
+          "6 perguntas, uma leitura personalizada do seu lipedema e o primeiro passo do protocolo — direto no seu WhatsApp.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
