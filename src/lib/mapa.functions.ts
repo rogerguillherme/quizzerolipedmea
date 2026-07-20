@@ -113,8 +113,17 @@ Devolva o JSON conforme instruções.`;
       console.error("[submitMapa] Falha ao gerar diagnóstico:", err);
       diagnostico = {
         estagioProvavel: "Indeterminado",
+        perfil: "Mapa em Análise",
         resumo:
           "Seu Mapa foi registrado. Vou te chamar no WhatsApp para revisar as respostas com calma e montar a leitura personalizada com a Gabriela.",
+        primeiraMissao: "Abrir a conversa no WhatsApp",
+        habitos: [
+          { chave: "alimentacao", label: "Alimentação", score: 50 },
+          { chave: "sono", label: "Sono", score: 50 },
+          { chave: "agua", label: "Água", score: 50 },
+          { chave: "movimento", label: "Movimento", score: 50 },
+          { chave: "estresse", label: "Estresse", score: 50 },
+        ],
         pontosChave: [
           "Suas respostas foram salvas com segurança.",
           "A leitura completa vai chegar pelo WhatsApp em instantes.",
