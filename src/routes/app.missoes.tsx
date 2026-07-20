@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { CheckCircle2, Circle, Utensils, Leaf, HeartPulse, MessageSquareQuote } from "lucide-react";
 import { getApp, setApp } from "../lib/quiz-store";
+import { track } from "../lib/analytics";
 
 export const Route = createFileRoute("/app/missoes")({
   component: Missoes,
@@ -62,6 +63,8 @@ function Missoes() {
     setApp({ concluidos });
     if (next.length === MISSOES.length) {
       setApp({ streak: (app.streak || 0) + 1 });
+      track("day_completed", { dia });
+      if (dia >= 7) track("challenge_completed");
     }
   }
 

@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, Play, Sparkles } from "lucide-react";
 import { getQuiz, setQuiz, setApp, type QuizAnswers } from "../lib/quiz-store";
+import { track } from "../lib/analytics";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
@@ -37,6 +38,10 @@ function Onboarding() {
   const [step, setStep] = useState<Step>("nome");
   const [answers, setAnswers] = useState<QuizAnswers>(() => getQuiz());
 
+  useEffect(() => {
+    track("quiz_started");
+  }, []);
+
   const stepIndex = ORDER.indexOf(step);
   const quizSteps = ORDER.length - 2; // exclude mapa + vsl from progress bar
   const progress = Math.min(
@@ -52,7 +57,12 @@ function Onboarding() {
 
   function goNext() {
     const idx = ORDER.indexOf(step);
-    if (idx < ORDER.length - 1) setStep(ORDER[idx + 1]);
+    if (idx < ORDER.length - 1) {
+      const nextStep = ORDER[idx + 1];
+      setStep(nextStep);
+      track("quiz_step", { step: nextStep });
+      if (nextStep === "mapa") track("quiz_completed");
+    }
   }
 
   function goBack() {
@@ -527,6 +537,30 @@ function BodyMap({ regioes }: { regioes: string[] }) {
 
 function Vsl({ nome, onContinue }: { nome?: string; onContinue: () => void }) {
   const [playing, setPlaying] = useState(false);
+  const VSL_SECONDS = 180; // 3 minutes simulated
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    if (!playing) return;
+    const start = Date.now();
+    const marked = new Set<number>();
+    const id = setInterval(() => {
+      const e = (Date.now() - start) / 1000;
+      setElapsed(e);
+      const pct = Math.min(100, Math.round((e / VSL_SECONDS) * 100));
+      [25, 50, 75, 100].forEach((m) => {
+        if (pct >= m && !marked.has(m)) {
+          marked.add(m);
+          track("vsl_progress", { percent: m });
+        }
+      });
+      if (pct >= 100) clearInterval(id);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [playing]);
+
+  const pct = Math.min(100, Math.round((elapsed / VSL_SECONDS) * 100));
+
   return (
     <div>
       <p className="text-sm font-bold uppercase tracking-wide text-coral">Vídeo · 3 min</p>
@@ -550,6 +584,14 @@ function Vsl({ nome, onContinue }: { nome?: string; onContinue: () => void }) {
         <div className="absolute bottom-3 left-3 rounded-md bg-black/40 px-2 py-0.5 text-[11px] font-semibold text-white">
           Gabriela Rosado · CRN 10582
         </div>
+        {playing && (
+          <div className="absolute inset-x-0 bottom-0 h-1 bg-black/30">
+            <div
+              className="h-full bg-coral transition-all duration-500"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        )}
       </button>
 
       <ul className="mt-6 space-y-2 text-sm text-foreground">

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Lock, FileText, Video, MessagesSquare, Stethoscope, Sparkles } from "lucide-react";
+import { track } from "../lib/analytics";
 
 export const Route = createFileRoute("/app/derma")({
   component: Derma,
@@ -76,10 +77,10 @@ function Derma() {
       </div>
 
       <button
-        disabled
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-coral px-5 py-4 text-base font-bold text-coral-foreground opacity-60"
+        onClick={() => track("derma_upgrade_clicked")}
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-coral px-5 py-4 text-base font-bold text-coral-foreground"
       >
-        <Lock className="size-4" /> Desbloquear após o Desafio
+        <Lock className="size-4" /> Quero saber quando abrir vaga
       </button>
       <p className="mt-2 text-center text-xs text-muted-foreground">
         Ao completar seus 7 dias, você recebe o convite de avaliação para o Método.
