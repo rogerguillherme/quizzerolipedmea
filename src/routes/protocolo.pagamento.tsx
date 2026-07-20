@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, CheckCircle2, ShieldCheck, Zap, Gift, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, CheckCircle2, ShieldCheck, Zap, Gift, Star, AlertCircle } from "lucide-react";
 import { setApp, getQuiz } from "../lib/quiz-store";
+import { track, upsertLead } from "../lib/analytics";
 
 export const Route = createFileRoute("/protocolo/pagamento")({
   component: Checkout,
@@ -18,15 +19,48 @@ function Checkout() {
   const [metodo, setMetodo] = useState<"pix" | "cartao">("pix");
   const [bump, setBump] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [erro, setErro] = useState<null | { mensagem: string; sugerir: "pix" | "cartao" }>(
+    null,
+  );
 
   const base = 57;
   const bumpValue = 32;
   const total = base + (bump ? bumpValue : 0);
 
+  useEffect(() => {
+    track("checkout_view");
+  }, []);
+
+  useEffect(() => {
+    if (bump) track("bump_activated");
+  }, [bump]);
+
   function submit() {
     if (!nome.trim() || telefone.replace(/\D/g, "").length < 10) return;
+    setErro(null);
     setProcessing(true);
+    // Simulated processing. In production, replace with real gateway call.
+    // Card ending in "0000" simulates a decline so QA can see the error state.
     setTimeout(() => {
+      const cardFail = metodo === "cartao" && telefone.replace(/\D/g, "").endsWith("0000");
+      if (cardFail) {
+        setProcessing(false);
+        track("checkout_error", { metodo });
+        setErro({
+          mensagem:
+            "Não conseguimos confirmar seu cartão agora. Nada foi cobrado — dá pra tentar pelo Pix, que costuma cair na hora.",
+          sugerir: "pix",
+        });
+        return;
+      }
+      upsertLead({
+        nome: nome.trim(),
+        telefone,
+        status: "desafio_ativo",
+        diaDesafio: 1,
+        bump,
+      });
+      track("purchase_completed", { valor: total, metodo, bump });
       setApp({
         nome: nome.trim(),
         telefone,
