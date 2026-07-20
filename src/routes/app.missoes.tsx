@@ -63,6 +63,8 @@ function Missoes() {
     setApp({ concluidos });
     if (next.length === MISSOES.length) {
       setApp({ streak: (app.streak || 0) + 1 });
+      track("day_completed", { dia });
+      if (dia >= 7) track("challenge_completed");
     }
   }
 
