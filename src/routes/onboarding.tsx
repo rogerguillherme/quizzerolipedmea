@@ -38,6 +38,10 @@ function Onboarding() {
   const [step, setStep] = useState<Step>("nome");
   const [answers, setAnswers] = useState<QuizAnswers>(() => getQuiz());
 
+  useEffect(() => {
+    track("quiz_started");
+  }, []);
+
   const stepIndex = ORDER.indexOf(step);
   const quizSteps = ORDER.length - 2; // exclude mapa + vsl from progress bar
   const progress = Math.min(
@@ -53,7 +57,12 @@ function Onboarding() {
 
   function goNext() {
     const idx = ORDER.indexOf(step);
-    if (idx < ORDER.length - 1) setStep(ORDER[idx + 1]);
+    if (idx < ORDER.length - 1) {
+      const nextStep = ORDER[idx + 1];
+      setStep(nextStep);
+      track("quiz_step", { step: nextStep });
+      if (nextStep === "mapa") track("quiz_completed");
+    }
   }
 
   function goBack() {
