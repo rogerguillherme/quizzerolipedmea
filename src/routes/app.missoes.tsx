@@ -42,6 +42,14 @@ const MISSOES: Missao[] = [
       "Café: pão integral + ovo mexido + mamão, ou iogurte natural + banana + castanhas. Almoço: arroz + feijão + frango grelhado + salada, ou arroz + feijão + peixe assado + abobrinha. Tarde: banana com chá de gengibre, ou maçã com um punhado de castanhas. Jantar: sopa de legumes com frango desfiado, ou omelete de claras + salada de folhas.",
   },
   {
+    id: "chas",
+    titulo: "Chás e shots — padrões e contraindicações",
+    descricao: "Use com atenção às contraindicações abaixo.",
+    icon: <Coffee className="size-4" />,
+    detalhe:
+      "Chá de gengibre: evitar em gestantes, quem usa anticoagulante, tem gastrite/refluxo ou pressão alta descontrolada. Chá de hibisco: evitar em gestantes, lactantes e quem tem pressão baixa. Chá de cavalinha: uso curto (até 7 dias seguidos), evitar em gestantes, crianças e insuficiência renal/cardíaca. Chá de camomila: evitar quem usa anticoagulante ou tem alergia a plantas da família (margarida, arnica). Shot de limão com gengibre em jejum: evitar em gastrite, refluxo, úlcera e uso de anticoagulante. Shot de cúrcuma: evitar em cálculo biliar, gestantes e uso de anticoagulante. Em qualquer dúvida, confirme com a Dra. Gabriela antes de incluir na rotina.",
+  },
+  {
     id: "olhos",
     titulo: "Primeiro se come com os olhos",
     descricao: "A apresentação muda a percepção da refeição.",
