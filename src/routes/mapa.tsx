@@ -517,7 +517,7 @@ function NomeStep({
         className="mt-2 text-sm"
         style={{ color: palette.inkSoft }}
       >
-        Só o primeiro nome já basta — é para personalizar seu mapa.
+        Só o primeiro nome já basta é para personalizar seu mapa.
       </p>
 
       <input
