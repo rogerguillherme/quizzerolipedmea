@@ -69,11 +69,16 @@ const QUESTION_STEPS: Step[] = [
 
 const Q = {
   q1: {
-    title: "Há quanto tempo você percebe esse inchaço ou desproporção nas pernas?",
-    options: ["Menos de 1 ano", "1 a 3 anos", "3 a 10 anos", "Mais de 10 anos"],
-    icons: ["🌱", "🌿", "🍃", "🌳"],
+    title: "Olhando essas imagens, qual grau mais se parece com as suas pernas hoje?",
+    options: ["Estágio 1 — leve", "Estágio 2 — moderado", "Estágio 3 — avançado", "Não sei identificar"],
+    icons: ["1️⃣", "2️⃣", "3️⃣", "❓"],
     key: "tempo" as const,
+    illustration: {
+      src: estagiosAsset.url,
+      caption: "Progressão do lipedema — do estágio 1 ao 4",
+    },
   },
+
 
   q2: {
     title: "Você já recebeu diagnóstico de lipedema por um profissional?",
