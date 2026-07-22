@@ -1,12 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, Loader2, CheckCircle2, MessageCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  CheckCircle2,
+  MessageCircle,
+  KeyRound,
+  Sparkles,
+} from "lucide-react";
 import { submitMapa, type Diagnostico } from "../lib/mapa.functions";
+import { criarAcessoMapa } from "../lib/mapa-access.functions";
 import { track } from "../lib/analytics";
-
-// WhatsApp da Dra. Gabriela (formato internacional, sem "+")
-const WHATSAPP_NUMBER = "5511999999999";
 
 // Paleta editorial (bege/creme + azul profundo + dourado)
 const palette = {
@@ -20,7 +26,7 @@ const palette = {
 } as const;
 
 export const Route = createFileRoute("/mapa")({
-  component: MapaPage,
+  component: () => <MapaPage />,
   head: () => ({
     meta: [
       { title: "Mapa do Lipedema — Teste de 2 minutos com a Dra. Gabriela Rosado" },
@@ -53,7 +59,8 @@ type Step =
   | "q1" | "q2" | "q3" | "q4" | "q5" | "q6" | "q7" | "q8"
   | "contato"
   | "gerando"
-  | "resultado";
+  | "resultado"
+  | "acesso";
 
 const QUESTION_STEPS: Step[] = [
   "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "contato",
@@ -112,7 +119,15 @@ const Q = {
   },
 };
 
-function MapaPage() {
+type AcessoResult = {
+  login: string;
+  senha: string;
+  loginUrl: string;
+  whatsappEnviado: boolean;
+  whatsappErro: string | null;
+};
+
+export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("boas-vindas");
   const [answers, setAnswers] = useState<Answers>({
@@ -128,8 +143,11 @@ function MapaPage() {
     objetivo: "",
   });
   const [diagnostico, setDiagnostico] = useState<Diagnostico | null>(null);
+  const [leadId, setLeadId] = useState<string | null>(null);
+  const [acesso, setAcesso] = useState<AcessoResult | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const submit = useServerFn(submitMapa);
+  const gerarAcesso = useServerFn(criarAcessoMapa);
 
   useEffect(() => {
     if (step === "boas-vindas") track("landing_view");
@@ -147,7 +165,10 @@ function MapaPage() {
   }
 
   function back() {
-    if (step === "boas-vindas") return navigate({ to: "/" });
+    if (step === "boas-vindas") {
+      if (onClose) return onClose();
+      return navigate({ to: "/" });
+    }
     const flow: Step[] = ["boas-vindas", "nome", ...QUESTION_STEPS];
     const i = flow.indexOf(step);
     if (i > 0) setStep(flow[i - 1]);
@@ -174,6 +195,7 @@ function MapaPage() {
         },
       });
       setDiagnostico(result.diagnostico);
+      setLeadId(result.leadId ?? null);
       track("quiz_completed");
       setStep("resultado");
     } catch (e) {
@@ -182,6 +204,27 @@ function MapaPage() {
         "Não consegui gerar seu Mapa agora. Tente novamente em instantes — se persistir, siga direto para o WhatsApp da Gabriela.",
       );
       setStep("contato");
+    }
+  }
+
+  async function handleReceberAcesso() {
+    if (!leadId) return;
+    try {
+      const result = await gerarAcesso({ data: { leadId } });
+      setAcesso({
+        login: result.login,
+        senha: result.senha,
+        loginUrl: result.loginUrl,
+        whatsappEnviado: result.whatsappEnviado,
+        whatsappErro: result.whatsappErro,
+      });
+      track("purchase_completed", { step: "acesso_gerado" });
+      setStep("acesso");
+    } catch (e) {
+      console.error(e);
+      setErro(
+        "Não consegui gerar seu acesso agora. Tente novamente em alguns segundos.",
+      );
     }
   }
 
@@ -196,7 +239,7 @@ function MapaPage() {
     >
       <BackgroundArcs />
 
-      {step !== "gerando" && step !== "resultado" && (
+      {step !== "gerando" && step !== "resultado" && step !== "acesso" && (
         <header
           className="sticky top-0 z-20 backdrop-blur"
           style={{
@@ -249,7 +292,9 @@ function MapaPage() {
       )}
 
       <main className="relative z-10 mx-auto max-w-md px-5 pb-24 pt-8">
-        {step === "boas-vindas" && <Welcome onStart={() => setStep("nome")} />}
+        {step === "boas-vindas" && (
+          <Welcome onStart={() => setStep("nome")} onClose={onClose} />
+        )}
 
         {step === "nome" && (
           <NomeStep
@@ -293,9 +338,14 @@ function MapaPage() {
         {step === "resultado" && diagnostico && (
           <Resultado
             nome={answers.nome}
-            telefone={answers.telefone}
             diagnostico={diagnostico}
+            onReceberAcesso={handleReceberAcesso}
+            erro={erro}
           />
+        )}
+
+        {step === "acesso" && acesso && (
+          <AcessoStep nome={answers.nome} data={acesso} onClose={onClose} />
         )}
       </main>
     </div>
@@ -333,7 +383,13 @@ function BackgroundArcs() {
 }
 
 // ---------- Boas-vindas ----------
-function Welcome({ onStart }: { onStart: () => void }) {
+function Welcome({
+  onStart,
+  onClose,
+}: {
+  onStart: () => void;
+  onClose?: () => void;
+}) {
   return (
     <div className="pt-4">
       <span
@@ -395,13 +451,23 @@ function Welcome({ onStart }: { onStart: () => void }) {
         Leitura educacional. Não substitui avaliação médica.
       </p>
 
-      <Link
-        to="/"
-        className="mt-3 block text-center text-[11px] underline"
-        style={{ color: palette.inkSoft }}
-      >
-        Voltar
-      </Link>
+      {onClose ? (
+        <button
+          onClick={onClose}
+          className="mt-3 block w-full text-center text-[11px] underline"
+          style={{ color: palette.inkSoft }}
+        >
+          Fechar
+        </button>
+      ) : (
+        <Link
+          to="/"
+          className="mt-3 block text-center text-[11px] underline"
+          style={{ color: palette.inkSoft }}
+        >
+          Voltar
+        </Link>
+      )}
     </div>
   );
 }
@@ -521,7 +587,7 @@ function ChoiceStep({
   );
 }
 
-// ---------- Contato (WhatsApp antes do resultado) ----------
+// ---------- Contato ----------
 function ContatoStep({
   nome,
   telefone,
@@ -548,7 +614,7 @@ function ContatoStep({
         style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, color: palette.ink }}
       >
         {nome ? `${nome.split(" ")[0]}, ` : ""}
-        para onde eu envio o acesso ao\u00a0seu <em style={{ color: palette.gold }}>Mapa do Lipedema</em>?
+        para onde eu envio o acesso ao&nbsp;seu <em style={{ color: palette.gold }}>Mapa do Lipedema</em>?
       </h1>
       <p className="mt-3 text-[14px] leading-relaxed" style={{ color: palette.inkSoft }}>
         Envia seu WhatsApp aqui abaixo, assim você recebe o acesso ao mapa e pode revisar com calma todas as dicas e como colocar em prática de forma rápida.
@@ -598,7 +664,7 @@ function ContatoStep({
 // ---------- Gerando ----------
 function Gerando({ nome }: { nome: string }) {
   return (
-    <div className="grid min-h-[70vh] place-items-center text-center">
+    <div className="grid min-h-[70vh] place-items-center text-center px-5">
       <div>
         <div
           className="mx-auto grid size-16 place-items-center rounded-full"
@@ -629,30 +695,31 @@ function Gerando({ nome }: { nome: string }) {
 // ---------- Resultado ----------
 function Resultado({
   nome,
-  telefone,
   diagnostico,
+  onReceberAcesso,
+  erro,
 }: {
   nome: string;
-  telefone: string;
   diagnostico: Diagnostico;
+  onReceberAcesso: () => Promise<void>;
+  erro: string | null;
 }) {
   const primeiroNome = nome.split(" ")[0];
-  const waMessage = encodeURIComponent(
-    `Oi Gabriela! Sou a ${primeiroNome}. Acabei de fazer o Mapa do Lipedema e queria confirmar o recebimento.`,
-  );
-  const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
-
-  function onWhatsappClick() {
-    track("purchase_completed", {
-      step: "mapa_to_whatsapp",
-      telefone,
-    });
-  }
+  const [enviando, setEnviando] = useState(false);
 
   const estagioLabel =
     diagnostico.estagio === "Indeterminado"
       ? "A definir com avaliação"
       : `Estágio percebido: ${diagnostico.estagio}`;
+
+  async function handle() {
+    setEnviando(true);
+    try {
+      await onReceberAcesso();
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   return (
     <div className="pt-2">
@@ -663,7 +730,6 @@ function Resultado({
         Mapa de {primeiroNome}
       </span>
 
-      {/* Abertura validadora */}
       <h1
         className="mt-4 text-[1.7rem] leading-[1.2] tracking-tight"
         style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, color: palette.ink }}
@@ -671,7 +737,6 @@ function Resultado({
         {diagnostico.aberturaValidadora}
       </h1>
 
-      {/* Estágio percebido */}
       <div
         className="mt-8 rounded-2xl border p-5"
         style={{
@@ -716,7 +781,6 @@ function Resultado({
         </p>
       </div>
 
-      {/* 3 prioridades */}
       <div className="mt-10">
         <span
           className="text-[11px] uppercase tracking-[0.28em]"
@@ -745,7 +809,6 @@ function Resultado({
         </div>
       </div>
 
-      {/* Confirmação (não é venda) */}
       <div
         className="mt-10 rounded-2xl border p-6"
         style={{
@@ -777,26 +840,38 @@ function Resultado({
           </div>
         </div>
 
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={onWhatsappClick}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-semibold transition-transform active:scale-[0.98]"
+        <button
+          onClick={handle}
+          disabled={enviando}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-semibold transition-transform active:scale-[0.98] disabled:opacity-60"
           style={{
             background: `linear-gradient(180deg, ${palette.goldSoft}, ${palette.gold})`,
             color: "#FFFFFF",
             boxShadow: `0 10px 30px -12px ${palette.gold}88, inset 0 1px 0 #FFFFFF66`,
           }}
         >
-          <MessageCircle className="size-5" /> Abrir conversa no WhatsApp
-        </a>
+          {enviando ? (
+            <>
+              <Loader2 className="size-5 animate-spin" /> Preparando seu acesso…
+            </>
+          ) : (
+            <>
+              <MessageCircle className="size-5" /> Receber acesso no WhatsApp
+            </>
+          )}
+        </button>
+
+        {erro && (
+          <p className="mt-3 text-center text-[12px]" style={{ color: "#b91c1c" }}>
+            {erro}
+          </p>
+        )}
 
         <p
           className="mt-3 text-center text-[11px]"
           style={{ color: palette.inkSoft }}
         >
-          Seu mapa já está no caminho para o seu WhatsApp.
+          Você recebe seu login e senha no WhatsApp em segundos.
         </p>
       </div>
 
@@ -807,6 +882,117 @@ function Resultado({
         Leitura educacional. Não substitui avaliação médica.<br />
         Gabriela Rosado — CRN 10582.
       </p>
+    </div>
+  );
+}
+
+// ---------- Acesso ----------
+function AcessoStep({
+  nome,
+  data,
+  onClose,
+}: {
+  nome: string;
+  data: AcessoResult;
+  onClose?: () => void;
+}) {
+  const primeiroNome = nome.split(" ")[0];
+  return (
+    <div className="pt-8">
+      <div className="text-center">
+        <div
+          className="mx-auto grid size-16 place-items-center rounded-full"
+          style={{
+            background: "#FFFFFF",
+            border: `1px solid ${palette.gold}`,
+            color: palette.gold,
+          }}
+        >
+          <Sparkles className="size-8" />
+        </div>
+        <h1
+          className="mt-6 text-[1.9rem] leading-[1.15] tracking-tight"
+          style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, color: palette.ink }}
+        >
+          Pronto, <em style={{ color: palette.gold }}>{primeiroNome}</em>.
+        </h1>
+        <p className="mt-3 text-[15px] leading-relaxed" style={{ color: palette.inkSoft }}>
+          {data.whatsappEnviado
+            ? "Enviei seu acesso pelo WhatsApp agora mesmo. Dá uma olhadinha no seu celular 💙"
+            : "Seu acesso foi gerado. Anota abaixo, é rapidinho."}
+        </p>
+      </div>
+
+      <div
+        className="mt-8 rounded-2xl border p-6"
+        style={{
+          borderColor: palette.creamDark,
+          background: "#FFFBF2",
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <KeyRound className="size-4" style={{ color: palette.gold }} />
+          <span
+            className="text-[10px] uppercase tracking-[0.28em]"
+            style={{ color: palette.gold }}
+          >
+            Seu acesso
+          </span>
+        </div>
+
+        <div className="mt-4 space-y-3 text-[15px]">
+          <div>
+            <p className="text-[11px] uppercase tracking-wider" style={{ color: palette.inkSoft }}>
+              Login
+            </p>
+            <p
+              className="mt-1 font-semibold tabular-nums"
+              style={{ color: palette.ink, fontFamily: "'Fraunces', serif" }}
+            >
+              {data.login}
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] uppercase tracking-wider" style={{ color: palette.inkSoft }}>
+              Senha
+            </p>
+            <p
+              className="mt-1 font-semibold tabular-nums"
+              style={{ color: palette.ink, fontFamily: "'Fraunces', serif" }}
+            >
+              {data.senha}
+            </p>
+          </div>
+        </div>
+
+        <a
+          href={data.loginUrl}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-semibold transition-transform active:scale-[0.98]"
+          style={{
+            background: `linear-gradient(180deg, ${palette.inkSoft}, ${palette.ink})`,
+            color: "#FFFFFF",
+            boxShadow: `0 14px 32px -14px ${palette.ink}AA, inset 0 1px 0 #FFFFFF22`,
+          }}
+        >
+          Entrar no meu app <ArrowRight className="size-4" />
+        </a>
+
+        {!data.whatsappEnviado && (
+          <p className="mt-3 text-[11px] leading-relaxed text-center" style={{ color: palette.inkSoft }}>
+            O envio automático pelo WhatsApp falhou, mas você pode entrar direto acima com o login/senha.
+          </p>
+        )}
+      </div>
+
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="mt-6 block w-full text-center text-[12px] underline"
+          style={{ color: palette.inkSoft }}
+        >
+          Fechar
+        </button>
+      )}
     </div>
   );
 }
@@ -846,7 +1032,6 @@ function StageBar({ estagio }: { estagio: Diagnostico["estagio"] }) {
   );
 }
 
-// ---------- Botão primário editorial (pílula com gradiente dourado) ----------
 function PrimaryButton({
   children,
   onClick,
