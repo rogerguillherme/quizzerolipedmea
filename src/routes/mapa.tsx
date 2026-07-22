@@ -142,7 +142,7 @@ type AcessoResult = {
 
 export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>("boas-vindas");
+  const [step, setStep] = useState<Step>("nome");
   const [answers, setAnswers] = useState<Answers>({
     nome: "",
     telefone: "",
