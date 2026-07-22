@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useRef, useState } from "react";
 import {
   Utensils,
   Droplets,
@@ -9,6 +10,14 @@ import {
   Loader2,
   ArrowRight,
   MessageCircle,
+  Lock,
+  Sparkles,
+  X,
+  Play,
+  Crown,
+  Salad,
+  Activity,
+  BookOpen,
 } from "lucide-react";
 import { getMyProfile } from "@/lib/mapa-access.functions";
 import type { Diagnostico } from "@/lib/mapa.functions";
