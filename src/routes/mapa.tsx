@@ -180,14 +180,15 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
   }
 
   function back() {
-    if (step === "boas-vindas") {
+    if (step === "nome" || step === "boas-vindas") {
       if (onClose) return onClose();
       return navigate({ to: "/" });
     }
-    const flow: Step[] = ["boas-vindas", "nome", ...QUESTION_STEPS];
+    const flow: Step[] = ["nome", ...QUESTION_STEPS];
     const i = flow.indexOf(step);
     if (i > 0) setStep(flow[i - 1]);
   }
+
 
   async function handleSubmit() {
     setErro(null);
