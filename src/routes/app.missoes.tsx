@@ -86,7 +86,7 @@ function Missoes() {
         className="text-[10px] font-semibold uppercase"
         style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
       >
-        Dia {dia} de 7
+        Guia essencial
       </p>
       <h1
         className="mt-2"
@@ -98,7 +98,7 @@ function Missoes() {
           color: "#16324F",
         }}
       >
-        Missões de <em className="italic" style={{ color: "#AF7F35" }}>hoje</em>
+        Dicas para <em className="italic" style={{ color: "#AF7F35" }}>cuidar</em> do lipedema
       </h1>
 
       <div
