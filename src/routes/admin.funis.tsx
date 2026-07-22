@@ -20,6 +20,8 @@ import {
   saveFunnel,
   deleteFunnel,
 } from "@/lib/funnels.functions";
+import { MERGE_TAGS, applyMergeTags } from "@/lib/merge-tags";
+import { useRef } from "react";
 
 export const Route = createFileRoute("/admin/funis")({
   component: FunilPage,
