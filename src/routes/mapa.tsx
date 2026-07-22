@@ -73,11 +73,8 @@ const Q = {
     options: ["Menos de 1 ano", "1 a 3 anos", "3 a 10 anos", "Mais de 10 anos"],
     icons: ["🌱", "🌿", "🍃", "🌳"],
     key: "tempo" as const,
-    illustration: {
-      src: estagiosAsset.url,
-      caption: "Progressão do lipedema — do estágio inicial ao avançado",
-    },
   },
+
   q2: {
     title: "Você já recebeu diagnóstico de lipedema por um profissional?",
     options: ["Sim, já tenho diagnóstico", "Não, mas desconfio", "Não sabia o que era"],
