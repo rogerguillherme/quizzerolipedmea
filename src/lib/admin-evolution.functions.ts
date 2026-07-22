@@ -6,10 +6,16 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function assertAdmin(supabase: any, userId: string) {
-  const { data } = await supabase.rpc("has_role", {
-    _user_id: userId,
-    _role: "admin",
-  });
+  const { data, error } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (error) {
+    console.error("[assertAdmin] erro consultando user_roles:", error);
+    throw new Error("Não consegui validar seu acesso agora.");
+  }
   if (!data) throw new Error("Acesso restrito à Gabriela.");
 }
 
