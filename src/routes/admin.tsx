@@ -45,7 +45,7 @@ export const Route = createFileRoute("/admin")({
 function Admin() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"funil" | "leads" | "fila">("funil");
+  const [tab, setTab] = useState<"funil" | "leads" | "fila" | "wa">("funil");
 
   useEffect(() => {
     let mounted = true;
