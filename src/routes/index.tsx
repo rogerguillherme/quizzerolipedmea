@@ -35,6 +35,8 @@ const SIGNALS: Array<{ icon: React.ComponentType<{ className?: string }>; text: 
 ];
 
 function Landing() {
+  const [quizOpen, setQuizOpen] = useState(false);
+
   useEffect(() => {
     track("landing_view");
   }, []);
