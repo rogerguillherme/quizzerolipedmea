@@ -49,9 +49,11 @@ type Funnel = {
   steps: Step[];
 };
 
+type IconCmp = React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+
 const STEP_META: Record<
   StepTipo,
-  { icon: React.ComponentType<{ className?: string }>; label: string; cor: string }
+  { icon: IconCmp; label: string; cor: string }
 > = {
   mensagem: { icon: MessageSquare, label: "Mensagem", cor: "#2C6FEA" },
   espera: { icon: Clock, label: "Espera", cor: "#F2C14E" },
