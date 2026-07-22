@@ -13,6 +13,7 @@ import {
 import { submitMapa, type Diagnostico } from "../lib/mapa.functions";
 import { criarAcessoMapa } from "../lib/mapa-access.functions";
 import { track } from "../lib/analytics";
+import estagiosAsset from "@/assets/estagios-lipedema.png.asset.json";
 
 // Paleta editorial (bege/creme + azul profundo + dourado)
 const palette = {
@@ -70,11 +71,17 @@ const Q = {
   q1: {
     title: "Há quanto tempo você percebe esse inchaço ou desproporção nas pernas?",
     options: ["Menos de 1 ano", "1 a 3 anos", "3 a 10 anos", "Mais de 10 anos"],
+    icons: ["🌱", "🌿", "🍃", "🌳"],
     key: "tempo" as const,
+    illustration: {
+      src: estagiosAsset.url,
+      caption: "Progressão do lipedema — do estágio inicial ao avançado",
+    },
   },
   q2: {
     title: "Você já recebeu diagnóstico de lipedema por um profissional?",
     options: ["Sim, já tenho diagnóstico", "Não, mas desconfio", "Não sabia o que era"],
+    icons: ["🩺", "🤔", "💭"],
     key: "diagnostico" as const,
   },
   q3: {
@@ -85,26 +92,31 @@ const Q = {
       "Hematomas (roxos) com facilidade",
       "Dificuldade de emagrecer nas pernas",
     ],
+    icons: ["💢", "💧", "🩹", "⚖️"],
     key: "sintomaMaior" as const,
   },
   q4: {
     title: "Seu peso já variou bastante, mas as pernas quase não mudam?",
     options: ["Sempre", "Às vezes", "Não notei isso"],
+    icons: ["✅", "🤷‍♀️", "❌"],
     key: "pesoPernas" as const,
   },
   q5: {
     title: "Já tentou dieta e exercício sem ver diferença nas pernas?",
     options: ["Muitas vezes", "Um pouco", "Ainda não tentei"],
+    icons: ["🥗", "🏃‍♀️", "🌸"],
     key: "dietaExercicio" as const,
   },
   q6: {
     title: "Qual seu nível de atividade física hoje?",
     options: ["Sedentária", "Leve", "Moderada", "Intensa"],
+    icons: ["🛋️", "🚶‍♀️", "🚴‍♀️", "🏋️‍♀️"],
     key: "atividade" as const,
   },
   q7: {
     title: "Você tem exames recentes (sangue, hormonal)?",
     options: ["Sim, tenho", "Não tenho", "Não sei dizer"],
+    icons: ["🧪", "📋", "❓"],
     key: "exames" as const,
   },
   q8: {
@@ -115,6 +127,7 @@ const Q = {
       "Ter um plano alimentar personalizado",
       "Acompanhamento contínuo com profissional",
     ],
+    icons: ["🧭", "🌊", "🍽️", "🤝"],
     key: "objetivo" as const,
   },
 };
