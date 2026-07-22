@@ -5,75 +5,62 @@ import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 
 /**
- * Respostas do Mapa do Lipedema.
- * Público (sem login). Grava um lead novo e devolve um diagnóstico gerado por IA.
+ * Mapa do Lipedema — quiz de 8 perguntas.
+ * Público (sem login). Grava um lead e devolve uma leitura personalizada.
+ * NÃO é diagnóstico clínico — apenas leitura educacional dos sintomas relatados.
  */
 const MapaInput = z.object({
   nome: z.string().trim().min(2).max(80),
   telefone: z.string().trim().min(8).max(40),
-  email: z.string().trim().email().optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
-  idade: z.number().int().min(12).max(90).optional(),
   respostas: z.object({
-    tempoSintomas: z.string().min(1),
-    regioes: z.array(z.string()).min(1),
-    dorNivel: z.number().min(0).max(10),
-    hormonal: z.string().min(1),
-    familia: z.string().min(1),
-    tentouDietaExercicio: z.string().min(1),
-    impactoEmocional: z.string().min(1),
-    inchaco: z.string().optional(),
-    hematomas: z.string().optional(),
+    tempo: z.string().min(1),           // Q1
+    diagnostico: z.string().min(1),     // Q2
+    sintomaMaior: z.string().min(1),    // Q3
+    pesoPernas: z.string().min(1),      // Q4
+    dietaExercicio: z.string().min(1),  // Q5
+    atividade: z.string().min(1),       // Q6
+    exames: z.string().min(1),          // Q7
+    objetivo: z.string().min(1),        // Q8
   }),
 });
 
 export type MapaInputType = z.infer<typeof MapaInput>;
 
-export type Habito = {
-  chave: "alimentacao" | "sono" | "agua" | "movimento" | "estresse";
-  label: string;
-  score: number; // 0-100
-};
-
 export type Diagnostico = {
-  estagioProvavel: "Estágio 1" | "Estágio 2" | "Estágio 3" | "Indeterminado";
-  perfil: string; // ex: "Rotina Desorganizada"
-  resumo: string;
-  primeiraMissao: string; // ex: "Trocar o café da manhã"
-  habitos: Habito[]; // exatamente 5, na ordem: alimentacao, sono, agua, movimento, estresse
-  pontosChave: string[];
-  proximosPassos: string[];
-  gatilhos: string[];
+  estagio: "Inicial" | "Intermediário" | "Avançado" | "Indeterminado";
+  aberturaValidadora: string;   // frase que valida o sintoma principal (Q3)
+  descricaoEstagio: string;     // 1-2 frases explicando o estágio percebido
+  prioridades: string[];         // exatamente 3
+  proximoPassoTitulo: string;    // ex: "Seu Mapa está pronto"
+  proximoPassoMensagem: string;  // confirmação — NÃO é venda
 };
 
-const SYSTEM_PROMPT = `Você é uma assistente clínica da nutricionista Gabriela Rosado (CRN 10582), especialista em lipedema.
-Sua função é ler as respostas do "Mapa do Lipedema" de uma mulher e devolver uma leitura acolhedora, técnica e humana — nunca fria.
+const SYSTEM_PROMPT = `Você é a assistente clínica da nutricionista Gabriela Rosado (CRN 10582), especialista em lipedema.
+Sua função é ler as 8 respostas do "Mapa do Lipedema" de uma mulher e devolver uma leitura acolhedora e humana — nunca fria, nunca alarmista.
 
 Regras invioláveis:
-- NÃO faz diagnóstico médico. É leitura educacional; sugira avaliação clínica quando fizer sentido.
-- Tom: acolhedor, direto, sem infantilizar. Fale com ela, não sobre ela.
+- NUNCA faça diagnóstico médico. É leitura educacional dos sintomas relatados.
+- Sempre deixe implícito que a confirmação clínica depende da Dra. Gabriela.
+- Tom: acolhedor, direto, sem infantilizar. Fale com ela (2ª pessoa).
 - Português do Brasil, mulher adulta 25–55 anos.
 - Nunca prometa cura, emagrecimento ou resultado estético.
-- Baseie-se nas respostas. Se algo está ausente, não invente.
+- Se ela disse "sedentária" + "muitas dietas sem resultado", NÃO comece pedindo treino — valide primeiro por que dieta restritiva não resolve lipedema.
+- Não mencione preços, produtos, planos, "protocolo pago". A oferta acontece depois, no WhatsApp.
 
 Devolva EXCLUSIVAMENTE um JSON válido, sem markdown, no formato:
 {
-  "estagioProvavel": "Estágio 1" | "Estágio 2" | "Estágio 3" | "Indeterminado",
-  "perfil": "2 palavras descrevendo o perfil dela. Ex: 'Rotina Desorganizada', 'Corpo Inflamado', 'Ciclo Instável', 'Fome Emocional', 'Sono Fragmentado'.",
-  "resumo": "2-3 frases falando diretamente com ela sobre o que o Mapa mostra.",
-  "primeiraMissao": "1 frase curta e concreta (máx 40 caracteres) — o primeiro passo. Ex: 'Trocar o café da manhã'.",
-  "habitos": [
-    {"chave":"alimentacao","label":"Alimentação","score": 0-100},
-    {"chave":"sono","label":"Sono","score": 0-100},
-    {"chave":"agua","label":"Água","score": 0-100},
-    {"chave":"movimento","label":"Movimento","score": 0-100},
-    {"chave":"estresse","label":"Estresse","score": 0-100}
-  ],
-  "pontosChave": ["até 5 bullets, cada um até 140 caracteres"],
-  "gatilhos": ["até 3 bullets sobre fatores hormonais/genéticos/inflamatórios"],
-  "proximosPassos": ["3 bullets acionáveis"]
+  "estagio": "Inicial" | "Intermediário" | "Avançado" | "Indeterminado",
+  "aberturaValidadora": "1-2 frases começando com 'Pelo que você compartilhou...' validando o sintoma da pergunta 3.",
+  "descricaoEstagio": "1-2 frases descrevendo em linguagem leiga o que esse estágio significa no dia a dia dela. Deixe claro que é leitura, não diagnóstico.",
+  "prioridades": ["3 prioridades personalizadas — cada uma até 160 caracteres, acionáveis, adaptadas à combinação de respostas."],
+  "proximoPassoTitulo": "Frase curta de confirmação. Ex: 'Seu Mapa está pronto, {nome}.'",
+  "proximoPassoMensagem": "2-3 frases confirmando que o Mapa também será enviado pelo WhatsApp para ela guardar e revisar com a Gabriela. NÃO é oferta de compra."
 }
 
-Para o score dos hábitos: 0 = totalmente desregulado, 100 = ótimo. Interprete conforme respostas.`;
+Cálculo do estágio (referência, ajuste com sensibilidade):
+- Inicial: sintomas < 3 anos, dor baixa, sem hematomas fáceis.
+- Intermediário: 3-10 anos, dor média, peso varia mas pernas não.
+- Avançado: >10 anos, dor alta, atividade limitada.`;
 
 export const submitMapa = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => MapaInput.parse(input))
@@ -81,22 +68,20 @@ export const submitMapa = createServerFn({ method: "POST" })
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("LOVABLE_API_KEY ausente");
 
-    // 1) IA gera o diagnóstico
     const gateway = createLovableAiGatewayProvider(apiKey);
     const model = gateway("google/gemini-3-flash-preview");
 
+    const r = data.respostas;
     const userPrompt = `Nome: ${data.nome}
-Idade: ${data.idade ?? "não informada"}
 Respostas do Mapa:
-- Tempo de sintomas: ${data.respostas.tempoSintomas}
-- Regiões mais afetadas: ${data.respostas.regioes.join(", ")}
-- Nível de dor/peso (0-10): ${data.respostas.dorNivel}
-- Momento hormonal: ${data.respostas.hormonal}
-- Casos na família: ${data.respostas.familia}
-- Já tentou dieta/exercício: ${data.respostas.tentouDietaExercicio}
-- Impacto emocional: ${data.respostas.impactoEmocional}
-${data.respostas.inchaco ? `- Padrão de inchaço: ${data.respostas.inchaco}` : ""}
-${data.respostas.hematomas ? `- Hematomas com facilidade: ${data.respostas.hematomas}` : ""}
+1. Há quanto tempo percebe inchaço/desproporção: ${r.tempo}
+2. Já recebeu diagnóstico de lipedema: ${r.diagnostico}
+3. Sintoma que mais incomoda hoje: ${r.sintomaMaior}
+4. Peso varia mas pernas não mudam: ${r.pesoPernas}
+5. Já tentou dieta e exercício sem ver diferença: ${r.dietaExercicio}
+6. Nível de atividade física hoje: ${r.atividade}
+7. Tem exames recentes (sangue, hormonal): ${r.exames}
+8. O que mais gostaria de ter agora: ${r.objetivo}
 
 Devolva o JSON conforme instruções.`;
 
@@ -110,48 +95,35 @@ Devolva o JSON conforme instruções.`;
       const cleaned = text.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
       diagnostico = JSON.parse(cleaned) as Diagnostico;
     } catch (err) {
-      console.error("[submitMapa] Falha ao gerar diagnóstico:", err);
+      console.error("[submitMapa] Falha ao gerar leitura:", err);
       diagnostico = {
-        estagioProvavel: "Indeterminado",
-        perfil: "Mapa em Análise",
-        resumo:
-          "Seu Mapa foi registrado. Vou te chamar no WhatsApp para revisar as respostas com calma e montar a leitura personalizada com a Gabriela.",
-        primeiraMissao: "Abrir a conversa no WhatsApp",
-        habitos: [
-          { chave: "alimentacao", label: "Alimentação", score: 50 },
-          { chave: "sono", label: "Sono", score: 50 },
-          { chave: "agua", label: "Água", score: 50 },
-          { chave: "movimento", label: "Movimento", score: 50 },
-          { chave: "estresse", label: "Estresse", score: 50 },
+        estagio: "Indeterminado",
+        aberturaValidadora: `Pelo que você compartilhou, ${data.nome.split(" ")[0]}, o que você sente é real — e tem nome.`,
+        descricaoEstagio:
+          "Suas respostas foram registradas. A leitura completa vai chegar pelo WhatsApp em instantes, para você revisar com calma junto da Gabriela.",
+        prioridades: [
+          "Ter em mãos exames recentes de sangue e hormonais quando falar com a Gabriela.",
+          "Anotar em que hora do dia o inchaço piora — ajuda a identificar gatilhos.",
+          "Não iniciar dieta restritiva por conta própria — pode piorar o quadro.",
         ],
-        pontosChave: [
-          "Suas respostas foram salvas com segurança.",
-          "A leitura completa vai chegar pelo WhatsApp em instantes.",
-        ],
-        gatilhos: [],
-        proximosPassos: [
-          "Abrir a conversa no WhatsApp para receber o Mapa completo.",
-          "Ter em mãos: horário de sono, ciclo menstrual e histórico familiar.",
-        ],
+        proximoPassoTitulo: `Seu Mapa está pronto, ${data.nome.split(" ")[0]}.`,
+        proximoPassoMensagem:
+          "Já enviamos sua leitura para o WhatsApp. Assim você guarda com você e revisa com a Gabriela quando quiser.",
       };
     }
 
-    // 2) Salva o lead no banco (via anon INSERT policy) — retorna id
+    // Salva o lead
     const supabase = createClient(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_PUBLISHABLE_KEY!,
       { auth: { persistSession: false, autoRefreshToken: false } },
     );
 
-    // Insere primeiro sem diagnóstico (policy anon exige diagnostico IS NULL),
-    // depois preenche com service_role para não conflitar com a policy.
     const { data: inserted, error: insertErr } = await supabase
       .from("leads")
       .insert({
         nome: data.nome,
         telefone: data.telefone,
-        email: data.email,
-        idade: data.idade,
         respostas: data.respostas,
         origem: "mapa",
         status: "mapa_gerado",
@@ -159,9 +131,7 @@ Devolva o JSON conforme instruções.`;
       .select("id")
       .single();
 
-    if (insertErr) {
-      console.error("[submitMapa] insert error", insertErr);
-    }
+    if (insertErr) console.error("[submitMapa] insert error", insertErr);
 
     if (inserted?.id) {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
