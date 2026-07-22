@@ -326,6 +326,8 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
               index={idx + 1}
               title={Q[k].title}
               options={Q[k].options}
+              icons={Q[k].icons}
+              illustration={"illustration" in Q[k] ? (Q[k] as { illustration?: { src: string; caption?: string } }).illustration : undefined}
               value={answers[Q[k].key]}
               onChange={(v) => update(Q[k].key, v)}
               onNext={() => {
@@ -543,6 +545,8 @@ function ChoiceStep({
   index,
   title,
   options,
+  icons,
+  illustration,
   value,
   onChange,
   onNext,
@@ -550,6 +554,8 @@ function ChoiceStep({
   index: number;
   title: string;
   options: string[];
+  icons?: string[];
+  illustration?: { src: string; caption?: string };
   value: string;
   onChange: (v: string) => void;
   onNext: () => void;
@@ -570,9 +576,40 @@ function ChoiceStep({
         {title}
       </h1>
 
+      {illustration && (
+        <figure
+          className="mt-5 overflow-hidden rounded-2xl border"
+          style={{
+            borderColor: palette.creamDark,
+            background: "#FFFBF2",
+            boxShadow: `0 10px 30px -18px ${palette.ink}33`,
+          }}
+        >
+          <img
+            src={illustration.src}
+            alt={illustration.caption ?? "Ilustração"}
+            className="w-full h-auto object-cover"
+            loading="eager"
+          />
+          {illustration.caption && (
+            <figcaption
+              className="px-4 py-2 text-[11px] italic"
+              style={{
+                fontFamily: "'Fraunces', serif",
+                color: palette.inkSoft,
+                borderTop: `1px solid ${palette.creamDark}`,
+              }}
+            >
+              {illustration.caption}
+            </figcaption>
+          )}
+        </figure>
+      )}
+
       <div className="mt-7 space-y-3">
-        {options.map((opt) => {
+        {options.map((opt, i) => {
           const selected = value === opt;
+          const icon = icons?.[i];
           return (
             <button
               key={opt}
@@ -580,7 +617,7 @@ function ChoiceStep({
                 onChange(opt);
                 setTimeout(onNext, 220);
               }}
-              className="w-full rounded-2xl border px-5 py-4 text-left text-[15px] transition-all"
+              className="flex w-full items-center gap-3 rounded-2xl border px-5 py-4 text-left text-[15px] transition-all"
               style={{
                 borderColor: selected ? palette.gold : palette.creamDark,
                 background: selected ? "#FFFBF2" : "#FDFAF1",
@@ -591,7 +628,18 @@ function ChoiceStep({
                 fontWeight: selected ? 600 : 500,
               }}
             >
-              {opt}
+              {icon && (
+                <span
+                  className="grid size-9 shrink-0 place-items-center rounded-full text-lg"
+                  style={{
+                    background: selected ? `${palette.gold}22` : "#FFFFFF",
+                    border: `1px solid ${selected ? palette.gold : palette.creamDark}`,
+                  }}
+                >
+                  {icon}
+                </span>
+              )}
+              <span className="flex-1">{opt}</span>
             </button>
           );
         })}
