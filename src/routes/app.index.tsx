@@ -166,23 +166,23 @@ function GuiaMapa() {
         <div className="mt-3 grid grid-cols-2 gap-2.5">
           <GuideCard
             icon={<Utensils className="size-4" />}
-            title="Como montar o prato"
-            desc="Modelo anti-inflamatório em 3 passos"
+            title="Alimentos que ajudam"
+            desc="Frutas, arroz integral, ovo, feijão, folhas e azeite"
           />
           <GuideCard
             icon={<Droplets className="size-4" />}
-            title="Hidratação"
-            desc="Rotina de água e chás"
+            title="O que evitar"
+            desc="Embutidos, frituras, refrigerante e ultraprocessados"
           />
           <GuideCard
             icon={<Footprints className="size-4" />}
-            title="Movimento"
-            desc="20 minutos que cabem no seu dia"
+            title="Refeições do dia"
+            desc="Café, almoço, tarde e jantar em versões simples"
           />
           <GuideCard
             icon={<HeartHandshake className="size-4" />}
-            title="Cuidados com a pele"
-            desc="Rotina simples pra sensibilidade"
+            title="Come-se com os olhos"
+            desc="Cores, corte e apresentação que saciam mais"
           />
         </div>
       </section>

@@ -18,36 +18,36 @@ type Missao = {
 
 const MISSOES: Missao[] = [
   {
-    id: "prato",
-    titulo: "Monte seu prato",
-    descricao: "Um molde flexível — não cardápio fechado.",
+    id: "aliados",
+    titulo: "Alimentos que ajudam no dia a dia",
+    descricao: "Itens simples, de qualquer mercado.",
     icon: <Utensils className="size-4" />,
     detalhe:
-      "½ do prato: vegetais folhosos + coloridos. ¼: proteína magra (frango, peixe, ovos). ¼: carboidrato de baixo IG (batata-doce, quinoa, arroz integral). Adicione 1 colher de azeite.",
+      "Frutas (banana, mamão, laranja, maçã), arroz integral, batata-doce, mandioca, ovo, frango grelhado, peixe (tilápia, sardinha), feijão, lentilha, folhas (alface, couve), brócolis, abobrinha, azeite de oliva no lugar do óleo comum, água, água de coco, chá de gengibre e chá de camomila.",
   },
   {
-    id: "cha",
-    titulo: "Chá do dia",
-    descricao: "Do Catálogo de Prescrição — liberado.",
+    id: "evitar",
+    titulo: "Alimentos que costumam piorar",
+    descricao: "Reduza esses itens da rotina.",
     icon: <Leaf className="size-4" />,
     detalhe:
-      "Chá de cavalinha + hibisco (500ml distribuídos ao longo do dia). Ação drenante suave.",
+      "Pão francês e pão de forma em excesso, salgadinhos de pacote, biscoito recheado, refrigerante e suco de caixinha, embutidos (presunto, salsicha, mortadela), molho de tomate pronto e caldo em cubo, frituras (salgados de padaria, batata frita), açúcar de mesa em excesso e macarrão instantâneo.",
   },
   {
-    id: "autocuidado",
-    titulo: "Autocuidado vascular",
-    descricao: "Movimento simples, sem prescrição de treino.",
+    id: "refeicao",
+    titulo: "Exemplo de refeições do dia",
+    descricao: "Modelo para trocar dentro da mesma lógica.",
     icon: <HeartPulse className="size-4" />,
     detalhe:
-      "Elevação de pernas por 10 minutos + 30 bombeios de tornozelo + 5 min de respiração diafragmática antes de dormir.",
+      "Café: pão integral + ovo mexido + mamão, ou iogurte natural + banana + castanhas. Almoço: arroz + feijão + frango grelhado + salada, ou arroz + feijão + peixe assado + abobrinha. Tarde: banana com chá de gengibre, ou maçã com um punhado de castanhas. Jantar: sopa de legumes com frango desfiado, ou omelete de claras + salada de folhas.",
   },
   {
-    id: "checkin",
-    titulo: "Check-in de sintomas",
-    descricao: "1 minuto — atualiza seu Radar.",
+    id: "olhos",
+    titulo: "Primeiro se come com os olhos",
+    descricao: "A apresentação muda a percepção da refeição.",
     icon: <MessageSquareQuote className="size-4" />,
     detalhe:
-      "Como estão o inchaço, dor e disposição hoje? Sua resposta ajusta a recomendação da IA para amanhã.",
+      "Capriche em 2-3 cores no prato, use uma louça que você goste, corte os alimentos de forma organizada (fatias, cubos, rodelas), sirva pouco de cada vez e repita se precisar, e faça a refeição sem tela para perceber fome e saciedade.",
   },
 ];
 
