@@ -71,7 +71,7 @@ function FunilPage() {
   const [saving, setSaving] = useState(false);
 
   async function refresh() {
-    const list = (await fetchFunnels()) as Funnel[];
+    const list = (await fetchFunnels()) as unknown as Funnel[];
     setFunnels(list);
   }
 
