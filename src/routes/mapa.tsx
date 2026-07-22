@@ -785,128 +785,77 @@ function Resultado({
   }
 
   return (
-    <div className="pt-2">
+    <div className="flex min-h-[100dvh] flex-col px-1 pt-2 pb-4">
       <span
-        className="text-[11px] uppercase tracking-[0.28em]"
+        className="text-[10px] uppercase tracking-[0.28em]"
         style={{ color: palette.gold }}
       >
         Mapa de {primeiroNome}
       </span>
 
       <h1
-        className="mt-4 text-[1.7rem] leading-[1.2] tracking-tight"
+        className="mt-2 text-[1.25rem] leading-[1.2] tracking-tight"
         style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, color: palette.ink }}
       >
         {diagnostico.aberturaValidadora}
       </h1>
 
       <div
-        className="mt-8 rounded-2xl border p-5"
-        style={{
-          borderColor: palette.creamDark,
-          background: "#FFFBF2",
-        }}
+        className="mt-3 rounded-xl border px-4 py-3"
+        style={{ borderColor: palette.creamDark, background: "#FFFBF2" }}
       >
         <div className="flex items-center justify-between">
           <span
-            className="text-[10px] uppercase tracking-[0.28em]"
+            className="text-[10px] uppercase tracking-[0.24em]"
             style={{ color: palette.gold }}
           >
             Você está aqui
           </span>
           <span
-            className="text-[11px] italic"
+            className="text-[10px] italic"
             style={{ fontFamily: "'Fraunces', serif", color: palette.inkSoft }}
           >
             leitura, não diagnóstico
           </span>
         </div>
         <p
-          className="mt-2 text-xl tracking-tight"
+          className="mt-1 text-base tracking-tight"
           style={{ fontFamily: "'Fraunces', serif", fontWeight: 500, color: palette.ink }}
         >
           {estagioLabel}
         </p>
-        <p className="mt-3 text-[14.5px] leading-relaxed" style={{ color: palette.inkSoft }}>
-          {diagnostico.descricaoEstagio}
-        </p>
-
         <StageBar estagio={diagnostico.estagio} />
-
-        <p
-          className="mt-4 border-t pt-3 text-[11.5px] leading-relaxed"
-          style={{ borderColor: palette.creamDark, color: palette.inkSoft }}
-        >
-          <strong style={{ color: palette.ink }}>Importante:</strong> essa é
-          uma leitura educacional baseada no que você relatou. A confirmação
-          clínica é feita pela Dra. Gabriela Rosado (CRN 10582) numa avaliação
-          individual.
-        </p>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-3">
         <span
-          className="text-[11px] uppercase tracking-[0.28em]"
+          className="text-[10px] uppercase tracking-[0.28em]"
           style={{ color: palette.gold }}
         >
           Suas 3 prioridades
         </span>
-        <div className="mt-4 space-y-4">
+        <ol className="mt-2 space-y-1.5">
           {diagnostico.prioridades.slice(0, 3).map((p, i) => (
-            <div
-              key={i}
-              className="flex gap-4 border-b pb-4"
-              style={{ borderColor: palette.creamDark }}
-            >
+            <li key={i} className="flex gap-2.5">
               <span
-                className="w-6 shrink-0 text-xl italic leading-none pt-1"
+                className="w-4 shrink-0 text-sm italic leading-none pt-0.5"
                 style={{ fontFamily: "'Fraunces', serif", color: palette.gold }}
               >
                 {["i", "ii", "iii"][i]}
               </span>
-              <p className="text-[15px] leading-relaxed" style={{ color: palette.ink }}>
+              <p className="text-[13px] leading-snug" style={{ color: palette.ink }}>
                 {p}
               </p>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
 
-      <div
-        className="mt-10 rounded-2xl border p-6"
-        style={{
-          borderColor: `${palette.gold}55`,
-          background: `linear-gradient(180deg, #FFFBF2, ${palette.cream})`,
-        }}
-      >
-        <div className="flex items-start gap-3">
-          <div
-            className="grid size-10 shrink-0 place-items-center rounded-full"
-            style={{
-              background: "#FFFFFF",
-              border: `1px solid ${palette.gold}`,
-              color: palette.gold,
-            }}
-          >
-            <CheckCircle2 className="size-5" />
-          </div>
-          <div>
-            <p
-              className="text-lg tracking-tight"
-              style={{ fontFamily: "'Fraunces', serif", fontWeight: 500, color: palette.ink }}
-            >
-              {diagnostico.proximoPassoTitulo}
-            </p>
-            <p className="mt-2 text-[14px] leading-relaxed" style={{ color: palette.inkSoft }}>
-              {diagnostico.proximoPassoMensagem}
-            </p>
-          </div>
-        </div>
-
+      <div className="mt-auto pt-4">
         <button
           onClick={handle}
           disabled={enviando}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-semibold transition-transform active:scale-[0.98] disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-semibold transition-transform active:scale-[0.98] disabled:opacity-60"
           style={{
             background: `linear-gradient(180deg, ${palette.goldSoft}, ${palette.gold})`,
             color: "#FFFFFF",
@@ -915,7 +864,7 @@ function Resultado({
         >
           {enviando ? (
             <>
-              <Loader2 className="size-5 animate-spin" /> Preparando seu acesso…
+              <Loader2 className="size-5 animate-spin" /> Criando seu acesso e enviando no WhatsApp…
             </>
           ) : (
             <>
@@ -925,29 +874,22 @@ function Resultado({
         </button>
 
         {erro && (
-          <p className="mt-3 text-center text-[12px]" style={{ color: "#b91c1c" }}>
+          <p className="mt-2 text-center text-[11px]" style={{ color: "#b91c1c" }}>
             {erro}
           </p>
         )}
 
         <p
-          className="mt-3 text-center text-[11px]"
+          className="mt-2 text-center text-[10px] leading-tight"
           style={{ color: palette.inkSoft }}
         >
-          Você recebe seu login e senha no WhatsApp em segundos.
+          Ao confirmar, criamos seu acesso e enviamos login e senha no seu WhatsApp em segundos. Leitura educacional — Gabriela Rosado, CRN 10582.
         </p>
       </div>
-
-      <p
-        className="mt-10 text-center text-[11px] leading-relaxed"
-        style={{ color: palette.inkSoft }}
-      >
-        Leitura educacional. Não substitui avaliação médica.<br />
-        Gabriela Rosado — CRN 10582.
-      </p>
     </div>
   );
 }
+
 
 // ---------- Acesso ----------
 function AcessoStep({
