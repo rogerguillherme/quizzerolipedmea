@@ -229,6 +229,9 @@ function GuiaMapa() {
         </Link>
       </section>
 
+      {/* Premium bloqueado */}
+      <PremiumSection nome={nome} />
+
       {/* Atalho WhatsApp */}
       <section className="mt-4">
         <Link
