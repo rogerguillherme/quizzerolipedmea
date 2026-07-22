@@ -22,7 +22,8 @@ export const getAppSettings = createServerFn({ method: "POST" })
       .from("app_settings")
       .select("setting_key, value")
       .eq("app_key", data.app_key);
-    const out: Record<string, unknown> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const out: Record<string, any> = {};
     for (const r of rows ?? []) out[r.setting_key] = r.value;
     return out;
   });

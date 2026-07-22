@@ -16,12 +16,16 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProtocoloPagamentoRouteImport } from './routes/protocolo.pagamento'
 import { Route as AppWhatsappRouteImport } from './routes/app.whatsapp'
 import { Route as AppReembolsoRouteImport } from './routes/app.reembolso'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppMissoesRouteImport } from './routes/app.missoes'
 import { Route as AppDermaRouteImport } from './routes/app.derma'
+import { Route as AdminProtocoloRouteImport } from './routes/admin.protocolo'
+import { Route as AdminMapaRouteImport } from './routes/admin.mapa'
+import { Route as AdminDermaRouteImport } from './routes/admin.derma'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -58,6 +62,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ProtocoloPagamentoRoute = ProtocoloPagamentoRouteImport.update({
   id: '/protocolo/pagamento',
   path: '/protocolo/pagamento',
@@ -88,50 +97,76 @@ const AppDermaRoute = AppDermaRouteImport.update({
   path: '/derma',
   getParentRoute: () => AppRoute,
 } as any)
+const AdminProtocoloRoute = AdminProtocoloRouteImport.update({
+  id: '/protocolo',
+  path: '/protocolo',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMapaRoute = AdminMapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDermaRoute = AdminDermaRouteImport.update({
+  id: '/derma',
+  path: '/derma',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
+  '/admin/derma': typeof AdminDermaRoute
+  '/admin/mapa': typeof AdminMapaRoute
+  '/admin/protocolo': typeof AdminProtocoloRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/reembolso': typeof AppReembolsoRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
+  '/admin/derma': typeof AdminDermaRoute
+  '/admin/mapa': typeof AdminMapaRoute
+  '/admin/protocolo': typeof AdminProtocoloRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/reembolso': typeof AppReembolsoRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
+  '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/onboarding': typeof OnboardingRoute
+  '/admin/derma': typeof AdminDermaRoute
+  '/admin/mapa': typeof AdminMapaRoute
+  '/admin/protocolo': typeof AdminProtocoloRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/reembolso': typeof AppReembolsoRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -143,26 +178,33 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mapa'
     | '/onboarding'
+    | '/admin/derma'
+    | '/admin/mapa'
+    | '/admin/protocolo'
     | '/app/derma'
     | '/app/missoes'
     | '/app/perfil'
     | '/app/reembolso'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
+    | '/admin/'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/auth'
     | '/mapa'
     | '/onboarding'
+    | '/admin/derma'
+    | '/admin/mapa'
+    | '/admin/protocolo'
     | '/app/derma'
     | '/app/missoes'
     | '/app/perfil'
     | '/app/reembolso'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
+    | '/admin'
     | '/app'
   id:
     | '__root__'
@@ -172,18 +214,22 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mapa'
     | '/onboarding'
+    | '/admin/derma'
+    | '/admin/mapa'
+    | '/admin/protocolo'
     | '/app/derma'
     | '/app/missoes'
     | '/app/perfil'
     | '/app/reembolso'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
+    | '/admin/'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   MapaRoute: typeof MapaRoute
@@ -242,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/protocolo/pagamento': {
       id: '/protocolo/pagamento'
       path: '/protocolo/pagamento'
@@ -284,8 +337,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDermaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/admin/protocolo': {
+      id: '/admin/protocolo'
+      path: '/protocolo'
+      fullPath: '/admin/protocolo'
+      preLoaderRoute: typeof AdminProtocoloRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/mapa': {
+      id: '/admin/mapa'
+      path: '/mapa'
+      fullPath: '/admin/mapa'
+      preLoaderRoute: typeof AdminMapaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/derma': {
+      id: '/admin/derma'
+      path: '/derma'
+      fullPath: '/admin/derma'
+      preLoaderRoute: typeof AdminDermaRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminDermaRoute: typeof AdminDermaRoute
+  AdminMapaRoute: typeof AdminMapaRoute
+  AdminProtocoloRoute: typeof AdminProtocoloRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminDermaRoute: AdminDermaRoute,
+  AdminMapaRoute: AdminMapaRoute,
+  AdminProtocoloRoute: AdminProtocoloRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AppRouteChildren {
   AppDermaRoute: typeof AppDermaRoute
@@ -309,7 +399,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   MapaRoute: MapaRoute,
