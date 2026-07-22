@@ -20,6 +20,8 @@ import {
   saveFunnel,
   deleteFunnel,
 } from "@/lib/funnels.functions";
+import { MERGE_TAGS, applyMergeTags } from "@/lib/merge-tags";
+import { useRef } from "react";
 
 export const Route = createFileRoute("/admin/funis")({
   component: FunilPage,
@@ -471,15 +473,7 @@ function StepFields({
   onChange: (patch: Partial<Step>) => void;
 }) {
   if (step.tipo === "mensagem") {
-    return (
-      <textarea
-        value={step.texto ?? ""}
-        onChange={(e) => onChange({ texto: e.target.value })}
-        rows={2}
-        placeholder="Texto da mensagem (use {nome} para o primeiro nome)"
-        className="mt-1 w-full resize-none rounded-lg border border-[#E5DBC3] bg-[#FBF6EB] p-2 text-sm outline-none focus:border-[#B8974D]"
-      />
-    );
+    return <MensagemField step={step} onChange={onChange} />;
   }
   if (step.tipo === "espera") {
     return (
@@ -531,5 +525,99 @@ function StepFields({
       placeholder="ID da etiqueta"
       className="mt-1 w-full rounded-lg border border-[#E5DBC3] px-2 py-1 text-sm"
     />
+  );
+}
+
+const EXEMPLO_LEAD = {
+  nome: "Maria Silva",
+  telefone: "+55 11 99999-9999",
+  diagnostico: { estagio: "Estágio 2" },
+  respostas: {
+    tempo: "5-10 anos",
+    diagnostico: "Sim, confirmado",
+    sintomaMaior: "Dor nas pernas",
+    pesoPernas: "Sim, sempre",
+    dietaExercicio: "Não mudou nada",
+    atividade: "Sedentária",
+    exames: "Não",
+    objetivo: "Aliviar a dor",
+  },
+};
+
+function MensagemField({
+  step,
+  onChange,
+}: {
+  step: Step;
+  onChange: (patch: Partial<Step>) => void;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const texto = step.texto ?? "";
+
+  function inserirTag(tag: string) {
+    const el = ref.current;
+    const marker = `{${tag}}`;
+    if (!el) {
+      onChange({ texto: texto + marker });
+      return;
+    }
+    const start = el.selectionStart ?? texto.length;
+    const end = el.selectionEnd ?? texto.length;
+    const novo = texto.slice(0, start) + marker + texto.slice(end);
+    onChange({ texto: novo });
+    // reposiciona o cursor após o marcador inserido
+    requestAnimationFrame(() => {
+      el.focus();
+      const pos = start + marker.length;
+      el.setSelectionRange(pos, pos);
+    });
+  }
+
+  const preview = applyMergeTags(texto, EXEMPLO_LEAD);
+
+  return (
+    <div className="mt-1 space-y-2">
+      <textarea
+        ref={ref}
+        value={texto}
+        onChange={(e) => onChange({ texto: e.target.value })}
+        rows={3}
+        placeholder="Texto da mensagem — clique nos parâmetros abaixo para inserir"
+        className="w-full resize-none rounded-lg border border-[#E5DBC3] bg-[#FBF6EB] p-2 text-sm outline-none focus:border-[#B8974D]"
+      />
+
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-wider text-[#8A7C5C]">
+          Parâmetros do formulário
+        </p>
+        <div className="mt-1 flex flex-wrap gap-1">
+          {MERGE_TAGS.map((t) => (
+            <button
+              key={t.key}
+              type="button"
+              title={`${t.descricao} · exemplo: ${t.exemplo}`}
+              onClick={() => inserirTag(t.key)}
+              className="rounded-full border border-[#E5DBC3] bg-white px-2 py-0.5 text-[10px] font-semibold text-[#0B2A4A] hover:border-[#B8974D] hover:bg-[#EFE5CE]"
+            >
+              {`{${t.key}}`}
+              <span className="ml-1 text-[9px] font-normal text-[#8A7C5C]">
+                {t.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {texto && (
+        <div className="rounded-lg border border-dashed border-[#E5DBC3] bg-white/60 p-2">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[#8A7C5C]">
+            Pré-visualização (dados de exemplo)
+          </p>
+          <p className="mt-1 whitespace-pre-wrap text-sm text-[#0B2A4A]">
+            {preview}
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
