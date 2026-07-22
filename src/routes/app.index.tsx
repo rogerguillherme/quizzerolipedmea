@@ -327,3 +327,326 @@ function GuideCard({
     </div>
   );
 }
+
+/* ============= Premium ============= */
+
+const PREMIUM_MODULES = [
+  {
+    icon: Salad,
+    title: "Cardápio Anti-Lipedema · 90 dias",
+    desc: "Planos semanais com lista de compras e substituições.",
+  },
+  {
+    icon: Activity,
+    title: "Treinos Guiados em Vídeo",
+    desc: "Circuitos de baixo impacto para drenagem e força.",
+  },
+  {
+    icon: BookOpen,
+    title: "Método Derma · Aulas em vídeo",
+    desc: "Aulas da Dra. Gabriela sobre hormônios, sono e inflamação.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Acompanhamento no WhatsApp",
+    desc: "Grupo exclusivo + check-in quinzenal com a equipe.",
+  },
+];
+
+function PremiumSection({ nome }: { nome: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <section className="mt-8">
+      <Eyebrow>Zero Lipedema · Premium</Eyebrow>
+
+      <div
+        className="relative mt-3 overflow-hidden rounded-3xl"
+        style={{
+          background:
+            "linear-gradient(155deg, #0D2138 0%, #16324F 55%, #1F3F63 100%)",
+          border: "1px solid rgba(217,169,75,0.35)",
+          boxShadow: "0 24px 40px -28px rgba(13,33,56,0.6)",
+        }}
+      >
+        {/* Header dourado */}
+        <div className="flex items-center justify-between px-5 pt-5">
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-semibold uppercase"
+            style={{
+              letterSpacing: "0.24em",
+              background: "rgba(217,169,75,0.15)",
+              border: "1px solid rgba(217,169,75,0.45)",
+              color: "#D9A94B",
+            }}
+          >
+            <Crown className="size-3" /> Premium
+          </span>
+          <span
+            className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase"
+            style={{
+              letterSpacing: "0.18em",
+              background: "rgba(245,239,225,0.1)",
+              color: "rgba(245,239,225,0.7)",
+            }}
+          >
+            Bloqueado
+          </span>
+        </div>
+
+        <h3
+          className="mt-3 px-5"
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            fontWeight: 500,
+            fontSize: "1.5rem",
+            lineHeight: 1.15,
+            color: "#F5EFE1",
+          }}
+        >
+          O plano completo para <em className="italic" style={{ color: "#D9A94B" }}>zerar</em> o lipedema.
+        </h3>
+        <p
+          className="mt-2 px-5 text-[13.5px]"
+          style={{ color: "rgba(245,239,225,0.78)", lineHeight: 1.55 }}
+        >
+          Cardápio, treinos, aulas do Método Derma e acompanhamento direto com a
+          Dra. Gabriela. Assim que liberar, {nome}, tudo aparece aqui destravado.
+        </p>
+
+        {/* Preview dos módulos, com blur */}
+        <div className="relative mt-5 px-5 pb-24">
+          <div className="grid grid-cols-2 gap-2.5" style={{ filter: "blur(2px)" }}>
+            {PREMIUM_MODULES.map((m) => (
+              <div
+                key={m.title}
+                className="rounded-2xl p-3.5"
+                style={{
+                  background: "rgba(245,239,225,0.08)",
+                  border: "1px solid rgba(217,169,75,0.2)",
+                }}
+              >
+                <span
+                  className="grid size-8 place-items-center rounded-full"
+                  style={{
+                    background: "rgba(217,169,75,0.18)",
+                    color: "#D9A94B",
+                  }}
+                >
+                  <m.icon className="size-4" />
+                </span>
+                <p
+                  className="mt-2.5 text-[12.5px] font-semibold"
+                  style={{ color: "#F5EFE1", lineHeight: 1.25 }}
+                >
+                  {m.title}
+                </p>
+                <p
+                  className="mt-1 text-[10.5px]"
+                  style={{ color: "rgba(245,239,225,0.7)", lineHeight: 1.4 }}
+                >
+                  {m.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Overlay de bloqueio */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(13,33,56,0) 0%, rgba(13,33,56,0.85) 65%, rgba(13,33,56,0.95) 100%)",
+            }}
+          />
+          <div className="absolute inset-x-5 bottom-5 flex flex-col items-center text-center">
+            <span
+              className="grid size-11 place-items-center rounded-full"
+              style={{
+                background: "rgba(217,169,75,0.18)",
+                border: "1px solid rgba(217,169,75,0.5)",
+                color: "#D9A94B",
+              }}
+            >
+              <Lock className="size-5" />
+            </span>
+            <p
+              className="mt-3 text-[12.5px] font-semibold uppercase"
+              style={{ letterSpacing: "0.2em", color: "rgba(245,239,225,0.75)" }}
+            >
+              Conteúdo bloqueado
+            </p>
+            <button
+              onClick={() => setOpen(true)}
+              className="mt-3 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13px] font-semibold transition-transform active:scale-[0.98]"
+              style={{
+                background:
+                  "linear-gradient(135deg, #D9A94B 0%, #AF7F35 100%)",
+                color: "#0D2138",
+                boxShadow: "0 12px 24px -12px rgba(217,169,75,0.55)",
+              }}
+            >
+              <Sparkles className="size-4" />
+              Desbloquear Premium
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {open && <PremiumVideoModal nome={nome} onClose={() => setOpen(false)} />}
+    </section>
+  );
+}
+
+function PremiumVideoModal({
+  nome,
+  onClose,
+}: {
+  nome: string;
+  onClose: () => void;
+}) {
+  const [restante, setRestante] = useState(30);
+  const startRef = useRef<number>(Date.now());
+
+  useEffect(() => {
+    startRef.current = Date.now();
+    const id = window.setInterval(() => {
+      const passado = Math.floor((Date.now() - startRef.current) / 1000);
+      const r = Math.max(0, 30 - passado);
+      setRestante(r);
+      if (r === 0) window.clearInterval(id);
+    }, 250);
+    return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
+  const desbloqueado = restante === 0;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
+      style={{ background: "rgba(9,20,35,0.72)", backdropFilter: "blur(6px)" }}
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl"
+        style={{
+          background: "linear-gradient(180deg, #0D2138 0%, #16324F 100%)",
+          border: "1px solid rgba(217,169,75,0.35)",
+          boxShadow: "0 30px 60px -20px rgba(0,0,0,0.6)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Fechar"
+          className="absolute right-3 top-3 z-10 grid size-8 place-items-center rounded-full"
+          style={{
+            background: "rgba(245,239,225,0.15)",
+            color: "#F5EFE1",
+          }}
+        >
+          <X className="size-4" />
+        </button>
+
+        {/* Video */}
+        <div
+          className="relative aspect-video w-full"
+          style={{ background: "#000" }}
+        >
+          <video
+            src="https://cdn.jsdelivr.net/gh/lovable-community/placeholders@main/gabriela-premium.mp4"
+            controls
+            autoPlay
+            playsInline
+            className="h-full w-full object-cover"
+            poster="/__l5e/assets-v1/placeholder/gabriela-poster.jpg"
+          >
+            <track kind="captions" />
+          </video>
+          <div
+            className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase"
+            style={{
+              letterSpacing: "0.22em",
+              background: "rgba(0,0,0,0.55)",
+              color: "#D9A94B",
+              border: "1px solid rgba(217,169,75,0.5)",
+            }}
+          >
+            <Play className="size-3" /> Dra. Gabriela
+          </div>
+        </div>
+
+        <div className="px-5 pb-6 pt-5">
+          <p
+            className="text-[10px] font-semibold uppercase"
+            style={{ letterSpacing: "0.28em", color: "#D9A94B" }}
+          >
+            Como funciona o Premium
+          </p>
+          <h3
+            className="mt-2"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 500,
+              fontSize: "1.4rem",
+              lineHeight: 1.2,
+              color: "#F5EFE1",
+            }}
+          >
+            {nome}, assista com atenção — <em className="italic" style={{ color: "#D9A94B" }}>é rápido</em>.
+          </h3>
+          <p
+            className="mt-2 text-[13.5px]"
+            style={{ color: "rgba(245,239,225,0.8)", lineHeight: 1.55 }}
+          >
+            Em menos de 3 minutos, a Dra. Gabriela explica o Método Derma, o que
+            você recebe e por que ele funciona para lipedema.
+          </p>
+
+          {desbloqueado ? (
+            <a
+              href="/protocolo/pagamento"
+              className="mt-5 flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-[14px] font-semibold transition-transform active:scale-[0.98]"
+              style={{
+                background:
+                  "linear-gradient(135deg, #D9A94B 0%, #AF7F35 100%)",
+                color: "#0D2138",
+                boxShadow: "0 14px 28px -12px rgba(217,169,75,0.6)",
+                animation: "breathe 2.4s ease-in-out infinite",
+              }}
+            >
+              <Sparkles className="size-4" />
+              Comprar Plano Premium Zero Lipedema
+            </a>
+          ) : (
+            <div
+              className="mt-5 flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-[13px] font-semibold"
+              style={{
+                background: "rgba(245,239,225,0.08)",
+                border: "1px dashed rgba(217,169,75,0.45)",
+                color: "rgba(245,239,225,0.7)",
+              }}
+            >
+              <Lock className="size-4" />
+              Botão libera em {restante}s
+            </div>
+          )}
+
+          <p
+            className="mt-3 text-center text-[11px]"
+            style={{ color: "rgba(245,239,225,0.55)" }}
+          >
+            Garantia incondicional de 7 dias.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
