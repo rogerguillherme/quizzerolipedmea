@@ -4,9 +4,14 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /** Server functions da aba WhatsApp (Evolution) no painel admin. */
 
-async function assertAdmin(supabase: {
-  rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>;
-}, userId: string) {
+type AuthedSupabase = Parameters<
+  Parameters<ReturnType<typeof requireSupabaseAuth.server>>[0]["next"]
+> extends never ? never : never; // (type helper unused — kept for clarity)
+
+async function assertAdmin(
+  supabase: { rpc: typeof requireSupabaseAuth extends never ? never : any },
+  userId: string,
+) {
   const { data } = await supabase.rpc("has_role", {
     _user_id: userId,
     _role: "admin",
