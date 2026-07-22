@@ -150,9 +150,9 @@ function Landing() {
 
         {/* Text column */}
         <div className="relative flex flex-col lg:flex-1">
-          <div className="mb-5 flex items-center gap-3">
+          <div className="mb-2 flex items-center gap-2 sm:mb-4 sm:gap-3">
             <span
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full sm:h-8 sm:w-8"
               style={{ border: "1px solid var(--gold)" }}
             >
               <svg
@@ -160,13 +160,13 @@ function Landing() {
                 fill="none"
                 stroke="#AF7F35"
                 strokeWidth="1.6"
-                className="h-3.5 w-3.5"
+                className="h-3 w-3 sm:h-3.5 sm:w-3.5"
               >
                 <path d="M12 2C8 6 6 10 6 13a6 6 0 0 0 12 0c0-3-2-7-6-11z" />
               </svg>
             </span>
             <span
-              className="text-[0.65rem] font-semibold uppercase sm:text-[0.72rem]"
+              className="text-[0.6rem] font-semibold uppercase sm:text-[0.72rem]"
               style={{ letterSpacing: "0.2em", color: "var(--gold)" }}
             >
               Mapa do Lipedema
@@ -187,8 +187,8 @@ function Landing() {
               fontWeight: 500,
               letterSpacing: "-0.005em",
               color: "var(--blue)",
-              fontSize: "clamp(1.8rem, 6.2vw, 3rem)",
-              lineHeight: 1.16,
+              fontSize: "clamp(1.45rem, 5.6vw, 3rem)",
+              lineHeight: 1.15,
               margin: 0,
             }}
           >
@@ -206,23 +206,22 @@ function Landing() {
           </h1>
 
           <p
-            className="mt-4 max-w-[44ch] text-[0.98rem] sm:mt-5 sm:text-[1.06rem]"
-            style={{ color: "var(--ink-soft)" }}
+            className="mt-2 max-w-[44ch] text-[0.85rem] sm:mt-5 sm:text-[1.06rem]"
+            style={{ color: "var(--ink-soft)", lineHeight: 1.45 }}
           >
             Faça o teste de{" "}
             <strong style={{ fontWeight: 600, color: "var(--blue)" }}>
               2 minutos
             </strong>{" "}
-            e receba o seu Mapa do Lipedema: onde você está agora, o que
-            priorizar primeiro, e como seguir em frente.
+            e receba o seu Mapa: onde você está, o que priorizar e como seguir em frente.
           </p>
 
           {/* Floating topics */}
-          <div className="mt-7 grid gap-3">
+          <div className="mt-3 grid gap-1.5 sm:mt-6 sm:gap-3">
             {SIGNALS.map(({ icon: Icon, text }, i) => (
               <div
                 key={i}
-                className={`zl-topic zl-topic-${i} flex items-start gap-3 rounded-2xl border px-4 py-3.5`}
+                className={`zl-topic zl-topic-${i} flex items-start gap-2.5 rounded-xl border px-3 py-2 sm:gap-3 sm:rounded-2xl sm:px-4 sm:py-3.5`}
                 style={{
                   background: "rgba(255, 253, 247, 0.85)",
                   borderColor: "rgba(216, 198, 160, 0.55)",
@@ -232,17 +231,17 @@ function Landing() {
                 }}
               >
                 <span
-                  className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full sm:mt-0.5 sm:h-8 sm:w-8"
                   style={{
                     background: "rgba(175,127,53,0.10)",
                     border: "1px solid rgba(175,127,53,0.35)",
                     color: "var(--gold)",
                   }}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </span>
                 <p
-                  className="m-0 text-[0.95rem] font-normal leading-snug sm:text-[0.98rem]"
+                  className="m-0 text-[0.82rem] font-normal leading-snug sm:text-[0.98rem]"
                   style={{ color: "var(--blue)" }}
                 >
                   {text}
@@ -251,13 +250,13 @@ function Landing() {
             ))}
           </div>
 
-          <div className="mt-8 sm:mt-10">
+          <div className="mt-3 sm:mt-8">
             <button
               onClick={() => {
                 track("quiz_started");
                 setQuizOpen(true);
               }}
-              className="zl-cta zl-breathe inline-flex w-full items-center justify-center gap-3 rounded-full border-0 py-4 pl-5 pr-6 sm:w-auto sm:gap-3.5 sm:pl-[22px] sm:pr-[30px]"
+              className="zl-cta zl-breathe inline-flex w-full items-center justify-center gap-3 rounded-full border-0 py-3 pl-5 pr-6 sm:w-auto sm:gap-3.5 sm:py-4 sm:pl-[22px] sm:pr-[30px]"
               style={{
                 background:
                   "linear-gradient(180deg, var(--blue-soft), var(--blue))",
@@ -274,25 +273,19 @@ function Landing() {
               </span>
               <span className="text-left">
                 <span
-                  className="block text-[1rem]"
+                  className="block text-[0.95rem] sm:text-[1rem]"
                   style={{ fontWeight: 600, letterSpacing: "0.01em" }}
                 >
                   Gerar Meu Mapa
                 </span>
                 <span
-                  className="mt-0.5 block text-[0.76rem]"
+                  className="mt-0.5 block text-[0.72rem] sm:text-[0.76rem]"
                   style={{ color: "var(--blue-pale)" }}
                 >
                   Teste de 2 minutos · gratuito
                 </span>
               </span>
             </button>
-            <div
-              className="mt-3 text-center text-[0.78rem] sm:text-left"
-              style={{ color: "var(--ink-soft)", letterSpacing: "0.02em" }}
-            >
-              Personalizado pra você · sem cadastro
-            </div>
           </div>
         </div>
       </main>
