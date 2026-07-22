@@ -233,7 +233,7 @@ function Landing() {
           <div className="mt-12">
             <Link
               to="/mapa"
-              onClick={() => track("mapa_start_cta")}
+              
               className="inline-flex items-center gap-3.5 rounded-full py-4 pl-[22px] pr-[30px] no-underline transition-transform hover:-translate-y-0.5"
               style={{
                 background: "linear-gradient(180deg, var(--blue-soft), var(--blue))",
