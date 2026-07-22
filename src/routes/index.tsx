@@ -1,14 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
-import {
-  ArrowRight,
-  ShieldCheck,
-  Sparkles,
-  MessageCircle,
-  Activity,
-  HeartHandshake,
-} from "lucide-react";
 import { track } from "../lib/analytics";
+import draGabriela from "../assets/dra-gabriela.jpg";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -24,7 +17,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "6 perguntas, um Mapa personalizado do seu caso e o primeiro passo do protocolo — direto no seu WhatsApp.",
+          "8 perguntas rápidas, um Mapa personalizado do seu caso e o primeiro passo do protocolo — direto no seu WhatsApp.",
       },
     ],
   }),
@@ -36,111 +29,247 @@ function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-hero-sapphire">
-      <header className="mx-auto flex max-w-md items-center justify-between px-5 pt-6">
-        <div className="flex items-center gap-2">
-          <div className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground font-bold">
-            Z
-          </div>
-          <div className="leading-tight">
-            <p className="text-sm font-bold text-primary">Zero Lipedema</p>
-            <p className="text-[11px] text-muted-foreground">
-              Gabriela Rosado · CRN 10582
-            </p>
-          </div>
-        </div>
-        <span className="rounded-full bg-sapphire-100 px-2.5 py-1 text-[10px] font-bold text-sapphire-800">
-          Gratuito
-        </span>
-      </header>
+    <div
+      className="relative min-h-screen"
+      style={{
+        // Editorial cream palette scoped to landing
+        ["--cream" as string]: "#F5EFE1",
+        ["--cream-line" as string]: "#D8C6A0",
+        ["--blue" as string]: "#16324F",
+        ["--blue-soft" as string]: "#2C5578",
+        ["--blue-pale" as string]: "#AFC4D6",
+        ["--gold" as string]: "#AF7F35",
+        ["--gold-soft" as string]: "#D9A94B",
+        ["--ink-soft" as string]: "#5B5D52",
+        background: "var(--cream)",
+        color: "var(--blue)",
+        fontFamily: "'Nunito', sans-serif",
+        fontWeight: 300,
+        lineHeight: 1.55,
+      }}
+    >
+      {/* Subtle paper texture */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(135deg, rgba(22,50,79,0.018) 0px, rgba(22,50,79,0.018) 1px, transparent 1px, transparent 6px)",
+        }}
+      />
+      {/* Corner frames — desktop only */}
+      <span
+        aria-hidden
+        className="pointer-events-none fixed z-20 hidden md:block"
+        style={{
+          top: 22,
+          left: 22,
+          width: 46,
+          height: 46,
+          borderTop: "1px solid var(--gold)",
+          borderLeft: "1px solid var(--gold)",
+          opacity: 0.55,
+        }}
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none fixed z-20 hidden md:block"
+        style={{
+          bottom: 22,
+          right: 22,
+          width: 46,
+          height: 46,
+          borderBottom: "1px solid var(--gold)",
+          borderRight: "1px solid var(--gold)",
+          opacity: 0.55,
+        }}
+      />
 
-      <main className="mx-auto max-w-md px-5 pb-16 pt-8">
-        <span className="inline-flex items-center gap-2 rounded-full bg-sapphire-100 px-3 py-1 text-xs font-semibold text-sapphire-800">
-          <Sparkles className="size-3.5" /> Leitura personalizada em 2 minutos
-        </span>
-
-        <h1 className="mt-4 text-3xl font-extrabold leading-tight text-primary sm:text-4xl">
-          Descubra o Mapa do seu Lipedema — direto no seu WhatsApp.
-        </h1>
-
-        <p className="mt-3 text-base text-muted-foreground">
-          Se dieta e treino nunca resolveram, o problema não é você. Responda 6
-          perguntas e receba a leitura do seu caso, feita pela IA da Gabriela
-          Rosado, com o primeiro passo do protocolo.
-        </p>
-
-        <Link
-          to="/mapa"
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-coral px-5 py-4 text-base font-bold text-coral-foreground shadow-lg shadow-primary/20 transition-transform active:scale-[0.98]"
+      <div className="relative z-10 grid min-h-screen grid-cols-1 md:grid-cols-[1.05fr_0.95fr]">
+        {/* Photo panel — first on mobile (per source design order: -1) */}
+        <div
+          className="relative order-first flex items-end justify-center overflow-hidden md:order-last min-h-[46vh] md:min-h-0"
+          style={{
+            background:
+              "radial-gradient(120% 90% at 70% 20%, #EFE3CC 0%, #E4D5B6 55%, #D9C69C 100%)",
+          }}
         >
-          Fazer meu Mapa gratuito <ArrowRight className="size-5" />
-        </Link>
-
-        <p className="mt-2 text-center text-xs text-muted-foreground">
-          Sem cadastro. Sem cobrança. Sem julgamento.
-        </p>
-
-        <div className="mt-10 space-y-3">
-          <FeatureRow
-            icon={<Activity className="size-5" />}
-            title="1. Mapa do Lipedema (grátis)"
-            desc="Leitura clínica do seu estágio, gatilhos hormonais e regiões afetadas."
+          <svg
+            className="absolute inset-0 z-0 h-full w-full"
+            viewBox="0 0 700 900"
+            preserveAspectRatio="xMidYMax slice"
+            aria-hidden="true"
+          >
+            <g fill="none" stroke="#AF7F35" strokeWidth="1" opacity="0.35">
+              <circle cx="470" cy="260" r="230" />
+              <circle cx="470" cy="260" r="185" />
+              <circle cx="470" cy="260" r="140" />
+            </g>
+            <g fill="none" stroke="#16324F" strokeWidth="1" opacity="0.12">
+              <circle cx="470" cy="260" r="280" />
+            </g>
+          </svg>
+          <img
+            src={draGabriela}
+            alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
+            width={912}
+            height={1200}
+            className="relative z-10 h-auto w-full max-w-[460px] object-contain object-bottom"
+            style={{ filter: "drop-shadow(0 30px 40px rgba(22,50,79,0.28))" }}
           />
-          <FeatureRow
-            icon={<HeartHandshake className="size-5" />}
-            title="2. Protocolo de 7 dias"
-            desc="Refeições substitutas, chás e checklist diário — para reduzir inchaço e dor."
-          />
-          <FeatureRow
-            icon={<ShieldCheck className="size-5" />}
-            title="3. Acompanhamento completo"
-            desc="Plano alimentar personalizado, análise de exames e feedback no WhatsApp."
-          />
-        </div>
-
-        <div className="mt-10 card-clinical p-5">
-          <div className="flex items-start gap-3">
-            <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-sapphire-100 text-sapphire-800">
-              <MessageCircle className="size-5" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-primary">
-                Tudo acontece no seu WhatsApp
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Depois do Mapa, você recebe o acesso ao app pelo WhatsApp e
-                continua a jornada quando fizer sentido para você.
-              </p>
-            </div>
+          <div
+            className="absolute z-20 flex items-center gap-2.5 rounded-full border px-4 py-2.5 text-[13px]"
+            style={{
+              left: 24,
+              bottom: 24,
+              color: "var(--blue)",
+              background: "rgba(245,239,225,0.9)",
+              borderColor: "rgba(175,127,53,0.4)",
+              boxShadow: "0 10px 22px -12px rgba(22,50,79,0.3)",
+            }}
+          >
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full"
+              style={{ background: "var(--gold)" }}
+            />
+            <strong
+              style={{
+                fontFamily: "'Fraunces', serif",
+                fontStyle: "italic",
+                fontWeight: 500,
+              }}
+            >
+              Dra. Gabriela Rosado
+            </strong>
+            <span>· Nutricionista</span>
           </div>
         </div>
 
-        <p className="mt-10 text-center text-[11px] leading-relaxed text-muted-foreground">
-          Conteúdo educacional de estilo de vida. Não substitui avaliação
-          médica. Gabriela Rosado — CRN 10582.
-        </p>
-      </main>
-    </div>
-  );
-}
+        {/* Content */}
+        <div className="relative flex max-w-none flex-col justify-center px-6 py-12 md:max-w-[640px] md:px-16 md:py-[68px]">
+          <div className="mb-7 flex items-center gap-3.5">
+            <span
+              className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full"
+              style={{ border: "1px solid var(--gold)" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="#AF7F35" strokeWidth="1.6" className="h-[15px] w-[15px]">
+                <path d="M12 2C8 6 6 10 6 13a6 6 0 0 0 12 0c0-3-2-7-6-11z" />
+              </svg>
+            </span>
+            <span
+              className="text-[0.7rem] font-semibold uppercase"
+              style={{ letterSpacing: "0.18em", color: "var(--gold)" }}
+            >
+              Mapa do Lipedema
+            </span>
+            <span
+              className="h-px flex-1"
+              style={{ background: "linear-gradient(90deg, var(--cream-line), transparent)" }}
+            />
+          </div>
 
-function FeatureRow({
-  icon,
-  title,
-  desc,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-}) {
-  return (
-    <div className="card-clinical flex items-start gap-3 p-4">
-      <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-sapphire-100 text-sapphire-800">
-        {icon}
-      </div>
-      <div>
-        <p className="font-semibold text-primary">{title}</p>
-        <p className="text-sm text-muted-foreground">{desc}</p>
+          <h1
+            className="max-w-[15ch]"
+            style={{
+              fontFamily: "'Fraunces', serif",
+              fontWeight: 500,
+              letterSpacing: "-0.01em",
+              color: "var(--blue)",
+              fontSize: "clamp(2.3rem, 4.2vw, 3.15rem)",
+              lineHeight: 1.14,
+              margin: 0,
+            }}
+          >
+            Não é falta de esforço. É{" "}
+            <em style={{ fontStyle: "italic", fontWeight: 500, color: "var(--gold)" }}>
+              lipedema
+            </em>{" "}
+            — e agora dá pra entender o seu.
+          </h1>
+
+          <p
+            className="mt-6 max-w-[44ch] text-[1.08rem]"
+            style={{ color: "var(--ink-soft)" }}
+          >
+            Responda 8 perguntas rápidas e receba o seu{" "}
+            <strong style={{ fontWeight: 600, color: "var(--blue)" }}>
+              Mapa do Lipedema
+            </strong>
+            : onde você está agora, o que priorizar primeiro, e como seguir em frente.
+          </p>
+
+          <div className="mt-10" style={{ borderTop: "1px solid var(--cream-line)" }}>
+            {[
+              "Suas pernas incham e doem, mesmo quando o resto do corpo emagrece",
+              "Já te disseram que é só falta de força de vontade",
+              "Aparecem hematomas do nada, sem nem lembrar de ter batido em algo",
+              "Já tentou dietas e treinos que funcionam pra todo mundo, menos pra você",
+            ].map((text, i) => (
+              <div
+                key={i}
+                className="grid items-baseline gap-5 py-4"
+                style={{
+                  gridTemplateColumns: "40px 1fr",
+                  borderBottom: "1px solid var(--cream-line)",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Fraunces', serif",
+                    fontStyle: "italic",
+                    fontSize: "1.05rem",
+                    color: "var(--gold)",
+                  }}
+                >
+                  {["i.", "ii.", "iii.", "iv."][i]}
+                </span>
+                <p className="m-0 text-base font-normal" style={{ color: "var(--blue)" }}>
+                  {text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12">
+            <Link
+              to="/mapa"
+              onClick={() => track("mapa_start_cta")}
+              className="inline-flex items-center gap-3.5 rounded-full py-4 pl-[22px] pr-[30px] no-underline transition-transform hover:-translate-y-0.5"
+              style={{
+                background: "linear-gradient(180deg, var(--blue-soft), var(--blue))",
+                color: "var(--cream)",
+                boxShadow:
+                  "0 14px 30px -14px rgba(22,50,79,0.55), inset 0 1px 0 rgba(255,255,255,0.08)",
+              }}
+            >
+              <span
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                style={{ background: "var(--gold-soft)" }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.8" stroke="#16324F" className="h-[15px] w-[15px]">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </span>
+              <span>
+                <span
+                  className="block text-[0.98rem]"
+                  style={{ fontWeight: 600, letterSpacing: "0.01em" }}
+                >
+                  Quero meu mapa
+                </span>
+                <span className="mt-0.5 block text-[0.76rem]" style={{ color: "var(--blue-pale)" }}>
+                  Leva menos de 2 minutos
+                </span>
+              </span>
+            </Link>
+            <div
+              className="mt-4 text-[0.8rem]"
+              style={{ color: "var(--ink-soft)", letterSpacing: "0.02em" }}
+            >
+              Gratuito · personalizado pra você
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
