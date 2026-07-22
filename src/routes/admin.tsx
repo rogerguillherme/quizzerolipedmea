@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import {
   BarChart3,
   Users,
@@ -10,6 +11,9 @@ import {
   Send,
   Search,
   Loader2,
+  Wifi,
+  WifiOff,
+  Save,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -21,6 +25,12 @@ import {
   type Lead,
   type LeadStatus,
 } from "../lib/analytics";
+import {
+  getEvolutionConfig,
+  salvarEvolutionConfig,
+  testarEvolution,
+  getWhatsAppLogs,
+} from "../lib/admin-evolution.functions";
 
 export const Route = createFileRoute("/admin")({
   component: Admin,
