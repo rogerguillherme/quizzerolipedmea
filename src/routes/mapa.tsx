@@ -548,11 +548,10 @@ function ContatoStep({
         style={{ fontFamily: "'Fraunces', serif", fontWeight: 400, color: palette.ink }}
       >
         {nome ? `${nome.split(" ")[0]}, ` : ""}
-        para onde eu envio <em style={{ color: palette.gold }}>seu mapa</em>?
+        para onde eu envio o acesso ao\u00a0seu <em style={{ color: palette.gold }}>Mapa do Lipedema</em>?
       </h1>
       <p className="mt-3 text-[14px] leading-relaxed" style={{ color: palette.inkSoft }}>
-        Seu WhatsApp — assim você recebe o mapa também por lá e pode revisar
-        com calma junto da Gabriela.
+        Envia seu WhatsApp aqui abaixo, assim você recebe o acesso ao mapa e pode revisar com calma todas as dicas e como colocar em prática de forma rápida.
       </p>
 
       <input
@@ -570,7 +569,7 @@ function ContatoStep({
       />
 
       <p className="mt-3 text-[11px]" style={{ color: palette.inkSoft }}>
-        Ao continuar, você concorda em receber contato pelo WhatsApp. Sem spam.
+        Clique no botão abaixo para confirmar seu número
       </p>
 
       {erro && (
