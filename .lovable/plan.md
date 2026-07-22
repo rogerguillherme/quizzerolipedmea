@@ -1,72 +1,103 @@
-# Plano — Zero Lipedema v2 (identidade + conteúdo real)
+## Escopo
 
-Sequência aprovada: Design System → Landing/Mapa → Ingestão dos documentos → Protocolo 7 dias com IA.
+Transformar o fluxo do Mapa do Lipedema em: **botão elegante na landing → popup com quiz ilustrado → mini-relatório → pré-cadastro automático → acesso ao app personalizado**, com Evolution API pré-configurada na área admin.
 
-## Etapa 1 — Identidade visual (logo + tokens)
+## 1. Landing — Botão + Popup
 
-1. Gerar o **logo Zero Lipedema** (gota azul degradê + wordmark) como asset:
-   - `src/assets/logo-zero-lipedema.svg.asset.json` (via `imagegen` premium com fundo transparente + `lovable-assets`).
-   - Versão OG social 1200×630 com o layout "Obrigada!" para compartilhamento (`src/assets/og-zero-lipedema.png.asset.json`).
-   - Favicon derivado (só a gota) em `public/favicon.png`; remover `public/favicon.ico`.
-2. Reescrever tokens em `src/styles.css`:
-   - `--primary` → azul-marinho profundo `#0B2A4A` (headlines).
-   - `--brand` (novo) → azul vibrante `#2C6FEA` (CTAs, destaques, links).
-   - `--brand-soft` → `#EAF1FB` (cards de destaque, chips de ícone).
-   - Fundo `#F5F8FD` (off-white azulado).
-   - Aposentar `--coral` (o design final é 100% azul, sem coral).
-   - Fonte display: `Fraunces` (serif elegante) para headlines "Obrigada!" / "Mapa" / "Método"; body continua `Nunito`.
-3. Atualizar `__root.tsx` para carregar Fraunces via `<link>` e apontar `og:image` para o novo asset (leaf routes).
+- Redesenhar o CTA principal ("Gerar Meu Mapa 🗺️") com estilo mais refinado: pílula dourada com brilho suave, micro-animação de respiração + hover com leve elevação e shimmer.
+- Ao clicar, abre um **Dialog fullscreen (mobile) / modal centralizado (desktop)** com o quiz. A rota `/mapa` continua existindo como fallback direto, mas o fluxo principal fica no popup da home.
 
-## Etapa 2 — Landing + Mapa com nova identidade
+## 2. Quiz dentro do popup
 
-- `src/routes/index.tsx`: hero com logo em gota + headline serif + CTA "Fazer o Mapa gratuito" em azul vibrante. Cards com ícones em círculo `brand-soft`.
-- `src/routes/mapa.tsx`: quiz do Mapa mantido, mas repaginado (chips azuis, barra de progresso `brand`, tela de resultado com layout "Obrigada!" — logo + headline serif + card destacando "Seu Mapa está pronto" + CTA WhatsApp).
-- `src/routes/index.tsx` da área logada (`app.index.tsx`): tela do lead recebido com resultado do Mapa + "Iniciar Protocolo 7 dias".
+- 8 perguntas mantidas (tempo, diagnóstico, sintoma-chave, peso×pernas, dieta, atividade, exames, objetivo) + captura de nome no início e WhatsApp no fim.
+- Cada pergunta recebe uma **ilustração temática** (ícone editorial grande em dourado sobre creme, usando Lucide + composição SVG — sem gerar imagens novas, para manter leve e coerente com o estilo editorial).
+- Barra de progresso dourada no topo, transição suave entre passos, cards de opção com hover, seleção destacada.
 
-## Etapa 3 — Ingestão dos documentos (base de conhecimento)
+## 3. Mini-relatório final (dentro do popup)
 
-Parsear os 7 `.docx` em `/mnt/user-uploads/` e criar:
+Antes do envio, mostra:
+- Abertura validadora personalizada com o nome.
+- **Resumo dos 3 sinais principais** identificados (derivados diretamente das respostas — sem IA nesta etapa para ser instantâneo).
+- Estágio percebido (Inicial / Intermediário / Avançado) com barra.
+- **Botão "Receber Acesso no WhatsApp"** — este é o gatilho do cadastro.
 
-1. **Migration** — 4 novas tabelas + policies + grants:
-   - `anamneses` (lead_id, respostas jsonb, exames_urls, status ∈ pendente/analisada/aprovada, plano_gerado jsonb, aprovado_por, aprovado_em).
-   - `protocolos_7dias` (lead_id, refeicao_alvo, refeicao_escolhida jsonb, lista_compras jsonb, iniciado_em, dia_atual, concluido_em).
-   - `feedbacks_diarios` (protocolo_id, dia, sono, intestino, humor, seguiu_plano bool, foto_url, observacoes, criado_em).
-   - `kb_documentos` (slug, titulo, categoria, conteudo_md, atualizado_em) — armazena texto extraído dos 7 documentos como base para a IA.
-2. Server function `src/lib/kb.server.ts` para carregar trechos relevantes do `kb_documentos` (Manual Mestre, Cardápios Regionais, Melhores/Piores Alimentos, Catálogo Prescrição) e injetar como contexto no prompt da IA.
-3. Seed dos documentos via server function admin-only (rodada uma vez a partir de `/admin`).
+## 4. Pré-cadastro automático + Evolution API
 
-## Etapa 4 — Protocolo 7 dias com IA
+Ao clicar em "Receber Acesso":
 
-- Formulário multi-step em `src/routes/app.protocolo.tsx`:
-  1. Sono (qualidade + horas).
-  2. Intestino (regularidade — perguntas leves: "Você costuma ir ao banheiro todo dia sem esforço?").
-  3. Dificuldades na alimentação.
-  4. Maior dificuldade com lipedema.
-  5. Já treina?
-  6. Primeiro tratamento?
-  7. Qual refeição substituir (café / almoço / lanche / jantar).
-- Ao selecionar a refeição: `gerar_refeicoes.functions.ts` chama Gemini 3 Flash com contexto dos documentos → 3 opções regionais + shot/chá sugerido.
-- Usuária escolhe uma → protocolo criado com lista de compras automática.
-- `app.protocolo.$dia.tsx`: check-in diário + link para feedback WhatsApp.
-- Dia 7: relatório de aderência + vídeo Gabriela (placeholder) + CTA para o plano Premium (anamnese completa).
+1. Server function `criarAcessoMapa`:
+   - Cria usuário no Auth com email temporário (`telefone@zerolipedema.app`) e **senha inicial de 8 caracteres gerada** (formato amigável tipo `mapa-4829`).
+   - Cria linha em `leads` com status `acesso_criado` + diagnóstico.
+   - Cria linha em `profiles` (nova tabela) com nome, telefone, respostas.
+   - Envia via **Evolution API** uma mensagem no WhatsApp da lead contendo: link (`/auth`), login (telefone) e senha inicial.
+2. Popup mostra tela final: "Enviamos seu acesso no WhatsApp ✓" + botão "Abrir WhatsApp da Gabriela".
 
-## Etapa 5 — /admin com controle completo
+## 5. App "Mapa do Lipedema" personalizado (após login)
 
-- Autenticação real (email/senha) + tabela `user_roles` (admin).
-- Abas: Leads · Anamneses (aprovar/editar plano gerado) · Protocolos 7d · Financeiro · Evolution API · Base de conhecimento.
-- Ação "Gerar plano" na anamnese: chama IA com exames + respostas + KB → nutri revisa e aprova.
+Rota `_authenticated/app.mapa` reformulada:
+- Header colorido com **saudação nominal** ("Olá, Maria 💙") e o perfil identificado.
+- **Cards temáticos coloridos** (não só azul — introduz acentos suaves de dourado, coral leve, verde-água) organizados como um guia:
+  - "Seu perfil" — leitura do quiz.
+  - "3 prioridades da semana" — personalizadas.
+  - "Como montar seu prato" — visual ilustrado.
+  - "Rotina de hidratação" — dicas.
+  - "Chás e shots caseiros" — 3 receitas do catálogo.
+  - "Movimento suave" — sugestões conforme nível de atividade respondido.
+  - "Próximo passo: Método Derma" — CTA final.
+- Tudo lido do `profiles` + `respostas` da lead, então o guia muda conforme o quiz.
+
+## 6. Admin — Evolution API pré-configurado
+
+Nova aba na `/admin` chamada "WhatsApp (Evolution)":
+- Campos: URL da instância, API Key, Nome da instância.
+- Salvos como **secrets** (`EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCE`).
+- Botão "Testar conexão" que dispara um `GET /instance/connectionState/{instance}` via server fn.
+- Bloco de status: conectado/desconectado, QR code se necessário (link para painel).
+- Log das últimas 20 mensagens enviadas (nova tabela `whatsapp_logs`).
 
 ## Detalhes técnicos
 
-- IA via `LOVABLE_API_KEY` + Gemini 3 Flash (default) para geração de refeições/planos; upgrade para `gemini-3.1-pro-preview` no plano Premium (análise de exames).
-- Storage bucket `exames` (privado, RLS por owner) para upload de PDFs/imagens de exames.
-- WhatsApp continua com link `wa.me` até Evolution API ser plugada em `/admin`.
-- Todo texto de sistema segue o guia acolhedor já em uso.
+**Banco (migração):**
+```sql
+CREATE TABLE public.profiles (
+  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  nome text NOT NULL,
+  telefone text NOT NULL,
+  perfil text,
+  respostas jsonb DEFAULT '{}',
+  diagnostico jsonb,
+  created_at timestamptz DEFAULT now()
+);
+GRANT SELECT, UPDATE ON public.profiles TO authenticated;
+GRANT ALL ON public.profiles TO service_role;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "own_profile_read" ON public.profiles FOR SELECT
+  TO authenticated USING (auth.uid() = id);
 
-## O que faço agora (primeiras 3 ações desta etapa)
+CREATE TABLE public.whatsapp_logs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  telefone text NOT NULL,
+  mensagem text NOT NULL,
+  status text NOT NULL,
+  erro text,
+  created_at timestamptz DEFAULT now()
+);
+GRANT ALL ON public.whatsapp_logs TO service_role;
+ALTER TABLE public.whatsapp_logs ENABLE ROW LEVEL SECURITY;
+```
 
-1. Gerar logo + favicon + OG image e subir como asset.
-2. Reescrever `src/styles.css` com a nova paleta 100% azul + Fraunces.
-3. Parsear os 7 documentos e mostrar um resumo por documento antes de escrever a migration da KB.
+**Server functions novas:**
+- `criarAcessoMapa` — cria user + profile + envia WhatsApp.
+- `enviarWhatsApp` (helper server-only) — POST para Evolution `/message/sendText/{instance}`.
+- `testarEvolution` — chamada admin para verificar conexão.
 
-Depois disso continuo direto até o fim das 5 etapas, mostrando progresso ao final de cada uma.
+**Secrets a solicitar depois via `add_secret`:**
+- `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCE`.
+
+## Fora do escopo desta iteração
+
+- Fluxo de recuperação de senha custom (usa reset padrão Supabase).
+- Método Derma pago (só CTA visual).
+- QR Code embutido no admin (link externo por enquanto).
+
+Depois que você aprovar, executo tudo em sequência: migração → server fns → popup na landing → app personalizado → aba admin.

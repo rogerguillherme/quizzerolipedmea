@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import {
   BarChart3,
   Users,
@@ -10,6 +11,9 @@ import {
   Send,
   Search,
   Loader2,
+  Wifi,
+  WifiOff,
+  Save,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -21,6 +25,12 @@ import {
   type Lead,
   type LeadStatus,
 } from "../lib/analytics";
+import {
+  getEvolutionConfig,
+  salvarEvolutionConfig,
+  testarEvolution,
+  getWhatsAppLogs,
+} from "../lib/admin-evolution.functions";
 
 export const Route = createFileRoute("/admin")({
   component: Admin,
@@ -35,7 +45,7 @@ export const Route = createFileRoute("/admin")({
 function Admin() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"funil" | "leads" | "fila">("funil");
+  const [tab, setTab] = useState<"funil" | "leads" | "fila" | "wa">("funil");
 
   useEffect(() => {
     let mounted = true;
@@ -104,6 +114,9 @@ function Admin() {
             <AlertTriangle className="size-4" /> Fila{" "}
             <FilaBadge />
           </TabBtn>
+          <TabBtn active={tab === "wa"} onClick={() => setTab("wa")}>
+            <MessageCircle className="size-4" /> WhatsApp
+          </TabBtn>
         </nav>
       </header>
 
@@ -111,6 +124,7 @@ function Admin() {
         {tab === "funil" && <FunnelView />}
         {tab === "leads" && <LeadsView />}
         {tab === "fila" && <FilaView />}
+        {tab === "wa" && <WhatsAppView />}
       </main>
     </div>
   );
@@ -454,5 +468,239 @@ function FilaView() {
         </div>
       )}
     </div>
+  );
+}
+
+// ---------- WhatsApp (Evolution) ------------------------------------------
+
+function WhatsAppView() {
+  const fetchCfg = useServerFn(getEvolutionConfig);
+  const saveCfg = useServerFn(salvarEvolutionConfig);
+  const testar = useServerFn(testarEvolution);
+  const fetchLogs = useServerFn(getWhatsAppLogs);
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [baseUrl, setBaseUrl] = useState("");
+  const [instanceName, setInstanceName] = useState("");
+  const [status, setStatus] = useState<{
+    ok: boolean;
+    state?: string;
+    error?: string;
+    configured?: boolean;
+  } | null>(null);
+  const [hasEnv, setHasEnv] = useState({ url: false, key: false, instance: false });
+  const [logs, setLogs] = useState<
+    Array<{
+      id: string;
+      telefone: string;
+      mensagem: string;
+      status: string;
+      erro: string | null;
+      created_at: string;
+    }>
+  >([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const cfg = await fetchCfg();
+        setBaseUrl(cfg.baseUrl ?? "");
+        setInstanceName(cfg.instanceName ?? "");
+        setStatus(cfg.status);
+        setHasEnv({ url: cfg.hasUrl, key: cfg.hasKey, instance: cfg.hasInstance });
+        const l = await fetchLogs();
+        setLogs(l as typeof logs);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [fetchCfg, fetchLogs]);
+
+  async function handleSalvar() {
+    setSaving(true);
+    try {
+      await saveCfg({ data: { baseUrl, instanceName } });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleTestar() {
+    setTesting(true);
+    try {
+      const s = await testar();
+      setStatus(s);
+    } finally {
+      setTesting(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="grid place-items-center py-20">
+        <Loader2 className="size-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const conectado = status?.ok && status?.state === "open";
+  const missingEnv = !hasEnv.url || !hasEnv.key || !hasEnv.instance;
+
+  return (
+    <div>
+      <h2 className="text-lg font-extrabold text-primary">Evolution API · WhatsApp</h2>
+      <p className="text-sm text-muted-foreground">
+        Conexão usada para enviar login e senha aos leads assim que o Mapa é gerado.
+      </p>
+
+      {/* Status */}
+      <div className="card-clinical mt-5 p-5">
+        <div className="flex items-center gap-3">
+          {conectado ? (
+            <div className="grid size-10 place-items-center rounded-full bg-emerald-500/10 text-emerald-600">
+              <Wifi className="size-5" />
+            </div>
+          ) : (
+            <div className="grid size-10 place-items-center rounded-full bg-destructive/10 text-destructive">
+              <WifiOff className="size-5" />
+            </div>
+          )}
+          <div className="flex-1">
+            <p className="text-sm font-bold text-primary">
+              {conectado ? "Conectado" : "Desconectado"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {status?.state ? `Estado: ${status.state}` : status?.error ?? "Sem status"}
+            </p>
+          </div>
+          <button
+            onClick={handleTestar}
+            disabled={testing}
+            className="rounded-xl border border-border bg-card px-3 py-2 text-sm font-semibold text-primary disabled:opacity-60"
+          >
+            {testing ? "Testando..." : "Testar conexão"}
+          </button>
+        </div>
+      </div>
+
+      {/* Secrets */}
+      <div className="card-clinical mt-4 p-5">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-sapphire-600">
+          Segredos do servidor
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Configure na área de secrets do projeto. Nunca são expostos ao navegador.
+        </p>
+        <ul className="mt-3 space-y-2 text-sm">
+          <SecretRow label="EVOLUTION_API_URL" ok={hasEnv.url} />
+          <SecretRow label="EVOLUTION_API_KEY" ok={hasEnv.key} />
+          <SecretRow label="EVOLUTION_INSTANCE" ok={hasEnv.instance} />
+        </ul>
+        {missingEnv && (
+          <p className="mt-3 rounded-lg bg-amber-500/10 p-3 text-xs text-amber-800">
+            Peça pra configurar os 3 segredos acima antes de tentar enviar mensagens.
+          </p>
+        )}
+      </div>
+
+      {/* Config editável */}
+      <div className="card-clinical mt-4 p-5">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-sapphire-600">
+          Referências (apenas anotação)
+        </p>
+        <div className="mt-3 space-y-3">
+          <label className="block">
+            <span className="text-xs font-semibold text-muted-foreground">
+              URL base (referência visual)
+            </span>
+            <input
+              value={baseUrl}
+              onChange={(e) => setBaseUrl(e.target.value)}
+              placeholder="https://evo.seu-servidor.com"
+              className="mt-1 w-full rounded-xl border border-input bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </label>
+          <label className="block">
+            <span className="text-xs font-semibold text-muted-foreground">
+              Nome da instância
+            </span>
+            <input
+              value={instanceName}
+              onChange={(e) => setInstanceName(e.target.value)}
+              placeholder="zerolipedema"
+              className="mt-1 w-full rounded-xl border border-input bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </label>
+        </div>
+        <button
+          onClick={handleSalvar}
+          disabled={saving}
+          className="mt-4 flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-60"
+        >
+          <Save className="size-4" /> {saving ? "Salvando..." : "Salvar"}
+        </button>
+      </div>
+
+      {/* Logs */}
+      <div className="mt-6">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-sapphire-600">
+          Últimos envios ({logs.length})
+        </p>
+        <div className="mt-3 space-y-2">
+          {logs.length === 0 && (
+            <p className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+              Ainda não há mensagens enviadas.
+            </p>
+          )}
+          {logs.map((l) => (
+            <div key={l.id} className="rounded-xl border border-border bg-card p-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-primary">{l.telefone}</span>
+                <span
+                  className={
+                    l.status === "enviado"
+                      ? "rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-700"
+                      : "rounded-full bg-destructive/10 px-2 py-0.5 text-destructive"
+                  }
+                >
+                  {l.status}
+                </span>
+              </div>
+              <p className="mt-2 whitespace-pre-wrap text-xs text-muted-foreground">
+                {l.mensagem.slice(0, 160)}
+                {l.mensagem.length > 160 ? "…" : ""}
+              </p>
+              {l.erro && (
+                <p className="mt-1 text-[11px] text-destructive">Erro: {l.erro}</p>
+              )}
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                {new Date(l.created_at).toLocaleString("pt-BR")}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SecretRow({ label, ok }: { label: string; ok: boolean }) {
+  return (
+    <li className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2">
+      <code className="text-xs">{label}</code>
+      <span
+        className={
+          ok
+            ? "rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-700"
+            : "rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-bold text-destructive"
+        }
+      >
+        {ok ? "configurado" : "ausente"}
+      </span>
+    </li>
   );
 }

@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      evolution_config: {
+        Row: {
+          base_url: string | null
+          connected: boolean
+          id: number
+          instance_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          base_url?: string | null
+          connected?: boolean
+          id?: number
+          instance_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          base_url?: string | null
+          connected?: boolean
+          id?: number
+          instance_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
@@ -27,6 +51,7 @@ export type Database = {
           status: string
           telefone: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -40,6 +65,7 @@ export type Database = {
           status?: string
           telefone: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -51,6 +77,43 @@ export type Database = {
           origem?: string | null
           respostas?: Json
           status?: string
+          telefone?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          diagnostico: Json | null
+          id: string
+          nome: string
+          perfil: string | null
+          respostas: Json
+          senha_temporaria: boolean
+          telefone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          diagnostico?: Json | null
+          id: string
+          nome: string
+          perfil?: string | null
+          respostas?: Json
+          senha_temporaria?: boolean
+          telefone: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          diagnostico?: Json | null
+          id?: string
+          nome?: string
+          perfil?: string | null
+          respostas?: Json
+          senha_temporaria?: boolean
           telefone?: string
           updated_at?: string
         }
@@ -74,6 +137,33 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      whatsapp_logs: {
+        Row: {
+          created_at: string
+          erro: string | null
+          id: string
+          mensagem: string
+          status: string
+          telefone: string
+        }
+        Insert: {
+          created_at?: string
+          erro?: string | null
+          id?: string
+          mensagem: string
+          status: string
+          telefone: string
+        }
+        Update: {
+          created_at?: string
+          erro?: string | null
+          id?: string
+          mensagem?: string
+          status?: string
+          telefone?: string
         }
         Relationships: []
       }
