@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
-  Sparkles,
   Utensils,
   Droplets,
   Footprints,
@@ -24,13 +23,6 @@ export const Route = createFileRoute("/app/")({
   }),
 });
 
-const HERO_GRADIENTS: Record<string, string> = {
-  Inicial: "linear-gradient(135deg, #7BC5F5 0%, #4A90E2 50%, #6B8FE8 100%)",
-  Intermediário: "linear-gradient(135deg, #F5B87B 0%, #E28A4A 50%, #E86B8F 100%)",
-  Avançado: "linear-gradient(135deg, #B87BF5 0%, #8A4AE2 50%, #6B4AE8 100%)",
-  Indeterminado: "linear-gradient(135deg, #7BC5F5 0%, #4A90E2 50%, #6B8FE8 100%)",
-};
-
 function GuiaMapa() {
   const fetchProfile = useServerFn(getMyProfile);
   const { data: profile, isLoading, error } = useQuery({
@@ -40,95 +32,119 @@ function GuiaMapa() {
 
   if (isLoading) {
     return (
-      <div className="grid min-h-screen place-items-center">
-        <Loader2 className="size-6 animate-spin text-primary" />
+      <div className="grid min-h-[70vh] place-items-center">
+        <Loader2 className="size-6 animate-spin" style={{ color: "#16324F" }} />
       </div>
     );
   }
 
-  if (error || !profile) {
-    return (
-      <div className="mx-auto max-w-md px-5 pt-10 text-center">
-        <p className="text-muted-foreground">
-          Não consegui carregar seu perfil. Tente sair e entrar novamente.
-        </p>
-      </div>
-    );
-  }
-
-  const nome = String(profile.nome ?? "").split(" ")[0] || "linda";
-  const diagnostico = (profile.diagnostico as Diagnostico | null) ?? null;
+  const nome = String((profile as any)?.nome ?? "").split(" ")[0] || "linda";
+  const diagnostico = ((profile as any)?.diagnostico as Diagnostico | null) ?? null;
   const estagio = diagnostico?.estagio ?? "Indeterminado";
-  const gradient = HERO_GRADIENTS[estagio] ?? HERO_GRADIENTS.Indeterminado;
   const prioridades = diagnostico?.prioridades?.slice(0, 3) ?? [];
 
   return (
-    <div className="min-h-screen pb-32" style={{ background: "#F6F9FF" }}>
-      {/* Hero personalizado */}
-      <section
-        className="relative overflow-hidden px-6 pb-10 pt-12 text-white"
-        style={{ background: gradient }}
-      >
-        <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-white/10 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-10 size-64 rounded-full bg-white/10 blur-3xl" />
+    <div className="px-5 pt-6">
+      {error && (
+        <p className="mb-4 text-center text-[13px]" style={{ color: "#5B5D52" }}>
+          Não consegui carregar seu perfil por completo — abaixo está seu guia essencial.
+        </p>
+      )}
 
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] opacity-90">
-          Mapa do Lipedema
+      {/* Hero editorial */}
+      <section
+        className="relative overflow-hidden rounded-[28px] px-6 py-8 text-[color:var(--cream)]"
+        style={{
+          background:
+            "linear-gradient(160deg, #2C5578 0%, #16324F 55%, #0D2138 100%)",
+          boxShadow: "0 24px 40px -28px rgba(22,50,79,0.55)",
+        }}
+      >
+        <div
+          className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(217,169,75,0.35), transparent 70%)",
+          }}
+        />
+        <p
+          className="text-[10px] font-semibold uppercase"
+          style={{ letterSpacing: "0.28em", color: "#D9A94B" }}
+        >
+          Bem-vinda de volta
         </p>
         <h1
-          className="mt-3 text-[2rem] leading-tight tracking-tight"
-          style={{ fontFamily: "'Fraunces', serif", fontWeight: 500 }}
+          className="mt-3"
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            fontWeight: 500,
+            fontSize: "1.85rem",
+            lineHeight: 1.15,
+            letterSpacing: "-0.005em",
+            color: "#F5EFE1",
+          }}
         >
-          Bem-vinda, <em className="italic opacity-95">{nome}</em>.
+          <em className="italic" style={{ color: "#D9A94B" }}>{nome}</em>, este é o
+          seu mapa.
         </h1>
-        <p className="mt-3 max-w-xs text-[15px] leading-relaxed opacity-90">
-          Este é seu guia personalizado com as escolhas certas pra você agora.
+        <p
+          className="mt-3 max-w-[36ch] text-[14.5px]"
+          style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}
+        >
+          O que você faz hoje muda o que seu corpo entrega amanhã. Aqui está seu
+          próximo passo.
         </p>
 
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 backdrop-blur">
-          <Sparkles className="size-4" />
-          <span className="text-[13px] font-semibold">
-            Estágio percebido: {estagio}
+        <div
+          className="mt-6 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5"
+          style={{
+            background: "rgba(245,239,225,0.14)",
+            border: "1px solid rgba(217,169,75,0.35)",
+          }}
+        >
+          <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#D9A94B" }} />
+          <span className="text-[12px] font-semibold" style={{ color: "#F5EFE1" }}>
+            Estágio percebido: <span style={{ color: "#D9A94B" }}>{estagio}</span>
           </span>
         </div>
       </section>
 
-      {/* Prioridades personalizadas */}
+      {/* Prioridades */}
       {prioridades.length > 0 && (
-        <section className="mx-auto max-w-md px-5 pt-8">
-          <div className="flex items-center gap-2">
-            <span
-              className="text-[10px] uppercase tracking-[0.28em]"
-              style={{ color: "#AF7F35" }}
-            >
-              Suas 3 prioridades da semana
-            </span>
-          </div>
-          <div className="mt-4 space-y-3">
+        <section className="mt-8">
+          <Eyebrow>Suas 3 prioridades da semana</Eyebrow>
+          <div className="mt-3 space-y-2.5">
             {prioridades.map((p, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-sapphire-100 bg-white p-5 shadow-sm"
+                className="flex items-start gap-3 rounded-2xl px-4 py-3.5"
+                style={{
+                  background: "rgba(255,253,247,0.9)",
+                  border: "1px solid rgba(216,198,160,0.55)",
+                  boxShadow:
+                    "0 10px 24px -18px rgba(22,50,79,0.35), 0 1px 0 rgba(255,255,255,0.6) inset",
+                }}
               >
-                <div className="flex items-start gap-3">
-                  <div
-                    className="grid size-9 shrink-0 place-items-center rounded-full text-white"
-                    style={{
-                      background: [
-                        "linear-gradient(135deg, #4A90E2, #6B8FE8)",
-                        "linear-gradient(135deg, #E28A4A, #E86B8F)",
-                        "linear-gradient(135deg, #8A4AE2, #6B4AE8)",
-                      ][i],
-                      fontFamily: "'Fraunces', serif",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {i + 1}
-                  </div>
-                  <p className="pt-1 text-[15px] leading-relaxed text-foreground">
-                    {p}
-                  </p>
-                </div>
+                <span
+                  className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full"
+                  style={{
+                    background: "rgba(175,127,53,0.1)",
+                    border: "1px solid rgba(175,127,53,0.4)",
+                    color: "#AF7F35",
+                    fontFamily: "'Playfair Display', serif",
+                    fontStyle: "italic",
+                    fontSize: "13px",
+                    fontWeight: 500,
+                  }}
+                >
+                  {i + 1}
+                </span>
+                <p
+                  className="pt-0.5 text-[14.5px]"
+                  style={{ color: "#16324F", lineHeight: 1.5 }}
+                >
+                  {p}
+                </p>
               </div>
             ))}
           </div>
@@ -136,115 +152,164 @@ function GuiaMapa() {
       )}
 
       {/* Guias rápidos */}
-      <section className="mx-auto max-w-md px-5 pt-10">
-        <span
-          className="text-[10px] uppercase tracking-[0.28em]"
-          style={{ color: "#AF7F35" }}
-        >
-          Guias rápidos
-        </span>
-        <div className="mt-4 grid grid-cols-2 gap-3">
+      <section className="mt-8">
+        <Eyebrow>Guias rápidos</Eyebrow>
+        <div className="mt-3 grid grid-cols-2 gap-2.5">
           <GuideCard
-            icon={<Utensils className="size-5" />}
-            gradient="linear-gradient(135deg, #FFB84D, #FF7A59)"
+            icon={<Utensils className="size-4" />}
             title="Como montar o prato"
             desc="Modelo anti-inflamatório em 3 passos"
           />
           <GuideCard
-            icon={<Droplets className="size-5" />}
-            gradient="linear-gradient(135deg, #4FC3F7, #4A90E2)"
-            title="Hidratação & drenagem"
-            desc="Rotina de água e chás pra reduzir inchaço"
+            icon={<Droplets className="size-4" />}
+            title="Hidratação"
+            desc="Rotina de água e chás"
           />
           <GuideCard
-            icon={<Footprints className="size-5" />}
-            gradient="linear-gradient(135deg, #81C784, #4CAF50)"
-            title="Movimento diário"
+            icon={<Footprints className="size-4" />}
+            title="Movimento"
             desc="20 minutos que cabem no seu dia"
           />
           <GuideCard
-            icon={<HeartHandshake className="size-5" />}
-            gradient="linear-gradient(135deg, #BA68C8, #7E57C2)"
+            icon={<HeartHandshake className="size-4" />}
             title="Cuidados com a pele"
             desc="Rotina simples pra sensibilidade"
           />
         </div>
       </section>
 
-      {/* CTA protocolo 7 dias */}
-      <section className="mx-auto max-w-md px-5 pt-10">
+      {/* CTA protocolo */}
+      <section className="mt-8">
         <Link
           to="/app/missoes"
-          className="block overflow-hidden rounded-3xl p-6 text-white shadow-lg shadow-sapphire-200/50"
+          className="block overflow-hidden rounded-3xl p-6"
           style={{
             background:
-              "linear-gradient(135deg, #16324F 0%, #2C5578 60%, #AF7F35 130%)",
+              "linear-gradient(150deg, #16324F 0%, #2C5578 60%, #AF7F35 130%)",
+            color: "#F5EFE1",
+            boxShadow: "0 20px 32px -22px rgba(22,50,79,0.5)",
           }}
         >
-          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] opacity-80">
-            <Sparkles className="size-3.5" /> Próximo passo
+          <div
+            className="text-[10px] font-semibold uppercase"
+            style={{ letterSpacing: "0.28em", color: "rgba(217,169,75,0.9)" }}
+          >
+            Próximo passo
           </div>
           <h3
-            className="mt-3 text-[1.4rem] leading-tight"
-            style={{ fontFamily: "'Fraunces', serif", fontWeight: 500 }}
+            className="mt-2"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 500,
+              fontSize: "1.4rem",
+              lineHeight: 1.2,
+            }}
           >
-            Iniciar Protocolo de 7 dias
+            Iniciar Protocolo de <em className="italic">7 dias</em>
           </h3>
-          <p className="mt-2 text-[13.5px] leading-relaxed opacity-90">
-            Uma missão suave por dia, guiada pela Gabriela. Ao final você
-            recebe um relatório com o que mudou.
+          <p className="mt-2 text-[13.5px]" style={{ color: "rgba(245,239,225,0.85)" }}>
+            Uma missão suave por dia, guiada pela Gabriela. Ao final você recebe
+            um relatório com o que mudou.
           </p>
-          <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-[13px] font-semibold backdrop-blur">
-            Começar agora <ArrowRight className="size-4" />
-          </div>
+          <span
+            className="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[12.5px] font-semibold"
+            style={{ background: "rgba(245,239,225,0.18)", color: "#F5EFE1" }}
+          >
+            Começar agora <ArrowRight className="size-3.5" />
+          </span>
         </Link>
       </section>
 
       {/* Atalho WhatsApp */}
-      <section className="mx-auto max-w-md px-5 pt-6">
+      <section className="mt-4">
         <Link
           to="/app/whatsapp"
-          className="flex items-center gap-3 rounded-2xl border border-sapphire-100 bg-white p-4"
+          className="flex items-center gap-3 rounded-2xl p-4"
+          style={{
+            background: "rgba(255,253,247,0.9)",
+            border: "1px solid rgba(216,198,160,0.55)",
+          }}
         >
-          <div className="grid size-10 place-items-center rounded-full bg-emerald-500/10 text-emerald-600">
+          <span
+            className="grid size-10 place-items-center rounded-full"
+            style={{
+              background: "rgba(175,127,53,0.1)",
+              border: "1px solid rgba(175,127,53,0.35)",
+              color: "#AF7F35",
+            }}
+          >
             <MessageCircle className="size-5" />
-          </div>
+          </span>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-primary">
+            <p className="text-[14px] font-semibold" style={{ color: "#16324F" }}>
               Falar com a Gabriela
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[12px]" style={{ color: "#5B5D52" }}>
               Tire dúvidas do dia direto pelo WhatsApp
             </p>
           </div>
-          <ArrowRight className="size-4 text-muted-foreground" />
+          <ArrowRight className="size-4" style={{ color: "#5B5D52" }} />
         </Link>
       </section>
     </div>
   );
 }
 
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className="text-[10px] font-semibold uppercase"
+        style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
+      >
+        {children}
+      </span>
+      <span
+        className="h-px flex-1"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(216,198,160,0.7), transparent)",
+        }}
+      />
+    </div>
+  );
+}
+
 function GuideCard({
   icon,
-  gradient,
   title,
   desc,
 }: {
   icon: React.ReactNode;
-  gradient: string;
   title: string;
   desc: string;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-sapphire-100 bg-white p-4 shadow-sm">
-      <div
-        className="grid size-10 place-items-center rounded-xl text-white"
-        style={{ background: gradient }}
+    <div
+      className="rounded-2xl p-4"
+      style={{
+        background: "rgba(255,253,247,0.9)",
+        border: "1px solid rgba(216,198,160,0.55)",
+        boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
+      }}
+    >
+      <span
+        className="grid size-9 place-items-center rounded-full"
+        style={{
+          background: "rgba(175,127,53,0.1)",
+          border: "1px solid rgba(175,127,53,0.4)",
+          color: "#AF7F35",
+        }}
       >
         {icon}
-      </div>
-      <p className="mt-3 text-[14px] font-bold text-primary">{title}</p>
-      <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+      </span>
+      <p
+        className="mt-3 text-[13.5px] font-semibold"
+        style={{ color: "#16324F" }}
+      >
+        {title}
+      </p>
+      <p className="mt-0.5 text-[11.5px]" style={{ color: "#5B5D52", lineHeight: 1.45 }}>
         {desc}
       </p>
     </div>

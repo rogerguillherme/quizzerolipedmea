@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Activity, ListChecks, MessageCircle, Lock, User, Loader2 } from "lucide-react";
+import { Compass, ListChecks, MessageCircle, Sparkles, User, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -33,33 +33,91 @@ function AppLayout() {
 
   if (!ready) {
     return (
-      <div className="grid min-h-screen place-items-center bg-background">
-        <Loader2 className="size-6 animate-spin text-primary" />
+      <div
+        className="grid min-h-[100dvh] place-items-center"
+        style={{ background: "#F5EFE1" }}
+      >
+        <Loader2 className="size-6 animate-spin" style={{ color: "#16324F" }} />
       </div>
     );
   }
 
-
-  const tabs: { to: string; label: string; icon: typeof Activity; exact?: boolean }[] = [
-    { to: "/app", label: "Radar", icon: Activity, exact: true },
+  const tabs: { to: string; label: string; icon: typeof Compass; exact?: boolean }[] = [
+    { to: "/app", label: "Radar", icon: Compass, exact: true },
     { to: "/app/missoes", label: "Missões", icon: ListChecks },
-    { to: "/app/whatsapp", label: "WhatsApp", icon: MessageCircle },
-    { to: "/app/derma", label: "Método", icon: Lock },
+    { to: "/app/whatsapp", label: "Gabi", icon: MessageCircle },
+    { to: "/app/derma", label: "Método", icon: Sparkles },
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
+    <div
+      className="relative min-h-[100dvh] overflow-x-hidden pb-24"
+      style={{
+        ["--cream" as string]: "#F5EFE1",
+        ["--cream-soft" as string]: "#FBF6E9",
+        ["--cream-line" as string]: "#D8C6A0",
+        ["--blue" as string]: "#16324F",
+        ["--blue-soft" as string]: "#2C5578",
+        ["--blue-pale" as string]: "#AFC4D6",
+        ["--gold" as string]: "#AF7F35",
+        ["--gold-soft" as string]: "#D9A94B",
+        ["--ink-soft" as string]: "#5B5D52",
+        background:
+          "radial-gradient(120% 60% at 80% 0%, #EFE3CC 0%, transparent 55%), #F5EFE1",
+        color: "#16324F",
+        fontFamily: "'Nunito', sans-serif",
+      }}
+    >
+      {/* Paper texture */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(135deg, rgba(22,50,79,0.018) 0px, rgba(22,50,79,0.018) 1px, transparent 1px, transparent 6px)",
+        }}
+      />
+
+      <header
+        className="sticky top-0 z-30 backdrop-blur"
+        style={{
+          background: "rgba(245,239,225,0.86)",
+          borderBottom: "1px solid rgba(216,198,160,0.5)",
+        }}
+      >
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-2">
-            <div className="grid size-8 place-items-center rounded-lg bg-primary text-primary-foreground text-sm font-bold">
-              Z
+          <div className="flex items-center gap-2.5">
+            <span
+              className="flex h-8 w-8 items-center justify-center rounded-full"
+              style={{ border: "1px solid var(--gold)" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="#AF7F35" strokeWidth="1.6" className="h-3.5 w-3.5">
+                <path d="M12 2C8 6 6 10 6 13a6 6 0 0 0 12 0c0-3-2-7-6-11z" />
+              </svg>
+            </span>
+            <div className="leading-tight">
+              <p
+                className="text-[9px] font-semibold uppercase"
+                style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
+              >
+                Zero Lipedema
+              </p>
+              <p
+                className="text-[13px] italic"
+                style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: "#16324F" }}
+              >
+                seu mapa pessoal
+              </p>
             </div>
-            <p className="text-sm font-bold text-primary">Zero Lipedema</p>
           </div>
           <Link
             to="/app/perfil"
-            className="grid size-9 place-items-center rounded-xl border border-border bg-card text-primary hover:bg-accent"
+            className="grid size-9 place-items-center rounded-full transition-colors"
+            style={{
+              border: "1px solid rgba(216,198,160,0.6)",
+              background: "rgba(255,253,247,0.85)",
+              color: "#16324F",
+            }}
             aria-label="Perfil"
           >
             <User className="size-4" />
@@ -67,11 +125,17 @@ function AppLayout() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-md">
+      <main className="relative z-10 mx-auto w-full max-w-md">
         <Outlet />
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
+      <nav
+        className="fixed inset-x-0 bottom-0 z-30 backdrop-blur"
+        style={{
+          background: "rgba(245,239,225,0.94)",
+          borderTop: "1px solid rgba(216,198,160,0.5)",
+        }}
+      >
         <div className="mx-auto grid max-w-md grid-cols-4">
           {tabs.map((t) => {
             const active = t.exact ? pathname === t.to : pathname.startsWith(t.to);
@@ -80,15 +144,30 @@ function AppLayout() {
               <Link
                 key={t.to}
                 to={t.to as "/app"}
-                className={[
-                  "flex flex-col items-center gap-1 py-3 text-[11px] font-semibold transition-colors",
-                  active ? "text-primary" : "text-muted-foreground",
-                ].join(" ")}
+                className="flex flex-col items-center gap-1 py-3 transition-colors"
+                style={{ color: active ? "#16324F" : "#8A8574" }}
               >
-                <Icon
-                  className={["size-5", active ? "text-primary" : "text-muted-foreground"].join(" ")}
-                />
-                {t.label}
+                <span
+                  className="grid size-8 place-items-center rounded-full transition-all"
+                  style={
+                    active
+                      ? {
+                          background:
+                            "linear-gradient(180deg, var(--blue-soft), var(--blue))",
+                          color: "#F5EFE1",
+                          boxShadow: "0 6px 14px -6px rgba(22,50,79,0.5)",
+                        }
+                      : { color: "#8A8574" }
+                  }
+                >
+                  <Icon className="size-4" />
+                </span>
+                <span
+                  className="text-[10px] font-semibold uppercase"
+                  style={{ letterSpacing: "0.14em" }}
+                >
+                  {t.label}
+                </span>
               </Link>
             );
           })}

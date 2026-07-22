@@ -21,7 +21,7 @@ const MISSOES: Missao[] = [
     id: "prato",
     titulo: "Monte seu prato",
     descricao: "Um molde flexível — não cardápio fechado.",
-    icon: <Utensils className="size-5" />,
+    icon: <Utensils className="size-4" />,
     detalhe:
       "½ do prato: vegetais folhosos + coloridos. ¼: proteína magra (frango, peixe, ovos). ¼: carboidrato de baixo IG (batata-doce, quinoa, arroz integral). Adicione 1 colher de azeite.",
   },
@@ -29,14 +29,15 @@ const MISSOES: Missao[] = [
     id: "cha",
     titulo: "Chá do dia",
     descricao: "Do Catálogo de Prescrição — liberado.",
-    icon: <Leaf className="size-5" />,
-    detalhe: "Chá de cavalinha + hibisco (500ml distribuídos ao longo do dia). Ação drenante suave.",
+    icon: <Leaf className="size-4" />,
+    detalhe:
+      "Chá de cavalinha + hibisco (500ml distribuídos ao longo do dia). Ação drenante suave.",
   },
   {
     id: "autocuidado",
     titulo: "Autocuidado vascular",
     descricao: "Movimento simples, sem prescrição de treino.",
-    icon: <HeartPulse className="size-5" />,
+    icon: <HeartPulse className="size-4" />,
     detalhe:
       "Elevação de pernas por 10 minutos + 30 bombeios de tornozelo + 5 min de respiração diafragmática antes de dormir.",
   },
@@ -44,7 +45,7 @@ const MISSOES: Missao[] = [
     id: "checkin",
     titulo: "Check-in de sintomas",
     descricao: "1 minuto — atualiza seu Radar.",
-    icon: <MessageSquareQuote className="size-5" />,
+    icon: <MessageSquareQuote className="size-4" />,
     detalhe:
       "Como estão o inchaço, dor e disposição hoje? Sua resposta ajusta a recomendação da IA para amanhã.",
   },
@@ -73,61 +74,131 @@ function Missoes() {
 
   return (
     <div className="px-5 pt-6">
-      <p className="text-xs font-bold uppercase tracking-wide text-sapphire-600">Dia {dia} de 7</p>
-      <h1 className="text-2xl font-extrabold text-primary">Missões de hoje</h1>
+      <p
+        className="text-[10px] font-semibold uppercase"
+        style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
+      >
+        Dia {dia} de 7
+      </p>
+      <h1
+        className="mt-2"
+        style={{
+          fontFamily: "'Playfair Display', serif",
+          fontWeight: 500,
+          fontSize: "1.75rem",
+          lineHeight: 1.15,
+          color: "#16324F",
+        }}
+      >
+        Missões de <em className="italic" style={{ color: "#AF7F35" }}>hoje</em>
+      </h1>
 
-      <div className="card-clinical mt-4 p-4">
+      <div
+        className="mt-5 rounded-2xl p-4"
+        style={{
+          background: "rgba(255,253,247,0.9)",
+          border: "1px solid rgba(216,198,160,0.55)",
+          boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
+        }}
+      >
         <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-primary">Progresso do dia</p>
-          <p className="text-sm font-bold text-primary tabular-nums">
+          <p className="text-[13px] font-semibold" style={{ color: "#16324F" }}>
+            Progresso do dia
+          </p>
+          <p
+            className="text-[13px] font-bold tabular-nums"
+            style={{ color: "#AF7F35" }}
+          >
             {feitas.length}/{MISSOES.length}
           </p>
         </div>
-        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-sapphire-100">
+        <div
+          className="mt-2 h-1.5 w-full overflow-hidden rounded-full"
+          style={{ background: "rgba(216,198,160,0.35)" }}
+        >
           <div
-            className="h-full rounded-full bg-coral transition-all duration-500"
-            style={{ width: `${pct}%` }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${pct}%`,
+              background: "linear-gradient(90deg, #D9A94B, #AF7F35)",
+            }}
           />
         </div>
         {completo && (
-          <p className="mt-3 rounded-xl bg-coral-soft px-3 py-2 text-center text-sm font-bold text-primary">
+          <p
+            className="mt-3 rounded-xl px-3 py-2 text-center text-[13px] font-semibold"
+            style={{
+              background: "rgba(217,169,75,0.15)",
+              color: "#16324F",
+              border: "1px solid rgba(175,127,53,0.35)",
+            }}
+          >
             🎉 Dia {dia} concluído — sua sequência aumentou!
           </p>
         )}
       </div>
 
-      <div className="mt-5 space-y-3">
+      <div className="mt-5 space-y-2.5">
         {MISSOES.map((m) => {
           const done = feitas.includes(m.id);
           return (
             <button
               key={m.id}
               onClick={() => toggle(m.id)}
-              className={[
-                "card-clinical w-full p-4 text-left transition-all",
-                done && "bg-sapphire-50",
-              ].join(" ")}
+              className="w-full rounded-2xl p-4 text-left transition-all"
+              style={{
+                background: done
+                  ? "rgba(217,169,75,0.08)"
+                  : "rgba(255,253,247,0.9)",
+                border: `1px solid ${
+                  done ? "rgba(175,127,53,0.5)" : "rgba(216,198,160,0.55)"
+                }`,
+                boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
+              }}
             >
               <div className="flex items-start gap-3">
-                <div
-                  className={[
-                    "grid size-11 shrink-0 place-items-center rounded-xl transition-colors",
-                    done ? "bg-primary text-primary-foreground" : "bg-sapphire-100 text-sapphire-800",
-                  ].join(" ")}
+                <span
+                  className="grid size-10 shrink-0 place-items-center rounded-full transition-colors"
+                  style={
+                    done
+                      ? {
+                          background:
+                            "linear-gradient(180deg, var(--blue-soft), var(--blue))",
+                          color: "#F5EFE1",
+                        }
+                      : {
+                          background: "rgba(175,127,53,0.1)",
+                          border: "1px solid rgba(175,127,53,0.35)",
+                          color: "#AF7F35",
+                        }
+                  }
                 >
                   {m.icon}
-                </div>
+                </span>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="font-bold text-primary">{m.titulo}</p>
+                    <p
+                      className="text-[14.5px] font-semibold"
+                      style={{ color: "#16324F" }}
+                    >
+                      {m.titulo}
+                    </p>
                     {done ? (
-                      <CheckCircle2 className="size-4 text-coral" />
+                      <CheckCircle2 className="size-4" style={{ color: "#AF7F35" }} />
                     ) : (
-                      <Circle className="size-4 text-muted-foreground" />
+                      <Circle className="size-4" style={{ color: "#B8AC8C" }} />
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">{m.descricao}</p>
-                  <p className="mt-2 rounded-lg bg-muted p-2 text-xs leading-relaxed text-foreground">
+                  <p className="text-[12.5px]" style={{ color: "#5B5D52" }}>
+                    {m.descricao}
+                  </p>
+                  <p
+                    className="mt-2 rounded-lg p-2.5 text-[11.5px] leading-relaxed"
+                    style={{
+                      background: "rgba(22,50,79,0.04)",
+                      color: "#16324F",
+                    }}
+                  >
                     {m.detalhe}
                   </p>
                 </div>
@@ -137,7 +208,10 @@ function Missoes() {
         })}
       </div>
 
-      <p className="mt-6 text-center text-[11px] leading-relaxed text-muted-foreground">
+      <p
+        className="mt-6 text-center text-[11px] leading-relaxed"
+        style={{ color: "#5B5D52" }}
+      >
         Conteúdo educacional. Nutricionista (CRN) não prescreve medicamento nem
         exercício estruturado. Autocuidado geral: elevação, bomba de tornozelo,
         respiração e caminhada leve.
