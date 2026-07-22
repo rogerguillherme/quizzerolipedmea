@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { CheckCircle2, Circle, Utensils, Leaf, HeartPulse, MessageSquareQuote } from "lucide-react";
+import { CheckCircle2, Circle, Utensils, Leaf, HeartPulse, MessageSquareQuote, Coffee, AlertTriangle } from "lucide-react";
 import { getApp, setApp } from "../lib/quiz-store";
 import { track } from "../lib/analytics";
 
