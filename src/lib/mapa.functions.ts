@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateText } from "ai";
-import { createClient } from "@supabase/supabase-js";
+
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 
@@ -112,14 +112,10 @@ Devolva o JSON conforme instruções.`;
       };
     }
 
-    // Salva o lead
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_PUBLISHABLE_KEY!,
-      { auth: { persistSession: false, autoRefreshToken: false } },
-    );
+    // Salva o lead (admin — sem depender de RLS do publishable key)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: inserted, error: insertErr } = await supabase
+    const { data: inserted, error: insertErr } = await supabaseAdmin
       .from("leads")
       .insert({
         nome: data.nome,
@@ -127,19 +123,13 @@ Devolva o JSON conforme instruções.`;
         respostas: data.respostas,
         origem: "mapa",
         status: "mapa_gerado",
+        diagnostico,
       })
       .select("id")
       .single();
 
     if (insertErr) console.error("[submitMapa] insert error", insertErr);
 
-    if (inserted?.id) {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      await supabaseAdmin
-        .from("leads")
-        .update({ diagnostico })
-        .eq("id", inserted.id);
-    }
 
     return { diagnostico, leadId: inserted?.id ?? null };
   });
