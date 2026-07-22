@@ -296,6 +296,7 @@ function Landing() {
           </div>
         </div>
       </main>
+      <MapaQuizDialog open={quizOpen} onClose={() => setQuizOpen(false)} />
     </div>
   );
 }
