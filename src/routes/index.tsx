@@ -252,13 +252,17 @@ function Landing() {
           </div>
 
           <div className="mt-8 sm:mt-10">
-            <Link
-              to="/mapa"
-              className="zl-cta inline-flex w-full items-center justify-center gap-3 rounded-full py-4 pl-5 pr-6 no-underline sm:w-auto sm:gap-3.5 sm:pl-[22px] sm:pr-[30px]"
+            <button
+              onClick={() => {
+                track("quiz_started");
+                setQuizOpen(true);
+              }}
+              className="zl-cta zl-breathe inline-flex w-full items-center justify-center gap-3 rounded-full border-0 py-4 pl-5 pr-6 sm:w-auto sm:gap-3.5 sm:pl-[22px] sm:pr-[30px]"
               style={{
                 background:
                   "linear-gradient(180deg, var(--blue-soft), var(--blue))",
                 color: "var(--cream)",
+                cursor: "pointer",
               }}
             >
               <span
@@ -282,7 +286,7 @@ function Landing() {
                   Teste de 2 minutos · gratuito
                 </span>
               </span>
-            </Link>
+            </button>
             <div
               className="mt-3 text-center text-[0.78rem] sm:text-left"
               style={{ color: "var(--ink-soft)", letterSpacing: "0.02em" }}
