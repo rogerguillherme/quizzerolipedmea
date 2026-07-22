@@ -14,6 +14,232 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          app_key: string
+          setting_key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          app_key: string
+          setting_key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          app_key?: string
+          setting_key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      crm_conversations: {
+        Row: {
+          app_context: string
+          created_at: string
+          id: string
+          lead_id: string | null
+          modo: string
+          nao_lidas: number
+          nome: string | null
+          status: string
+          tags: string[]
+          telefone: string
+          ultima_mensagem: string | null
+          ultima_mensagem_em: string | null
+          updated_at: string
+        }
+        Insert: {
+          app_context?: string
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          modo?: string
+          nao_lidas?: number
+          nome?: string | null
+          status?: string
+          tags?: string[]
+          telefone: string
+          ultima_mensagem?: string | null
+          ultima_mensagem_em?: string | null
+          updated_at?: string
+        }
+        Update: {
+          app_context?: string
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          modo?: string
+          nao_lidas?: number
+          nome?: string | null
+          status?: string
+          tags?: string[]
+          telefone?: string
+          ultima_mensagem?: string | null
+          ultima_mensagem_em?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_conversations_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_funnel_runs: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          funnel_id: string
+          id: string
+          proximo_em: string | null
+          status: string
+          step_index: number
+          updated_at: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          funnel_id: string
+          id?: string
+          proximo_em?: string | null
+          status?: string
+          step_index?: number
+          updated_at?: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          funnel_id?: string
+          id?: string
+          proximo_em?: string | null
+          status?: string
+          step_index?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_funnel_runs_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "crm_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_funnel_runs_funnel_id_fkey"
+            columns: ["funnel_id"]
+            isOneToOne: false
+            referencedRelation: "crm_funnels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_funnels: {
+        Row: {
+          app_key: string
+          ativo: boolean
+          created_at: string
+          descricao: string | null
+          gatilho_tipo: string
+          gatilho_valor: string | null
+          id: string
+          nome: string
+          steps: Json
+          updated_at: string
+        }
+        Insert: {
+          app_key?: string
+          ativo?: boolean
+          created_at?: string
+          descricao?: string | null
+          gatilho_tipo?: string
+          gatilho_valor?: string | null
+          id?: string
+          nome: string
+          steps?: Json
+          updated_at?: string
+        }
+        Update: {
+          app_key?: string
+          ativo?: boolean
+          created_at?: string
+          descricao?: string | null
+          gatilho_tipo?: string
+          gatilho_valor?: string | null
+          id?: string
+          nome?: string
+          steps?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crm_messages: {
+        Row: {
+          autor: string
+          conteudo: string
+          conversation_id: string
+          created_at: string
+          direcao: string
+          erro: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          autor?: string
+          conteudo: string
+          conversation_id: string
+          created_at?: string
+          direcao: string
+          erro?: string | null
+          id?: string
+          status?: string
+        }
+        Update: {
+          autor?: string
+          conteudo?: string
+          conversation_id?: string
+          created_at?: string
+          direcao?: string
+          erro?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "crm_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_tags: {
+        Row: {
+          cor: string
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          cor?: string
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          cor?: string
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
       evolution_config: {
         Row: {
           base_url: string | null
