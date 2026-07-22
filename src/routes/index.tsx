@@ -93,7 +93,7 @@ function Landing() {
         }
       `}</style>
 
-      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-[520px] flex-col px-5 pb-14 pt-8 sm:px-8 sm:pt-10 lg:max-w-[1080px] lg:flex-row lg:items-center lg:gap-12 lg:px-16 lg:py-16">
+      <main className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-[520px] flex-col justify-between px-5 pb-4 pt-4 sm:px-8 sm:pb-6 sm:pt-6 lg:max-w-[1080px] lg:flex-row lg:items-center lg:justify-center lg:gap-12 lg:px-16 lg:py-16">
         {/* Portrait — integrated into page, not a separate panel */}
         <div className="relative mx-auto mb-6 flex w-full max-w-[360px] justify-center lg:order-last lg:mb-0 lg:max-w-[440px]">
           <svg
