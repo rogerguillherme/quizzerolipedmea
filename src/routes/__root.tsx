@@ -78,22 +78,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0B2A4A" },
-      { title: "Zero Lipedema — plataforma da Nutri Gabriela Rosado" },
+      { title: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
       {
         name: "description",
         content:
-          "Mapa do Lipedema gratuito, Protocolo 7 Dias e Método Derma de 90 dias com a nutricionista Gabriela Rosado (CRN 10582). Acompanhamento humano e IA no WhatsApp.",
+          "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura gratuita feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue pelo WhatsApp.",
       },
       { name: "author", content: "Zero Lipedema · Gabriela Rosado CRN 10582" },
-      { property: "og:title", content: "Zero Lipedema — cuidado real para quem tem lipedema" },
+      { property: "og:title", content: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
       {
         property: "og:description",
         content:
-          "Descubra em 2 minutos o retrato do seu lipedema e comece o Protocolo 7 Dias gratuito com a Nutri Gabriela.",
+          "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura gratuita feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue pelo WhatsApp.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Zero Lipedema" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
+      { name: "twitter:description", content: "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura gratuita feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue pelo WhatsApp." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9260e33e-b220-431a-b008-9a807451410d/id-preview-e01ed8a6--4a9b7442-01d5-4766-8c69-f473718afe8b.lovable.app-1784680241356.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9260e33e-b220-431a-b008-9a807451410d/id-preview-e01ed8a6--4a9b7442-01d5-4766-8c69-f473718afe8b.lovable.app-1784680241356.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

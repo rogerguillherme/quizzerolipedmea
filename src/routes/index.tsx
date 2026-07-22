@@ -16,11 +16,11 @@ export const Route = createFileRoute("/")({
         content:
           "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura gratuita feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue pelo WhatsApp.",
       },
-      { property: "og:title", content: "Mapa do Lipedema — leitura gratuita" },
+      { property: "og:title", content: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
       {
         property: "og:description",
         content:
-          "Um teste de 2 minutos com um Mapa personalizado do seu caso — direto no seu WhatsApp.",
+          "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura gratuita feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue pelo WhatsApp.",
       },
     ],
   }),
