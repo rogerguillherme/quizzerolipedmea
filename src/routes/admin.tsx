@@ -114,6 +114,9 @@ function Admin() {
             <AlertTriangle className="size-4" /> Fila{" "}
             <FilaBadge />
           </TabBtn>
+          <TabBtn active={tab === "wa"} onClick={() => setTab("wa")}>
+            <MessageCircle className="size-4" /> WhatsApp
+          </TabBtn>
         </nav>
       </header>
 
@@ -121,6 +124,7 @@ function Admin() {
         {tab === "funil" && <FunnelView />}
         {tab === "leads" && <LeadsView />}
         {tab === "fila" && <FilaView />}
+        {tab === "wa" && <WhatsAppView />}
       </main>
     </div>
   );
