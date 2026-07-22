@@ -33,39 +33,91 @@ function WhatsApp() {
 
   return (
     <div className="px-5 pt-6">
-      <div className="flex items-center gap-3">
-        <div className="grid size-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
-          <Bot className="size-6" />
-        </div>
+      <p
+        className="text-[10px] font-semibold uppercase"
+        style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
+      >
+        Assistente
+      </p>
+      <h1
+        className="mt-2"
+        style={{
+          fontFamily: "'Playfair Display', serif",
+          fontWeight: 500,
+          fontSize: "1.75rem",
+          lineHeight: 1.15,
+          color: "#16324F",
+        }}
+      >
+        Fale com a <em className="italic" style={{ color: "#AF7F35" }}>Gabi</em>
+      </h1>
+
+      <div className="mt-4 flex items-center gap-3">
+        <span
+          className="grid size-11 place-items-center rounded-2xl"
+          style={{
+            background: "linear-gradient(180deg, #2C5578, #16324F)",
+            color: "#F5EFE1",
+          }}
+        >
+          <Bot className="size-5" />
+        </span>
         <div>
-          <p className="font-bold text-primary">Assistente Zero</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[14px] font-semibold" style={{ color: "#16324F" }}>
+            Assistente Zero
+          </p>
+          <p className="text-[11.5px]" style={{ color: "#5B5D52" }}>
             IA treinada no método da Gabriela · CRN 10582
           </p>
         </div>
       </div>
 
-      <div className="mt-3 rounded-xl border border-sapphire-200 bg-sapphire-50 p-3 text-xs text-primary">
+      <div
+        className="mt-4 rounded-2xl px-3.5 py-3 text-[12px]"
+        style={{
+          background: "rgba(175,127,53,0.08)",
+          border: "1px solid rgba(175,127,53,0.3)",
+          color: "#16324F",
+        }}
+      >
         <p className="font-semibold">WhatsApp é o canal principal.</p>
-        <p className="mt-0.5 text-muted-foreground">
+        <p className="mt-0.5" style={{ color: "#5B5D52" }}>
           O app é o apoio visual. Toda cadência acontece por lá.
         </p>
       </div>
 
-      <div className="mt-5 space-y-2 rounded-2xl border border-border bg-sapphire-50/40 p-3">
+      <div
+        className="mt-5 space-y-2 rounded-3xl p-3"
+        style={{
+          background: "rgba(22,50,79,0.04)",
+          border: "1px solid rgba(216,198,160,0.55)",
+        }}
+      >
         {messages.map((m, i) => (
           <Bubble key={i} m={m} />
         ))}
-        <div className="pt-2">
-          <div className="mx-auto w-fit rounded-full bg-muted px-3 py-1 text-[11px] text-muted-foreground">
-            IA respondendo em segundos · escalona para Gabriela quando necessário
+        <div className="pt-1.5">
+          <div
+            className="mx-auto w-fit rounded-full px-3 py-1 text-[10.5px]"
+            style={{
+              background: "rgba(245,239,225,0.85)",
+              border: "1px solid rgba(216,198,160,0.5)",
+              color: "#5B5D52",
+            }}
+          >
+            IA responde em segundos · escalona para Gabriela quando necessário
           </div>
         </div>
       </div>
 
       <a
         href="https://wa.me/"
-        className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[oklch(0.68_0.16_150)] px-5 py-4 text-base font-bold text-white shadow-lg"
+        className="mt-5 flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-semibold"
+        style={{
+          background: "linear-gradient(180deg, #2C5578, #16324F)",
+          color: "#F5EFE1",
+          boxShadow: "0 14px 26px -14px rgba(22,50,79,0.55)",
+        }}
       >
         <MessageCircle className="size-5" /> Abrir conversa no WhatsApp
       </a>
@@ -78,15 +130,30 @@ function Bubble({ m }: { m: Msg }) {
   return (
     <div className={["flex", isUser ? "justify-end" : "justify-start"].join(" ")}>
       <div
-        className={[
-          "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-sm",
+        className="max-w-[80%] rounded-2xl px-3.5 py-2 text-[13.5px]"
+        style={
           isUser
-            ? "rounded-br-sm bg-coral-soft text-primary"
-            : "rounded-bl-sm bg-card text-foreground",
-        ].join(" ")}
+            ? {
+                background: "rgba(217,169,75,0.2)",
+                color: "#16324F",
+                borderBottomRightRadius: 6,
+                border: "1px solid rgba(175,127,53,0.35)",
+              }
+            : {
+                background: "#FFFDF7",
+                color: "#16324F",
+                borderBottomLeftRadius: 6,
+                border: "1px solid rgba(216,198,160,0.5)",
+              }
+        }
       >
-        <p className="whitespace-pre-line leading-snug">{m.text}</p>
-        <div className="mt-1 flex items-center justify-end gap-1 text-[10px] text-muted-foreground">
+        <p className="whitespace-pre-line" style={{ lineHeight: 1.45 }}>
+          {m.text}
+        </p>
+        <div
+          className="mt-1 flex items-center justify-end gap-1 text-[10px]"
+          style={{ color: "#8A8574" }}
+        >
           {m.time}
           {isUser && (m.read ? <CheckCheck className="size-3" /> : <Check className="size-3" />)}
         </div>

@@ -37,39 +37,100 @@ const INCLUI = [
 function Derma() {
   return (
     <div className="px-5 pt-6">
-      <div className="flex items-center gap-2 text-coral">
-        <Lock className="size-4" />
-        <p className="text-xs font-bold uppercase tracking-wide">Acesso ao Método Derma</p>
+      <div className="flex items-center gap-2">
+        <span
+          className="text-[10px] font-semibold uppercase"
+          style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
+        >
+          Método Derma
+        </span>
+        <span
+          className="h-px flex-1"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(216,198,160,0.7), transparent)",
+          }}
+        />
       </div>
-      <h1 className="mt-2 text-2xl font-extrabold text-primary">
-        Protocolo de 90 dias com a Gabriela
+      <h1
+        className="mt-2"
+        style={{
+          fontFamily: "'Playfair Display', serif",
+          fontWeight: 500,
+          fontSize: "1.75rem",
+          lineHeight: 1.15,
+          color: "#16324F",
+        }}
+      >
+        Protocolo de <em className="italic" style={{ color: "#AF7F35" }}>90 dias</em> com a Gabriela
       </h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Este é o tier onde você tem contato humano real com a Gabriela.
-        O desafio de 7 dias abre a porta — o Método Derma sustenta a mudança.
+      <p className="mt-3 text-[13.5px]" style={{ color: "#5B5D52", lineHeight: 1.55 }}>
+        Este é o tier onde você tem contato humano real com a Gabriela. O desafio
+        de 7 dias abre a porta — o Método Derma sustenta a mudança.
       </p>
 
-      <div className="card-clinical mt-5 overflow-hidden">
-        <div className="bg-gradient-to-br from-sapphire-800 to-sapphire-600 p-5 text-primary-foreground">
-          <p className="text-xs font-semibold uppercase tracking-wide opacity-80">
+      <div
+        className="mt-6 overflow-hidden rounded-3xl"
+        style={{
+          background: "rgba(255,253,247,0.92)",
+          border: "1px solid rgba(216,198,160,0.55)",
+          boxShadow: "0 20px 32px -22px rgba(22,50,79,0.45)",
+        }}
+      >
+        <div
+          className="p-5"
+          style={{
+            background: "linear-gradient(150deg, #2C5578 0%, #16324F 70%)",
+            color: "#F5EFE1",
+          }}
+        >
+          <p
+            className="text-[10px] font-semibold uppercase"
+            style={{ letterSpacing: "0.28em", color: "#D9A94B" }}
+          >
             Método Derma · 90 dias
           </p>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold">Em breve</span>
-          </div>
-          <p className="mt-2 text-sm opacity-90">
+          <p
+            className="mt-2"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 500,
+              fontSize: "1.6rem",
+              lineHeight: 1.15,
+            }}
+          >
+            Em <em className="italic" style={{ color: "#D9A94B" }}>breve</em>
+          </p>
+          <p className="mt-2 text-[12.5px]" style={{ color: "rgba(245,239,225,0.85)" }}>
             Vaga sob avaliação — turma reduzida por trimestre.
           </p>
         </div>
-        <div className="divide-y divide-border">
+        <div>
           {INCLUI.map((i, idx) => (
-            <div key={idx} className="flex items-start gap-3 p-4">
-              <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-sapphire-100 text-sapphire-800">
+            <div
+              key={idx}
+              className="flex items-start gap-3 p-4"
+              style={{
+                borderTop: idx === 0 ? "none" : "1px solid rgba(216,198,160,0.4)",
+              }}
+            >
+              <span
+                className="grid size-9 shrink-0 place-items-center rounded-full"
+                style={{
+                  background: "rgba(175,127,53,0.1)",
+                  border: "1px solid rgba(175,127,53,0.35)",
+                  color: "#AF7F35",
+                }}
+              >
                 {i.icon}
-              </div>
+              </span>
               <div>
-                <p className="font-bold text-primary">{i.title}</p>
-                <p className="text-sm text-muted-foreground">{i.body}</p>
+                <p className="text-[13.5px] font-semibold" style={{ color: "#16324F" }}>
+                  {i.title}
+                </p>
+                <p className="text-[12px]" style={{ color: "#5B5D52", lineHeight: 1.5 }}>
+                  {i.body}
+                </p>
               </div>
             </div>
           ))}
@@ -78,11 +139,16 @@ function Derma() {
 
       <button
         onClick={() => track("derma_upgrade_clicked")}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-coral px-5 py-4 text-base font-bold text-coral-foreground"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-semibold"
+        style={{
+          background: "linear-gradient(180deg, #2C5578, #16324F)",
+          color: "#F5EFE1",
+          boxShadow: "0 14px 26px -14px rgba(22,50,79,0.55)",
+        }}
       >
         <Lock className="size-4" /> Quero saber quando abrir vaga
       </button>
-      <p className="mt-2 text-center text-xs text-muted-foreground">
+      <p className="mt-3 text-center text-[11px]" style={{ color: "#5B5D52" }}>
         Ao completar seus 7 dias, você recebe o convite de avaliação para o Método.
       </p>
     </div>

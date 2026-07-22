@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Bell, CreditCard, LogOut, User, ShieldCheck, RefreshCw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { getApp } from "../lib/quiz-store";
 import { getNotifPrefs, setNotifPrefs, type NotifPrefs } from "../lib/analytics";
 
@@ -29,10 +30,11 @@ function Perfil() {
     setNotifPrefs(patch);
   }
 
-  function sair() {
+  async function sair() {
     localStorage.removeItem("zl:app");
     localStorage.removeItem("zl:quiz");
-    navigate({ to: "/" });
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
   }
 
   return (
@@ -40,32 +42,82 @@ function Perfil() {
       <div className="flex items-center gap-2">
         <Link
           to="/app"
-          className="grid size-9 place-items-center rounded-xl text-primary hover:bg-accent"
+          className="grid size-9 place-items-center rounded-full"
+          style={{
+            border: "1px solid rgba(216,198,160,0.6)",
+            background: "rgba(255,253,247,0.85)",
+            color: "#16324F",
+          }}
         >
-          <ArrowLeft className="size-5" />
+          <ArrowLeft className="size-4" />
         </Link>
-        <p className="font-bold text-primary">Perfil</p>
+        <p
+          className="italic"
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            fontWeight: 500,
+            color: "#16324F",
+            fontSize: "1.05rem",
+          }}
+        >
+          Perfil
+        </p>
       </div>
 
-      <div className="card-clinical mt-5 flex items-center gap-4 p-5">
-        <div className="grid size-14 place-items-center rounded-2xl bg-sapphire-100 text-sapphire-800">
+      <div
+        className="mt-5 flex items-center gap-4 rounded-3xl p-5"
+        style={{
+          background: "rgba(255,253,247,0.92)",
+          border: "1px solid rgba(216,198,160,0.55)",
+          boxShadow: "0 12px 24px -20px rgba(22,50,79,0.3)",
+        }}
+      >
+        <span
+          className="grid size-14 place-items-center rounded-2xl"
+          style={{
+            background: "linear-gradient(180deg, #2C5578, #16324F)",
+            color: "#F5EFE1",
+          }}
+        >
           <User className="size-6" />
-        </div>
+        </span>
         <div>
-          <p className="text-lg font-extrabold text-primary">{app.nome || "Sua conta"}</p>
-          <p className="text-xs text-muted-foreground">{app.telefone || "sem telefone cadastrado"}</p>
+          <p
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 500,
+              fontSize: "1.2rem",
+              color: "#16324F",
+              lineHeight: 1.15,
+            }}
+          >
+            {app.nome || "Sua conta"}
+          </p>
+          <p className="mt-0.5 text-[12px]" style={{ color: "#5B5D52" }}>
+            {app.telefone || "sem telefone cadastrado"}
+          </p>
         </div>
       </div>
 
-      {/* Notification preferences */}
-      <div className="card-clinical mt-5 p-5">
-        <div className="flex items-center gap-2 text-sapphire-600">
-          <Bell className="size-4" />
-          <p className="text-xs font-bold uppercase tracking-wide">Notificações</p>
+      <div
+        className="mt-5 rounded-3xl p-5"
+        style={{
+          background: "rgba(255,253,247,0.92)",
+          border: "1px solid rgba(216,198,160,0.55)",
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <Bell className="size-3.5" style={{ color: "#AF7F35" }} />
+          <span
+            className="text-[10px] font-semibold uppercase"
+            style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
+          >
+            Notificações
+          </span>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-2 text-[12px]" style={{ color: "#5B5D52", lineHeight: 1.5 }}>
           O canal principal é o WhatsApp. Aqui no app avisamos só o essencial —
-          nada de “abra o app” sem motivo.
+          nada de "abra o app" sem motivo.
         </p>
 
         <div className="mt-4 space-y-3">
@@ -90,7 +142,9 @@ function Perfil() {
         </div>
 
         <div className="mt-5">
-          <p className="text-xs font-semibold text-primary">Formato dos avisos</p>
+          <p className="text-[12px] font-semibold" style={{ color: "#16324F" }}>
+            Formato dos avisos
+          </p>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <ModeButton
               active={prefs.modo === "distribuido"}
@@ -108,31 +162,54 @@ function Perfil() {
         </div>
       </div>
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-4 space-y-2.5">
         <Row icon={<CreditCard className="size-4" />} title="Histórico de pagamento" desc="Desafio, bônus e futuros upgrades" />
         <Row icon={<ShieldCheck className="size-4" />} title="Termos e privacidade" desc="Como cuidamos dos seus dados" />
         <Link
           to="/app/reembolso"
-          className="card-clinical flex w-full items-center gap-3 p-4 text-left"
+          className="flex w-full items-center gap-3 rounded-2xl p-4"
+          style={{
+            background: "rgba(255,253,247,0.92)",
+            border: "1px solid rgba(216,198,160,0.55)",
+          }}
         >
-          <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-sapphire-100 text-sapphire-800">
+          <span
+            className="grid size-10 shrink-0 place-items-center rounded-full"
+            style={{
+              background: "rgba(175,127,53,0.1)",
+              border: "1px solid rgba(175,127,53,0.35)",
+              color: "#AF7F35",
+            }}
+          >
             <RefreshCw className="size-4" />
-          </div>
+          </span>
           <div className="flex-1">
-            <p className="font-semibold text-primary">Pedir reembolso</p>
-            <p className="text-xs text-muted-foreground">Sob a garantia dos 7 dias</p>
+            <p className="text-[14px] font-semibold" style={{ color: "#16324F" }}>
+              Pedir reembolso
+            </p>
+            <p className="text-[11.5px]" style={{ color: "#5B5D52" }}>
+              Sob a garantia dos 7 dias
+            </p>
           </div>
         </Link>
       </div>
 
       <button
         onClick={sair}
-        className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-card px-5 py-4 text-base font-bold text-destructive"
+        className="mt-8 flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[14.5px] font-semibold"
+        style={{
+          background: "rgba(255,253,247,0.9)",
+          border: "1px solid rgba(216,198,160,0.6)",
+          color: "#B23A48",
+        }}
       >
         <LogOut className="size-4" /> Sair
       </button>
 
-      <p className="mt-6 text-center text-[11px] leading-relaxed text-muted-foreground">
+      <p
+        className="mt-6 text-center text-[11px] leading-relaxed"
+        style={{ color: "#5B5D52" }}
+      >
         Conteúdo educacional de estilo de vida. Não substitui avaliação médica.
       </p>
     </div>
@@ -149,13 +226,30 @@ function Row({
   desc: string;
 }) {
   return (
-    <button className="card-clinical flex w-full items-center gap-3 p-4 text-left">
-      <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-sapphire-100 text-sapphire-800">
+    <button
+      className="flex w-full items-center gap-3 rounded-2xl p-4 text-left"
+      style={{
+        background: "rgba(255,253,247,0.92)",
+        border: "1px solid rgba(216,198,160,0.55)",
+      }}
+    >
+      <span
+        className="grid size-10 shrink-0 place-items-center rounded-full"
+        style={{
+          background: "rgba(175,127,53,0.1)",
+          border: "1px solid rgba(175,127,53,0.35)",
+          color: "#AF7F35",
+        }}
+      >
         {icon}
-      </div>
+      </span>
       <div className="flex-1">
-        <p className="font-semibold text-primary">{title}</p>
-        <p className="text-xs text-muted-foreground">{desc}</p>
+        <p className="text-[14px] font-semibold" style={{ color: "#16324F" }}>
+          {title}
+        </p>
+        <p className="text-[11.5px]" style={{ color: "#5B5D52" }}>
+          {desc}
+        </p>
       </div>
     </button>
   );
@@ -178,14 +272,18 @@ function Toggle({
       className="flex w-full items-start gap-3 text-left"
     >
       <div className="flex-1">
-        <p className="text-sm font-semibold text-primary">{label}</p>
-        <p className="text-xs text-muted-foreground">{desc}</p>
+        <p className="text-[13px] font-semibold" style={{ color: "#16324F" }}>
+          {label}
+        </p>
+        <p className="text-[11.5px]" style={{ color: "#5B5D52", lineHeight: 1.45 }}>
+          {desc}
+        </p>
       </div>
       <span
-        className={[
-          "relative mt-1 h-6 w-11 shrink-0 rounded-full transition-colors",
-          checked ? "bg-coral" : "bg-sapphire-100",
-        ].join(" ")}
+        className="relative mt-1 h-6 w-11 shrink-0 rounded-full transition-colors"
+        style={{
+          background: checked ? "#AF7F35" : "rgba(216,198,160,0.5)",
+        }}
       >
         <span
           className={[
@@ -212,13 +310,18 @@ function ModeButton({
   return (
     <button
       onClick={onClick}
-      className={[
-        "rounded-xl border-2 p-3 text-left transition-all",
-        active ? "border-primary bg-sapphire-100" : "border-border bg-card",
-      ].join(" ")}
+      className="rounded-2xl p-3 text-left transition-all"
+      style={{
+        background: active ? "rgba(217,169,75,0.12)" : "rgba(255,253,247,0.9)",
+        border: `1px solid ${active ? "rgba(175,127,53,0.55)" : "rgba(216,198,160,0.55)"}`,
+      }}
     >
-      <p className="text-sm font-bold text-primary">{title}</p>
-      <p className="text-[11px] text-muted-foreground">{desc}</p>
+      <p className="text-[13px] font-semibold" style={{ color: "#16324F" }}>
+        {title}
+      </p>
+      <p className="text-[11px]" style={{ color: "#5B5D52" }}>
+        {desc}
+      </p>
     </button>
   );
 }
