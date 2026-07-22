@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Droplets, MessageSquareOff, Bandage, Utensils } from "lucide-react";
 import { track } from "../lib/analytics";
+import { MapaQuizDialog } from "@/components/MapaQuizDialog";
 import draGabrielaAsset from "../assets/dra-gabriela.png.asset.json";
 
 const draGabriela = draGabrielaAsset.url;
