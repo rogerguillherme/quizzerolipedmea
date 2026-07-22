@@ -64,7 +64,7 @@ function LandingPage() {
               <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.55rem,7.2vw,2rem)] md:text-6xl">
                 Não é falta de esforço.{" "}
                 <em className="text-[hsl(38_55%_42%)] font-serif italic">É lipedema</em>{" "}
-                <span className="md:inline"> — e agora dá pra entender o seu.</span>
+                <span className="md:inline">e tem solução sem dietas restritas e sofrimento.</span>
               </h1>
               <p className="mt-2 md:mt-6 text-[13px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-snug md:leading-relaxed">
                 Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>, nutricionista
