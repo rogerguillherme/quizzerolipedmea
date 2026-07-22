@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 const ADMIN_EMAIL = "rogerbendlin@hotmail.com";
-const ADMIN_PASSWORD = "admin@@@";
+const ADMIN_PASSWORD = "adminadmin";
 
 /**
  * Idempotent bootstrap: creates the admin user if not present and grants the
