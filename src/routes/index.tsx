@@ -95,7 +95,7 @@ function Landing() {
 
       <main className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-[520px] flex-col justify-between px-5 pb-4 pt-4 sm:px-8 sm:pb-6 sm:pt-6 lg:max-w-[1080px] lg:flex-row lg:items-center lg:justify-center lg:gap-12 lg:px-16 lg:py-16">
         {/* Portrait — integrated into page, not a separate panel */}
-        <div className="relative mx-auto mb-6 flex w-full max-w-[360px] justify-center lg:order-last lg:mb-0 lg:max-w-[440px]">
+        <div className="relative mx-auto flex w-full max-w-[220px] justify-center sm:max-w-[280px] lg:order-last lg:mb-0 lg:max-w-[440px]">
           <svg
             className="absolute inset-0 z-0 h-full w-full"
             viewBox="0 0 500 600"
@@ -115,11 +115,11 @@ function Landing() {
             src={draGabriela}
             alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
             fetchPriority="high"
-            className="relative z-10 h-auto w-full max-w-[300px] object-contain lg:max-w-[420px]"
+            className="relative z-10 h-auto w-full max-w-[190px] object-contain sm:max-w-[240px] lg:max-w-[420px]"
             style={{ filter: "drop-shadow(0 20px 30px rgba(22,50,79,0.22))" }}
           />
           <div
-            className="absolute z-20 flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] sm:text-[12px]"
+            className="absolute z-20 flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] sm:gap-2 sm:px-3 sm:py-1.5 sm:text-[12px]"
             style={{
               left: "50%",
               bottom: 0,
