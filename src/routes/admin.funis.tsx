@@ -473,15 +473,7 @@ function StepFields({
   onChange: (patch: Partial<Step>) => void;
 }) {
   if (step.tipo === "mensagem") {
-    return (
-      <textarea
-        value={step.texto ?? ""}
-        onChange={(e) => onChange({ texto: e.target.value })}
-        rows={2}
-        placeholder="Texto da mensagem (use {nome} para o primeiro nome)"
-        className="mt-1 w-full resize-none rounded-lg border border-[#E5DBC3] bg-[#FBF6EB] p-2 text-sm outline-none focus:border-[#B8974D]"
-      />
-    );
+    return <MensagemField step={step} onChange={onChange} />;
   }
   if (step.tipo === "espera") {
     return (
