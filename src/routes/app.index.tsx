@@ -56,7 +56,7 @@ function GuiaMapa() {
   return (
     <div className="px-5 pt-6">
       {error && (
-        <p className="mb-4 text-center text-[13px]" style={{ color: "#5B5D52" }}>
+        <p className="mb-4 text-center text-[13px]" style={{ color: "#2F3128" }}>
           Não consegui carregar seu perfil por completo — abaixo está sua avaliação essencial.
         </p>
       )}
@@ -145,7 +145,7 @@ function GuiaMapa() {
           {descricao && (
             <p
               className="mt-3 text-[13.5px]"
-              style={{ color: "#5B5D52", lineHeight: 1.55 }}
+              style={{ color: "#2F3128", lineHeight: 1.55 }}
             >
               {descricao}
             </p>

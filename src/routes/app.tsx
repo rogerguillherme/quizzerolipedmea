@@ -60,7 +60,7 @@ function AppLayout() {
         ["--blue-pale" as string]: "#AFC4D6",
         ["--gold" as string]: "#AF7F35",
         ["--gold-soft" as string]: "#D9A94B",
-        ["--ink-soft" as string]: "#5B5D52",
+        ["--ink-soft" as string]: "#2F3128",
         background:
           "radial-gradient(120% 60% at 80% 0%, #EFE3CC 0%, transparent 55%), #F5EFE1",
         color: "#16324F",
@@ -144,7 +144,7 @@ function AppLayout() {
                 key={t.to}
                 to={t.to as "/app"}
                 className="flex flex-col items-center gap-1 py-3 transition-colors"
-                style={{ color: active ? "#16324F" : "#8A8574" }}
+                style={{ color: active ? "#16324F" : "#5C5749" }}
               >
                 <span
                   className="grid size-8 place-items-center rounded-full transition-all"
@@ -156,7 +156,7 @@ function AppLayout() {
                           color: "#F5EFE1",
                           boxShadow: "0 6px 14px -6px rgba(22,50,79,0.5)",
                         }
-                      : { color: "#8A8574" }
+                      : { color: "#5C5749" }
                   }
                 >
                   <Icon className="size-4" />
