@@ -15,6 +15,19 @@ export type QuizAnswers = {
 const KEY = "zl:quiz";
 const APP_KEY = "zl:app";
 
+export type Jornada7 = {
+  ativa?: boolean;
+  iniciadoEm?: string; // ISO date
+  regiao?: string;
+  restricao?: string;
+  refeicao?: string;
+  opcaoId?: string;
+  opcaoTitulo?: string;
+  ingredientes?: string[];
+  listaCompras?: string[];
+  feedbackDias?: Record<number, "sim" | "parcial" | "nao">;
+};
+
 export type AppState = {
   nome?: string;
   telefone?: string;
@@ -23,7 +36,9 @@ export type AppState = {
   streak?: number;
   concluidos?: Record<number, string[]>; // day -> mission ids
   pagoBump?: boolean;
+  jornada7?: Jornada7;
 };
+
 
 const isBrowser = typeof window !== "undefined";
 
