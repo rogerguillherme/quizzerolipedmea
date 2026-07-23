@@ -54,7 +54,7 @@ export const iniciarProtocolo7 = createServerFn({ method: "POST" })
 
     await supabaseAdmin
       .from("leads")
-      .update({ respostas, status: "protocolo_7d_ativo" })
+      .update({ respostas: respostas as never, status: "protocolo_7d_ativo" })
       .eq("id", lead.id);
 
     // Mensagem inicial
@@ -103,6 +103,6 @@ export const registrarFeedbackDia = createServerFn({ method: "POST" })
     j.feedback = feedback;
     j.dia_atual = Math.max(Number(j.dia_atual || 1), data.dia + 1);
     respostas.jornada_7dias = j;
-    await supabaseAdmin.from("leads").update({ respostas }).eq("id", lead.id);
+    await supabaseAdmin.from("leads").update({ respostas: respostas as never }).eq("id", lead.id);
     return { ok: true as const };
   });
