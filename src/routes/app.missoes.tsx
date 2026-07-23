@@ -197,7 +197,7 @@ function Missoes() {
                       <Circle className="size-4" style={{ color: "#B8AC8C" }} />
                     )}
                   </div>
-                  <p className="text-[12.5px]" style={{ color: "#5B5D52" }}>
+                  <p className="text-[12.5px]" style={{ color: "#2F3128" }}>
                     {m.descricao}
                   </p>
                   <p
@@ -218,7 +218,7 @@ function Missoes() {
 
       <p
         className="mt-6 text-center text-[11px] leading-relaxed"
-        style={{ color: "#5B5D52" }}
+        style={{ color: "#2F3128" }}
       >
         Conteúdo educacional. Nutricionista (CRN) não prescreve medicamento nem
         exercício estruturado. Autocuidado geral: elevação, bomba de tornozelo,

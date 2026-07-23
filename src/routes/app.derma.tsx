@@ -64,7 +64,7 @@ function Derma() {
       >
         Protocolo de <em className="italic" style={{ color: "#AF7F35" }}>90 dias</em> com a Gabriela
       </h1>
-      <p className="mt-3 text-[13.5px]" style={{ color: "#5B5D52", lineHeight: 1.55 }}>
+      <p className="mt-3 text-[13.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
         Este é o tier onde você tem contato humano real com a Gabriela. O desafio
         de 7 dias abre a porta — o Método Derma sustenta a mudança.
       </p>
@@ -128,7 +128,7 @@ function Derma() {
                 <p className="text-[13.5px] font-semibold" style={{ color: "#16324F" }}>
                   {i.title}
                 </p>
-                <p className="text-[12px]" style={{ color: "#5B5D52", lineHeight: 1.5 }}>
+                <p className="text-[12px]" style={{ color: "#2F3128", lineHeight: 1.5 }}>
                   {i.body}
                 </p>
               </div>
@@ -148,7 +148,7 @@ function Derma() {
       >
         <Lock className="size-4" /> Quero saber quando abrir vaga
       </button>
-      <p className="mt-3 text-center text-[11px]" style={{ color: "#5B5D52" }}>
+      <p className="mt-3 text-center text-[11px]" style={{ color: "#2F3128" }}>
         Ao completar seus 7 dias, você recebe o convite de avaliação para o Método.
       </p>
     </div>

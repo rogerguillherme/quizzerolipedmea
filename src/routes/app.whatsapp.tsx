@@ -66,7 +66,7 @@ function WhatsApp() {
           <p className="text-[14px] font-semibold" style={{ color: "#16324F" }}>
             Assistente Zero
           </p>
-          <p className="text-[11.5px]" style={{ color: "#5B5D52" }}>
+          <p className="text-[11.5px]" style={{ color: "#2F3128" }}>
             IA treinada no método da Gabriela · CRN 10582
           </p>
         </div>
@@ -81,7 +81,7 @@ function WhatsApp() {
         }}
       >
         <p className="font-semibold">WhatsApp é o canal principal.</p>
-        <p className="mt-0.5" style={{ color: "#5B5D52" }}>
+        <p className="mt-0.5" style={{ color: "#2F3128" }}>
           O app é o apoio visual. Toda cadência acontece por lá.
         </p>
       </div>
@@ -102,7 +102,7 @@ function WhatsApp() {
             style={{
               background: "rgba(245,239,225,0.85)",
               border: "1px solid rgba(216,198,160,0.5)",
-              color: "#5B5D52",
+              color: "#2F3128",
             }}
           >
             IA responde em segundos · escalona para Gabriela quando necessário
@@ -152,7 +152,7 @@ function Bubble({ m }: { m: Msg }) {
         </p>
         <div
           className="mt-1 flex items-center justify-end gap-1 text-[10px]"
-          style={{ color: "#8A8574" }}
+          style={{ color: "#5C5749" }}
         >
           {m.time}
           {isUser && (m.read ? <CheckCheck className="size-3" /> : <Check className="size-3" />)}

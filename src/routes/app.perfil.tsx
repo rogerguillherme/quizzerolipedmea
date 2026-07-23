@@ -93,7 +93,7 @@ function Perfil() {
           >
             {app.nome || "Sua conta"}
           </p>
-          <p className="mt-0.5 text-[12px]" style={{ color: "#5B5D52" }}>
+          <p className="mt-0.5 text-[12px]" style={{ color: "#2F3128" }}>
             {app.telefone || "sem telefone cadastrado"}
           </p>
         </div>
@@ -115,7 +115,7 @@ function Perfil() {
             Notificações
           </span>
         </div>
-        <p className="mt-2 text-[12px]" style={{ color: "#5B5D52", lineHeight: 1.5 }}>
+        <p className="mt-2 text-[12px]" style={{ color: "#2F3128", lineHeight: 1.5 }}>
           O canal principal é o WhatsApp. Aqui no app avisamos só o essencial —
           nada de "abra o app" sem motivo.
         </p>
@@ -187,7 +187,7 @@ function Perfil() {
             <p className="text-[14px] font-semibold" style={{ color: "#16324F" }}>
               Pedir reembolso
             </p>
-            <p className="text-[11.5px]" style={{ color: "#5B5D52" }}>
+            <p className="text-[11.5px]" style={{ color: "#2F3128" }}>
               Sob a garantia dos 7 dias
             </p>
           </div>
@@ -208,7 +208,7 @@ function Perfil() {
 
       <p
         className="mt-6 text-center text-[11px] leading-relaxed"
-        style={{ color: "#5B5D52" }}
+        style={{ color: "#2F3128" }}
       >
         Conteúdo educacional de estilo de vida. Não substitui avaliação médica.
       </p>
@@ -247,7 +247,7 @@ function Row({
         <p className="text-[14px] font-semibold" style={{ color: "#16324F" }}>
           {title}
         </p>
-        <p className="text-[11.5px]" style={{ color: "#5B5D52" }}>
+        <p className="text-[11.5px]" style={{ color: "#2F3128" }}>
           {desc}
         </p>
       </div>
@@ -275,7 +275,7 @@ function Toggle({
         <p className="text-[13px] font-semibold" style={{ color: "#16324F" }}>
           {label}
         </p>
-        <p className="text-[11.5px]" style={{ color: "#5B5D52", lineHeight: 1.45 }}>
+        <p className="text-[11.5px]" style={{ color: "#2F3128", lineHeight: 1.45 }}>
           {desc}
         </p>
       </div>
@@ -319,7 +319,7 @@ function ModeButton({
       <p className="text-[13px] font-semibold" style={{ color: "#16324F" }}>
         {title}
       </p>
-      <p className="text-[11px]" style={{ color: "#5B5D52" }}>
+      <p className="text-[11px]" style={{ color: "#2F3128" }}>
         {desc}
       </p>
     </button>
