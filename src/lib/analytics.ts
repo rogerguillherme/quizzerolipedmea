@@ -23,6 +23,9 @@ export type FunnelEvent =
   | "day_completed"
   | "challenge_completed"
   | "derma_upgrade_clicked"
+  | "derma_cta_click"
+  | "protocol7_started"
+  | "protocol7_completed"
   | "refund_requested";
 
 export type TrackedEvent = {
