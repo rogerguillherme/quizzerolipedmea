@@ -3,11 +3,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 /**
- * Inscreve o usuário na cadência de 7 dias do Protocolo.
- * - Marca `respostas.jornada_7dias` no lead correspondente.
- * - Dispara a mensagem de boas-vindas + lista de compras pelo WhatsApp.
- * A cadência diária propriamente é agendada por um job/cron externo (não neste turno),
- * aproveitando a marca em `leads.respostas.jornada_7dias`.
+ * Inscreve a usuária na cadência de 7 dias do Protocolo.
+ * - Marca `respostas.jornada_7dias` no lead correspondente (com `diasEnviados: [1]`).
+ * - Envia a mensagem de boas-vindas + lista de compras pelo WhatsApp.
+ * - Loga o envio em `whatsapp_logs` e marca `atencao` no lead se falhar.
+ * A cadência dos dias 2–7 roda via cron em /api/public/hooks/cron-tick.
  */
 export const iniciarProtocolo7 = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -28,7 +28,6 @@ export const iniciarProtocolo7 = createServerFn({ method: "POST" })
     );
     const { sendWhatsApp } = await import("./evolution.server");
 
-    // Encontra o lead vinculado ao user_id logado.
     const { data: lead } = await supabaseAdmin
       .from("leads")
       .select("id, nome, telefone, respostas")
@@ -49,7 +48,10 @@ export const iniciarProtocolo7 = createServerFn({ method: "POST" })
       restricao: data.restricao,
       refeicao: data.refeicao,
       opcao: data.opcaoTitulo,
+      lista_compras: data.listaCompras,
       dia_atual: 1,
+      dias_enviados: [1],
+      feedback: {} as Record<string, string>,
     };
 
     await supabaseAdmin
@@ -57,7 +59,6 @@ export const iniciarProtocolo7 = createServerFn({ method: "POST" })
       .update({ respostas: respostas as never, status: "protocolo_7d_ativo" })
       .eq("id", lead.id);
 
-    // Mensagem inicial
     const primeiroNome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
       `Oi ${primeiroNome}! 💙 Seu Protocolo de 7 Dias começou.\n\n` +
@@ -65,12 +66,32 @@ export const iniciarProtocolo7 = createServerFn({ method: "POST" })
       `com 2 receitas práticas em dois dias da semana.\n\n` +
       `📝 *Sua lista de compras:*\n` +
       data.listaCompras.map((i) => `• ${i}`).join("\n") +
-      `\n\nDica de hoje: ao final do dia eu te pergunto como foi — ` +
+      `\n\nAo final do dia eu te pergunto como foi — ` +
       `responde só se quiser, sem cobrança. — Dra. Gabriela`;
 
-    await sendWhatsApp(lead.telefone, msg);
+    const wa = await sendWhatsApp(lead.telefone, msg);
 
-    return { ok: true as const };
+    await supabaseAdmin.from("whatsapp_logs").insert({
+      telefone: lead.telefone,
+      mensagem: msg,
+      status: wa.ok ? "enviado" : "falhou",
+      erro: wa.error ?? null,
+    });
+
+    if (!wa.ok) {
+      // Marca o lead para aparecer na fila de atenção da Gabriela em /admin.
+      respostas.atencao = {
+        motivo: "envio_dia1_falhou",
+        erro: wa.error ?? "desconhecido",
+        criado_em: new Date().toISOString(),
+      };
+      await supabaseAdmin
+        .from("leads")
+        .update({ respostas: respostas as never })
+        .eq("id", lead.id);
+    }
+
+    return { ok: true as const, whatsappEnviado: wa.ok, erro: wa.error ?? null };
   });
 
 export const registrarFeedbackDia = createServerFn({ method: "POST" })
@@ -97,12 +118,15 @@ export const registrarFeedbackDia = createServerFn({ method: "POST" })
     if (!lead) return { ok: false as const };
     const respostas = (lead.respostas as Record<string, unknown>) || {};
     const j = (respostas.jornada_7dias as Record<string, unknown>) || {};
-    const feedback =
-      (j.feedback as Record<string, string>) || {};
+    const feedback = (j.feedback as Record<string, string>) || {};
     feedback[String(data.dia)] = data.resposta;
     j.feedback = feedback;
     j.dia_atual = Math.max(Number(j.dia_atual || 1), data.dia + 1);
+    j.ultimo_feedback_em = new Date().toISOString();
     respostas.jornada_7dias = j;
-    await supabaseAdmin.from("leads").update({ respostas: respostas as never }).eq("id", lead.id);
+    await supabaseAdmin
+      .from("leads")
+      .update({ respostas: respostas as never })
+      .eq("id", lead.id);
     return { ok: true as const };
   });
