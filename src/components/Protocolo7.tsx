@@ -17,10 +17,10 @@ import {
   listaDeCompras,
   REFEICOES,
   REGIOES,
-  RESTRICOES,
   type Refeicao,
   type Regiao,
   type Restricao,
+
 } from "@/lib/protocolo7";
 import {
   iniciarProtocolo7,
