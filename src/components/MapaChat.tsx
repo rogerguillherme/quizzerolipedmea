@@ -111,85 +111,66 @@ const QS: ChoiceQ[] = [
   },
 ];
 
-// ------------- DDD → região (macro) -------------
-function regiaoPorDDD(tel: string): { uf: string; regiao: string; comentario: string } | null {
+// ------------- DDD → estado (comentário sempre por UF, sem cidade) -------------
+const DDD_TO_UF: Record<number, string> = {
+  11: "SP", 12: "SP", 13: "SP", 14: "SP", 15: "SP", 16: "SP", 17: "SP", 18: "SP", 19: "SP",
+  21: "RJ", 22: "RJ", 24: "RJ",
+  27: "ES", 28: "ES",
+  31: "MG", 32: "MG", 33: "MG", 34: "MG", 35: "MG", 37: "MG", 38: "MG",
+  41: "PR", 42: "PR", 43: "PR", 44: "PR", 45: "PR", 46: "PR",
+  47: "SC", 48: "SC", 49: "SC",
+  51: "RS", 53: "RS", 54: "RS", 55: "RS",
+  61: "DF", 62: "GO", 64: "GO",
+  63: "TO", 65: "MT", 66: "MT", 67: "MS",
+  68: "AC", 69: "RO",
+  71: "BA", 73: "BA", 74: "BA", 75: "BA", 77: "BA",
+  79: "SE", 81: "PE", 87: "PE", 82: "AL", 83: "PB", 84: "RN",
+  85: "CE", 88: "CE", 86: "PI", 89: "PI",
+  91: "PA", 93: "PA", 94: "PA", 92: "AM", 97: "AM",
+  95: "RR", 96: "AP", 98: "MA", 99: "MA",
+};
+
+const UF_INFO: Record<string, { estado: string; regiao: string; comentario: string }> = {
+  SP: { estado: "São Paulo", regiao: "Sudeste", comentario: "São Paulo — atendo muita paciente daí, dá pra adaptar bem à rotina corrida." },
+  RJ: { estado: "Rio de Janeiro", regiao: "Sudeste", comentario: "Rio de Janeiro — calor e umidade pesam no inchaço, vou considerar isso." },
+  ES: { estado: "Espírito Santo", regiao: "Sudeste", comentario: "Espírito Santo — clima quente pede atenção especial ao inchaço." },
+  MG: { estado: "Minas Gerais", regiao: "Sudeste", comentario: "Minas Gerais — cozinha caseira favorece muito o protocolo." },
+  PR: { estado: "Paraná", regiao: "Sul", comentario: "Paraná — clima mais frio ajuda bastante na circulação." },
+  SC: { estado: "Santa Catarina", regiao: "Sul", comentario: "Santa Catarina — atendo muita paciente daí, dá pra aproveitar peixes no plano." },
+  RS: { estado: "Rio Grande do Sul", regiao: "Sul", comentario: "Rio Grande do Sul — frio ajuda no inchaço, cozinha gaúcha a gente adapta." },
+  DF: { estado: "Distrito Federal", regiao: "Centro-Oeste", comentario: "Distrito Federal — clima seco pede atenção redobrada à hidratação." },
+  GO: { estado: "Goiás", regiao: "Centro-Oeste", comentario: "Goiás — cozinha típica combina bem com nosso plano." },
+  MT: { estado: "Mato Grosso", regiao: "Centro-Oeste", comentario: "Mato Grosso — calor intenso pede atenção especial ao inchaço." },
+  MS: { estado: "Mato Grosso do Sul", regiao: "Centro-Oeste", comentario: "Mato Grosso do Sul — cozinha regional que a gente adapta bem." },
+  TO: { estado: "Tocantins", regiao: "Norte", comentario: "Tocantins — calor forte, vou considerar isso no seu plano." },
+  AC: { estado: "Acre", regiao: "Norte", comentario: "Acre — calor e umidade pedem atenção especial ao inchaço." },
+  RO: { estado: "Rondônia", regiao: "Norte", comentario: "Rondônia — clima quente, vou considerar isso." },
+  PA: { estado: "Pará", regiao: "Norte", comentario: "Pará — calor e umidade pesam bastante no inchaço, a gente ajusta." },
+  AM: { estado: "Amazonas", regiao: "Norte", comentario: "Amazonas — clima quente e úmido, vou considerar isso no plano." },
+  RR: { estado: "Roraima", regiao: "Norte", comentario: "Roraima — calor forte pede atenção especial." },
+  AP: { estado: "Amapá", regiao: "Norte", comentario: "Amapá — clima quente e úmido, atenção ao inchaço." },
+  BA: { estado: "Bahia", regiao: "Nordeste", comentario: "Bahia — cozinha rica em opções que combinam com o protocolo." },
+  SE: { estado: "Sergipe", regiao: "Nordeste", comentario: "Sergipe — cozinha regional que a gente adapta bem." },
+  PE: { estado: "Pernambuco", regiao: "Nordeste", comentario: "Pernambuco — calor forte, vamos ficar atentas ao inchaço." },
+  AL: { estado: "Alagoas", regiao: "Nordeste", comentario: "Alagoas — cozinha regional que combina bem." },
+  PB: { estado: "Paraíba", regiao: "Nordeste", comentario: "Paraíba — calor pede atenção redobrada à hidratação." },
+  RN: { estado: "Rio Grande do Norte", regiao: "Nordeste", comentario: "Rio Grande do Norte — dá pra aproveitar bem os peixes no protocolo." },
+  CE: { estado: "Ceará", regiao: "Nordeste", comentario: "Ceará — adoro atender pacientes daí, vou considerar o clima quente." },
+  PI: { estado: "Piauí", regiao: "Nordeste", comentario: "Piauí — calor forte, atenção especial ao inchaço." },
+  MA: { estado: "Maranhão", regiao: "Nordeste", comentario: "Maranhão — cozinha regional rica, a gente adapta bem." },
+};
+
+function regiaoPorDDD(tel: string): { uf: string; estado: string; regiao: string; comentario: string } | null {
   const digits = tel.replace(/\D/g, "");
-  // 13 dígitos = 55 + DDD (2) + celular (9). 10 ou 11 dígitos = DDD + fixo/celular, SEM código do país.
   let ddd = "";
   if (digits.length === 12 || digits.length === 13) ddd = digits.slice(2, 4);
   else if (digits.length === 10 || digits.length === 11) ddd = digits.slice(0, 2);
   if (!ddd) return null;
-  const n = Number(ddd);
-  const map: Record<number, { uf: string; regiao: string; comentario: string }> = {
-    11: { uf: "SP", regiao: "Sudeste", comentario: "São Paulo — atendo muita paciente aí, dá pra adaptar bem o cardápio à correria do dia a dia." },
-    12: { uf: "SP", regiao: "Sudeste", comentario: "Vale do Paraíba (SP), ótimo — clima ajuda bastante na circulação." },
-    13: { uf: "SP", regiao: "Sudeste", comentario: "Baixada Santista, adoro atender pacientes do litoral." },
-    14: { uf: "SP", regiao: "Sudeste", comentario: "Interior de SP, região com boa oferta de alimentos frescos." },
-    15: { uf: "SP", regiao: "Sudeste", comentario: "Sorocaba e região, ótima cozinha caseira pra adaptar o protocolo." },
-    16: { uf: "SP", regiao: "Sudeste", comentario: "Ribeirão Preto, clima quente pede atenção especial ao inchaço." },
-    17: { uf: "SP", regiao: "Sudeste", comentario: "Noroeste paulista, clima seco e quente pesa no inchaço — a gente ajusta." },
-    18: { uf: "SP", regiao: "Sudeste", comentario: "Presidente Prudente e região, dá pra montar um plano bem prático aí." },
-    19: { uf: "SP", regiao: "Sudeste", comentario: "Campinas, região com boa oferta de tudo que a gente precisa." },
-    21: { uf: "RJ", regiao: "Sudeste", comentario: "Rio de Janeiro, calor e umidade fazem diferença — vou considerar isso." },
-    22: { uf: "RJ", regiao: "Sudeste", comentario: "Interior do Rio, ótima base de alimentos frescos." },
-    24: { uf: "RJ", regiao: "Sudeste", comentario: "Sul Fluminense, clima ameno ajuda bastante." },
-    27: { uf: "ES", regiao: "Sudeste", comentario: "Espírito Santo, clima quente pede atenção ao inchaço." },
-    28: { uf: "ES", regiao: "Sudeste", comentario: "Sul do ES, dá pra aproveitar bem o que tem por aí." },
-    31: { uf: "MG", regiao: "Sudeste", comentario: "Belo Horizonte, cozinha mineira favorece muito o protocolo." },
-    32: { uf: "MG", regiao: "Sudeste", comentario: "Zona da Mata mineira, adoro os ingredientes daí." },
-    33: { uf: "MG", regiao: "Sudeste", comentario: "Vale do Rio Doce (MG), a gente adapta com o que tem local." },
-    34: { uf: "MG", regiao: "Sudeste", comentario: "Triângulo Mineiro, boa base de proteínas e verduras." },
-    35: { uf: "MG", regiao: "Sudeste", comentario: "Sul de Minas, clima ameno favorece muito." },
-    37: { uf: "MG", regiao: "Sudeste", comentario: "Centro-Oeste mineiro, culinária caseira favorece muito." },
-    38: { uf: "MG", regiao: "Sudeste", comentario: "Norte de Minas, clima quente pede atenção especial ao inchaço." },
-    41: { uf: "PR", regiao: "Sul", comentario: "Curitiba, o frio do Sul ajuda no inchaço — mas a alimentação típica precisa de ajuste." },
-    42: { uf: "PR", regiao: "Sul", comentario: "Paraná (Ponta Grossa), clima frio favorece a circulação." },
-    43: { uf: "PR", regiao: "Sul", comentario: "Norte do Paraná, dá pra montar um plano bem local." },
-    44: { uf: "PR", regiao: "Sul", comentario: "Maringá (PR), clima quente pede atenção especial." },
-    45: { uf: "PR", regiao: "Sul", comentario: "Oeste do Paraná, culinária forte pede ajustes." },
-    46: { uf: "PR", regiao: "Sul", comentario: "Sudoeste do Paraná, clima frio ajuda." },
-    47: { uf: "SC", regiao: "Sul", comentario: "Santa Catarina — atendo muita paciente aí, tem uns ajustes ótimos pra fazer." },
-    48: { uf: "SC", regiao: "Sul", comentario: "Florianópolis e região, dá pra aproveitar peixes e frutos do mar no protocolo." },
-    49: { uf: "SC", regiao: "Sul", comentario: "Oeste catarinense, cozinha forte que a gente adapta bem." },
-    51: { uf: "RS", regiao: "Sul", comentario: "Porto Alegre, cozinha gaúcha tem ajustes bem interessantes." },
-    53: { uf: "RS", regiao: "Sul", comentario: "Sul do RS, frio ajuda no inchaço." },
-    54: { uf: "RS", regiao: "Sul", comentario: "Serra gaúcha, clima frio favorece muito." },
-    55: { uf: "RS", regiao: "Sul", comentario: "Centro-oeste do RS, dá pra montar um plano bem regional." },
-    61: { uf: "DF", regiao: "Centro-Oeste", comentario: "Brasília, clima seco pede atenção à hidratação." },
-    62: { uf: "GO", regiao: "Centro-Oeste", comentario: "Goiás, cozinha típica que a gente adapta bem." },
-    63: { uf: "TO", regiao: "Norte", comentario: "Tocantins, calor forte — vou considerar isso no plano." },
-    64: { uf: "GO", regiao: "Centro-Oeste", comentario: "Interior de Goiás, base de alimentos naturais bem forte." },
-    65: { uf: "MT", regiao: "Centro-Oeste", comentario: "Mato Grosso, calor intenso pede atenção especial." },
-    66: { uf: "MT", regiao: "Centro-Oeste", comentario: "Interior do MT, dá pra aproveitar bastante coisa local." },
-    67: { uf: "MS", regiao: "Centro-Oeste", comentario: "Mato Grosso do Sul, cozinha regional que a gente adapta." },
-    68: { uf: "AC", regiao: "Norte", comentario: "Acre, calor e umidade pedem atenção especial ao inchaço." },
-    69: { uf: "RO", regiao: "Norte", comentario: "Rondônia, clima quente vou considerar no seu plano." },
-    71: { uf: "BA", regiao: "Nordeste", comentario: "Salvador, cozinha baiana tem muita opção que combina com o protocolo." },
-    73: { uf: "BA", regiao: "Nordeste", comentario: "Sul da Bahia, adoro os ingredientes daí." },
-    74: { uf: "BA", regiao: "Nordeste", comentario: "Norte da Bahia, calor pede atenção especial." },
-    75: { uf: "BA", regiao: "Nordeste", comentario: "Feira de Santana e região, dá pra aproveitar muita coisa local." },
-    77: { uf: "BA", regiao: "Nordeste", comentario: "Oeste baiano, base de alimentos naturais bem forte." },
-    79: { uf: "SE", regiao: "Nordeste", comentario: "Sergipe, cozinha rica que a gente adapta bem." },
-    81: { uf: "PE", regiao: "Nordeste", comentario: "Recife, calor forte — vamos ficar atentas ao inchaço." },
-    82: { uf: "AL", regiao: "Nordeste", comentario: "Alagoas, cozinha regional que combina bem." },
-    83: { uf: "PB", regiao: "Nordeste", comentario: "Paraíba, calor pede atenção à hidratação." },
-    84: { uf: "RN", regiao: "Nordeste", comentario: "Rio Grande do Norte, dá pra aproveitar peixes no protocolo." },
-    85: { uf: "CE", regiao: "Nordeste", comentario: "Fortaleza, adoro atender pacientes daí — vou considerar o clima." },
-    86: { uf: "PI", regiao: "Nordeste", comentario: "Piauí, calor forte — atenção especial ao inchaço." },
-    87: { uf: "PE", regiao: "Nordeste", comentario: "Sertão pernambucano, cozinha típica que a gente adapta." },
-    88: { uf: "CE", regiao: "Nordeste", comentario: "Interior do Ceará, dá pra montar plano bem regional." },
-    89: { uf: "PI", regiao: "Nordeste", comentario: "Sul do Piauí, calor intenso pede atenção." },
-    91: { uf: "PA", regiao: "Norte", comentario: "Pará, calor e umidade pedem atenção especial ao inchaço." },
-    92: { uf: "AM", regiao: "Norte", comentario: "Amazonas, clima quente e úmido — vou considerar no seu plano." },
-    93: { uf: "PA", regiao: "Norte", comentario: "Oeste do Pará, dá pra aproveitar peixes e frutas locais." },
-    94: { uf: "PA", regiao: "Norte", comentario: "Sudeste do Pará, cozinha forte que a gente adapta." },
-    95: { uf: "RR", regiao: "Norte", comentario: "Roraima, calor forte pede atenção especial." },
-    96: { uf: "AP", regiao: "Norte", comentario: "Amapá, clima quente e úmido — atenção ao inchaço." },
-    97: { uf: "AM", regiao: "Norte", comentario: "Interior do Amazonas, dá pra aproveitar muita coisa local." },
-    98: { uf: "MA", regiao: "Nordeste", comentario: "Maranhão (São Luís), cozinha regional que a gente adapta." },
-    99: { uf: "MA", regiao: "Nordeste", comentario: "Interior do Maranhão, calor pede atenção especial." },
-  };
-  return map[n] || null;
+  const uf = DDD_TO_UF[Number(ddd)];
+  if (!uf) return null;
+  const info = UF_INFO[uf];
+  if (!info) return null;
+  return { uf, estado: info.estado, regiao: info.regiao, comentario: info.comentario };
 }
 
 // ------------- Mensagens -------------
