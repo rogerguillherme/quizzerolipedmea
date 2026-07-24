@@ -240,7 +240,7 @@ export function ProtocoloDialog({
 }) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [regiao, setRegiao] = useState<Regiao | null>(null);
-  const [restricao, setRestricao] = useState<Restricao | null>(null);
+  const restricao: Restricao = "ambas";
   const [refeicao, setRefeicao] = useState<Refeicao | null>(null);
   const [opcaoId, setOpcaoId] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
@@ -249,7 +249,8 @@ export function ProtocoloDialog({
   const opcoes = regiao && refeicao ? CARDAPIOS[regiao][refeicao] : [];
   const opcao = opcoes.find((o) => o.id === opcaoId) || null;
   const lista =
-    opcao && restricao ? listaDeCompras(opcao.ingredientes, restricao) : [];
+    opcao ? listaDeCompras(opcao.ingredientes, restricao) : [];
+
 
   async function confirmar() {
     if (!regiao || !restricao || !refeicao || !opcao) return;
