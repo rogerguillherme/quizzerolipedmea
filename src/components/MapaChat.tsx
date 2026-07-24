@@ -242,8 +242,11 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     }
   }, [stage.kind]);
 
-  // Mensagens iniciais
+  // Mensagens iniciais (guardadas contra StrictMode double-invoke)
+  const bootedRef = useRef(false);
   useEffect(() => {
+    if (bootedRef.current) return;
+    bootedRef.current = true;
     (async () => {
       await gabiSay("Oi! Aqui é a Gabriela Rosado, nutricionista (CRN 10582).");
       await gabiSay("Vou te fazer algumas perguntas rápidas pra montar o seu Mapa do Lipedema — leva uns 2 minutinhos. Pode ser?");
@@ -263,9 +266,15 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushMsg({ id: crypto.randomUUID(), from: "user", text });
   }
 
-  async function gabiSay(text: string, delay = 700) {
+  // Simula "digitando" proporcional ao tamanho da mensagem — mais humano.
+  async function gabiSay(text: string, delay?: number) {
+    // ~35ms por caractere, mínimo 900ms, máximo 3200ms
+    const auto = Math.min(3200, Math.max(900, Math.round(text.length * 35)));
+    const wait = delay ?? auto;
+    // pequena pausa antes de "começar a digitar"
+    await new Promise((r) => setTimeout(r, 350));
     setTyping(true);
-    await new Promise((r) => setTimeout(r, delay));
+    await new Promise((r) => setTimeout(r, wait));
     setTyping(false);
     pushGabi(text);
   }
