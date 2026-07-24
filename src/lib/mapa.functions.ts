@@ -11,16 +11,18 @@ import { createLovableAiGatewayProvider } from "./ai-gateway.server";
  */
 const MapaInput = z.object({
   nome: z.string().trim().min(2).max(80),
-  telefone: z.string().trim().min(8).max(40),
+  // Telefone agora é opcional — captura acontece DEPOIS de mostrar o Mapa,
+  // para que ela veja o valor antes de entregar o WhatsApp.
+  telefone: z.string().trim().max(40).optional().default(""),
   respostas: z.object({
-    tempo: z.string().min(1),           // Q1
-    diagnostico: z.string().min(1),     // Q2
-    sintomaMaior: z.string().min(1),    // Q3
-    pesoPernas: z.string().min(1),      // Q4
-    dietaExercicio: z.string().min(1),  // Q5
-    atividade: z.string().min(1),       // Q6
-    exames: z.string().min(1),          // Q7
-    objetivo: z.string().min(1),        // Q8
+    tempo: z.string().min(1),
+    diagnostico: z.string().min(1),
+    sintomaMaior: z.string().min(1),
+    pesoPernas: z.string().min(1),
+    dietaExercicio: z.string().min(1),
+    atividade: z.string().min(1),
+    exames: z.string().min(1),
+    objetivo: z.string().min(1),
   }),
 });
 
