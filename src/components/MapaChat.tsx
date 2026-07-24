@@ -396,34 +396,11 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
   async function handleReceberAcesso() {
     if (!leadId) return;
-    setStage({ kind: "sending-access" });
-    pushUser("Sim, pode chamar 💙");
-    await gabiSay("Estou criando seu acesso e enviando agora…", 500);
-    try {
-      const result = await gerarAcesso({ data: { leadId } });
-      track("purchase_completed", { step: "acesso_gerado" });
-      setTyping(false);
-      pushMsg({
-        id: crypto.randomUUID(),
-        from: "system",
-        kind: "acesso",
-        login: result.login,
-        senha: result.senha,
-        loginUrl: result.loginUrl,
-        whatsappEnviado: result.whatsappEnviado,
-      });
-      if (result.whatsappEnviado) {
-        await gabiSay("Prontinho! Já mandei no seu WhatsApp. Dá uma olhadinha 📲");
-      } else {
-        await gabiSay("Seu acesso está pronto — anote aí, é rapidinho.");
-      }
-      setStage({ kind: "done" });
-    } catch (e) {
-      console.error(e);
-      setTyping(false);
-      setErro("Não consegui gerar seu acesso agora. Tenta de novo em alguns segundos?");
-      setStage({ kind: "showing-report" });
-    }
+    pushUser("Sim, pode me chamar 💙");
+    setStage({ kind: "asking-telefone" });
+    await gabiSay(
+      "Perfeito! Me passa seu WhatsApp com DDD — (11) 9 8888-7777 — que já te chamo por lá.",
+    );
   }
 
   // ---- Render ----
