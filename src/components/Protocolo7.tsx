@@ -9,6 +9,9 @@ import {
   ShoppingBasket,
   PartyPopper,
   PlayCircle,
+  Copy,
+  Check,
+  TrendingUp,
 } from "lucide-react";
 import { getApp, setApp, type Jornada7 } from "@/lib/quiz-store";
 import { track } from "@/lib/analytics";
