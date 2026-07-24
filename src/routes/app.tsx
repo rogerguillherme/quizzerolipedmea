@@ -136,7 +136,7 @@ function AppLayout() {
           borderTop: "1px solid rgba(216,198,160,0.5)",
         }}
       >
-        <div className="mx-auto grid max-w-md grid-cols-3">
+        <div className="mx-auto grid max-w-md grid-cols-4">
           {tabs.map((t) => {
             const active = t.exact ? pathname === t.to : pathname.startsWith(t.to);
             const Icon = t.icon;
