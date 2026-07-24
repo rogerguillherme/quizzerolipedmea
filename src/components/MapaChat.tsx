@@ -297,7 +297,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     await gabiSay(QS[0].gabi(nome));
   }
 
-  async function handleChoice(qIndex: number, opt: { label: string; short: string }) {
+  async function handleChoice(qIndex: number, opt: ChoiceOpt) {
     const q = QS[qIndex];
     pushUser(opt.short);
     setAnswers((prev) => ({ ...prev, [q.key]: opt.label }));
