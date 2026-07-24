@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MapaPage } from "@/routes/mapa";
+import { MapaChat } from "@/components/MapaChat";
 
 /**
  * Popup fullscreen que hospeda o fluxo do Mapa do Lipedema.
