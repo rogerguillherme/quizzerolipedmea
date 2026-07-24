@@ -55,7 +55,7 @@ function AdminLayout() {
       const { data } = await supabase.auth.getSession();
       if (!mounted) return;
       if (!data.session) {
-        navigate({ to: "/auth" });
+        navigate({ to: "/admin/login" });
         return;
       }
       const { data: role } = await supabase
@@ -66,7 +66,7 @@ function AdminLayout() {
         .maybeSingle();
       if (!role) {
         await supabase.auth.signOut();
-        navigate({ to: "/auth" });
+        navigate({ to: "/admin/login" });
         return;
       }
       setChecking(false);
