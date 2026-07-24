@@ -300,7 +300,8 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
   async function handleChoice(qIndex: number, opt: ChoiceOpt) {
     const q = QS[qIndex];
     pushUser(opt.short);
-    setAnswers((prev) => ({ ...prev, [q.key]: opt.label }));
+    const updated = { ...answers, [q.key]: opt.label };
+    setAnswers(updated);
 
     // Comentário reativo curto (opcional)
     const reacao = reacaoParaResposta(q.key, opt.label, nome);
@@ -314,11 +315,11 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       // Todas respondidas — submeter
       setStage({ kind: "submitting" });
       await gabiSay(`Perfeito, ${nome}. Vou juntar tudo aqui e montar seu Mapa…`, 600);
-      await enviarQuiz();
+      await enviarQuiz(updated);
     }
   }
 
-  async function enviarQuiz() {
+  async function enviarQuiz(finalAnswers: Record<string, string> = answers) {
     setErro(null);
     try {
       const result = await submit({
@@ -326,14 +327,14 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
           nome,
           telefone,
           respostas: {
-            tempo: answers.tempo || "",
-            diagnostico: answers.diagnostico || "",
-            sintomaMaior: answers.sintomaMaior || "",
-            pesoPernas: answers.pesoPernas || "",
-            dietaExercicio: answers.dietaExercicio || "",
-            atividade: answers.atividade || "",
-            exames: answers.exames || "",
-            objetivo: answers.objetivo || "",
+            tempo: finalAnswers.tempo || "",
+            diagnostico: finalAnswers.diagnostico || "",
+            sintomaMaior: finalAnswers.sintomaMaior || "",
+            pesoPernas: finalAnswers.pesoPernas || "",
+            dietaExercicio: finalAnswers.dietaExercicio || "",
+            atividade: finalAnswers.atividade || "",
+            exames: finalAnswers.exames || "",
+            objetivo: finalAnswers.objetivo || "",
           },
         },
       });
@@ -730,14 +731,12 @@ function ChoiceComposer({
                 src={opt.image}
                 alt={opt.short}
                 loading="lazy"
-                width={512}
-                height={512}
-                className="h-24 w-full rounded-xl object-cover"
+                className="h-36 w-full rounded-xl object-contain"
                 style={{ background: C.creamSoft }}
               />
             ) : (
               <div
-                className="grid h-24 w-full place-items-center rounded-xl text-[11px]"
+                className="grid h-36 w-full place-items-center rounded-xl text-[11px]"
                 style={{ background: C.creamSoft, color: C.inkSoft }}
               >
                 Não sei
