@@ -1,38 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import {
-  CheckCircle2,
-  Circle,
   Utensils,
   Leaf,
   HeartPulse,
   MessageSquareQuote,
   Coffee,
-  Sparkles,
-  X,
-  ArrowRight,
-  ShoppingBasket,
-  PartyPopper,
-  PlayCircle,
+  ChevronDown,
 } from "lucide-react";
-import { getApp, setApp, type Jornada7 } from "../lib/quiz-store";
-import { track } from "../lib/analytics";
-import {
-  CARDAPIOS,
-  CHA_INDICADO,
-  listaDeCompras,
-  REFEICOES,
-  REGIOES,
-  RESTRICOES,
-  type Refeicao,
-  type Regiao,
-  type Restricao,
-} from "../lib/protocolo7";
-import {
-  iniciarProtocolo7,
-  registrarFeedbackDia,
-} from "../lib/protocolo7.functions";
+import { CHA_INDICADO } from "../lib/protocolo7";
 
 export const Route = createFileRoute("/app/missoes")({
   component: Missoes,
@@ -46,9 +22,8 @@ const CARD = {
 
 const NAVY = "#16324F";
 const GOLD = "#AF7F35";
-const CREAM = "#F5EFE1";
 
-type Missao = {
+type Dica = {
   id: string;
   titulo: string;
   descricao: string;
@@ -56,7 +31,7 @@ type Missao = {
   detalhe: string;
 };
 
-const MISSOES: Missao[] = [
+const DICAS: Dica[] = [
   {
     id: "aliados",
     titulo: "Alimentos que ajudam no dia a dia",
@@ -92,62 +67,7 @@ const MISSOES: Missao[] = [
 ];
 
 function Missoes() {
-  const app = getApp();
-  const dia = app.diaAtual || 1;
-  const initial = (app.concluidos?.[dia] || []) as string[];
-  const [feitas, setFeitas] = useState<string[]>(initial);
-  const [jornada, setJornada] = useState<Jornada7>(app.jornada7 || {});
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [finaleOpen, setFinaleOpen] = useState(false);
-
-  function toggle(id: string) {
-    const next = feitas.includes(id) ? feitas.filter((x) => x !== id) : [...feitas, id];
-    setFeitas(next);
-    const concluidos = { ...(app.concluidos || {}), [dia]: next };
-    setApp({ concluidos });
-    if (next.length === MISSOES.length) {
-      setApp({ streak: (app.streak || 0) + 1 });
-      track("day_completed", { dia });
-      if (dia >= 7) track("challenge_completed");
-    }
-  }
-
-  const diasCumpridos = useMemo(() => {
-    const fb = jornada.feedbackDias || {};
-    return Object.values(fb).filter((v) => v === "sim" || v === "parcial").length;
-  }, [jornada]);
-
-  const pctProtocolo = Math.round((diasCumpridos / 7) * 100);
-  const protocoloAtivo = !!jornada.ativa;
-
-  const pctDia = Math.round((feitas.length / MISSOES.length) * 100);
-  const completo = feitas.length === MISSOES.length;
-
-  function onProtocoloIniciado(j: Jornada7) {
-    setJornada(j);
-    setApp({ jornada7: j });
-    setDialogOpen(false);
-    track("protocol7_started", { regiao: j.regiao, refeicao: j.refeicao });
-  }
-
-  const registrarFeedback = useServerFn(registrarFeedbackDia);
-
-  async function marcarDia(diaN: number, resposta: "sim" | "parcial" | "nao") {
-    const fb = { ...(jornada.feedbackDias || {}), [diaN]: resposta };
-    const next = { ...jornada, feedbackDias: fb };
-    setJornada(next);
-    setApp({ jornada7: next });
-    try {
-      await registrarFeedback({ data: { dia: diaN, resposta } });
-    } catch {
-      /* silencioso — sem cobrança */
-    }
-    const cumpridos = Object.values(fb).filter((v) => v === "sim" || v === "parcial").length;
-    if (cumpridos >= 7) {
-      track("protocol7_completed");
-      setFinaleOpen(true);
-    }
-  }
+  const [aberta, setAberta] = useState<string | null>(null);
 
   return (
     <div className="px-5 pt-6 pb-24">
@@ -169,104 +89,67 @@ function Missoes() {
       >
         Dicas para <em className="italic" style={{ color: GOLD }}>cuidar</em> do lipedema
       </h1>
+      <p className="mt-2 text-[13px]" style={{ color: "#2F3128" }}>
+        Toque em cada dica para expandir o conteúdo.
+      </p>
 
-      {/* Progresso do dia */}
-      <div className="mt-5 rounded-2xl p-4" style={CARD}>
-        <div className="flex items-center justify-between">
-          <p className="text-[13px] font-semibold" style={{ color: NAVY }}>
-            Progresso do dia
-          </p>
-          <p className="text-[13px] font-bold tabular-nums" style={{ color: GOLD }}>
-            {feitas.length}/{MISSOES.length}
-          </p>
-        </div>
-        <div
-          className="mt-2 h-1.5 w-full overflow-hidden rounded-full"
-          style={{ background: "rgba(216,198,160,0.35)" }}
-        >
-          <div
-            className="h-full rounded-full transition-all duration-500"
-            style={{
-              width: `${pctDia}%`,
-              background: "linear-gradient(90deg, #D9A94B, #AF7F35)",
-            }}
-          />
-        </div>
-        {completo && (
-          <p
-            className="mt-3 rounded-xl px-3 py-2 text-center text-[13px] font-semibold"
-            style={{
-              background: "rgba(217,169,75,0.15)",
-              color: NAVY,
-              border: "1px solid rgba(175,127,53,0.35)",
-            }}
-          >
-            🎉 Dia {dia} concluído — sua sequência aumentou!
-          </p>
-        )}
-      </div>
-
-      {/* Missões / guia */}
-      <div className="mt-5 space-y-2.5">
-        {MISSOES.map((m) => {
-          const done = feitas.includes(m.id);
+      {/* Dicas minimizadas — clique para expandir */}
+      <div className="mt-5 space-y-2">
+        {DICAS.map((d) => {
+          const open = aberta === d.id;
           return (
-            <button
-              key={m.id}
-              onClick={() => toggle(m.id)}
-              className="w-full rounded-2xl p-4 text-left transition-all"
-              style={{
-                background: done ? "rgba(217,169,75,0.08)" : "rgba(255,253,247,0.9)",
-                border: `1px solid ${done ? "rgba(175,127,53,0.5)" : "rgba(216,198,160,0.55)"}`,
-                boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
-              }}
+            <div
+              key={d.id}
+              className="overflow-hidden rounded-2xl transition-all"
+              style={CARD}
             >
-              <div className="flex items-start gap-3">
+              <button
+                onClick={() => setAberta(open ? null : d.id)}
+                className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
+                aria-expanded={open}
+              >
                 <span
-                  className="grid size-10 shrink-0 place-items-center rounded-full transition-colors"
-                  style={
-                    done
-                      ? {
-                          background: "linear-gradient(180deg, var(--blue-soft), var(--blue))",
-                          color: CREAM,
-                        }
-                      : {
-                          background: "rgba(175,127,53,0.1)",
-                          border: "1px solid rgba(175,127,53,0.35)",
-                          color: GOLD,
-                        }
-                  }
+                  className="grid size-9 shrink-0 place-items-center rounded-full"
+                  style={{
+                    background: "rgba(175,127,53,0.1)",
+                    border: "1px solid rgba(175,127,53,0.35)",
+                    color: GOLD,
+                  }}
                 >
-                  {m.icon}
+                  {d.icon}
                 </span>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-[14.5px] font-semibold" style={{ color: NAVY }}>
-                      {m.titulo}
-                    </p>
-                    {done ? (
-                      <CheckCircle2 className="size-4" style={{ color: GOLD }} />
-                    ) : (
-                      <Circle className="size-4" style={{ color: "#B8AC8C" }} />
-                    )}
-                  </div>
-                  <p className="text-[12.5px]" style={{ color: "#2F3128" }}>
-                    {m.descricao}
+                  <p className="text-[14px] font-semibold" style={{ color: NAVY }}>
+                    {d.titulo}
                   </p>
-                  <p
-                    className="mt-2 rounded-lg p-2.5 text-[11.5px] leading-relaxed"
-                    style={{ background: "rgba(22,50,79,0.04)", color: NAVY }}
-                  >
-                    {m.detalhe}
+                  <p className="text-[12px]" style={{ color: "#5C5749" }}>
+                    {d.descricao}
                   </p>
                 </div>
-              </div>
-            </button>
+                <ChevronDown
+                  className="size-4 shrink-0 transition-transform"
+                  style={{
+                    color: NAVY,
+                    transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                  }}
+                />
+              </button>
+              {open && (
+                <div className="px-4 pb-4">
+                  <p
+                    className="rounded-lg p-3 text-[12.5px] leading-relaxed"
+                    style={{ background: "rgba(22,50,79,0.04)", color: NAVY }}
+                  >
+                    {d.detalhe}
+                  </p>
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
 
-      {/* Chá / shot indicado — sempre com contraindicação */}
+      {/* Chá indicado — sempre com contraindicação */}
       <div className="mt-5 rounded-2xl p-4" style={CARD}>
         <div className="flex items-center gap-2">
           <Coffee className="size-4" style={{ color: GOLD }} />
@@ -299,550 +182,12 @@ function Missoes() {
         </div>
       </div>
 
-      {/* Protocolo de 7 dias */}
-      <div
-        className="mt-5 overflow-hidden rounded-2xl p-5"
-        style={{
-          background: "linear-gradient(160deg, #16324F 0%, #1E4368 100%)",
-          color: CREAM,
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <Sparkles className="size-4" style={{ color: "#D9A94B" }} />
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "#D9A94B" }}>
-            Protocolo gratuito
-          </p>
-        </div>
-        <p
-          className="mt-2"
-          style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.3rem", lineHeight: 1.2 }}
-        >
-          {protocoloAtivo ? "Seu Protocolo de 7 Dias" : "Comece o Protocolo de 7 Dias"}
-        </p>
-        <p className="mt-2 text-[13px] leading-relaxed" style={{ color: "rgba(245,239,225,0.85)" }}>
-          {protocoloAtivo
-            ? "Sua cadência está ativa. Você recebe as dicas pelo WhatsApp e pode marcar como foi o dia — sem cobrança."
-            : "Escolha 1 refeição, receba sua lista de compras e uma cadência diária no WhatsApp. Sem cobrança durante os 7 dias."}
-        </p>
-
-        {protocoloAtivo && (
-          <>
-            <div className="mt-4 flex items-center justify-between text-[12px]">
-              <span style={{ color: "rgba(245,239,225,0.85)" }}>Dias cumpridos</span>
-              <span className="font-bold tabular-nums" style={{ color: "#D9A94B" }}>
-                {diasCumpridos}/7
-              </span>
-            </div>
-            <div
-              className="mt-1 h-1.5 w-full overflow-hidden rounded-full"
-              style={{ background: "rgba(245,239,225,0.15)" }}
-            >
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${pctProtocolo}%`,
-                  background: "linear-gradient(90deg, #D9A94B, #F5EFE1)",
-                }}
-              />
-            </div>
-            <div className="mt-3 grid grid-cols-7 gap-1.5">
-              {Array.from({ length: 7 }, (_, i) => i + 1).map((d) => {
-                const fb = jornada.feedbackDias?.[d];
-                const ok = fb === "sim" || fb === "parcial";
-                return (
-                  <button
-                    key={d}
-                    onClick={() => marcarDia(d, ok ? "nao" : "sim")}
-                    className="rounded-lg py-2 text-[11px] font-bold transition"
-                    style={{
-                      background: ok ? "#D9A94B" : "rgba(245,239,225,0.1)",
-                      color: ok ? NAVY : CREAM,
-                      border: "1px solid rgba(245,239,225,0.25)",
-                    }}
-                    aria-label={`Marcar dia ${d}`}
-                  >
-                    D{d}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="mt-3 text-[11px] leading-relaxed" style={{ color: "rgba(245,239,225,0.7)" }}>
-              Sem responder é ok. A barra segue no ritmo do que você marcar aqui ou responder no WhatsApp.
-            </p>
-          </>
-        )}
-
-        {!protocoloAtivo && (
-          <button
-            onClick={() => setDialogOpen(true)}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[14px] font-semibold transition active:scale-[0.98]"
-            style={{
-              background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
-              color: NAVY,
-              boxShadow: "0 10px 24px -12px rgba(217,169,75,0.6)",
-            }}
-          >
-            Iniciar Protocolo de 7 Dias
-            <ArrowRight className="size-4" />
-          </button>
-        )}
-
-        {protocoloAtivo && diasCumpridos >= 7 && (
-          <button
-            onClick={() => setFinaleOpen(true)}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[14px] font-semibold"
-            style={{ background: CREAM, color: NAVY }}
-          >
-            <PartyPopper className="size-4" />
-            Ver relatório e próximo passo
-          </button>
-        )}
-      </div>
-
       <p
         className="mt-6 text-center text-[11px] leading-relaxed"
         style={{ color: "#2F3128" }}
       >
-        Conteúdo educacional. Nutricionista (CRN) não prescreve medicamento nem
-        exercício estruturado. Autocuidado geral: elevação, bomba de tornozelo,
-        respiração e caminhada leve.
+        Para iniciar o Protocolo de 7 Dias, use a aba <strong>Protocolo</strong> no menu.
       </p>
-
-      {dialogOpen && (
-        <ProtocoloDialog
-          onClose={() => setDialogOpen(false)}
-          onFinish={onProtocoloIniciado}
-        />
-      )}
-      {finaleOpen && <FinaleDialog onClose={() => setFinaleOpen(false)} />}
-    </div>
-  );
-}
-
-// -------------------------- Dialog: iniciar protocolo --------------------------
-
-function ProtocoloDialog({
-  onClose,
-  onFinish,
-}: {
-  onClose: () => void;
-  onFinish: (j: Jornada7) => void;
-}) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [regiao, setRegiao] = useState<Regiao | null>(null);
-  const [restricao, setRestricao] = useState<Restricao | null>(null);
-  const [refeicao, setRefeicao] = useState<Refeicao | null>(null);
-  const [opcaoId, setOpcaoId] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
-  const iniciar = useServerFn(iniciarProtocolo7);
-
-  const opcoes = regiao && refeicao ? CARDAPIOS[regiao][refeicao] : [];
-  const opcao = opcoes.find((o) => o.id === opcaoId) || null;
-  const lista =
-    opcao && restricao ? listaDeCompras(opcao.ingredientes, restricao) : [];
-
-  async function confirmar() {
-    if (!regiao || !restricao || !refeicao || !opcao) return;
-    setEnviando(true);
-    const jornada: Jornada7 = {
-      ativa: true,
-      iniciadoEm: new Date().toISOString(),
-      regiao,
-      restricao,
-      refeicao,
-      opcaoId: opcao.id,
-      opcaoTitulo: opcao.titulo,
-      ingredientes: opcao.ingredientes,
-      listaCompras: lista,
-      feedbackDias: {},
-    };
-    try {
-      await iniciar({
-        data: {
-          regiao,
-          restricao,
-          refeicao,
-          opcaoTitulo: opcao.titulo,
-          listaCompras: lista,
-        },
-      });
-    } catch {
-      /* segue mesmo sem WhatsApp — não bloqueia a jornada local */
-    }
-    setEnviando(false);
-    onFinish(jornada);
-  }
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
-      style={{ background: "rgba(15,30,50,0.55)" }}
-      onClick={onClose}
-    >
-      <div
-        className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl p-5 sm:rounded-3xl"
-        style={{ background: "#FDFBF5" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-3 flex items-center justify-between">
-          <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
-            Protocolo 7 Dias · Passo {step}/4
-          </p>
-          <button onClick={onClose} aria-label="Fechar">
-            <X className="size-5" style={{ color: NAVY }} />
-          </button>
-        </div>
-
-        {step === 1 && (
-          <div>
-            <h3
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "1.25rem",
-                color: NAVY,
-              }}
-            >
-              Duas perguntas rápidas
-            </h3>
-            <p className="mt-3 text-[13px] font-semibold" style={{ color: NAVY }}>
-              Em qual região você mora?
-            </p>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {REGIOES.map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => setRegiao(r.id)}
-                  className="rounded-xl px-3 py-2.5 text-[13px] font-medium transition"
-                  style={{
-                    background: regiao === r.id ? NAVY : "rgba(255,253,247,0.9)",
-                    color: regiao === r.id ? CREAM : NAVY,
-                    border: "1px solid rgba(216,198,160,0.55)",
-                  }}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-            <p className="mt-4 text-[13px] font-semibold" style={{ color: NAVY }}>
-              Alguma restrição alimentar?
-            </p>
-            <div className="mt-2 grid grid-cols-1 gap-2">
-              {RESTRICOES.map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => setRestricao(r.id)}
-                  className="rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition"
-                  style={{
-                    background: restricao === r.id ? NAVY : "rgba(255,253,247,0.9)",
-                    color: restricao === r.id ? CREAM : NAVY,
-                    border: "1px solid rgba(216,198,160,0.55)",
-                  }}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-            <button
-              disabled={!regiao || !restricao}
-              onClick={() => setStep(2)}
-              className="mt-5 w-full rounded-xl py-3 text-[14px] font-semibold transition disabled:opacity-40"
-              style={{ background: NAVY, color: CREAM }}
-            >
-              Continuar
-            </button>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div>
-            <h3
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "1.25rem",
-                color: NAVY,
-              }}
-            >
-              Qual refeição você quer substituir?
-            </h3>
-            <p className="mt-1 text-[12.5px]" style={{ color: "#2F3128" }}>
-              Escolha uma — vamos montar as opções e a lista pra ela.
-            </p>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {REFEICOES.map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => setRefeicao(r.id)}
-                  className="rounded-xl px-3 py-4 text-[13px] font-semibold transition"
-                  style={{
-                    background: refeicao === r.id ? NAVY : "rgba(255,253,247,0.9)",
-                    color: refeicao === r.id ? CREAM : NAVY,
-                    border: "1px solid rgba(216,198,160,0.55)",
-                  }}
-                >
-                  <span className="block text-2xl">{r.emoji}</span>
-                  <span className="mt-1 block">{r.label}</span>
-                </button>
-              ))}
-            </div>
-            <div className="mt-5 flex gap-2">
-              <button
-                onClick={() => setStep(1)}
-                className="flex-1 rounded-xl py-3 text-[13px] font-semibold"
-                style={{ background: "rgba(22,50,79,0.08)", color: NAVY }}
-              >
-                Voltar
-              </button>
-              <button
-                disabled={!refeicao}
-                onClick={() => setStep(3)}
-                className="flex-[2] rounded-xl py-3 text-[14px] font-semibold transition disabled:opacity-40"
-                style={{ background: NAVY, color: CREAM }}
-              >
-                Ver opções
-              </button>
-            </div>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div>
-            <h3
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "1.25rem",
-                color: NAVY,
-              }}
-            >
-              3 opções para {REFEICOES.find((r) => r.id === refeicao)?.label.toLowerCase()}
-            </h3>
-            <p className="mt-1 text-[12.5px]" style={{ color: "#2F3128" }}>
-              Baseadas no cardápio validado da sua região.
-            </p>
-            <div className="mt-3 space-y-2">
-              {opcoes.map((o) => {
-                const sel = opcaoId === o.id;
-                return (
-                  <button
-                    key={o.id}
-                    onClick={() => setOpcaoId(o.id)}
-                    className="w-full rounded-xl p-3 text-left transition"
-                    style={{
-                      background: sel ? "rgba(217,169,75,0.15)" : "rgba(255,253,247,0.9)",
-                      border: `1px solid ${sel ? GOLD : "rgba(216,198,160,0.55)"}`,
-                    }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <p className="flex-1 text-[13.5px] font-semibold" style={{ color: NAVY }}>
-                        {o.titulo}
-                      </p>
-                      {sel && <CheckCircle2 className="size-4" style={{ color: GOLD }} />}
-                    </div>
-                    <p className="mt-1 text-[12px]" style={{ color: "#2F3128" }}>
-                      {o.descricao}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="mt-5 flex gap-2">
-              <button
-                onClick={() => setStep(2)}
-                className="flex-1 rounded-xl py-3 text-[13px] font-semibold"
-                style={{ background: "rgba(22,50,79,0.08)", color: NAVY }}
-              >
-                Voltar
-              </button>
-              <button
-                disabled={!opcaoId}
-                onClick={() => setStep(4)}
-                className="flex-[2] rounded-xl py-3 text-[14px] font-semibold transition disabled:opacity-40"
-                style={{ background: NAVY, color: CREAM }}
-              >
-                Ver lista de compras
-              </button>
-            </div>
-          </div>
-        )}
-
-        {step === 4 && opcao && (
-          <div>
-            <div className="flex items-center gap-2">
-              <ShoppingBasket className="size-4" style={{ color: GOLD }} />
-              <h3
-                style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontSize: "1.25rem",
-                  color: NAVY,
-                }}
-              >
-                Sua lista de compras
-              </h3>
-            </div>
-            <p className="mt-1 text-[12.5px]" style={{ color: "#2F3128" }}>
-              Para <strong>{opcao.titulo}</strong> + despensa base + chá de gengibre.
-            </p>
-            <ul className="mt-3 grid grid-cols-1 gap-1.5">
-              {lista.map((i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-[13px]"
-                  style={{
-                    background: "rgba(22,50,79,0.04)",
-                    color: NAVY,
-                  }}
-                >
-                  <Circle className="size-3" style={{ color: GOLD }} />
-                  {i}
-                </li>
-              ))}
-            </ul>
-            <div
-              className="mt-4 rounded-xl p-3 text-[12px] leading-relaxed"
-              style={{ background: "rgba(217,169,75,0.1)", color: NAVY }}
-            >
-              Ao confirmar, você recebe a lista pelo WhatsApp e a cadência começa hoje.
-              Nos próximos 7 dias, dicas diárias + 2 receitas em dois dias da semana.
-            </div>
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={() => setStep(3)}
-                className="flex-1 rounded-xl py-3 text-[13px] font-semibold"
-                style={{ background: "rgba(22,50,79,0.08)", color: NAVY }}
-              >
-                Voltar
-              </button>
-              <button
-                disabled={enviando}
-                onClick={confirmar}
-                className="flex-[2] rounded-xl py-3 text-[14px] font-semibold transition disabled:opacity-60"
-                style={{
-                  background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
-                  color: NAVY,
-                }}
-              >
-                {enviando ? "Enviando…" : "Ativar protocolo"}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// -------------------------- Dialog: encerramento dia 7 --------------------------
-
-function FinaleDialog({ onClose }: { onClose: () => void }) {
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
-      style={{ background: "rgba(15,30,50,0.6)" }}
-      onClick={onClose}
-    >
-      <div
-        className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl sm:rounded-3xl"
-        style={{ background: "#FDFBF5" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between p-5 pb-2">
-          <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
-            Você chegou ao dia 7 🎉
-          </p>
-          <button onClick={onClose} aria-label="Fechar">
-            <X className="size-5" style={{ color: NAVY }} />
-          </button>
-        </div>
-        <div className="px-5">
-          <h3
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "1.5rem",
-              color: NAVY,
-              lineHeight: 1.15,
-            }}
-          >
-            Parabéns por concluir seu Protocolo de 7 Dias
-          </h3>
-          <div
-            className="mt-3 aspect-video overflow-hidden rounded-2xl"
-            style={{
-              background: "linear-gradient(160deg, #16324F, #1E4368)",
-              display: "grid",
-              placeItems: "center",
-            }}
-          >
-            <div className="flex flex-col items-center text-center" style={{ color: CREAM }}>
-              <PlayCircle className="size-12" style={{ color: "#D9A94B" }} />
-              <p className="mt-2 text-[12px] uppercase tracking-widest" style={{ color: "#D9A94B" }}>
-                Mensagem da Dra. Gabriela
-              </p>
-              <p className="mt-1 text-[13px]" style={{ color: "rgba(245,239,225,0.85)" }}>
-                (vídeo em breve nesta tela)
-              </p>
-            </div>
-          </div>
-
-          <div
-            className="mt-4 rounded-2xl p-4"
-            style={{
-              background: "rgba(217,169,75,0.1)",
-              border: "1px solid rgba(175,127,53,0.35)",
-            }}
-          >
-            <p className="text-[12px] font-bold uppercase tracking-widest" style={{ color: GOLD }}>
-              Seu progresso
-            </p>
-            <ul className="mt-2 space-y-1 text-[13px]" style={{ color: NAVY }}>
-              <li>• Você seguiu 7 dias de troca de refeição.</li>
-              <li>• Introduziu o chá indicado com a contraindicação respeitada.</li>
-              <li>• Recebeu 2 receitas práticas na semana.</li>
-              <li>• Marcou seus dias sem cobrança.</li>
-            </ul>
-          </div>
-
-          <div
-            className="mt-4 rounded-2xl p-4"
-            style={{
-              background: "linear-gradient(160deg, #16324F 0%, #1E4368 100%)",
-              color: CREAM,
-            }}
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#D9A94B" }}>
-              Próximo passo
-            </p>
-            <p
-              className="mt-2"
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "1.2rem",
-                lineHeight: 1.2,
-              }}
-            >
-              Método Derma — 90 dias de acompanhamento completo
-            </p>
-            <p className="mt-2 text-[13px]" style={{ color: "rgba(245,239,225,0.85)" }}>
-              Cardápios personalizados por fase, acompanhamento próximo da Dra. Gabriela
-              e o protocolo completo que ela usa com as pacientes do consultório.
-            </p>
-            <a
-              href="/app/derma"
-              className="mt-4 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-[14px] font-semibold"
-              style={{
-                background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
-                color: NAVY,
-              }}
-              onClick={() => track("derma_cta_click", { origem: "protocolo7_finale" })}
-            >
-              Quero conhecer o Método Derma
-              <ArrowRight className="size-4" />
-            </a>
-          </div>
-
-          <p className="mt-4 pb-5 text-center text-[11px]" style={{ color: "#5C5749" }}>
-            Este é o único momento de cobrança do protocolo. Nada antes disso.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
