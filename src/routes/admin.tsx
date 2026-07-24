@@ -154,7 +154,7 @@ function AdminLayout() {
             <button
               onClick={async () => {
                 await supabase.auth.signOut();
-                navigate({ to: "/auth" });
+                navigate({ to: "/admin/login" });
               }}
               className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-[#3E4F65] hover:bg-[#EFE5CE]"
             >
