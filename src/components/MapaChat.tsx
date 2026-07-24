@@ -731,14 +731,12 @@ function ChoiceComposer({
                 src={opt.image}
                 alt={opt.short}
                 loading="lazy"
-                width={512}
-                height={512}
-                className="h-24 w-full rounded-xl object-cover"
+                className="h-36 w-full rounded-xl object-contain"
                 style={{ background: C.creamSoft }}
               />
             ) : (
               <div
-                className="grid h-24 w-full place-items-center rounded-xl text-[11px]"
+                className="grid h-36 w-full place-items-center rounded-xl text-[11px]"
                 style={{ background: C.creamSoft, color: C.inkSoft }}
               >
                 Não sei
