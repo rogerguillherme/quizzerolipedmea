@@ -121,7 +121,7 @@ Devolva o JSON conforme instruções.`;
       .from("leads")
       .insert({
         nome: data.nome,
-        telefone: data.telefone,
+        telefone: data.telefone && data.telefone.length >= 8 ? data.telefone : "pendente",
         respostas: data.respostas,
         origem: "mapa",
         status: "mapa_gerado",
