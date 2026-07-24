@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import {
   MessageSquare,
   GitBranch,
@@ -7,23 +8,47 @@ import {
   Sparkles,
   Crown,
   TrendingUp,
+  AlertTriangle,
 } from "lucide-react";
 import {
   getEvents,
   getLeads,
   seedAdminDemoIfEmpty,
 } from "@/lib/analytics";
+import { listarLeadsAtencao } from "@/lib/mapa-access.functions";
 
 export const Route = createFileRoute("/admin/")({
   component: DashboardPage,
 });
 
+type LeadAtencao = {
+  id: string;
+  nome: string;
+  telefone: string;
+  status: string;
+  motivo: string;
+  criadoEm: string;
+};
+
+const MOTIVO_LABEL: Record<string, string> = {
+  envio_dia1_falhou: "WhatsApp não enviou (dia 1)",
+  sem_feedback_3d: "3+ dias sem responder",
+};
+
 function DashboardPage() {
   const [ready, setReady] = useState(false);
+  const [atencao, setAtencao] = useState<LeadAtencao[]>([]);
+  const carregarAtencao = useServerFn(listarLeadsAtencao);
+
   useEffect(() => {
     seedAdminDemoIfEmpty();
     setReady(true);
-  }, []);
+    carregarAtencao()
+      .then((rows) => setAtencao(rows as LeadAtencao[]))
+      .catch(() => {
+        /* silencioso — sem cobrança */
+      });
+  }, [carregarAtencao]);
 
   const events = useMemo(() => (ready ? getEvents() : []), [ready]);
   const leads = useMemo(() => (ready ? getLeads() : []), [ready]);
@@ -92,6 +117,48 @@ function DashboardPage() {
           </div>
         ))}
       </section>
+
+      {atencao.length > 0 && (
+        <section className="mt-8">
+          <div className="mb-3 flex items-center gap-2">
+            <AlertTriangle className="size-4 text-[#B23A48]" />
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#B23A48]">
+              Fila de atenção ({atencao.length})
+            </p>
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-[#E5DBC3] bg-white/80">
+            <table className="w-full text-sm">
+              <thead className="bg-[#FBF6EB] text-[10px] uppercase tracking-[0.14em] text-[#8A7C5C]">
+                <tr>
+                  <th className="px-4 py-2.5 text-left">Lead</th>
+                  <th className="px-4 py-2.5 text-left">WhatsApp</th>
+                  <th className="px-4 py-2.5 text-left">Motivo</th>
+                  <th className="px-4 py-2.5 text-left">Quando</th>
+                </tr>
+              </thead>
+              <tbody>
+                {atencao.map((l) => (
+                  <tr key={l.id} className="border-t border-[#E5DBC3] text-[#0B2A4A]">
+                    <td className="px-4 py-2.5 font-medium">{l.nome}</td>
+                    <td className="px-4 py-2.5 tabular-nums text-[#3E4F65]">{l.telefone}</td>
+                    <td className="px-4 py-2.5 text-[#B23A48]">
+                      {MOTIVO_LABEL[l.motivo] ?? l.motivo}
+                    </td>
+                    <td className="px-4 py-2.5 text-[#3E4F65]">
+                      {new Date(l.criadoEm).toLocaleString("pt-BR", {
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       <section className="mt-10">
         <div className="mb-3 flex items-center gap-2">

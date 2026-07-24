@@ -17,13 +17,14 @@ import { getApp, setApp, type Jornada7 } from "@/lib/quiz-store";
 import { track } from "@/lib/analytics";
 import {
   CARDAPIOS,
+  CHA_INDICADO,
   listaDeCompras,
   REFEICOES,
   REGIOES,
+  RESTRICOES,
   type Refeicao,
   type Regiao,
   type Restricao,
-
 } from "@/lib/protocolo7";
 import {
   iniciarProtocolo7,
@@ -284,7 +285,7 @@ export function ProtocoloDialog({
 }) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [regiao, setRegiao] = useState<Regiao | null>(null);
-  const restricao: Restricao = "ambas";
+  const [restricao, setRestricao] = useState<Restricao>("ambas");
   const [refeicao, setRefeicao] = useState<Refeicao | null>(null);
   const [opcaoId, setOpcaoId] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
@@ -373,9 +374,25 @@ export function ProtocoloDialog({
                 </button>
               ))}
             </div>
-            <p className="mt-4 text-[11.5px] leading-relaxed" style={{ color: "#5C5749" }}>
-              Todas as opções já são naturalmente sem glúten e sem lactose.
+            <p className="mt-5 text-[11px] font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
+              Alguma restrição alimentar?
             </p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {RESTRICOES.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => setRestricao(r.id)}
+                  className="rounded-xl px-3 py-2.5 text-[12.5px] font-medium transition"
+                  style={{
+                    background: restricao === r.id ? NAVY : "rgba(255,253,247,0.9)",
+                    color: restricao === r.id ? CREAM : NAVY,
+                    border: "1px solid rgba(216,198,160,0.55)",
+                  }}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
             <button
               disabled={!regiao}
               onClick={() => setStep(2)}
@@ -496,7 +513,7 @@ export function ProtocoloDialog({
               </h3>
             </div>
             <p className="mt-1 text-[12.5px]" style={{ color: "#2F3128" }}>
-              Para <strong>{opcao.titulo}</strong> + despensa base + chá de gengibre.
+              Para <strong>{opcao.titulo}</strong> + despensa base + {CHA_INDICADO.nome}.
             </p>
             <ul className="mt-3 grid grid-cols-1 gap-1.5">
               {lista.map((i) => (

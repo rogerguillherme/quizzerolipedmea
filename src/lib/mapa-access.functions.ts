@@ -9,24 +9,44 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  * - testarEvolution / salvarEvolutionConfig: administração da Evolution API.
  */
 
-const SENHA_PADRAO = "zero123";
 
 function emailFrom(telefone: string) {
   const digits = telefone.replace(/\D/g, "");
   return `wa${digits}@zerolipedema.app`;
 }
 
+// Senha aleatória, curta e fácil de digitar no celular.
+// Ex: "zero7834". A lead só vê essa senha pelo WhatsApp.
+function gerarSenha(): string {
+  const n = Math.floor(1000 + Math.random() * 9000);
+  return `zero${n}`;
+}
+
 // ---------------- Criar acesso pós-quiz -----------------
 
 export const criarAcessoMapa = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
-    z.object({ leadId: z.string().uuid() }).parse(input),
+    z
+      .object({
+        leadId: z.string().uuid(),
+        // Telefone informado no final do chat (opcional; se vier, sobrescreve o do lead).
+        telefone: z.string().trim().min(8).max(40).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import(
       "@/integrations/supabase/client.server"
     );
     const { sendWhatsApp } = await import("./evolution.server");
+
+    // Se o telefone chegou agora, atualiza o lead antes de prosseguir.
+    if (data.telefone) {
+      await supabaseAdmin
+        .from("leads")
+        .update({ telefone: data.telefone })
+        .eq("id", data.leadId);
+    }
 
     const { data: lead, error: leadErr } = await supabaseAdmin
       .from("leads")
@@ -38,7 +58,11 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
       throw new Error(`Lead não encontrado: ${leadErr?.message ?? "n/a"}`);
     }
 
-    const senha = SENHA_PADRAO;
+    if (!lead.telefone || lead.telefone === "pendente" || lead.telefone.replace(/\D/g, "").length < 8) {
+      throw new Error("Telefone inválido — preciso do WhatsApp com DDD.");
+    }
+
+    const senha = gerarSenha();
     const email = emailFrom(lead.telefone);
     let userId = lead.user_id as string | null;
     let novaConta = false;
@@ -152,3 +176,42 @@ export const getMyProfile = createServerFn({ method: "GET" })
     if (error) throw error;
     return data;
   });
+
+// ---------------- Fila de atenção (admin) -----------------
+// Leads marcados com respostas.atencao (envio falhou / 3+ dias sem responder).
+export const listarLeadsAtencao = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: role } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (!role) throw new Error("Acesso restrito.");
+
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+    const { data } = await supabaseAdmin
+      .from("leads")
+      .select("id, nome, telefone, status, respostas, updated_at")
+      .not("respostas->atencao", "is", null)
+      .order("updated_at", { ascending: false })
+      .limit(50);
+
+    return (data ?? []).map((l) => {
+      const at = (l.respostas as Record<string, unknown>)?.atencao as
+        | { motivo?: string; criado_em?: string; erro?: string }
+        | undefined;
+      return {
+        id: l.id,
+        nome: l.nome,
+        telefone: l.telefone,
+        status: l.status,
+        motivo: at?.motivo ?? "desconhecido",
+        criadoEm: at?.criado_em ?? l.updated_at,
+      };
+    });
+  });
+

@@ -140,7 +140,7 @@ function AuthPage() {
           Entrar no seu <em className="italic" style={{ color: "#AF7F35" }}>mapa</em>
         </h1>
         <p className="mt-1 text-[13px]" style={{ color: "#2F3128", lineHeight: 1.5 }}>
-          Use o número de WhatsApp que recebeu o link. Senha inicial: <strong>zero123</strong>.
+          Use o número de WhatsApp que recebeu o link, e a senha que enviamos por lá.
         </p>
 
         <label

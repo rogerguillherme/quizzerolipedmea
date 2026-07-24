@@ -94,6 +94,57 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
           status: "recebido",
         });
 
+        // Interpretação de feedback do Protocolo 7 Dias.
+        // Só entra em ação se a lead tem jornada_7dias.ativa; caso contrário,
+        // segue o comportamento normal (mensagem cai no inbox humano).
+        if (!fromMe) {
+          const norm = conteudo
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/\p{Diacritic}/gu, "")
+            .trim();
+
+          let resposta: "sim" | "parcial" | "nao" | null = null;
+          if (/\b(sim|consegui|ok|feito|fiz)\b/.test(norm)) resposta = "sim";
+          else if (/(mais ou menos|parcial|quase|meio a meio|em partes)/.test(norm))
+            resposta = "parcial";
+          else if (/\b(nao|não|nao consegui|not?ao)\b/.test(norm) || /^n$/.test(norm))
+            resposta = "nao";
+
+          if (resposta) {
+            const { data: lead } = await supabaseAdmin
+              .from("leads")
+              .select("id, respostas")
+              .eq("telefone", telefone)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (lead) {
+              const respostas =
+                (lead.respostas as Record<string, unknown>) ?? {};
+              const j =
+                (respostas.jornada_7dias as Record<string, unknown>) ?? {};
+              if (j.ativa) {
+                const feedback =
+                  (j.feedback as Record<string, string>) ?? {};
+                const dia = Math.max(
+                  1,
+                  Math.min(7, Number(j.dia_atual ?? 1) - 1 || 1),
+                );
+                feedback[String(dia)] = resposta;
+                j.feedback = feedback;
+                j.dia_atual = Math.max(Number(j.dia_atual || 1), dia + 1);
+                j.ultimo_feedback_em = new Date().toISOString();
+                respostas.jornada_7dias = j;
+                await supabaseAdmin
+                  .from("leads")
+                  .update({ respostas: respostas as never })
+                  .eq("id", lead.id);
+              }
+            }
+          }
+        }
+
         return Response.json({ ok: true });
       },
       GET: async () =>

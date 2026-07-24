@@ -50,6 +50,12 @@ function AdminLayout() {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
 
   useEffect(() => {
+    // A rota /admin/login é filha desta layout no roteamento flat.
+    // Se guardarmos sessão aqui, ela redireciona pra si mesma em loop.
+    if (pathname.startsWith("/admin/login")) {
+      setChecking(false);
+      return;
+    }
     let mounted = true;
     (async () => {
       const { data } = await supabase.auth.getSession();
@@ -74,7 +80,12 @@ function AdminLayout() {
     return () => {
       mounted = false;
     };
-  }, [navigate]);
+  }, [navigate, pathname]);
+
+  // Na rota de login, renderiza direto sem chrome do painel.
+  if (pathname.startsWith("/admin/login")) {
+    return <Outlet />;
+  }
 
   if (checking) {
     return (

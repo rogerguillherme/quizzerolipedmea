@@ -692,3 +692,37 @@ export const FEEDBACK_REPLIES: Record<FeedbackResposta, string> = {
 // Após 3+ dias sem resposta → escalonar em /admin (fila humana),
 // nunca disparar mensagem automática de pressão.
 export const ESCALONAMENTO_DIAS_SEM_RESPOSTA = 3;
+
+// ---------- 6. Receitas práticas — enviadas nos dias 3 e 5 ----------
+
+export type ReceitaPratica = {
+  dia: number;
+  titulo: string;
+  descricao: string;
+  passos: string[];
+};
+
+export const RECEITAS_PRATICAS: ReceitaPratica[] = [
+  {
+    dia: 3,
+    titulo: "Shot verde de gengibre e limão",
+    descricao:
+      "Anti-inflamatório natural, ajuda no inchaço matinal. Bebe em jejum.",
+    passos: [
+      "Bata 1 xícara de água de coco com 1 folha de couve, suco de 1/2 limão e 1 cm de gengibre.",
+      "Coa e bebe puro pela manhã, antes do café.",
+    ],
+  },
+  {
+    dia: 5,
+    titulo: "Salada morna de folhas + peixe grelhado",
+    descricao:
+      "Prática pra almoço/jantar. Combina ômega-3 com folhas antioxidantes.",
+    passos: [
+      "Grelha 1 filé de peixe (salmão, tilápia ou pescada) com azeite e limão.",
+      "Serve sobre folhas verdes (rúcula/agrião) levemente aquecidas com azeite.",
+      "Finaliza com sementes de chia ou linhaça.",
+    ],
+  },
+];
+
