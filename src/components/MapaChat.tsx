@@ -325,7 +325,8 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       const result = await submit({
         data: {
           nome,
-          telefone,
+          // Telefone chega DEPOIS do report; envia vazio aqui.
+          telefone: "",
           respostas: {
             tempo: finalAnswers.tempo || "",
             diagnostico: finalAnswers.diagnostico || "",
@@ -350,13 +351,46 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
         nome,
       });
       await gabiSay("Esse é o resumo do que li nas suas respostas. 💙", 900);
-      await gabiSay("Posso te chamar agora no WhatsApp com o acesso completo ao seu Mapa?");
+      await gabiSay(
+        "Se quiser, te mando o Mapa completo no WhatsApp — é onde vou te acompanhar. Me passa seu número com DDD?",
+      );
       setStage({ kind: "showing-report" });
     } catch (e) {
       console.error(e);
       setTyping(false);
       setErro("Tive um problema pra gerar seu Mapa agora. Vamos tentar de novo?");
       setStage({ kind: "showing-report" });
+    }
+  }
+
+  async function enviarAcesso(telefoneFinal: string) {
+    if (!leadId) return;
+    setStage({ kind: "sending-access" });
+    await gabiSay("Estou criando seu acesso e enviando agora…", 500);
+    try {
+      const result = await gerarAcesso({ data: { leadId, telefone: telefoneFinal } });
+      track("purchase_completed", { step: "acesso_gerado" });
+      setTyping(false);
+      pushMsg({
+        id: crypto.randomUUID(),
+        from: "system",
+        kind: "acesso",
+        login: result.login,
+        senha: result.senha,
+        loginUrl: result.loginUrl,
+        whatsappEnviado: result.whatsappEnviado,
+      });
+      if (result.whatsappEnviado) {
+        await gabiSay("Prontinho! Já mandei no seu WhatsApp. Dá uma olhadinha 📲");
+      } else {
+        await gabiSay("Seu acesso está pronto — anote aí, é rapidinho.");
+      }
+      setStage({ kind: "done" });
+    } catch (e) {
+      console.error(e);
+      setTyping(false);
+      setErro("Não consegui gerar seu acesso agora. Tenta de novo em alguns segundos?");
+      setStage({ kind: "asking-telefone" });
     }
   }
 
