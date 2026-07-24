@@ -110,7 +110,10 @@ const QS: ChoiceQ[] = [
 // ------------- DDD → região (macro) -------------
 function regiaoPorDDD(tel: string): { uf: string; regiao: string; comentario: string } | null {
   const digits = tel.replace(/\D/g, "");
-  const ddd = digits.length >= 11 ? digits.slice(2, 4) : digits.length >= 10 ? digits.slice(0, 2) : "";
+  // 13 dígitos = 55 + DDD (2) + celular (9). 10 ou 11 dígitos = DDD + fixo/celular, SEM código do país.
+  let ddd = "";
+  if (digits.length === 12 || digits.length === 13) ddd = digits.slice(2, 4);
+  else if (digits.length === 10 || digits.length === 11) ddd = digits.slice(0, 2);
   if (!ddd) return null;
   const n = Number(ddd);
   const map: Record<number, { uf: string; regiao: string; comentario: string }> = {
