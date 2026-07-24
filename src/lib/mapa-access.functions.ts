@@ -9,7 +9,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  * - testarEvolution / salvarEvolutionConfig: administração da Evolution API.
  */
 
-const SENHA_PADRAO = "zero123";
 
 function emailFrom(telefone: string) {
   const digits = telefone.replace(/\D/g, "");
