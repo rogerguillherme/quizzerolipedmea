@@ -287,12 +287,12 @@ export function ProtocoloDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[110] flex items-end justify-center sm:items-center"
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4"
       style={{ background: "rgba(15,30,50,0.55)" }}
       onClick={onClose}
     >
       <div
-        className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl p-5 sm:rounded-3xl"
+        className="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-3xl p-5"
         style={{ background: "#FDFBF5" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -308,17 +308,17 @@ export function ProtocoloDialog({
         {step === 1 && (
           <div>
             <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.25rem", color: NAVY }}>
-              Duas perguntas rápidas
-            </h3>
-            <p className="mt-3 text-[13px] font-semibold" style={{ color: NAVY }}>
               Em qual região você mora?
+            </h3>
+            <p className="mt-1 text-[12.5px]" style={{ color: "#2F3128" }}>
+              Vamos adaptar o cardápio aos alimentos típicos da sua região.
             </p>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="mt-4 grid grid-cols-1 gap-2">
               {REGIOES.map((r) => (
                 <button
                   key={r.id}
                   onClick={() => setRegiao(r.id)}
-                  className="rounded-xl px-3 py-2.5 text-[13px] font-medium transition"
+                  className="rounded-xl px-3 py-3 text-left text-[13.5px] font-medium transition"
                   style={{
                     background: regiao === r.id ? NAVY : "rgba(255,253,247,0.9)",
                     color: regiao === r.id ? CREAM : NAVY,
@@ -329,35 +329,20 @@ export function ProtocoloDialog({
                 </button>
               ))}
             </div>
-            <p className="mt-4 text-[13px] font-semibold" style={{ color: NAVY }}>
-              Alguma restrição alimentar?
+            <p className="mt-4 text-[11.5px] leading-relaxed" style={{ color: "#5C5749" }}>
+              Todas as opções já são naturalmente sem glúten e sem lactose.
             </p>
-            <div className="mt-2 grid grid-cols-1 gap-2">
-              {RESTRICOES.map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => setRestricao(r.id)}
-                  className="rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition"
-                  style={{
-                    background: restricao === r.id ? NAVY : "rgba(255,253,247,0.9)",
-                    color: restricao === r.id ? CREAM : NAVY,
-                    border: "1px solid rgba(216,198,160,0.55)",
-                  }}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
             <button
-              disabled={!regiao || !restricao}
+              disabled={!regiao}
               onClick={() => setStep(2)}
-              className="mt-5 w-full rounded-xl py-3 text-[14px] font-semibold transition disabled:opacity-40"
+              className="mt-4 w-full rounded-xl py-3 text-[14px] font-semibold transition disabled:opacity-40"
               style={{ background: NAVY, color: CREAM }}
             >
               Continuar
             </button>
           </div>
         )}
+
 
         {step === 2 && (
           <div>
