@@ -23,12 +23,13 @@ const C = {
 } as const;
 
 // ------------- Perguntas (mesmas do quiz, adaptadas ao formato de chat) -------------
+type ChoiceOpt = { label: string; short: string; image?: string };
 type ChoiceQ = {
   key:
     | "tempo" | "diagnostico" | "sintomaMaior" | "pesoPernas"
     | "dietaExercicio" | "atividade" | "exames" | "objetivo";
   gabi: (nome: string) => string;
-  options: { label: string; short: string }[];
+  options: ChoiceOpt[];
 };
 
 const QS: ChoiceQ[] = [
@@ -36,9 +37,9 @@ const QS: ChoiceQ[] = [
     key: "tempo",
     gabi: (n) => `${n}, olhando as suas pernas hoje, qual desses estágios mais se parece com elas?`,
     options: [
-      { label: "Estágio 1 — leve", short: "Estágio 1" },
-      { label: "Estágio 2 — moderado", short: "Estágio 2" },
-      { label: "Estágio 3 — avançado", short: "Estágio 3" },
+      { label: "Estágio 1 — leve", short: "Estágio 1", image: estagio1Img },
+      { label: "Estágio 2 — moderado", short: "Estágio 2", image: estagio2Img },
+      { label: "Estágio 3 — avançado", short: "Estágio 3", image: estagio3Img },
       { label: "Não sei identificar", short: "Não sei" },
     ],
   },
