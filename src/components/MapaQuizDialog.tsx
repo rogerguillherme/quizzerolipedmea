@@ -48,7 +48,7 @@ export function MapaQuizDialog({
       aria-modal="true"
       aria-label="Mapa do Lipedema"
     >
-      <MapaPage onClose={onClose} />
+      <MapaChat onClose={onClose} />
     </div>
   );
 }
