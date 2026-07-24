@@ -110,7 +110,10 @@ const QS: ChoiceQ[] = [
 // ------------- DDD → região (macro) -------------
 function regiaoPorDDD(tel: string): { uf: string; regiao: string; comentario: string } | null {
   const digits = tel.replace(/\D/g, "");
-  const ddd = digits.length >= 11 ? digits.slice(2, 4) : digits.length >= 10 ? digits.slice(0, 2) : "";
+  // 13 dígitos = 55 + DDD (2) + celular (9). 10 ou 11 dígitos = DDD + fixo/celular, SEM código do país.
+  let ddd = "";
+  if (digits.length === 12 || digits.length === 13) ddd = digits.slice(2, 4);
+  else if (digits.length === 10 || digits.length === 11) ddd = digits.slice(0, 2);
   if (!ddd) return null;
   const n = Number(ddd);
   const map: Record<number, { uf: string; regiao: string; comentario: string }> = {
@@ -239,8 +242,11 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     }
   }, [stage.kind]);
 
-  // Mensagens iniciais
+  // Mensagens iniciais (guardadas contra StrictMode double-invoke)
+  const bootedRef = useRef(false);
   useEffect(() => {
+    if (bootedRef.current) return;
+    bootedRef.current = true;
     (async () => {
       await gabiSay("Oi! Aqui é a Gabriela Rosado, nutricionista (CRN 10582).");
       await gabiSay("Vou te fazer algumas perguntas rápidas pra montar o seu Mapa do Lipedema — leva uns 2 minutinhos. Pode ser?");
@@ -260,9 +266,15 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushMsg({ id: crypto.randomUUID(), from: "user", text });
   }
 
-  async function gabiSay(text: string, delay = 700) {
+  // Simula "digitando" proporcional ao tamanho da mensagem — mais humano.
+  async function gabiSay(text: string, delay?: number) {
+    // ~35ms por caractere, mínimo 900ms, máximo 3200ms
+    const auto = Math.min(3200, Math.max(900, Math.round(text.length * 35)));
+    const wait = delay ?? auto;
+    // pequena pausa antes de "começar a digitar"
+    await new Promise((r) => setTimeout(r, 350));
     setTyping(true);
-    await new Promise((r) => setTimeout(r, delay));
+    await new Promise((r) => setTimeout(r, wait));
     setTyping(false);
     pushGabi(text);
   }
