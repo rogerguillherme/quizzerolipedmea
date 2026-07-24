@@ -33,7 +33,7 @@ function LandingPage() {
 
   return (
     <>
-      <main className="h-[100dvh] min-h-[100dvh] overflow-hidden bg-[hsl(var(--cream,40_45%_95%))] text-[hsl(var(--blue,213_60%_17%))] relative">
+      <main className="min-h-[100dvh] md:h-[100dvh] md:overflow-hidden bg-[hsl(var(--cream,40_45%_95%))] text-[hsl(var(--blue,213_60%_17%))] relative">
         {/* fundo suave */}
         <div
           className="pointer-events-none absolute inset-0 opacity-60"
@@ -43,7 +43,7 @@ function LandingPage() {
           }}
         />
 
-        <div className="relative mx-auto flex h-full max-w-6xl flex-col px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-[max(env(safe-area-inset-bottom),0.75rem)] md:px-6 md:pt-16 md:pb-24">
+        <div className="relative mx-auto flex min-h-[100dvh] md:h-full max-w-6xl flex-col px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-[max(env(safe-area-inset-bottom),1rem)] md:px-6 md:pt-16 md:pb-24">
           {/* Topbar */}
           <div className="flex items-center justify-between shrink-0">
             <span className="text-[10px] md:text-[11px] tracking-[0.28em] uppercase text-[hsl(38_45%_40%)] font-medium">

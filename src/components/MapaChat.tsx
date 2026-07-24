@@ -394,7 +394,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
   // ---- Render ----
   return (
-    <div className="flex h-[100dvh] flex-col" style={{ background: C.cream }}>
+    <div className="flex h-[100dvh] flex-col overflow-hidden" style={{ background: C.cream }}>
       {/* Header */}
       <header
         className="flex items-center gap-3 border-b px-4 py-3"
@@ -457,7 +457,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Composer */}
-      <div className="border-t px-3 py-3" style={{ borderColor: C.line, background: C.creamSoft }}>
+      <div className="border-t px-3 pt-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]" style={{ borderColor: C.line, background: C.creamSoft }}>
         {erro && (
           <p className="mb-2 text-center text-[12px]" style={{ color: "#B91C1C" }}>
             {erro}
@@ -731,12 +731,12 @@ function ChoiceComposer({
                 src={opt.image}
                 alt={opt.short}
                 loading="lazy"
-                className="h-36 w-full rounded-xl object-contain"
+                className="h-24 sm:h-32 md:h-36 w-full rounded-xl object-contain"
                 style={{ background: C.creamSoft }}
               />
             ) : (
               <div
-                className="grid h-36 w-full place-items-center rounded-xl text-[11px]"
+                className="grid h-24 sm:h-32 md:h-36 w-full place-items-center rounded-xl text-[11px]"
                 style={{ background: C.creamSoft, color: C.inkSoft }}
               >
                 Não sei

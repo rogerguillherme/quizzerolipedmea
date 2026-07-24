@@ -51,8 +51,9 @@ function AppLayout() {
 
   return (
     <div
-      className="relative min-h-[100dvh] overflow-x-hidden pb-24"
+      className="relative min-h-[100dvh] overflow-x-hidden"
       style={{
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 5.5rem)",
         ["--cream" as string]: "#F5EFE1",
         ["--cream-soft" as string]: "#FBF6E9",
         ["--cream-line" as string]: "#D8C6A0",
@@ -136,7 +137,7 @@ function AppLayout() {
           borderTop: "1px solid rgba(216,198,160,0.5)",
         }}
       >
-        <div className="mx-auto grid max-w-md grid-cols-4">
+        <div className="mx-auto grid max-w-md grid-cols-4" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
           {tabs.map((t) => {
             const active = t.exact ? pathname === t.to : pathname.startsWith(t.to);
             const Icon = t.icon;
