@@ -705,10 +705,50 @@ function ChoiceComposer({
   onChoose,
   disabled,
 }: {
-  options: { label: string; short: string }[];
-  onChoose: (opt: { label: string; short: string }) => void;
+  options: ChoiceOpt[];
+  onChoose: (opt: ChoiceOpt) => void;
   disabled?: boolean;
 }) {
+  const hasImages = options.some((o) => o.image);
+  if (hasImages) {
+    return (
+      <div className="grid grid-cols-2 gap-2">
+        {options.map((opt) => (
+          <button
+            key={opt.short}
+            disabled={disabled}
+            onClick={() => onChoose(opt)}
+            className="flex flex-col items-center gap-1.5 rounded-2xl border p-2 transition active:scale-[0.97] disabled:opacity-40"
+            style={{
+              borderColor: C.gold,
+              background: "#FFFBF2",
+              color: C.ink,
+            }}
+          >
+            {opt.image ? (
+              <img
+                src={opt.image}
+                alt={opt.short}
+                loading="lazy"
+                width={512}
+                height={512}
+                className="h-24 w-full rounded-xl object-cover"
+                style={{ background: C.creamSoft }}
+              />
+            ) : (
+              <div
+                className="grid h-24 w-full place-items-center rounded-xl text-[11px]"
+                style={{ background: C.creamSoft, color: C.inkSoft }}
+              >
+                Não sei
+              </div>
+            )}
+            <span className="text-[12.5px] font-medium">{opt.short}</span>
+          </button>
+        ))}
+      </div>
+    );
+  }
   return (
     <div className="flex flex-wrap gap-2 justify-end">
       {options.map((opt) => (
