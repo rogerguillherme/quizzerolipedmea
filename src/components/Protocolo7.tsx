@@ -255,6 +255,20 @@ export function Protocolo7Screen() {
         />
       )}
       {finaleOpen && <FinaleDialog onClose={() => setFinaleOpen(false)} />}
+      {listaOpen && (
+        <ListaComprasDialog
+          lista={jornada.listaCompras || []}
+          opcaoTitulo={jornada.opcaoTitulo}
+          onClose={() => setListaOpen(false)}
+        />
+      )}
+      {progressoOpen && (
+        <ProgressoDialog
+          jornada={jornada}
+          diasCumpridos={diasCumpridos}
+          onClose={() => setProgressoOpen(false)}
+        />
+      )}
     </div>
   );
 }
