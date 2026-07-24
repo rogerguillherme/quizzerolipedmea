@@ -374,9 +374,25 @@ export function ProtocoloDialog({
                 </button>
               ))}
             </div>
-            <p className="mt-4 text-[11.5px] leading-relaxed" style={{ color: "#5C5749" }}>
-              Todas as opções já são naturalmente sem glúten e sem lactose.
+            <p className="mt-5 text-[11px] font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
+              Alguma restrição alimentar?
             </p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {RESTRICOES.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => setRestricao(r.id)}
+                  className="rounded-xl px-3 py-2.5 text-[12.5px] font-medium transition"
+                  style={{
+                    background: restricao === r.id ? NAVY : "rgba(255,253,247,0.9)",
+                    color: restricao === r.id ? CREAM : NAVY,
+                    border: "1px solid rgba(216,198,160,0.55)",
+                  }}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
             <button
               disabled={!regiao}
               onClick={() => setStep(2)}
