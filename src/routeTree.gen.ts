@@ -25,9 +25,9 @@ import { Route as AppProtocoloRouteImport } from './routes/app.protocolo'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppMissoesRouteImport } from './routes/app.missoes'
 import { Route as AppDermaRouteImport } from './routes/app.derma'
+import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as AdminProtocoloRouteImport } from './routes/admin.protocolo'
 import { Route as AdminMapaRouteImport } from './routes/admin.mapa'
-import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminFunisRouteImport } from './routes/admin.funis'
 import { Route as AdminDermaRouteImport } from './routes/admin.derma'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
@@ -115,6 +115,11 @@ const AppDermaRoute = AppDermaRouteImport.update({
   path: '/derma',
   getParentRoute: () => AppRoute,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin_/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminProtocoloRoute = AdminProtocoloRouteImport.update({
   id: '/protocolo',
   path: '/protocolo',
@@ -123,11 +128,6 @@ const AdminProtocoloRoute = AdminProtocoloRouteImport.update({
 const AdminMapaRoute = AdminMapaRouteImport.update({
   id: '/mapa',
   path: '/mapa',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminFunisRoute = AdminFunisRouteImport.update({
@@ -174,9 +174,9 @@ export interface FileRoutesByFullPath {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
   '/admin/funis': typeof AdminFunisRoute
-  '/admin/login': typeof AdminLoginRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
+  '/admin/login': typeof AdminLoginRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -199,9 +199,9 @@ export interface FileRoutesByTo {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
   '/admin/funis': typeof AdminFunisRoute
-  '/admin/login': typeof AdminLoginRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
+  '/admin/login': typeof AdminLoginRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -227,9 +227,9 @@ export interface FileRoutesById {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
   '/admin/funis': typeof AdminFunisRoute
-  '/admin/login': typeof AdminLoginRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
+  '/admin_/login': typeof AdminLoginRoute
   '/app/derma': typeof AppDermaRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -256,9 +256,9 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/derma'
     | '/admin/funis'
-    | '/admin/login'
     | '/admin/mapa'
     | '/admin/protocolo'
+    | '/admin/login'
     | '/app/derma'
     | '/app/missoes'
     | '/app/perfil'
@@ -281,9 +281,9 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/derma'
     | '/admin/funis'
-    | '/admin/login'
     | '/admin/mapa'
     | '/admin/protocolo'
+    | '/admin/login'
     | '/app/derma'
     | '/app/missoes'
     | '/app/perfil'
@@ -308,9 +308,9 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/derma'
     | '/admin/funis'
-    | '/admin/login'
     | '/admin/mapa'
     | '/admin/protocolo'
+    | '/admin_/login'
     | '/app/derma'
     | '/app/missoes'
     | '/app/perfil'
@@ -332,6 +332,7 @@ export interface RootRouteChildren {
   DefinirSenhaRoute: typeof DefinirSenhaRoute
   MapaRoute: typeof MapaRoute
   OnboardingRoute: typeof OnboardingRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
   ApiPublicHooksCronTickRoute: typeof ApiPublicHooksCronTickRoute
   ApiPublicWebhooksEvolutionRoute: typeof ApiPublicWebhooksEvolutionRoute
@@ -451,6 +452,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDermaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/admin_/login': {
+      id: '/admin_/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/protocolo': {
       id: '/admin/protocolo'
       path: '/protocolo'
@@ -463,13 +471,6 @@ declare module '@tanstack/react-router' {
       path: '/mapa'
       fullPath: '/admin/mapa'
       preLoaderRoute: typeof AdminMapaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/funis': {
@@ -522,7 +523,6 @@ interface AdminRouteChildren {
   AdminCrmRoute: typeof AdminCrmRoute
   AdminDermaRoute: typeof AdminDermaRoute
   AdminFunisRoute: typeof AdminFunisRoute
-  AdminLoginRoute: typeof AdminLoginRoute
   AdminMapaRoute: typeof AdminMapaRoute
   AdminProtocoloRoute: typeof AdminProtocoloRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -533,7 +533,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCrmRoute: AdminCrmRoute,
   AdminDermaRoute: AdminDermaRoute,
   AdminFunisRoute: AdminFunisRoute,
-  AdminLoginRoute: AdminLoginRoute,
   AdminMapaRoute: AdminMapaRoute,
   AdminProtocoloRoute: AdminProtocoloRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -571,6 +570,7 @@ const rootRouteChildren: RootRouteChildren = {
   DefinirSenhaRoute: DefinirSenhaRoute,
   MapaRoute: MapaRoute,
   OnboardingRoute: OnboardingRoute,
+  AdminLoginRoute: AdminLoginRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
   ApiPublicHooksCronTickRoute: ApiPublicHooksCronTickRoute,
   ApiPublicWebhooksEvolutionRoute: ApiPublicWebhooksEvolutionRoute,

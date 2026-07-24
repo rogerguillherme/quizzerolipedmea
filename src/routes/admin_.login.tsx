@@ -4,7 +4,7 @@ import { Lock, Mail, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureAdminUser } from "@/lib/auth.functions";
 
-export const Route = createFileRoute("/admin/login")({
+export const Route = createFileRoute("/admin_/login")({
   component: AdminLoginPage,
   head: () => ({
     meta: [
