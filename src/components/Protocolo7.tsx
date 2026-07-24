@@ -253,7 +253,8 @@ export function ProtocoloDialog({
 
 
   async function confirmar() {
-    if (!regiao || !restricao || !refeicao || !opcao) return;
+    if (!regiao || !refeicao || !opcao) return;
+
     setEnviando(true);
     const jornada: Jornada7 = {
       ativa: true,
