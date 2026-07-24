@@ -51,8 +51,9 @@ function AppLayout() {
 
   return (
     <div
-      className="relative min-h-[100dvh] overflow-x-hidden pb-24"
+      className="relative min-h-[100dvh] overflow-x-hidden"
       style={{
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 5.5rem)",
         ["--cream" as string]: "#F5EFE1",
         ["--cream-soft" as string]: "#FBF6E9",
         ["--cream-line" as string]: "#D8C6A0",
