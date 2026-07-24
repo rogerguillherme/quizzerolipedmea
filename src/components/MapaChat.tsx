@@ -457,7 +457,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Composer */}
-      <div className="border-t px-3 py-3" style={{ borderColor: C.line, background: C.creamSoft }}>
+      <div className="border-t px-3 pt-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]" style={{ borderColor: C.line, background: C.creamSoft }}>
         {erro && (
           <p className="mb-2 text-center text-[12px]" style={{ color: "#B91C1C" }}>
             {erro}
