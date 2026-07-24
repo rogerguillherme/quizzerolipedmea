@@ -38,7 +38,7 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
       throw new Error(`Lead não encontrado: ${leadErr?.message ?? "n/a"}`);
     }
 
-    const senha = gerarSenha();
+    const senha = SENHA_PADRAO;
     const email = emailFrom(lead.telefone);
     let userId = lead.user_id as string | null;
     let novaConta = false;
