@@ -394,7 +394,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
   // ---- Render ----
   return (
-    <div className="flex h-[100dvh] flex-col" style={{ background: C.cream }}>
+    <div className="flex h-[100dvh] flex-col overflow-hidden" style={{ background: C.cream }}>
       {/* Header */}
       <header
         className="flex items-center gap-3 border-b px-4 py-3"
