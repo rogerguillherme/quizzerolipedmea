@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Lock, Mail, Loader2 } from "lucide-react";
+import { Lock, User as UserIcon, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureAdminUser } from "@/lib/auth.functions";
 
@@ -14,9 +14,47 @@ export const Route = createFileRoute("/auth")({
   }),
 });
 
+function looksLikeEmail(v: string) {
+  return v.includes("@");
+}
+
+function phoneToEmail(v: string) {
+  const digits = v.replace(/\D/g, "");
+  return `wa${digits}@zerolipedema.app`;
+}
+
+async function routeAfterLogin(navigate: ReturnType<typeof useNavigate>) {
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData.user?.id;
+  if (!userId) return;
+
+  // Admin?
+  const { data: roles } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId);
+  const isAdmin = roles?.some((r) => r.role === "admin");
+  if (isAdmin) {
+    navigate({ to: "/admin" });
+    return;
+  }
+
+  // Senha temporária?
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("senha_temporaria")
+    .eq("id", userId)
+    .maybeSingle();
+  if (profile?.senha_temporaria) {
+    navigate({ to: "/definir-senha" });
+    return;
+  }
+  navigate({ to: "/app" });
+}
+
 function AuthPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("rogerbendlin@hotmail.com");
+  const [identificador, setIdentificador] = useState("");
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -28,7 +66,7 @@ function AuthPage() {
       .finally(() => setBootstrapping(false));
 
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/admin" });
+      if (data.session) routeAfterLogin(navigate);
     });
   }, [navigate]);
 
@@ -36,13 +74,15 @@ function AuthPage() {
     e.preventDefault();
     setErro(null);
     setLoading(true);
+    const raw = identificador.trim();
+    const email = looksLikeEmail(raw) ? raw : phoneToEmail(raw);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
-      setErro("E-mail ou senha incorretos.");
+      setErro("Login ou senha incorretos.");
       return;
     }
-    navigate({ to: "/admin" });
+    await routeAfterLogin(navigate);
   }
 
   return (
@@ -97,17 +137,17 @@ function AuthPage() {
             color: "#16324F",
           }}
         >
-          Entrar no <em className="italic" style={{ color: "#AF7F35" }}>painel</em>
+          Entrar no seu <em className="italic" style={{ color: "#AF7F35" }}>mapa</em>
         </h1>
-        <p className="mt-1 text-[13px]" style={{ color: "#5B5D52", lineHeight: 1.5 }}>
-          Acesso à área da Gabriela e a todos os apps.
+        <p className="mt-1 text-[13px]" style={{ color: "#2F3128", lineHeight: 1.5 }}>
+          Use o número de WhatsApp que recebeu o link. Senha inicial: <strong>zero123</strong>.
         </p>
 
         <label
           className="mt-5 block text-[10px] font-semibold uppercase"
           style={{ letterSpacing: "0.2em", color: "#AF7F35" }}
         >
-          E-mail
+          WhatsApp ou e-mail
         </label>
         <div
           className="mt-1.5 flex items-center gap-2 rounded-xl px-3"
@@ -116,14 +156,15 @@ function AuthPage() {
             border: "1px solid rgba(216,198,160,0.6)",
           }}
         >
-          <Mail className="size-4" style={{ color: "#8A8574" }} />
+          <UserIcon className="size-4" style={{ color: "#5C5749" }} />
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={identificador}
+            onChange={(e) => setIdentificador(e.target.value)}
+            placeholder="(11) 99999-9999"
             className="flex-1 bg-transparent py-3 text-[14px] outline-none"
             style={{ color: "#16324F" }}
-            autoComplete="email"
+            autoComplete="username"
             required
           />
         </div>
@@ -141,7 +182,7 @@ function AuthPage() {
             border: "1px solid rgba(216,198,160,0.6)",
           }}
         >
-          <Lock className="size-4" style={{ color: "#8A8574" }} />
+          <Lock className="size-4" style={{ color: "#5C5749" }} />
           <input
             type="password"
             value={password}
