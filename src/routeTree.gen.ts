@@ -33,6 +33,7 @@ import { Route as AdminDermaRouteImport } from './routes/admin.derma'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as ApiPublicWebhooksEvolutionRouteImport } from './routes/api/public/webhooks/evolution'
+import { Route as ApiPublicHooksCronTickRouteImport } from './routes/api/public/hooks/cron-tick'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -155,6 +156,11 @@ const ApiPublicWebhooksEvolutionRoute =
     path: '/api/public/webhooks/evolution',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksCronTickRoute = ApiPublicHooksCronTickRouteImport.update({
+  id: '/api/public/hooks/cron-tick',
+  path: '/api/public/hooks/cron-tick',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
+  '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
 }
 export interface FileRoutesByTo {
@@ -204,6 +211,7 @@ export interface FileRoutesByTo {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
+  '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
 }
 export interface FileRoutesById {
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
+  '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
 }
 export interface FileRouteTypes {
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/protocolo/pagamento'
     | '/admin/'
     | '/app/'
+    | '/api/public/hooks/cron-tick'
     | '/api/public/webhooks/evolution'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/protocolo/pagamento'
     | '/admin'
     | '/app'
+    | '/api/public/hooks/cron-tick'
     | '/api/public/webhooks/evolution'
   id:
     | '__root__'
@@ -309,6 +320,7 @@ export interface FileRouteTypes {
     | '/protocolo/pagamento'
     | '/admin/'
     | '/app/'
+    | '/api/public/hooks/cron-tick'
     | '/api/public/webhooks/evolution'
   fileRoutesById: FileRoutesById
 }
@@ -321,6 +333,7 @@ export interface RootRouteChildren {
   MapaRoute: typeof MapaRoute
   OnboardingRoute: typeof OnboardingRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
+  ApiPublicHooksCronTickRoute: typeof ApiPublicHooksCronTickRoute
   ApiPublicWebhooksEvolutionRoute: typeof ApiPublicWebhooksEvolutionRoute
 }
 
@@ -494,6 +507,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksEvolutionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/cron-tick': {
+      id: '/api/public/hooks/cron-tick'
+      path: '/api/public/hooks/cron-tick'
+      fullPath: '/api/public/hooks/cron-tick'
+      preLoaderRoute: typeof ApiPublicHooksCronTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -552,6 +572,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapaRoute: MapaRoute,
   OnboardingRoute: OnboardingRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
+  ApiPublicHooksCronTickRoute: ApiPublicHooksCronTickRoute,
   ApiPublicWebhooksEvolutionRoute: ApiPublicWebhooksEvolutionRoute,
 }
 export const routeTree = rootRouteImport
