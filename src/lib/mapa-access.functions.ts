@@ -9,10 +9,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  * - testarEvolution / salvarEvolutionConfig: administração da Evolution API.
  */
 
-function gerarSenha() {
-  const n = Math.floor(1000 + Math.random() * 9000);
-  return `mapa-${n}`;
-}
+const SENHA_PADRAO = "zero123";
 
 function emailFrom(telefone: string) {
   const digits = telefone.replace(/\D/g, "");
