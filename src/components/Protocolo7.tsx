@@ -44,6 +44,8 @@ export function Protocolo7Screen() {
   const [jornada, setJornada] = useState<Jornada7>(app.jornada7 || {});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [finaleOpen, setFinaleOpen] = useState(false);
+  const [listaOpen, setListaOpen] = useState(false);
+  const [progressoOpen, setProgressoOpen] = useState(false);
 
   const diasCumpridos = useMemo(() => {
     const fb = jornada.feedbackDias || {};
