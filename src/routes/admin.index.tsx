@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import {
   MessageSquare,
   GitBranch,
@@ -7,23 +8,47 @@ import {
   Sparkles,
   Crown,
   TrendingUp,
+  AlertTriangle,
 } from "lucide-react";
 import {
   getEvents,
   getLeads,
   seedAdminDemoIfEmpty,
 } from "@/lib/analytics";
+import { listarLeadsAtencao } from "@/lib/mapa-access.functions";
 
 export const Route = createFileRoute("/admin/")({
   component: DashboardPage,
 });
 
+type LeadAtencao = {
+  id: string;
+  nome: string;
+  telefone: string;
+  status: string;
+  motivo: string;
+  criadoEm: string;
+};
+
+const MOTIVO_LABEL: Record<string, string> = {
+  envio_dia1_falhou: "WhatsApp não enviou (dia 1)",
+  sem_feedback_3d: "3+ dias sem responder",
+};
+
 function DashboardPage() {
   const [ready, setReady] = useState(false);
+  const [atencao, setAtencao] = useState<LeadAtencao[]>([]);
+  const carregarAtencao = useServerFn(listarLeadsAtencao);
+
   useEffect(() => {
     seedAdminDemoIfEmpty();
     setReady(true);
-  }, []);
+    carregarAtencao()
+      .then((rows) => setAtencao(rows as LeadAtencao[]))
+      .catch(() => {
+        /* silencioso — sem cobrança */
+      });
+  }, [carregarAtencao]);
 
   const events = useMemo(() => (ready ? getEvents() : []), [ready]);
   const leads = useMemo(() => (ready ? getLeads() : []), [ready]);
