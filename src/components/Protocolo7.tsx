@@ -513,7 +513,7 @@ export function ProtocoloDialog({
               </h3>
             </div>
             <p className="mt-1 text-[12.5px]" style={{ color: "#2F3128" }}>
-              Para <strong>{opcao.titulo}</strong> + despensa base + chá de gengibre.
+              Para <strong>{opcao.titulo}</strong> + despensa base + {CHA_INDICADO.nome}.
             </p>
             <ul className="mt-3 grid grid-cols-1 gap-1.5">
               {lista.map((i) => (
