@@ -1,88 +1,68 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Lock, User as UserIcon, Loader2 } from "lucide-react";
+import { Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureAdminUser } from "@/lib/auth.functions";
 
-export const Route = createFileRoute("/auth")({
-  component: AuthPage,
+export const Route = createFileRoute("/definir-senha")({
+  component: DefinirSenhaPage,
   head: () => ({
     meta: [
-      { title: "Entrar · Zero Lipedema" },
+      { title: "Definir nova senha · Zero Lipedema" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
 });
 
-function looksLikeEmail(v: string) {
-  return v.includes("@");
-}
-
-function phoneToEmail(v: string) {
-  const digits = v.replace(/\D/g, "");
-  return `wa${digits}@zerolipedema.app`;
-}
-
-async function routeAfterLogin(navigate: ReturnType<typeof useNavigate>) {
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData.user?.id;
-  if (!userId) return;
-
-  // Admin?
-  const { data: roles } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId);
-  const isAdmin = roles?.some((r) => r.role === "admin");
-  if (isAdmin) {
-    navigate({ to: "/admin" });
-    return;
-  }
-
-  // Senha temporária?
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("senha_temporaria")
-    .eq("id", userId)
-    .maybeSingle();
-  if (profile?.senha_temporaria) {
-    navigate({ to: "/definir-senha" });
-    return;
-  }
-  navigate({ to: "/app" });
-}
-
-function AuthPage() {
+function DefinirSenhaPage() {
   const navigate = useNavigate();
-  const [identificador, setIdentificador] = useState("");
-  const [password, setPassword] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirma, setConfirma] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [bootstrapping, setBootstrapping] = useState(true);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    ensureAdminUser({ data: undefined } as any)
-      .catch((e) => console.warn("bootstrap:", e))
-      .finally(() => setBootstrapping(false));
-
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) routeAfterLogin(navigate);
+      if (!data.session) navigate({ to: "/auth" });
+      else setReady(true);
     });
   }, [navigate]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErro(null);
-    setLoading(true);
-    const raw = identificador.trim();
-    const email = looksLikeEmail(raw) ? raw : phoneToEmail(raw);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      setErro("Login ou senha incorretos.");
+    if (senha.length < 6) {
+      setErro("A senha precisa ter pelo menos 6 caracteres.");
       return;
     }
-    await routeAfterLogin(navigate);
+    if (senha !== confirma) {
+      setErro("As senhas não conferem.");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password: senha });
+    if (error) {
+      setLoading(false);
+      setErro("Não foi possível atualizar a senha. Tente novamente.");
+      return;
+    }
+    const { data: userData } = await supabase.auth.getUser();
+    if (userData.user?.id) {
+      await supabase
+        .from("profiles")
+        .update({ senha_temporaria: false })
+        .eq("id", userData.user.id);
+    }
+    setLoading(false);
+    navigate({ to: "/app" });
+  }
+
+  if (!ready) {
+    return (
+      <div className="grid min-h-[100dvh] place-items-center" style={{ background: "#F5EFE1" }}>
+        <Loader2 className="size-6 animate-spin" style={{ color: "#16324F" }} />
+      </div>
+    );
   }
 
   return (
@@ -94,15 +74,6 @@ function AuthPage() {
         fontFamily: "'Nunito', sans-serif",
       }}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(135deg, rgba(22,50,79,0.018) 0px, rgba(22,50,79,0.018) 1px, transparent 1px, transparent 6px)",
-        }}
-      />
-
       <form
         onSubmit={onSubmit}
         className="relative z-10 w-full max-w-sm rounded-3xl p-6"
@@ -123,7 +94,7 @@ function AuthPage() {
             className="text-[10px] font-semibold uppercase"
             style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
           >
-            Zero Lipedema
+            Primeiro acesso
           </span>
         </div>
 
@@ -137,35 +108,32 @@ function AuthPage() {
             color: "#16324F",
           }}
         >
-          Entrar no seu <em className="italic" style={{ color: "#AF7F35" }}>mapa</em>
+          Crie a sua <em className="italic" style={{ color: "#AF7F35" }}>senha</em>
         </h1>
         <p className="mt-1 text-[13px]" style={{ color: "#2F3128", lineHeight: 1.5 }}>
-          Use o número de WhatsApp que recebeu o link. Senha inicial: <strong>zero123</strong>.
+          Escolha uma senha nova para acessar seu mapa a partir de agora.
         </p>
 
         <label
           className="mt-5 block text-[10px] font-semibold uppercase"
           style={{ letterSpacing: "0.2em", color: "#AF7F35" }}
         >
-          WhatsApp ou e-mail
+          Nova senha
         </label>
         <div
           className="mt-1.5 flex items-center gap-2 rounded-xl px-3"
-          style={{
-            background: "#FFFDF7",
-            border: "1px solid rgba(216,198,160,0.6)",
-          }}
+          style={{ background: "#FFFDF7", border: "1px solid rgba(216,198,160,0.6)" }}
         >
-          <UserIcon className="size-4" style={{ color: "#5C5749" }} />
+          <Lock className="size-4" style={{ color: "#5C5749" }} />
           <input
-            type="text"
-            value={identificador}
-            onChange={(e) => setIdentificador(e.target.value)}
-            placeholder="(11) 99999-9999"
+            type="password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
             className="flex-1 bg-transparent py-3 text-[14px] outline-none"
             style={{ color: "#16324F" }}
-            autoComplete="username"
+            autoComplete="new-password"
             required
+            minLength={6}
           />
         </div>
 
@@ -173,24 +141,22 @@ function AuthPage() {
           className="mt-3 block text-[10px] font-semibold uppercase"
           style={{ letterSpacing: "0.2em", color: "#AF7F35" }}
         >
-          Senha
+          Confirmar senha
         </label>
         <div
           className="mt-1.5 flex items-center gap-2 rounded-xl px-3"
-          style={{
-            background: "#FFFDF7",
-            border: "1px solid rgba(216,198,160,0.6)",
-          }}
+          style={{ background: "#FFFDF7", border: "1px solid rgba(216,198,160,0.6)" }}
         >
           <Lock className="size-4" style={{ color: "#5C5749" }} />
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={confirma}
+            onChange={(e) => setConfirma(e.target.value)}
             className="flex-1 bg-transparent py-3 text-[14px] outline-none"
             style={{ color: "#16324F" }}
-            autoComplete="current-password"
+            autoComplete="new-password"
             required
+            minLength={6}
           />
         </div>
 
@@ -202,7 +168,7 @@ function AuthPage() {
 
         <button
           type="submit"
-          disabled={loading || bootstrapping}
+          disabled={loading}
           className="mt-6 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-[14.5px] font-semibold disabled:opacity-60"
           style={{
             background: "linear-gradient(180deg, #2C5578, #16324F)",
@@ -210,13 +176,12 @@ function AuthPage() {
             boxShadow: "0 14px 26px -14px rgba(22,50,79,0.55)",
           }}
         >
-          {loading || bootstrapping ? (
+          {loading ? (
             <>
-              <Loader2 className="size-4 animate-spin" />
-              {bootstrapping ? "Preparando…" : "Entrando…"}
+              <Loader2 className="size-4 animate-spin" /> Salvando…
             </>
           ) : (
-            "Entrar"
+            "Salvar e entrar"
           )}
         </button>
       </form>

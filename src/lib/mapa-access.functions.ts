@@ -9,10 +9,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  * - testarEvolution / salvarEvolutionConfig: administração da Evolution API.
  */
 
-function gerarSenha() {
-  const n = Math.floor(1000 + Math.random() * 9000);
-  return `mapa-${n}`;
-}
+const SENHA_PADRAO = "zero123";
 
 function emailFrom(telefone: string) {
   const digits = telefone.replace(/\D/g, "");
@@ -41,7 +38,7 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
       throw new Error(`Lead não encontrado: ${leadErr?.message ?? "n/a"}`);
     }
 
-    const senha = gerarSenha();
+    const senha = SENHA_PADRAO;
     const email = emailFrom(lead.telefone);
     let userId = lead.user_id as string | null;
     let novaConta = false;
