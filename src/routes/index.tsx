@@ -33,7 +33,7 @@ function LandingPage() {
 
   return (
     <>
-      <main className="h-[100dvh] min-h-[100dvh] overflow-hidden bg-[hsl(var(--cream,40_45%_95%))] text-[hsl(var(--blue,213_60%_17%))] relative">
+      <main className="min-h-[100dvh] md:h-[100dvh] md:overflow-hidden bg-[hsl(var(--cream,40_45%_95%))] text-[hsl(var(--blue,213_60%_17%))] relative">
         {/* fundo suave */}
         <div
           className="pointer-events-none absolute inset-0 opacity-60"
