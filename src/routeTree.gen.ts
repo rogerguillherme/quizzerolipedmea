@@ -26,6 +26,7 @@ import { Route as AppMissoesRouteImport } from './routes/app.missoes'
 import { Route as AppDermaRouteImport } from './routes/app.derma'
 import { Route as AdminProtocoloRouteImport } from './routes/admin.protocolo'
 import { Route as AdminMapaRouteImport } from './routes/admin.mapa'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminFunisRouteImport } from './routes/admin.funis'
 import { Route as AdminDermaRouteImport } from './routes/admin.derma'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
@@ -117,6 +118,11 @@ const AdminMapaRoute = AdminMapaRouteImport.update({
   path: '/mapa',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminFunisRoute = AdminFunisRouteImport.update({
   id: '/funis',
   path: '/funis',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
   '/admin/funis': typeof AdminFunisRoute
+  '/admin/login': typeof AdminLoginRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/app/derma': typeof AppDermaRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
   '/admin/funis': typeof AdminFunisRoute
+  '/admin/login': typeof AdminLoginRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/app/derma': typeof AppDermaRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
   '/admin/funis': typeof AdminFunisRoute
+  '/admin/login': typeof AdminLoginRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/app/derma': typeof AppDermaRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/derma'
     | '/admin/funis'
+    | '/admin/login'
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/app/derma'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/derma'
     | '/admin/funis'
+    | '/admin/login'
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/app/derma'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/derma'
     | '/admin/funis'
+    | '/admin/login'
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/app/derma'
@@ -421,6 +433,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMapaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/funis': {
       id: '/admin/funis'
       path: '/funis'
@@ -464,6 +483,7 @@ interface AdminRouteChildren {
   AdminCrmRoute: typeof AdminCrmRoute
   AdminDermaRoute: typeof AdminDermaRoute
   AdminFunisRoute: typeof AdminFunisRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   AdminMapaRoute: typeof AdminMapaRoute
   AdminProtocoloRoute: typeof AdminProtocoloRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -474,6 +494,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCrmRoute: AdminCrmRoute,
   AdminDermaRoute: AdminDermaRoute,
   AdminFunisRoute: AdminFunisRoute,
+  AdminLoginRoute: AdminLoginRoute,
   AdminMapaRoute: AdminMapaRoute,
   AdminProtocoloRoute: AdminProtocoloRoute,
   AdminIndexRoute: AdminIndexRoute,
