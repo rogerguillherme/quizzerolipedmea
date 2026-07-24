@@ -502,12 +502,13 @@ export function ProtocoloDialog({
 export function FinaleDialog({ onClose }: { onClose: () => void }) {
   return (
     <div
-      className="fixed inset-0 z-[110] flex items-end justify-center sm:items-center"
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4"
       style={{ background: "rgba(15,30,50,0.6)" }}
       onClick={onClose}
     >
       <div
-        className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl sm:rounded-3xl"
+        className="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-3xl"
+
         style={{ background: "#FDFBF5" }}
         onClick={(e) => e.stopPropagation()}
       >
