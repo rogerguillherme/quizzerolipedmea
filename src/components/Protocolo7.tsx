@@ -174,8 +174,33 @@ export function Protocolo7Screen() {
             <p className="mt-3 text-[11px] leading-relaxed" style={{ color: "rgba(245,239,225,0.7)" }}>
               Sem responder é ok. A barra segue no ritmo do que você marcar aqui ou no WhatsApp.
             </p>
-          </>
-        )}
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setListaOpen(true)}
+                className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12.5px] font-semibold transition active:scale-[0.98]"
+                style={{
+                  background: "rgba(245,239,225,0.12)",
+                  color: CREAM,
+                  border: "1px solid rgba(245,239,225,0.25)",
+                }}
+              >
+                <ShoppingBasket className="size-3.5" />
+                Lista de compras
+              </button>
+              <button
+                onClick={() => setProgressoOpen(true)}
+                className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12.5px] font-semibold transition active:scale-[0.98]"
+                style={{
+                  background: "rgba(245,239,225,0.12)",
+                  color: CREAM,
+                  border: "1px solid rgba(245,239,225,0.25)",
+                }}
+              >
+                <TrendingUp className="size-3.5" />
+                Progresso
+              </button>
+            </div>
+          </>)}
 
         {!protocoloAtivo && (
           <button
