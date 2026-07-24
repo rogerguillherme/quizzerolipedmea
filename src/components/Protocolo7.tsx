@@ -285,7 +285,7 @@ export function ProtocoloDialog({
 }) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [regiao, setRegiao] = useState<Regiao | null>(null);
-  const restricao: Restricao = "ambas";
+  const [restricao, setRestricao] = useState<Restricao>("ambas");
   const [refeicao, setRefeicao] = useState<Refeicao | null>(null);
   const [opcaoId, setOpcaoId] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
