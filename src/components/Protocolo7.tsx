@@ -17,13 +17,14 @@ import { getApp, setApp, type Jornada7 } from "@/lib/quiz-store";
 import { track } from "@/lib/analytics";
 import {
   CARDAPIOS,
+  CHA_INDICADO,
   listaDeCompras,
   REFEICOES,
   REGIOES,
+  RESTRICOES,
   type Refeicao,
   type Regiao,
   type Restricao,
-
 } from "@/lib/protocolo7";
 import {
   iniciarProtocolo7,
