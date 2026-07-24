@@ -16,17 +16,38 @@ function emailFrom(telefone: string) {
   return `wa${digits}@zerolipedema.app`;
 }
 
+// Senha aleatória, curta e fácil de digitar no celular.
+// Ex: "zero7834". A lead só vê essa senha pelo WhatsApp.
+function gerarSenha(): string {
+  const n = Math.floor(1000 + Math.random() * 9000);
+  return `zero${n}`;
+}
+
 // ---------------- Criar acesso pós-quiz -----------------
 
 export const criarAcessoMapa = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
-    z.object({ leadId: z.string().uuid() }).parse(input),
+    z
+      .object({
+        leadId: z.string().uuid(),
+        // Telefone informado no final do chat (opcional; se vier, sobrescreve o do lead).
+        telefone: z.string().trim().min(8).max(40).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import(
       "@/integrations/supabase/client.server"
     );
     const { sendWhatsApp } = await import("./evolution.server");
+
+    // Se o telefone chegou agora, atualiza o lead antes de prosseguir.
+    if (data.telefone) {
+      await supabaseAdmin
+        .from("leads")
+        .update({ telefone: data.telefone })
+        .eq("id", data.leadId);
+    }
 
     const { data: lead, error: leadErr } = await supabaseAdmin
       .from("leads")
@@ -38,7 +59,11 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
       throw new Error(`Lead não encontrado: ${leadErr?.message ?? "n/a"}`);
     }
 
-    const senha = SENHA_PADRAO;
+    if (!lead.telefone || lead.telefone === "pendente" || lead.telefone.replace(/\D/g, "").length < 8) {
+      throw new Error("Telefone inválido — preciso do WhatsApp com DDD.");
+    }
+
+    const senha = gerarSenha();
     const email = emailFrom(lead.telefone);
     let userId = lead.user_id as string | null;
     let novaConta = false;
