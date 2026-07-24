@@ -61,42 +61,41 @@ function LandingPage() {
               <p className="hidden md:block text-[11px] tracking-[0.32em] uppercase text-[hsl(38_60%_38%)] mb-6">
                 Mapa do Lipedema · Teste de 2 min
               </p>
-              <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.55rem,7.2vw,2rem)] md:text-6xl">
+              <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.4rem,6.2vw,2rem)] md:text-6xl">
                 Não é falta de esforço.{" "}
                 <em className="text-[hsl(38_55%_42%)] font-serif italic">É lipedema</em>{" "}
                 <span className="md:inline">e tem solução sem dietas restritas e sofrimento.</span>
               </h1>
-              <p className="mt-2 md:mt-6 text-[13px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-snug md:leading-relaxed">
+              <p className="mt-2 md:mt-6 text-[12.5px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-snug md:leading-relaxed">
                 Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>, nutricionista
-                especialista em lipedema. <span className="hidden md:inline">Respondendo 8 perguntas rápidas você recebe o seu <em className="italic">mapa personalizado</em> — direto aqui e também no seu WhatsApp.</span>
-                <span className="md:hidden"> 8 perguntas rápidas e você recebe seu mapa no WhatsApp.</span>
+                especialista em lipedema.<span className="hidden md:inline"> Respondendo 8 perguntas rápidas você recebe o seu <em className="italic">mapa personalizado</em> — direto aqui e também no seu WhatsApp.</span>
               </p>
 
-              {/* Bullets: só desktop */}
-              <ul className="hidden md:block mt-8 space-y-3 text-sm md:text-base">
-                <li className="flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 mt-0.5 text-[hsl(38_60%_45%)]" />
+              {/* Bullets: mobile + desktop */}
+              <ul className="mt-3 md:mt-8 space-y-2 md:space-y-3 text-[12.5px] md:text-base">
+                <li className="flex items-start gap-2.5 md:gap-3">
+                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 mt-0.5 text-[hsl(38_60%_45%)] shrink-0" />
                   <span>Leitura clínica baseada nos seus sintomas reais.</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <HeartPulse className="w-5 h-5 mt-0.5 text-[hsl(38_60%_45%)]" />
+                <li className="flex items-start gap-2.5 md:gap-3">
+                  <HeartPulse className="w-4 h-4 md:w-5 md:h-5 mt-0.5 text-[hsl(38_60%_45%)] shrink-0" />
                   <span>Estágio percebido e 3 prioridades para começar hoje.</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 mt-0.5 text-[hsl(38_60%_45%)]" />
+                <li className="flex items-start gap-2.5 md:gap-3">
+                  <ShieldCheck className="w-4 h-4 md:w-5 md:h-5 mt-0.5 text-[hsl(38_60%_45%)] shrink-0" />
                   <span>Acesso ao app enviado pelo WhatsApp após concluir.</span>
                 </li>
               </ul>
             </div>
 
             {/* Foto */}
-            <div className="relative order-1 md:order-2 flex-1 min-h-0 flex items-center justify-center md:block">
+            <div className="relative order-1 md:order-2 shrink-0 md:flex-1 md:min-h-0 flex items-center justify-center md:block">
               <div className="hidden md:block absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-[hsl(38_55%_75%)]/40 to-transparent blur-2xl" />
-              <div className="relative w-full h-full md:h-auto max-w-[min(78vw,320px)] md:max-w-none mx-auto rounded-[1.25rem] md:rounded-[1.75rem] overflow-hidden border border-[hsl(38_35%_75%)]/60 shadow-[0_20px_40px_-20px_rgba(11,42,74,0.35)] md:shadow-[0_30px_60px_-30px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
+              <div className="relative w-[40vw] max-w-[160px] md:w-full md:max-w-none aspect-[4/5] md:aspect-auto mx-auto rounded-[1.25rem] md:rounded-[1.75rem] overflow-hidden border border-[hsl(38_35%_75%)]/60 shadow-[0_20px_40px_-20px_rgba(11,42,74,0.35)] md:shadow-[0_30px_60px_-30px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
                 <img
                   src={draGabrielaAsset.url}
                   alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema (CRN 10582)"
-                  className="w-full h-full object-cover md:aspect-[4/5] md:h-auto"
+                  className="w-full h-full object-cover md:aspect-[4/5]"
                   loading="eager"
                 />
               </div>
