@@ -9,6 +9,9 @@ import {
   ShoppingBasket,
   PartyPopper,
   PlayCircle,
+  Copy,
+  Check,
+  TrendingUp,
 } from "lucide-react";
 import { getApp, setApp, type Jornada7 } from "@/lib/quiz-store";
 import { track } from "@/lib/analytics";
@@ -41,6 +44,8 @@ export function Protocolo7Screen() {
   const [jornada, setJornada] = useState<Jornada7>(app.jornada7 || {});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [finaleOpen, setFinaleOpen] = useState(false);
+  const [listaOpen, setListaOpen] = useState(false);
+  const [progressoOpen, setProgressoOpen] = useState(false);
 
   const diasCumpridos = useMemo(() => {
     const fb = jornada.feedbackDias || {};
@@ -169,8 +174,33 @@ export function Protocolo7Screen() {
             <p className="mt-3 text-[11px] leading-relaxed" style={{ color: "rgba(245,239,225,0.7)" }}>
               Sem responder é ok. A barra segue no ritmo do que você marcar aqui ou no WhatsApp.
             </p>
-          </>
-        )}
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setListaOpen(true)}
+                className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12.5px] font-semibold transition active:scale-[0.98]"
+                style={{
+                  background: "rgba(245,239,225,0.12)",
+                  color: CREAM,
+                  border: "1px solid rgba(245,239,225,0.25)",
+                }}
+              >
+                <ShoppingBasket className="size-3.5" />
+                Lista de compras
+              </button>
+              <button
+                onClick={() => setProgressoOpen(true)}
+                className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[12.5px] font-semibold transition active:scale-[0.98]"
+                style={{
+                  background: "rgba(245,239,225,0.12)",
+                  color: CREAM,
+                  border: "1px solid rgba(245,239,225,0.25)",
+                }}
+              >
+                <TrendingUp className="size-3.5" />
+                Progresso
+              </button>
+            </div>
+          </>)}
 
         {!protocoloAtivo && (
           <button
@@ -225,6 +255,20 @@ export function Protocolo7Screen() {
         />
       )}
       {finaleOpen && <FinaleDialog onClose={() => setFinaleOpen(false)} />}
+      {listaOpen && (
+        <ListaComprasDialog
+          lista={jornada.listaCompras || []}
+          opcaoTitulo={jornada.opcaoTitulo}
+          onClose={() => setListaOpen(false)}
+        />
+      )}
+      {progressoOpen && (
+        <ProgressoDialog
+          jornada={jornada}
+          diasCumpridos={diasCumpridos}
+          onClose={() => setProgressoOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -584,6 +628,243 @@ export function FinaleDialog({ onClose }: { onClose: () => void }) {
           </p>
         </div>
       </div>
+    </div>
+  );
+}
+
+// -------------------------- Dialog: lista de compras --------------------------
+
+export function ListaComprasDialog({
+  lista,
+  opcaoTitulo,
+  onClose,
+}: {
+  lista: string[];
+  opcaoTitulo?: string;
+  onClose: () => void;
+}) {
+  const [copiado, setCopiado] = useState(false);
+
+  async function copiar() {
+    const texto =
+      (opcaoTitulo ? `Lista de compras — ${opcaoTitulo}\n\n` : "Lista de compras\n\n") +
+      lista.map((i) => `• ${i}`).join("\n");
+    try {
+      await navigator.clipboard.writeText(texto);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2000);
+    } catch {
+      /* silencioso */
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4"
+      style={{ background: "rgba(15,30,50,0.55)" }}
+      onClick={onClose}
+    >
+      <div
+        className="max-h-[85dvh] w-full max-w-md overflow-y-auto rounded-3xl p-5"
+        style={{ background: "#FDFBF5" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ShoppingBasket className="size-4" style={{ color: GOLD }} />
+            <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
+              Lista de compras
+            </p>
+          </div>
+          <button onClick={onClose} aria-label="Fechar">
+            <X className="size-5" style={{ color: NAVY }} />
+          </button>
+        </div>
+
+        {opcaoTitulo && (
+          <p className="text-[13px]" style={{ color: "#2F3128" }}>
+            Para <strong>{opcaoTitulo}</strong>.
+          </p>
+        )}
+
+        {lista.length === 0 ? (
+          <p className="mt-4 text-[13px]" style={{ color: "#5C5749" }}>
+            Sua lista aparece aqui depois de configurar o protocolo.
+          </p>
+        ) : (
+          <ul className="mt-3 grid grid-cols-1 gap-1.5">
+            {lista.map((i) => (
+              <li
+                key={i}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-[13px]"
+                style={{ background: "rgba(22,50,79,0.04)", color: NAVY }}
+              >
+                <Circle className="size-3" style={{ color: GOLD }} />
+                {i}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <button
+          disabled={lista.length === 0}
+          onClick={copiar}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[14px] font-semibold transition disabled:opacity-40"
+          style={{
+            background: copiado ? CREAM : "linear-gradient(180deg, #D9A94B, #AF7F35)",
+            color: NAVY,
+            border: copiado ? `1px solid ${GOLD}` : "none",
+          }}
+        >
+          {copiado ? (
+            <>
+              <Check className="size-4" />
+              Copiado!
+            </>
+          ) : (
+            <>
+              <Copy className="size-4" />
+              Copiar lista
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// -------------------------- Dialog: progresso --------------------------
+
+export function ProgressoDialog({
+  jornada,
+  diasCumpridos,
+  onClose,
+}: {
+  jornada: Jornada7;
+  diasCumpridos: number;
+  onClose: () => void;
+}) {
+  const fb = jornada.feedbackDias || {};
+  const dias = Array.from({ length: 7 }, (_, i) => i + 1);
+  const sim = dias.filter((d) => fb[d] === "sim").length;
+  const parcial = dias.filter((d) => fb[d] === "parcial").length;
+  const nao = dias.filter((d) => fb[d] === "nao").length;
+  const semResposta = 7 - sim - parcial - nao;
+  const pct = Math.round((diasCumpridos / 7) * 100);
+
+  const mensagem =
+    diasCumpridos === 0
+      ? "Você ainda está começando. Marque um dia sempre que conseguir — sem cobrança."
+      : diasCumpridos < 3
+      ? "Bom início. A constância importa mais que a perfeição."
+      : diasCumpridos < 5
+      ? "Você já criou ritmo. Continue no seu tempo."
+      : diasCumpridos < 7
+      ? "Excelente evolução. Faltam poucos dias para fechar o ciclo."
+      : "Ciclo completo. Parabéns por chegar até aqui.";
+
+  return (
+    <div
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4"
+      style={{ background: "rgba(15,30,50,0.55)" }}
+      onClick={onClose}
+    >
+      <div
+        className="max-h-[85dvh] w-full max-w-md overflow-y-auto rounded-3xl p-5"
+        style={{ background: "#FDFBF5" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="size-4" style={{ color: GOLD }} />
+            <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
+              Seu progresso
+            </p>
+          </div>
+          <button onClick={onClose} aria-label="Fechar">
+            <X className="size-5" style={{ color: NAVY }} />
+          </button>
+        </div>
+
+        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.4rem", color: NAVY, lineHeight: 1.2 }}>
+          {diasCumpridos}/7 dias cumpridos
+        </h3>
+        <p className="mt-1 text-[13px]" style={{ color: "#2F3128" }}>
+          {mensagem}
+        </p>
+
+        <div
+          className="mt-4 h-2 w-full overflow-hidden rounded-full"
+          style={{ background: "rgba(22,50,79,0.08)" }}
+        >
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${pct}%`, background: "linear-gradient(90deg, #D9A94B, #AF7F35)" }}
+          />
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <StatCard label="Cumpri" valor={sim} cor="#2F7A47" />
+          <StatCard label="Parcial" valor={parcial} cor={GOLD} />
+          <StatCard label="Não cumpri" valor={nao} cor="#A85C3B" />
+          <StatCard label="Sem marcar" valor={semResposta} cor="#5C5749" />
+        </div>
+
+        <div className="mt-5">
+          <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: GOLD }}>
+            Linha do tempo
+          </p>
+          <div className="mt-2 space-y-1.5">
+            {dias.map((d) => {
+              const r = fb[d];
+              const label =
+                r === "sim" ? "Cumpri" : r === "parcial" ? "Parcial" : r === "nao" ? "Não cumpri" : "Sem marcar";
+              const cor =
+                r === "sim" ? "#2F7A47" : r === "parcial" ? GOLD : r === "nao" ? "#A85C3B" : "#B8B3A3";
+              return (
+                <div
+                  key={d}
+                  className="flex items-center justify-between rounded-lg px-3 py-2 text-[13px]"
+                  style={{ background: "rgba(22,50,79,0.04)", color: NAVY }}
+                >
+                  <span className="font-semibold">Dia {d}</span>
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="inline-block size-2 rounded-full"
+                      style={{ background: cor }}
+                    />
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="mt-5 w-full rounded-xl py-3 text-[14px] font-semibold"
+          style={{ background: NAVY, color: CREAM }}
+        >
+          Fechar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ label, valor, cor }: { label: string; valor: number; cor: string }) {
+  return (
+    <div
+      className="rounded-xl p-3"
+      style={{ background: "rgba(22,50,79,0.04)", border: "1px solid rgba(216,198,160,0.4)" }}
+    >
+      <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "#5C5749" }}>
+        {label}
+      </p>
+      <p className="mt-1 text-2xl font-bold tabular-nums" style={{ color: cor, fontFamily: "'Playfair Display', serif" }}>
+        {valor}
+      </p>
     </div>
   );
 }
