@@ -5,6 +5,9 @@ import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
 import { track } from "@/lib/analytics";
 import draGabrielaAsset from "@/assets/dra-gabriela.png.asset.json";
+import estagio1Img from "@/assets/estagio-1.jpg";
+import estagio2Img from "@/assets/estagio-2.jpg";
+import estagio3Img from "@/assets/estagio-3.jpg";
 
 // Paleta
 const C = {
