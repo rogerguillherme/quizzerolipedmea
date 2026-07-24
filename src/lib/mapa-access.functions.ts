@@ -176,3 +176,42 @@ export const getMyProfile = createServerFn({ method: "GET" })
     if (error) throw error;
     return data;
   });
+
+// ---------------- Fila de atenção (admin) -----------------
+// Leads marcados com respostas.atencao (envio falhou / 3+ dias sem responder).
+export const listarLeadsAtencao = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: role } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (!role) throw new Error("Acesso restrito.");
+
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+    const { data } = await supabaseAdmin
+      .from("leads")
+      .select("id, nome, telefone, status, respostas, updated_at")
+      .not("respostas->atencao", "is", null)
+      .order("updated_at", { ascending: false })
+      .limit(50);
+
+    return (data ?? []).map((l) => {
+      const at = (l.respostas as Record<string, unknown>)?.atencao as
+        | { motivo?: string; criado_em?: string; erro?: string }
+        | undefined;
+      return {
+        id: l.id,
+        nome: l.nome,
+        telefone: l.telefone,
+        status: l.status,
+        motivo: at?.motivo ?? "desconhecido",
+        criadoEm: at?.criado_em ?? l.updated_at,
+      };
+    });
+  });
+
