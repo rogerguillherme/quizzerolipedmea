@@ -329,11 +329,11 @@ function OfertaPage() {
                 },
                 {
                   n: 2,
-                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana. Teste também tirar foto de até 3 refeições no app e veja como funciona o registro.",
+                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana.",
                 },
                 {
                   n: 3,
-                  t: "Libere o plano completo — sugestão alimentar, chá/shot indicado, lista de compras e o acompanhamento diário pelo agente de WhatsApp — por R$57.",
+                  t: "Continue pelo WhatsApp com seu plano — sugestão alimentar, chá/shot indicado e lista de compras, por R$57.",
                 },
               ].map((s) => (
                 <li
