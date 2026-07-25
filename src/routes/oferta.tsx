@@ -315,6 +315,60 @@ function OfertaPage() {
           </div>
         </section>
 
+        {/* 6b. TUDO QUE VOCÊ RECEBE */}
+        <section className="relative border-t border-[hsl(38_35%_80%)]/50">
+          <div className="relative mx-auto max-w-6xl px-5 md:px-6 py-14 md:py-20">
+            <SectionTitle>Tudo que você recebe</SectionTitle>
+            <div className="mt-8 md:mt-12 grid md:grid-cols-2 gap-6 md:gap-8">
+              {[
+                {
+                  title: "No Plano de R$57 (sem assinatura)",
+                  items: [
+                    "Plano alimentar com sugestões práticas pro seu dia a dia",
+                    "Chá ou shot indicado, com lista de compras pronta",
+                    "Protocolo de 7 Dias com feedback diário pelo seu WhatsApp",
+                    "Registro de até 3 refeições por foto, com feedback da IA na hora (teste incluso, antes mesmo de pagar)",
+                  ],
+                },
+                {
+                  title: "Se quiser aprofundar: Método Derma",
+                  items: [
+                    "Anamnese completa com a Dra. Gabriela",
+                    "Leitura dos seus exames",
+                    "Plano alimentar 100% personalizado pro seu perfil",
+                    "Prescrição personalizada — chás, shots, suplementos e manipulados sob medida",
+                    "Receitas exclusivas alinhadas ao seu plano",
+                    "Registro de refeição por foto com IA sem limite (contínuo, não só teste)",
+                  ],
+                },
+              ].map((col) => (
+                <div
+                  key={col.title}
+                  className="rounded-2xl bg-[hsl(40_45%_97%)] border border-[hsl(38_35%_80%)]/60 p-6 md:p-7 shadow-[0_20px_50px_-25px_rgba(11,42,74,0.35)]"
+                >
+                  <h3 className="font-serif text-[20px] md:text-2xl leading-tight text-[hsl(213_60%_17%)]">
+                    {col.title}
+                  </h3>
+                  <ul className="mt-5 space-y-3">
+                    {col.items.map((it, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 text-[14px] md:text-[15px] text-[hsl(213_30%_25%)]"
+                      >
+                        <Check className="w-5 h-5 mt-0.5 text-[hsl(38_60%_45%)] shrink-0" />
+                        <span className="leading-relaxed">{it}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className="mt-8 text-center text-[12px] md:text-[13px] text-[hsl(213_20%_45%)]">
+              Você começa pelo Plano de R$57 e decide depois se quer o Método Derma — não é obrigatório.
+            </p>
+          </div>
+        </section>
+
         {/* 7. COMO FUNCIONA */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_92%)]">
           <ArcsBg />
