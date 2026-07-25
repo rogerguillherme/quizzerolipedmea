@@ -25,6 +25,7 @@ import { Route as AppReembolsoRouteImport } from './routes/app.reembolso'
 import { Route as AppProtocoloRouteImport } from './routes/app.protocolo'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppMissoesRouteImport } from './routes/app.missoes'
+import { Route as AppFotoRouteImport } from './routes/app.foto'
 import { Route as AppDermaRouteImport } from './routes/app.derma'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as AdminProtocoloRouteImport } from './routes/admin.protocolo'
@@ -116,6 +117,11 @@ const AppMissoesRoute = AppMissoesRouteImport.update({
   path: '/missoes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFotoRoute = AppFotoRouteImport.update({
+  id: '/foto',
+  path: '/foto',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDermaRoute = AppDermaRouteImport.update({
   id: '/derma',
   path: '/derma',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin/login': typeof AdminLoginRoute
   '/app/derma': typeof AppDermaRoute
+  '/app/foto': typeof AppFotoRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin/login': typeof AdminLoginRoute
   '/app/derma': typeof AppDermaRoute
+  '/app/foto': typeof AppFotoRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin_/login': typeof AdminLoginRoute
   '/app/derma': typeof AppDermaRoute
+  '/app/foto': typeof AppFotoRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/admin/protocolo'
     | '/admin/login'
     | '/app/derma'
+    | '/app/foto'
     | '/app/missoes'
     | '/app/perfil'
     | '/app/protocolo'
@@ -296,6 +306,7 @@ export interface FileRouteTypes {
     | '/admin/protocolo'
     | '/admin/login'
     | '/app/derma'
+    | '/app/foto'
     | '/app/missoes'
     | '/app/perfil'
     | '/app/protocolo'
@@ -324,6 +335,7 @@ export interface FileRouteTypes {
     | '/admin/protocolo'
     | '/admin_/login'
     | '/app/derma'
+    | '/app/foto'
     | '/app/missoes'
     | '/app/perfil'
     | '/app/protocolo'
@@ -465,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMissoesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/foto': {
+      id: '/app/foto'
+      path: '/foto'
+      fullPath: '/app/foto'
+      preLoaderRoute: typeof AppFotoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/derma': {
       id: '/app/derma'
       path: '/derma'
@@ -562,6 +581,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AppRouteChildren {
   AppDermaRoute: typeof AppDermaRoute
+  AppFotoRoute: typeof AppFotoRoute
   AppMissoesRoute: typeof AppMissoesRoute
   AppPerfilRoute: typeof AppPerfilRoute
   AppProtocoloRoute: typeof AppProtocoloRoute
@@ -572,6 +592,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppDermaRoute: AppDermaRoute,
+  AppFotoRoute: AppFotoRoute,
   AppMissoesRoute: AppMissoesRoute,
   AppPerfilRoute: AppPerfilRoute,
   AppProtocoloRoute: AppProtocoloRoute,

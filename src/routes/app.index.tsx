@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Clock, Stethoscope, Activity, Target, HeartPulse } from "lucide-react";
+import { Loader2, Clock, Stethoscope, Activity, Target, HeartPulse, Camera, ChevronRight } from "lucide-react";
 import { getMyProfile } from "@/lib/mapa-access.functions";
+import { getMealTestStatus } from "@/lib/meal-test.functions";
 import type { Diagnostico } from "@/lib/mapa.functions";
 
 export const Route = createFileRoute("/app/")({
