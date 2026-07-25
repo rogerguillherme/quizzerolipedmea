@@ -35,10 +35,15 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
         const telefone = normalizePhone(remoteJid.split("@")[0] ?? "");
         if (!telefone) return Response.json({ ok: true, empty: true });
 
-        const conteudo =
+        const conteudoTexto =
           (data?.message?.conversation as string | undefined) ??
           (data?.message?.extendedTextMessage?.text as string | undefined) ??
           "";
+        const imageMessage = data?.message?.imageMessage as
+          | { caption?: string; mimetype?: string }
+          | undefined;
+        const isImage = Boolean(imageMessage);
+        const conteudo = conteudoTexto || (isImage ? "[imagem]" : "");
         if (!conteudo) return Response.json({ ok: true, noText: true });
 
         const pushName = (data?.pushName as string | undefined) ?? null;
@@ -93,6 +98,108 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
           conteudo,
           status: "recebido",
         });
+
+        // -------- Teste grátis de 3 fotos de refeição (pré-plano R$57) --------
+        // Se for imagem recebida do lead, tenta rodar o feedback multimodal.
+        if (!fromMe && isImage) {
+          const { data: lead } = await supabaseAdmin
+            .from("leads")
+            .select("id, nome, telefone, status, respostas")
+            .eq("telefone", telefone)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          // Só roda para leads já cadastradas e que ainda não pagaram o plano.
+          const statusPago = new Set(["plano_ativo", "premium", "cliente"]);
+          if (lead && !statusPago.has(String(lead.status))) {
+            const respostas =
+              (lead.respostas as Record<string, unknown>) ?? {};
+            const teste =
+              (respostas.teste_fotos as {
+                usadas?: number;
+                ultima_em?: string;
+              }) ?? { usadas: 0 };
+            const usadas = Number(teste.usadas ?? 0);
+            const primeiroNome = String(lead.nome ?? "").split(" ")[0] || "linda";
+
+            const { sendWhatsApp } = await import("@/lib/evolution.server");
+
+            if (usadas >= 3) {
+              const msg = `Oi ${primeiroNome} 💛 Seu *teste grátis de 3 fotos* já foi usado.\n\nPra continuar recebendo feedback ilimitado das suas refeições + o *plano completo* (sugestão alimentar, chás/shots e lista de compras) por *R$57* — sem assinatura — é só me responder aqui que eu te passo os próximos passos.`;
+              const wa = await sendWhatsApp(telefone, msg);
+              await supabaseAdmin.from("whatsapp_logs").insert({
+                telefone,
+                mensagem: msg,
+                status: wa.ok ? "enviado" : "falhou",
+                erro: wa.error ?? null,
+              });
+            } else {
+              const { downloadEvolutionMediaBase64 } = await import(
+                "@/lib/evolution.server"
+              );
+              const { analisarFotoRefeicao, formatarFeedbackWhatsApp } =
+                await import("@/lib/meal-photo.server");
+
+              const media = await downloadEvolutionMediaBase64(data);
+              if (!media.ok || !media.base64) {
+                const msg = `Oi ${primeiroNome}! Recebi sua foto mas não consegui abrir por aqui 😔 Me manda de novo, por favor?`;
+                const wa = await sendWhatsApp(telefone, msg);
+                await supabaseAdmin.from("whatsapp_logs").insert({
+                  telefone,
+                  mensagem: msg,
+                  status: wa.ok ? "enviado" : "falhou",
+                  erro: media.error ?? wa.error ?? null,
+                });
+              } else {
+                const analise = await analisarFotoRefeicao(
+                  media.base64,
+                  media.mimetype ?? "image/jpeg",
+                );
+                if (!analise.ok || !analise.feedback) {
+                  const msg = `${primeiroNome}, tive um probleminha pra analisar essa foto agora. Pode me mandar outra em alguns minutos? 🙏`;
+                  const wa = await sendWhatsApp(telefone, msg);
+                  await supabaseAdmin.from("whatsapp_logs").insert({
+                    telefone,
+                    mensagem: msg,
+                    status: "falhou",
+                    erro: analise.error ?? wa.error ?? null,
+                  });
+                } else {
+                  // Só conta como foto usada se a análise reconheceu refeição.
+                  const contaComoUsada = analise.feedback.isRefeicao;
+                  const proximoN = contaComoUsada ? usadas + 1 : usadas;
+                  const msg = formatarFeedbackWhatsApp(
+                    analise.feedback,
+                    Math.max(1, proximoN),
+                    primeiroNome,
+                  );
+                  const wa = await sendWhatsApp(telefone, msg);
+                  await supabaseAdmin.from("whatsapp_logs").insert({
+                    telefone,
+                    mensagem: msg,
+                    status: wa.ok ? "enviado" : "falhou",
+                    erro: wa.error ?? null,
+                  });
+                  if (contaComoUsada) {
+                    respostas.teste_fotos = {
+                      usadas: proximoN,
+                      ultima_em: new Date().toISOString(),
+                    };
+                    await supabaseAdmin
+                      .from("leads")
+                      .update({ respostas: respostas as never })
+                      .eq("id", lead.id);
+                  }
+                }
+              }
+            }
+
+            // Encerra aqui — a imagem não deve cair no parser de feedback textual.
+            return Response.json({ ok: true, photoTest: true });
+          }
+        }
+
 
         // Interpretação de feedback do Protocolo 7 Dias.
         // Só entra em ação se a lead tem jornada_7dias.ativa; caso contrário,

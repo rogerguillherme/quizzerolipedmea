@@ -81,3 +81,41 @@ export async function checkEvolutionStatus(): Promise<{
     return { ok: false, configured: true, error: (e as Error).message };
   }
 }
+
+/**
+ * Baixa uma mídia (imagem) recebida via webhook e devolve em base64 + mimetype.
+ * Usa o endpoint /chat/getBase64FromMediaMessage/{instance} da Evolution v2.
+ * `messagePayload` é o objeto `data` inteiro do webhook (com key + message).
+ */
+export async function downloadEvolutionMediaBase64(
+  messagePayload: unknown,
+): Promise<{ ok: boolean; base64?: string; mimetype?: string; error?: string }> {
+  const cfg = evoConfig();
+  if (!cfg.ok) return { ok: false, error: cfg.error };
+  try {
+    const res = await fetch(
+      `${cfg.url}/chat/getBase64FromMediaMessage/${cfg.instance}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: cfg.key },
+        body: JSON.stringify({
+          message: messagePayload,
+          convertToMp4: false,
+        }),
+      },
+    );
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      return { ok: false, error: `HTTP ${res.status}: ${text.slice(0, 200)}` };
+    }
+    const json = (await res.json()) as { base64?: string; mimetype?: string };
+    if (!json?.base64) return { ok: false, error: "resposta sem base64" };
+    return {
+      ok: true,
+      base64: json.base64,
+      mimetype: json.mimetype ?? "image/jpeg",
+    };
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
+}
