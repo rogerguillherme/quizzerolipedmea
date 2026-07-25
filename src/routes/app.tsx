@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Compass, Lightbulb, Sparkles, User, Loader2, CalendarCheck } from "lucide-react";
+import { Compass, Lightbulb, Sparkles, User, Loader2, CalendarCheck, Camera } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -46,6 +46,7 @@ function AppLayout() {
     { to: "/app", label: "Radar", icon: Compass, exact: true },
     { to: "/app/missoes", label: "Dicas", icon: Lightbulb },
     { to: "/app/protocolo", label: "Protocolo", icon: CalendarCheck },
+    { to: "/app/foto", label: "Refeição", icon: Camera },
     { to: "/app/derma", label: "Método", icon: Sparkles },
   ];
 
@@ -137,7 +138,7 @@ function AppLayout() {
           borderTop: "1px solid rgba(216,198,160,0.5)",
         }}
       >
-        <div className="mx-auto grid max-w-md grid-cols-4" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        <div className="mx-auto grid max-w-md grid-cols-5" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
           {tabs.map((t) => {
             const active = t.exact ? pathname === t.to : pathname.startsWith(t.to);
             const Icon = t.icon;
