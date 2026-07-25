@@ -138,7 +138,9 @@ Ao entrar você encontra:
 • As 3 prioridades da sua semana
 • Guia completo com as dicas da Gabriela
 
-Qualquer coisa, me chama aqui mesmo. ✨`;
+Qualquer coisa, me chama aqui mesmo. ✨
+
+✨ *Teste grátis:* me manda até *3 fotos de refeições* suas nos próximos dias que eu te dou um feedback rápido de cada uma — sem compromisso.`;
 
     const wa = await sendWhatsApp(lead.telefone, mensagem);
 
