@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as OfertaRouteImport } from './routes/oferta'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -38,6 +39,11 @@ import { Route as ApiPublicHooksCronTickRouteImport } from './routes/api/public/
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfertaRoute = OfertaRouteImport.update({
+  id: '/oferta',
+  path: '/oferta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapaRoute = MapaRouteImport.update({
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/mapa': typeof MapaRoute
+  '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/mapa': typeof MapaRoute
+  '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/mapa': typeof MapaRoute
+  '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/definir-senha'
     | '/mapa'
+    | '/oferta'
     | '/onboarding'
     | '/admin/configuracoes'
     | '/admin/crm'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/definir-senha'
     | '/mapa'
+    | '/oferta'
     | '/onboarding'
     | '/admin/configuracoes'
     | '/admin/crm'
@@ -303,6 +314,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/definir-senha'
     | '/mapa'
+    | '/oferta'
     | '/onboarding'
     | '/admin/configuracoes'
     | '/admin/crm'
@@ -331,6 +343,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DefinirSenhaRoute: typeof DefinirSenhaRoute
   MapaRoute: typeof MapaRoute
+  OfertaRoute: typeof OfertaRoute
   OnboardingRoute: typeof OnboardingRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
@@ -345,6 +358,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oferta': {
+      id: '/oferta'
+      path: '/oferta'
+      fullPath: '/oferta'
+      preLoaderRoute: typeof OfertaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mapa': {
@@ -569,6 +589,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DefinirSenhaRoute: DefinirSenhaRoute,
   MapaRoute: MapaRoute,
+  OfertaRoute: OfertaRoute,
   OnboardingRoute: OnboardingRoute,
   AdminLoginRoute: AdminLoginRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
