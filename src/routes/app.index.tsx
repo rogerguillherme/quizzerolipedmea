@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Clock, Stethoscope, Activity, Target, HeartPulse } from "lucide-react";
+import { Loader2, Clock, Stethoscope, Activity, Target, HeartPulse, Camera, ChevronRight } from "lucide-react";
 import { getMyProfile } from "@/lib/mapa-access.functions";
+import { getMealTestStatus } from "@/lib/meal-test.functions";
 import type { Diagnostico } from "@/lib/mapa.functions";
 
 export const Route = createFileRoute("/app/")({
@@ -28,9 +29,14 @@ const LABELS_Q: Record<string, { icon: React.ReactNode; label: string }> = {
 
 function GuiaMapa() {
   const fetchProfile = useServerFn(getMyProfile);
+  const fetchMealStatus = useServerFn(getMealTestStatus);
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => fetchProfile(),
+  });
+  const { data: mealStatus } = useQuery({
+    queryKey: ["meal-test-status"],
+    queryFn: () => fetchMealStatus(),
   });
 
   if (isLoading) {
@@ -116,6 +122,50 @@ function GuiaMapa() {
           </span>
         </div>
       </section>
+
+      {/* Teste grátis: foto de refeição */}
+      <section className="mt-6">
+        <Link
+          to="/app/foto"
+          className="flex items-center gap-4 rounded-2xl px-4 py-4 transition-transform active:scale-[0.98]"
+          style={{
+            background: "linear-gradient(140deg, rgba(217,169,75,0.18), rgba(255,253,247,0.95))",
+            border: "1px solid rgba(217,169,75,0.5)",
+            boxShadow: "0 10px 24px -18px rgba(22,50,79,0.35)",
+          }}
+        >
+          <span
+            className="grid size-11 shrink-0 place-items-center rounded-full"
+            style={{
+              background: "linear-gradient(180deg, #2C5578, #16324F)",
+              color: "#F5EFE1",
+            }}
+          >
+            <Camera className="size-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p
+              className="text-[10px] font-semibold uppercase"
+              style={{ letterSpacing: "0.2em", color: "#AF7F35" }}
+            >
+              Teste grátis
+            </p>
+            <p
+              className="mt-0.5 text-[14.5px] font-semibold"
+              style={{ color: "#16324F", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}
+            >
+              Registre uma refeição
+            </p>
+            <p className="mt-0.5 text-[11.5px]" style={{ color: "#5C5749" }}>
+              {mealStatus?.pago
+                ? "Feedback ilimitado ativo"
+                : `${mealStatus?.restantes ?? 3} de 3 fotos restantes`}
+            </p>
+          </div>
+          <ChevronRight className="size-4 shrink-0" style={{ color: "#AF7F35" }} />
+        </Link>
+      </section>
+
 
       {/* Avaliação do caso */}
       <section className="mt-8">
