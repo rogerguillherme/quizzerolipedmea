@@ -35,10 +35,15 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
         const telefone = normalizePhone(remoteJid.split("@")[0] ?? "");
         if (!telefone) return Response.json({ ok: true, empty: true });
 
-        const conteudo =
+        const conteudoTexto =
           (data?.message?.conversation as string | undefined) ??
           (data?.message?.extendedTextMessage?.text as string | undefined) ??
           "";
+        const imageMessage = data?.message?.imageMessage as
+          | { caption?: string; mimetype?: string }
+          | undefined;
+        const isImage = Boolean(imageMessage);
+        const conteudo = conteudoTexto || (isImage ? "[imagem]" : "");
         if (!conteudo) return Response.json({ ok: true, noText: true });
 
         const pushName = (data?.pushName as string | undefined) ?? null;
