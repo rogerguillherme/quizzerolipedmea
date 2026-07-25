@@ -29,9 +29,14 @@ const LABELS_Q: Record<string, { icon: React.ReactNode; label: string }> = {
 
 function GuiaMapa() {
   const fetchProfile = useServerFn(getMyProfile);
+  const fetchMealStatus = useServerFn(getMealTestStatus);
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => fetchProfile(),
+  });
+  const { data: mealStatus } = useQuery({
+    queryKey: ["meal-test-status"],
+    queryFn: () => fetchMealStatus(),
   });
 
   if (isLoading) {
