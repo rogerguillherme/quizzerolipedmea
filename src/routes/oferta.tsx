@@ -205,7 +205,117 @@ function OfertaPage() {
           </div>
         </section>
 
-        {/* 6. COMO FUNCIONA */}
+        {/* 6. VEJA COMO FICA DENTRO DO APP */}
+        <section className="relative border-t border-[hsl(38_35%_80%)]/50">
+          <div className="relative mx-auto max-w-6xl px-5 md:px-6 py-14 md:py-20">
+            <SectionTitle>Veja como fica dentro do app</SectionTitle>
+            <div className="mt-8 md:mt-12 grid md:grid-cols-2 gap-6 md:gap-8">
+              {/* Preview 1 — Mapa */}
+              <div>
+                <div className="rounded-2xl bg-[hsl(40_45%_97%)] border border-[hsl(38_35%_80%)]/60 p-6 md:p-7 shadow-[0_20px_50px_-25px_rgba(11,42,74,0.35)]">
+                  <p className="text-[10px] tracking-[0.32em] uppercase text-[hsl(38_60%_38%)] font-medium">
+                    Mapa personalizado
+                  </p>
+                  <h3 className="mt-2 font-serif text-[22px] md:text-2xl leading-tight text-[hsl(213_60%_17%)]">
+                    Sua leitura do lipedema
+                  </h3>
+                  <p className="mt-4 text-[13.5px] md:text-sm leading-relaxed text-[hsl(213_30%_28%)]">
+                    Pelo que você descreveu, o padrão sugere um quadro compatível com lipedema — as
+                    pernas guardam volume mesmo com esforço no resto do corpo, e isso não é falta de
+                    disciplina.
+                  </p>
+                  <div className="mt-5 flex items-center gap-2 rounded-lg bg-[hsl(40_40%_92%)] border border-[hsl(38_35%_80%)]/60 px-3 py-2">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-[hsl(38_60%_38%)]">
+                      Estágio percebido
+                    </span>
+                    <span className="ml-auto font-serif text-[hsl(213_60%_17%)] text-[15px]">
+                      Intermediário
+                    </span>
+                  </div>
+                  <p className="mt-5 text-[11px] uppercase tracking-[0.24em] text-[hsl(38_60%_38%)] font-medium">
+                    Suas 3 prioridades
+                  </p>
+                  <ul className="mt-3 space-y-2.5">
+                    {[
+                      "Reduzir alimentos ultraprocessados e inflamatórios",
+                      "Incluir chá/shot indicado no ritual da manhã",
+                      "Movimento leve diário, sem exigir treino pesado",
+                    ].map((p, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 text-[13.5px] md:text-sm text-[hsl(213_30%_25%)]"
+                      >
+                        <span className="mt-0.5 w-5 h-5 rounded-full bg-[hsl(213_60%_17%)] text-[hsl(40_45%_95%)] flex items-center justify-center font-serif text-[11px] shrink-0">
+                          {i + 1}
+                        </span>
+                        <span className="leading-relaxed">{p}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="mt-4 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center">
+                  Seu mapa personalizado, com estágio percebido e as 3 prioridades da semana.
+                </p>
+              </div>
+
+              {/* Preview 2 — Protocolo 7 Dias */}
+              <div>
+                <div className="rounded-2xl bg-[hsl(40_45%_97%)] border border-[hsl(38_35%_80%)]/60 p-6 md:p-7 shadow-[0_20px_50px_-25px_rgba(11,42,74,0.35)]">
+                  <p className="text-[10px] tracking-[0.32em] uppercase text-[hsl(38_60%_38%)] font-medium">
+                    Em andamento
+                  </p>
+                  <h3 className="mt-2 font-serif text-[22px] md:text-2xl leading-tight text-[hsl(213_60%_17%)]">
+                    Seu Protocolo de 7 Dias
+                  </h3>
+                  <div className="mt-5 flex items-center justify-between text-[12px] text-[hsl(213_25%_35%)]">
+                    <span>Dias cumpridos</span>
+                    <span className="font-medium text-[hsl(213_60%_17%)]">1 / 7</span>
+                  </div>
+                  <div className="mt-2 h-1.5 rounded-full bg-[hsl(40_40%_92%)] overflow-hidden">
+                    <div
+                      className="h-full bg-[hsl(38_55%_58%)]"
+                      style={{ width: `${(1 / 7) * 100}%` }}
+                    />
+                  </div>
+                  <div className="mt-5 grid grid-cols-7 gap-1.5">
+                    {Array.from({ length: 7 }).map((_, i) => {
+                      const active = i === 0;
+                      return (
+                        <div
+                          key={i}
+                          className={`aspect-square rounded-lg flex items-center justify-center text-[11px] font-medium border ${
+                            active
+                              ? "bg-[hsl(38_55%_58%)] text-[hsl(213_60%_12%)] border-[hsl(38_55%_58%)]"
+                              : "bg-transparent text-[hsl(213_25%_40%)] border-[hsl(38_35%_80%)]/60"
+                          }`}
+                        >
+                          D{i + 1}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-5 text-[12.5px] md:text-[13px] leading-relaxed text-[hsl(213_25%_35%)]">
+                    Sem responder é ok — o protocolo continua no seu ritmo. Nenhum dia perdido, nada
+                    cobrado.
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <span className="inline-flex items-center rounded-full border border-[hsl(38_35%_75%)]/70 px-3.5 py-1.5 text-[12px] text-[hsl(213_60%_17%)] bg-[hsl(40_40%_94%)]">
+                      Lista de compras
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-[hsl(38_35%_75%)]/70 px-3.5 py-1.5 text-[12px] text-[hsl(213_60%_17%)] bg-[hsl(40_40%_94%)]">
+                      Progresso
+                    </span>
+                  </div>
+                </div>
+                <p className="mt-4 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center">
+                  Protocolo de 7 Dias ativo — dias marcados sem cobrança, no seu ritmo.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 7. COMO FUNCIONA */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_92%)]">
           <ArcsBg />
           <div className="relative mx-auto max-w-5xl px-5 md:px-6 py-14 md:py-20">
