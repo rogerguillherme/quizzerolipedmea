@@ -370,7 +370,7 @@ function OfertaPage() {
                 },
                 {
                   q: "Precisa de assinatura?",
-                  a: "Não. Você começa pelo Plano de R$57 (sugestão alimentar + chás/shots/suplementos gerais, sem personalização). Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada.",
+                  a: "Não. Por R$57 você libera o plano completo — sugestão alimentar, chá/shot indicado, lista de compras e o Protocolo de 7 Dias conduzido pelo agente de WhatsApp (tudo dentro do mesmo pagamento, sem personalização de exames). Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada.",
                 },
                 {
                   q: "É indicado pra qualquer estágio?",
