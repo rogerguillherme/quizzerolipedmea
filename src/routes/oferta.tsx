@@ -350,7 +350,7 @@ function OfertaPage() {
               ))}
             </ol>
             <p className="mt-6 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center md:text-left">
-              R$57 libera o plano completo + acompanhamento pelo WhatsApp — sem assinatura obrigatória.
+              A partir de R$57 — sem assinatura obrigatória.
             </p>
           </div>
         </section>
