@@ -328,11 +328,11 @@ function OfertaPage() {
                 },
                 {
                   n: 2,
-                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana.",
+                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana. Teste também tirar foto de até 3 refeições no app e veja como funciona o registro.",
                 },
                 {
                   n: 3,
-                  t: "Acesse pelo WhatsApp e continue com o Protocolo de 7 Dias — sugestão alimentar, chá/shot indicado, lista de compras e dicas diárias, por R$57.",
+                  t: "Libere o plano completo — sugestão alimentar, chá/shot indicado, lista de compras e o acompanhamento diário pelo agente de WhatsApp — por R$57.",
                 },
               ].map((s) => (
                 <li
@@ -349,7 +349,7 @@ function OfertaPage() {
               ))}
             </ol>
             <p className="mt-6 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center md:text-left">
-              A partir de R$57 — sem assinatura obrigatória.
+              R$57 libera o plano completo + acompanhamento pelo WhatsApp — sem assinatura obrigatória.
             </p>
           </div>
         </section>
@@ -370,7 +370,7 @@ function OfertaPage() {
                 },
                 {
                   q: "Precisa de assinatura?",
-                  a: "Não. Você começa pelo Plano de R$57 (sugestão alimentar + chás/shots/suplementos gerais, sem personalização). Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada.",
+                  a: "Não. Por R$57 você libera o plano completo — sugestão alimentar, chá/shot indicado, lista de compras e o Protocolo de 7 Dias conduzido pelo agente de WhatsApp (tudo dentro do mesmo pagamento, sem personalização de exames). Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada.",
                 },
                 {
                   q: "É indicado pra qualquer estágio?",
