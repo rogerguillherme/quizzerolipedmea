@@ -367,7 +367,10 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
   }
 
   async function enviarAcesso(telefoneFinal: string) {
-    if (!leadId) return;
+    if (!leadId) {
+      setErro("Ops, perdi seu Mapa aqui. Pode responder as perguntas de novo?");
+      return;
+    }
     setStage({ kind: "sending-access" });
     await gabiSay("Estou criando seu acesso e enviando agora…", 500);
     try {
