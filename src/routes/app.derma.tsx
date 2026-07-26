@@ -91,8 +91,10 @@ function PremiumPlano() {
           acompanhamento direto e ferramentas dentro do app.
         </p>
 
-        <Link
-          to="/upsell"
+        <a
+          href="https://pay.kiwify.com.br/j0hsxv3"
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={() => track("premium_upgrade_clicked")}
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform active:scale-[0.98]"
           style={{
@@ -104,7 +106,7 @@ function PremiumPlano() {
           <Sparkles className="size-4" />
           Ativar plano premium
           <ChevronRight className="size-4" />
-        </Link>
+        </a>
       </section>
 
       <section className="mt-6 space-y-3">
