@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UpsellRouteImport } from './routes/upsell'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OfertaRouteImport } from './routes/oferta'
 import { Route as MapaRouteImport } from './routes/mapa'
@@ -37,6 +38,11 @@ import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configura
 import { Route as ApiPublicWebhooksEvolutionRouteImport } from './routes/api/public/webhooks/evolution'
 import { Route as ApiPublicHooksCronTickRouteImport } from './routes/api/public/hooks/cron-tick'
 
+const UpsellRoute = UpsellRouteImport.update({
+  id: '/upsell',
+  path: '/upsell',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -183,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
@@ -271,6 +280,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/upsell'
     | '/admin/configuracoes'
     | '/admin/crm'
     | '/admin/derma'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/upsell'
     | '/admin/configuracoes'
     | '/admin/crm'
     | '/admin/derma'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/upsell'
     | '/admin/configuracoes'
     | '/admin/crm'
     | '/admin/derma'
@@ -357,6 +369,7 @@ export interface RootRouteChildren {
   MapaRoute: typeof MapaRoute
   OfertaRoute: typeof OfertaRoute
   OnboardingRoute: typeof OnboardingRoute
+  UpsellRoute: typeof UpsellRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
   ApiPublicHooksCronTickRoute: typeof ApiPublicHooksCronTickRoute
@@ -365,6 +378,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/upsell': {
+      id: '/upsell'
+      path: '/upsell'
+      fullPath: '/upsell'
+      preLoaderRoute: typeof UpsellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -612,6 +632,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapaRoute: MapaRoute,
   OfertaRoute: OfertaRoute,
   OnboardingRoute: OnboardingRoute,
+  UpsellRoute: UpsellRoute,
   AdminLoginRoute: AdminLoginRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
   ApiPublicHooksCronTickRoute: ApiPublicHooksCronTickRoute,
