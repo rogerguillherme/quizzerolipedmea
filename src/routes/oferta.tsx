@@ -316,6 +316,99 @@ function OfertaPage() {
           </div>
         </section>
 
+        {/* 6b. FOTO DA REFEIÇÃO — ANTES / DEPOIS */}
+        <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_93%)]">
+          <div className="relative mx-auto max-w-6xl px-5 md:px-6 py-14 md:py-20">
+            <p className="text-[10px] tracking-[0.32em] uppercase text-[hsl(38_60%_38%)] font-medium">
+              Teste grátis · 3 fotos
+            </p>
+            <SectionTitle>Fotografe seu prato, receba a leitura</SectionTitle>
+            <p className="mt-3 max-w-2xl text-[14px] md:text-base text-[hsl(213_30%_28%)] leading-relaxed">
+              Antes de decidir qualquer coisa, você pode enviar 3 fotos de refeição — pelo app ou
+              pelo WhatsApp — e receber na hora a análise da nossa I.A. treinada com a Dra. Gabriela.
+            </p>
+
+            <div className="mt-8 md:mt-12 grid md:grid-cols-2 gap-6 md:gap-8 items-stretch">
+              {/* ANTES — foto */}
+              <div className="flex flex-col">
+                <div className="relative rounded-2xl overflow-hidden border border-[hsl(38_35%_80%)]/60 shadow-[0_20px_50px_-25px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
+                  <img
+                    src={pratoExemplo}
+                    alt="Foto de exemplo: arroz, feijão preto, frango grelhado e salada"
+                    className="w-full h-full object-cover aspect-square"
+                    width={1024}
+                    height={1024}
+                    loading="lazy"
+                  />
+                  <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-[hsl(213_60%_17%)]/85 backdrop-blur px-3 py-1.5 text-[10px] uppercase tracking-[0.24em] text-[hsl(40_45%_95%)]">
+                    <Camera className="w-3 h-3" />
+                    Antes · sua foto
+                  </div>
+                </div>
+                <p className="mt-4 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center">
+                  Uma foto simples do prato, tirada na hora do almoço.
+                </p>
+              </div>
+
+              {/* DEPOIS — análise IA */}
+              <div className="flex flex-col">
+                <div className="rounded-2xl bg-[hsl(40_45%_97%)] border border-[hsl(38_35%_80%)]/60 p-6 md:p-7 shadow-[0_20px_50px_-25px_rgba(11,42,74,0.35)] flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(213_60%_17%)] text-[hsl(40_45%_95%)] px-3 py-1.5 text-[10px] uppercase tracking-[0.24em]">
+                      <Sparkles className="w-3 h-3" />
+                      Depois · análise I.A.
+                    </span>
+                    <span className="ml-auto text-[10px] uppercase tracking-[0.24em] text-[hsl(38_60%_38%)]">
+                      2 fotos restantes
+                    </span>
+                  </div>
+
+                  <h3 className="mt-4 font-serif text-[20px] md:text-2xl leading-tight text-[hsl(213_60%_17%)]">
+                    Boa escolha, quase pronto ✨
+                  </h3>
+                  <p className="mt-3 text-[13.5px] md:text-sm leading-relaxed text-[hsl(213_30%_28%)]">
+                    Prato equilibrado no geral — proteína magra, salada colorida e feijão preto
+                    (ótimo pra circulação). Pra lipedema, a gente ajusta 2 pontinhos pra reduzir
+                    inchaço já hoje à tarde.
+                  </p>
+
+                  <div className="mt-5 grid grid-cols-2 gap-2.5">
+                    <div className="rounded-lg bg-[hsl(140_35%_94%)] border border-[hsl(140_25%_78%)]/60 px-3 py-2.5">
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-[hsl(150_35%_28%)] font-medium">
+                        Manteve
+                      </p>
+                      <p className="mt-1 text-[12.5px] text-[hsl(213_30%_25%)] leading-snug">
+                        Frango grelhado, salada, feijão preto
+                      </p>
+                    </div>
+                    <div className="rounded-lg bg-[hsl(30_60%_95%)] border border-[hsl(30_45%_78%)]/60 px-3 py-2.5">
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-[hsl(28_55%_35%)] font-medium">
+                        Ajuste
+                      </p>
+                      <p className="mt-1 text-[12.5px] text-[hsl(213_30%_25%)] leading-snug">
+                        Reduza o arroz pela metade
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="mt-5 text-[11px] uppercase tracking-[0.24em] text-[hsl(38_60%_38%)] font-medium">
+                    Dica da Gabi
+                  </p>
+                  <p className="mt-2 text-[13px] md:text-[13.5px] leading-relaxed text-[hsl(213_25%_30%)]">
+                    Beba 1 copo de água com limão 20 min antes do almoço e caminhe 10 min depois de
+                    comer. Ajuda drenagem e evita o inchaço da tarde.
+                  </p>
+                </div>
+                <p className="mt-4 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center">
+                  Feedback em segundos, direto no seu WhatsApp ou no app.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+
 
         {/* 7. COMO FUNCIONA */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_92%)]">
