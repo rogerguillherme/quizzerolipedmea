@@ -38,9 +38,9 @@ const QS: ChoiceQ[] = [
     key: "tempo",
     gabi: (n) => `${n}, olhando as suas pernas hoje, qual desses estágios mais se parece com elas?`,
     options: [
-      { label: "Estágio 1 — leve", short: "Estágio 1", image: estagio1Img },
-      { label: "Estágio 2 — moderado", short: "Estágio 2", image: estagio2Img },
-      { label: "Estágio 3 — avançado", short: "Estágio 3", image: estagio3Img },
+      { label: "Estágio 1 leve", short: "Estágio 1", image: estagio1Img },
+      { label: "Estágio 2 moderado", short: "Estágio 2", image: estagio2Img },
+      { label: "Estágio 3 avançado", short: "Estágio 3", image: estagio3Img },
       { label: "Não sei identificar", short: "Não sei" },
     ],
   },
@@ -132,33 +132,33 @@ const DDD_TO_UF: Record<number, string> = {
 };
 
 const UF_INFO: Record<string, { estado: string; regiao: string; comentario: string }> = {
-  SP: { estado: "São Paulo", regiao: "Sudeste", comentario: "São Paulo — atendo muita paciente daí, dá pra adaptar bem à rotina corrida." },
-  RJ: { estado: "Rio de Janeiro", regiao: "Sudeste", comentario: "Rio de Janeiro — calor e umidade pesam no inchaço, vou considerar isso." },
-  ES: { estado: "Espírito Santo", regiao: "Sudeste", comentario: "Espírito Santo — clima quente pede atenção especial ao inchaço." },
-  MG: { estado: "Minas Gerais", regiao: "Sudeste", comentario: "Minas Gerais — cozinha caseira favorece muito o protocolo." },
-  PR: { estado: "Paraná", regiao: "Sul", comentario: "Paraná — clima mais frio ajuda bastante na circulação." },
-  SC: { estado: "Santa Catarina", regiao: "Sul", comentario: "Santa Catarina — atendo muita paciente daí, dá pra aproveitar peixes no plano." },
-  RS: { estado: "Rio Grande do Sul", regiao: "Sul", comentario: "Rio Grande do Sul — frio ajuda no inchaço, cozinha gaúcha a gente adapta." },
-  DF: { estado: "Distrito Federal", regiao: "Centro-Oeste", comentario: "Distrito Federal — clima seco pede atenção redobrada à hidratação." },
-  GO: { estado: "Goiás", regiao: "Centro-Oeste", comentario: "Goiás — cozinha típica combina bem com nosso plano." },
-  MT: { estado: "Mato Grosso", regiao: "Centro-Oeste", comentario: "Mato Grosso — calor intenso pede atenção especial ao inchaço." },
-  MS: { estado: "Mato Grosso do Sul", regiao: "Centro-Oeste", comentario: "Mato Grosso do Sul — cozinha regional que a gente adapta bem." },
-  TO: { estado: "Tocantins", regiao: "Norte", comentario: "Tocantins — calor forte, vou considerar isso no seu plano." },
-  AC: { estado: "Acre", regiao: "Norte", comentario: "Acre — calor e umidade pedem atenção especial ao inchaço." },
-  RO: { estado: "Rondônia", regiao: "Norte", comentario: "Rondônia — clima quente, vou considerar isso." },
-  PA: { estado: "Pará", regiao: "Norte", comentario: "Pará — calor e umidade pesam bastante no inchaço, a gente ajusta." },
-  AM: { estado: "Amazonas", regiao: "Norte", comentario: "Amazonas — clima quente e úmido, vou considerar isso no plano." },
-  RR: { estado: "Roraima", regiao: "Norte", comentario: "Roraima — calor forte pede atenção especial." },
-  AP: { estado: "Amapá", regiao: "Norte", comentario: "Amapá — clima quente e úmido, atenção ao inchaço." },
-  BA: { estado: "Bahia", regiao: "Nordeste", comentario: "Bahia — cozinha rica em opções que combinam com o protocolo." },
-  SE: { estado: "Sergipe", regiao: "Nordeste", comentario: "Sergipe — cozinha regional que a gente adapta bem." },
-  PE: { estado: "Pernambuco", regiao: "Nordeste", comentario: "Pernambuco — calor forte, vamos ficar atentas ao inchaço." },
-  AL: { estado: "Alagoas", regiao: "Nordeste", comentario: "Alagoas — cozinha regional que combina bem." },
-  PB: { estado: "Paraíba", regiao: "Nordeste", comentario: "Paraíba — calor pede atenção redobrada à hidratação." },
-  RN: { estado: "Rio Grande do Norte", regiao: "Nordeste", comentario: "Rio Grande do Norte — dá pra aproveitar bem os peixes no protocolo." },
-  CE: { estado: "Ceará", regiao: "Nordeste", comentario: "Ceará — adoro atender pacientes daí, vou considerar o clima quente." },
-  PI: { estado: "Piauí", regiao: "Nordeste", comentario: "Piauí — calor forte, atenção especial ao inchaço." },
-  MA: { estado: "Maranhão", regiao: "Nordeste", comentario: "Maranhão — cozinha regional rica, a gente adapta bem." },
+  SP: { estado: "São Paulo", regiao: "Sudeste", comentario: "São Paulo atendo muita paciente daí, dá pra adaptar bem à rotina corrida." },
+  RJ: { estado: "Rio de Janeiro", regiao: "Sudeste", comentario: "Rio de Janeiro calor e umidade pesam no inchaço, vou considerar isso." },
+  ES: { estado: "Espírito Santo", regiao: "Sudeste", comentario: "Espírito Santo clima quente pede atenção especial ao inchaço." },
+  MG: { estado: "Minas Gerais", regiao: "Sudeste", comentario: "Minas Gerais cozinha caseira favorece muito o protocolo." },
+  PR: { estado: "Paraná", regiao: "Sul", comentario: "Paraná clima mais frio ajuda bastante na circulação." },
+  SC: { estado: "Santa Catarina", regiao: "Sul", comentario: "Santa Catarina atendo muita paciente daí, dá pra aproveitar peixes no plano." },
+  RS: { estado: "Rio Grande do Sul", regiao: "Sul", comentario: "Rio Grande do Sul frio ajuda no inchaço, cozinha gaúcha a gente adapta." },
+  DF: { estado: "Distrito Federal", regiao: "Centro-Oeste", comentario: "Distrito Federal clima seco pede atenção redobrada à hidratação." },
+  GO: { estado: "Goiás", regiao: "Centro-Oeste", comentario: "Goiás cozinha típica combina bem com nosso plano." },
+  MT: { estado: "Mato Grosso", regiao: "Centro-Oeste", comentario: "Mato Grosso calor intenso pede atenção especial ao inchaço." },
+  MS: { estado: "Mato Grosso do Sul", regiao: "Centro-Oeste", comentario: "Mato Grosso do Sul cozinha regional que a gente adapta bem." },
+  TO: { estado: "Tocantins", regiao: "Norte", comentario: "Tocantins calor forte, vou considerar isso no seu plano." },
+  AC: { estado: "Acre", regiao: "Norte", comentario: "Acre calor e umidade pedem atenção especial ao inchaço." },
+  RO: { estado: "Rondônia", regiao: "Norte", comentario: "Rondônia clima quente, vou considerar isso." },
+  PA: { estado: "Pará", regiao: "Norte", comentario: "Pará calor e umidade pesam bastante no inchaço, a gente ajusta." },
+  AM: { estado: "Amazonas", regiao: "Norte", comentario: "Amazonas clima quente e úmido, vou considerar isso no plano." },
+  RR: { estado: "Roraima", regiao: "Norte", comentario: "Roraima calor forte pede atenção especial." },
+  AP: { estado: "Amapá", regiao: "Norte", comentario: "Amapá clima quente e úmido, atenção ao inchaço." },
+  BA: { estado: "Bahia", regiao: "Nordeste", comentario: "Bahia cozinha rica em opções que combinam com o protocolo." },
+  SE: { estado: "Sergipe", regiao: "Nordeste", comentario: "Sergipe cozinha regional que a gente adapta bem." },
+  PE: { estado: "Pernambuco", regiao: "Nordeste", comentario: "Pernambuco calor forte, vamos ficar atentas ao inchaço." },
+  AL: { estado: "Alagoas", regiao: "Nordeste", comentario: "Alagoas cozinha regional que combina bem." },
+  PB: { estado: "Paraíba", regiao: "Nordeste", comentario: "Paraíba calor pede atenção redobrada à hidratação." },
+  RN: { estado: "Rio Grande do Norte", regiao: "Nordeste", comentario: "Rio Grande do Norte dá pra aproveitar bem os peixes no protocolo." },
+  CE: { estado: "Ceará", regiao: "Nordeste", comentario: "Ceará adoro atender pacientes daí, vou considerar o clima quente." },
+  PI: { estado: "Piauí", regiao: "Nordeste", comentario: "Piauí calor forte, atenção especial ao inchaço." },
+  MA: { estado: "Maranhão", regiao: "Nordeste", comentario: "Maranhão cozinha regional rica, a gente adapta bem." },
 };
 
 function regiaoPorDDD(tel: string): { uf: string; estado: string; regiao: string; comentario: string } | null {
@@ -235,8 +235,8 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     bootedRef.current = true;
     (async () => {
       await gabiSay("Oi! Aqui é a Gabriela Rosado, nutricionista (CRN 10582).");
-      await gabiSay("Vou te fazer algumas perguntas rápidas pra montar o seu Mapa do Lipedema — leva uns 2 minutinhos. Pode ser?");
-      await gabiSay("Antes de tudo — como você quer ser chamada?");
+      await gabiSay("Vou te fazer algumas perguntas rápidas pra montar o seu Mapa do Lipedema leva uns 2 minutinhos. Pode ser?");
+      await gabiSay("Antes de tudo como você quer ser chamada?");
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -275,7 +275,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     setStage({ kind: "asking-choice", qIndex: 0 });
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
     await gabiSay(
-      "Vou te fazer 8 perguntinhas rápidas — no fim monto seu Mapa aqui na conversa. Bora?",
+      "Vou te fazer 8 perguntinhas rápidas no fim monto seu Mapa aqui na conversa. Bora?",
     );
     await gabiSay(QS[0].gabi(primeiroNome));
   }
@@ -354,7 +354,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       });
       await gabiSay("Esse é o resumo do que li nas suas respostas. 💙", 900);
       await gabiSay(
-        "Se quiser, te mando o Mapa completo no WhatsApp — é onde vou te acompanhar. Me passa seu número com DDD?",
+        "Se quiser, te mando o Mapa completo no WhatsApp é onde vou te acompanhar. Me passa seu número com DDD?",
       );
       setStage({ kind: "showing-report" });
     } catch (e) {
@@ -385,7 +385,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       if (result.whatsappEnviado) {
         await gabiSay("Prontinho! Já mandei no seu WhatsApp. Dá uma olhadinha 📲");
       } else {
-        await gabiSay("Seu acesso está pronto — anote aí, é rapidinho.");
+        await gabiSay("Seu acesso está pronto anote aí, é rapidinho.");
       }
       setStage({ kind: "done" });
     } catch (e) {
@@ -401,7 +401,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushUser("Sim, pode me chamar 💙");
     setStage({ kind: "asking-telefone" });
     await gabiSay(
-      "Perfeito! Me passa seu WhatsApp com DDD — (11) 9 8888-7777 — que já te chamo por lá.",
+      "Perfeito! Me passa seu WhatsApp com DDD (11) 9 8888-7777 que já te chamo por lá.",
     );
   }
 
@@ -566,17 +566,17 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 function reacaoParaResposta(key: string, resposta: string, nome: string): string | null {
   const n = nome || "você";
   if (key === "tempo" && resposta.startsWith("Estágio 3"))
-    return `Entendi, ${n}. Estágio mais avançado pede um cuidado bem específico — vou considerar isso.`;
+    return `Entendi, ${n}. Estágio mais avançado pede um cuidado bem específico vou considerar isso.`;
   if (key === "tempo" && resposta === "Não sei identificar")
     return "Tudo bem, é super comum não saber identificar. A gente segue com as outras perguntas.";
   if (key === "diagnostico" && resposta.startsWith("Sim"))
-    return "Ótimo que já tem o diagnóstico — isso acelera muito nosso plano.";
+    return "Ótimo que já tem o diagnóstico isso acelera muito nosso plano.";
   if (key === "sintomaMaior" && resposta.startsWith("Dor"))
     return "A dor ao toque é um sinal muito característico. Anotei.";
   if (key === "sintomaMaior" && resposta.startsWith("Inchaço"))
     return "Inchaço que piora ao longo do dia é um marcador clássico. Anotei.";
   if (key === "pesoPernas" && resposta === "Sempre")
-    return "Esse padrão é bem típico — não é você, é o lipedema.";
+    return "Esse padrão é bem típico não é você, é o lipedema.";
   if (key === "dietaExercicio" && resposta === "Muitas vezes")
     return `${n}, isso não é falta de esforço seu. Prometo.`;
   return null;
