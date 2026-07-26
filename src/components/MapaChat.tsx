@@ -272,12 +272,12 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     setNome(primeiroNome);
     setInputText("");
     pushUser(val);
-    setStage({ kind: "asking-choice", qIndex: 0 });
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
     await gabiSay(
       "Vou te fazer 8 perguntinhas rápidas no fim monto seu Mapa aqui na conversa. Bora?",
     );
     await gabiSay(QS[0].gabi(primeiroNome));
+    setStage({ kind: "asking-choice", qIndex: 0 });
   }
 
   async function handleSendTelefone() {
@@ -304,6 +304,8 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushUser(opt.short);
     const updated = { ...answers, [q.key]: opt.label };
     setAnswers(updated);
+    // Trava os botões enquanto a próxima mensagem é preparada
+    setStage({ kind: "submitting" });
 
     // Comentário reativo curto (opcional)
     const reacao = reacaoParaResposta(q.key, opt.label, nome);
@@ -311,11 +313,10 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
     const next = qIndex + 1;
     if (next < QS.length) {
-      setStage({ kind: "asking-choice", qIndex: next });
       await gabiSay(QS[next].gabi(nome));
+      setStage({ kind: "asking-choice", qIndex: next });
     } else {
       // Todas respondidas — submeter
-      setStage({ kind: "submitting" });
       await gabiSay(`Perfeito, ${nome}. Vou juntar tudo aqui e montar seu Mapa…`, 600);
       await enviarQuiz(updated);
     }
@@ -366,7 +367,10 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
   }
 
   async function enviarAcesso(telefoneFinal: string) {
-    if (!leadId) return;
+    if (!leadId) {
+      setErro("Ops, perdi seu Mapa aqui. Pode responder as perguntas de novo?");
+      return;
+    }
     setStage({ kind: "sending-access" });
     await gabiSay("Estou criando seu acesso e enviando agora…", 500);
     try {
@@ -397,7 +401,6 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
   }
 
   async function handleReceberAcesso() {
-    if (!leadId) return;
     pushUser("Sim, pode me chamar 💙");
     setStage({ kind: "asking-telefone" });
     await gabiSay(
