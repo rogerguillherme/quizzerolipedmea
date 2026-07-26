@@ -58,11 +58,11 @@ const DICAS: Dica[] = [
   },
   {
     id: "olhos",
-    titulo: "Primeiro se come com os olhos",
-    descricao: "A apresentação muda a percepção da refeição.",
+    titulo: "Lipedema é mudança da hábitos",
+    descricao: "Aprenda a se alimentar bem sem dietas restritas",
     icon: <MessageSquareQuote className="size-4" />,
     detalhe:
-      "Capriche em 2-3 cores no prato, use uma louça que você goste, corte os alimentos de forma organizada (fatias, cubos, rodelas), sirva pouco de cada vez e repita se precisar, e faça a refeição sem tela para perceber fome e saciedade.",
+      "Quando você entende o que faz seu lipedema piorar, o controle do seu corpo está nas suas mãos, sem ficar dependendo de dietas prontas e restitivas.",
   },
 ];
 
