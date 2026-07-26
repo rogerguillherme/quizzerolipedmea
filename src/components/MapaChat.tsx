@@ -492,7 +492,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
           <TextComposer
             inputRef={inputRef}
             value={inputText}
-            onChange={setInputText}
+            onChange={(v) => setInputText(formatPhoneBR(v))}
             onSend={handleSendTelefone}
             placeholder="(11) 9 8888-7777"
             inputMode="tel"
