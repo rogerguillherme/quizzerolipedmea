@@ -87,8 +87,9 @@ function PremiumPlano() {
           Zero Lipedema · 30 dias
         </h1>
         <p className="mt-3 text-sm opacity-85">
-          O plano completo de 30 dias para reduzir inchaço, dor e inflamação — com
-          acompanhamento direto e ferramentas dentro do app.
+          O plano completo de 30 dias para reduzir inchaço, dor e inflamação,
+          ajustando seus hábitos alimentares sem viver de Dietas restritivas e
+          com resultados a longo prazo.
         </p>
 
         <a
