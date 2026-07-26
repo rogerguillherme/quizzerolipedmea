@@ -182,12 +182,6 @@ function Missoes() {
         </div>
       </div>
 
-      <p
-        className="mt-6 text-center text-[11px] leading-relaxed"
-        style={{ color: "#2F3128" }}
-      >
-        Para iniciar o Protocolo de 7 Dias, use a aba <strong>Protocolo</strong> no menu.
-      </p>
     </div>
   );
 }
