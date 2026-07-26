@@ -719,7 +719,7 @@ function ContatoStep({
         disabled={telefone.trim().length < 8}
         onClick={onSubmit}
       >
-        Gerar meu mapa 🗺️
+        Gerar meu mapa 🧭
       </PrimaryButton>
     </div>
   );
