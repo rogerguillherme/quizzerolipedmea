@@ -43,12 +43,23 @@ function DashboardPage() {
   useEffect(() => {
     seedAdminDemoIfEmpty();
     setReady(true);
-    carregarAtencao()
-      .then((rows) => setAtencao(rows as LeadAtencao[]))
-      .catch(() => {
-        /* silencioso — sem cobrança */
-      });
+    let cancelled = false;
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.auth.getSession();
+      if (cancelled || !data.session) return;
+      try {
+        const rows = await carregarAtencao();
+        if (!cancelled) setAtencao(rows as LeadAtencao[]);
+      } catch {
+        /* silencioso */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [carregarAtencao]);
+
 
   const events = useMemo(() => (ready ? getEvents() : []), [ready]);
   const leads = useMemo(() => (ready ? getLeads() : []), [ready]);
