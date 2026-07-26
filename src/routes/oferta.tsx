@@ -128,7 +128,7 @@ function OfertaPage() {
                 <div className="relative w-[55vw] max-w-[240px] md:w-full md:max-w-none aspect-[4/5] rounded-[1.25rem] md:rounded-[1.75rem] overflow-hidden border border-[hsl(38_35%_75%)]/60 shadow-[0_20px_40px_-20px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
                   <img
                     src={draGabrielaAsset.url}
-                    alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema (CRN 10582)"
+                    alt="Dra. Gabriela Rosado, especialista em lipedema (CRN 10582)"
                     className="w-full h-full object-cover"
                     loading="eager"
                   />

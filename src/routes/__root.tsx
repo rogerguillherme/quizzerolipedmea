@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura gratuita feita pela IA da nutricionista Gabriela Rosado (CRN 10582), entregue pelo WhatsApp.",
+          "Descubra em 2 minutos o retrato clínico do seu lipedema. Leitura gratuita feita pela IA da especialista Gabriela Rosado (CRN 10582), entregue pelo WhatsApp.",
       },
       { name: "author", content: "Zero Lipedema · Gabriela Rosado CRN 10582" },
       { property: "og:title", content: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
