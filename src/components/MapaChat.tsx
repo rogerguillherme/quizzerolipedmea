@@ -235,8 +235,8 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     bootedRef.current = true;
     (async () => {
       await gabiSay("Oi! Aqui é a Gabriela Rosado, nutricionista (CRN 10582).");
-      await gabiSay("Vou te fazer algumas perguntas rápidas pra montar o seu Mapa do Lipedema — leva uns 2 minutinhos. Pode ser?");
-      await gabiSay("Antes de tudo — como você quer ser chamada?");
+      await gabiSay("Vou te fazer algumas perguntas rápidas pra montar o seu Mapa do Lipedema leva uns 2 minutinhos. Pode ser?");
+      await gabiSay("Antes de tudo como você quer ser chamada?");
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
