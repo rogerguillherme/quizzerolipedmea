@@ -104,7 +104,7 @@ const QS: ChoiceQ[] = [
     key: "objetivo",
     gabi: () => "Qual resultado você mais gostaria de ter agora?",
     options: [
-      { label: "Emagrece", short: "Emagrece" },
+      { label: "Emagrecer", short: "Emagrecer" },
       { label: "Reduzir dor e inchaço no dia a dia", short: "Reduzir dor" },
       { label: "Desinchar as pernas", short: "Desinchar as pernas" },
       { label: "Ter um corpo funcional de volta", short: "Ter um corpo funcional de volta" },
@@ -234,7 +234,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     if (bootedRef.current) return;
     bootedRef.current = true;
     (async () => {
-      await gabiSay("Oi! Aqui é a Gabriela Rosado, especialista em lipedema.");
+      await gabiSay("Oi! Aqui é a Dra Gabriela Rosado, especialista em lipedema.");
       await gabiSay("Vou te fazer algumas perguntas rápidas pra montar o seu Mapa do Lipedema leva uns 2 minutinhos. Pode ser?");
       await gabiSay("Antes de tudo como você quer ser chamada?");
     })();
@@ -274,7 +274,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushUser(val);
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
     await gabiSay(
-      "Vou te fazer 8 perguntinhas rápidas no fim monto seu Mapa aqui na conversa. Bora?",
+      "Vou te fazer perguntinhas rápidas no fim monto seu Mapa aqui na conversa. Combinado?",
     );
     await gabiSay(QS[0].gabi(primeiroNome));
     setStage({ kind: "asking-choice", qIndex: 0 });
@@ -355,7 +355,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       });
       await gabiSay("Esse é o resumo do que li nas suas respostas. 💙", 900);
       await gabiSay(
-        "Se quiser, te mando o Mapa completo no WhatsApp é onde vou te acompanhar. Me passa seu número com DDD?",
+        "Vou te mandar o seu Mapa completo no WhatsApp, me passa seu número com DDD?",
       );
       setStage({ kind: "showing-report" });
     } catch (e) {
@@ -436,7 +436,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
             Dra. Gabriela Rosado
           </p>
           <p className="text-[11px]" style={{ color: C.inkSoft }}>
-            Nutricionista · CRN 10582 · online
+            CRN 10582 · online
           </p>
         </div>
         {onClose && (
