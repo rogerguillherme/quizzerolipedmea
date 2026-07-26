@@ -1,71 +1,37 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateText } from "ai";
-
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
-
-/**
- * Mapa do Lipedema — quiz de 8 perguntas.
- * Público (sem login). Grava um lead e devolve uma leitura personalizada.
- * NÃO é diagnóstico clínico — apenas leitura educacional dos sintomas relatados.
- */
-const MapaInput = z.object({
-  nome: z.string().trim().min(2).max(80),
-  // Telefone agora é opcional — captura acontece DEPOIS de mostrar o Mapa,
-  // para que ela veja o valor antes de entregar o WhatsApp.
-  telefone: z.string().trim().max(40).optional().default(""),
-  respostas: z.object({
-    tempo: z.string().min(1),
-    diagnostico: z.string().min(1),
-    sintomaMaior: z.string().min(1),
-    pesoPernas: z.string().min(1),
-    dietaExercicio: z.string().min(1),
-    atividade: z.string().min(1),
-    exames: z.string().min(1),
-    objetivo: z.string().min(1),
-  }),
-});
-
-export type MapaInputType = z.infer<typeof MapaInput>;
+import { MAPA_SYSTEM_PROMPT } from "./mapa.server";
 
 export type Diagnostico = {
   estagio: "Inicial" | "Intermediário" | "Avançado" | "Indeterminado";
-  aberturaValidadora: string;   // frase que valida o sintoma principal (Q3)
-  descricaoEstagio: string;     // 1-2 frases explicando o estágio percebido
-  prioridades: string[];         // exatamente 3
-  proximoPassoTitulo: string;    // ex: "Seu Mapa está pronto"
-  proximoPassoMensagem: string;  // confirmação — NÃO é venda
+  aberturaValidadora: string;
+  descricaoEstagio: string;
+  prioridades: string[];
+  proximoPassoTitulo: string;
+  proximoPassoMensagem: string;
 };
 
-const SYSTEM_PROMPT = `Você é a assistente clínica da nutricionista Gabriela Rosado (CRN 10582), especialista em lipedema.
-Sua função é ler as 8 respostas do "Mapa do Lipedema" de uma mulher e devolver uma leitura acolhedora e humana — nunca fria, nunca alarmista.
-
-Regras invioláveis:
-- NUNCA faça diagnóstico médico. É leitura educacional dos sintomas relatados.
-- Sempre deixe implícito que a confirmação clínica depende da Dra. Gabriela.
-- Tom: acolhedor, direto, sem infantilizar. Fale com ela (2ª pessoa).
-- Português do Brasil, mulher adulta 25–55 anos.
-- Nunca prometa cura, emagrecimento ou resultado estético.
-- Se ela disse "sedentária" + "muitas dietas sem resultado", NÃO comece pedindo treino — valide primeiro por que dieta restritiva não resolve lipedema.
-- Não mencione preços, produtos, planos, "protocolo pago". A oferta acontece depois, no WhatsApp.
-
-Devolva EXCLUSIVAMENTE um JSON válido, sem markdown, no formato:
-{
-  "estagio": "Inicial" | "Intermediário" | "Avançado" | "Indeterminado",
-  "aberturaValidadora": "1-2 frases começando com 'Pelo que você compartilhou...' validando o sintoma da pergunta 3.",
-  "descricaoEstagio": "1-2 frases descrevendo em linguagem leiga o que esse estágio significa no dia a dia dela. Deixe claro que é leitura, não diagnóstico.",
-  "prioridades": ["3 prioridades personalizadas — cada uma até 160 caracteres, acionáveis, adaptadas à combinação de respostas."],
-  "proximoPassoTitulo": "Frase curta de confirmação. Ex: 'Seu Mapa está pronto, {nome}.'",
-  "proximoPassoMensagem": "2-3 frases confirmando que o Mapa também será enviado pelo WhatsApp para ela guardar e revisar com a Gabriela. NÃO é oferta de compra."
-}
-
-Cálculo do estágio (referência, ajuste com sensibilidade):
-- Inicial: sintomas < 3 anos, dor baixa, sem hematomas fáceis.
-- Intermediário: 3-10 anos, dor média, peso varia mas pernas não.
-- Avançado: >10 anos, dor alta, atividade limitada.`;
-
 export const submitMapa = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => MapaInput.parse(input))
+  .validator((input: unknown) =>
+    z
+      .object({
+        nome: z.string().trim().min(2).max(80),
+        telefone: z.string().trim().max(40).optional().default(""),
+        respostas: z.object({
+          tempo: z.string().min(1),
+          diagnostico: z.string().min(1),
+          sintomaMaior: z.string().min(1),
+          pesoPernas: z.string().min(1),
+          dietaExercicio: z.string().min(1),
+          atividade: z.string().min(1),
+          exames: z.string().min(1),
+          objetivo: z.string().min(1),
+        }),
+      })
+      .parse(input),
+  )
   .handler(async ({ data }) => {
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("LOVABLE_API_KEY ausente");
@@ -91,16 +57,17 @@ Devolva o JSON conforme instruções.`;
     try {
       const { text } = await generateText({
         model,
-        system: SYSTEM_PROMPT,
+        system: MAPA_SYSTEM_PROMPT,
         prompt: userPrompt,
       });
       const cleaned = text.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
       diagnostico = JSON.parse(cleaned) as Diagnostico;
     } catch (err) {
       console.error("[submitMapa] Falha ao gerar leitura:", err);
+      const primeiroNome = data.nome.split(" ")[0];
       diagnostico = {
         estagio: "Indeterminado",
-        aberturaValidadora: `Pelo que você compartilhou, ${data.nome.split(" ")[0]}, o que você sente é real — e tem nome.`,
+        aberturaValidadora: `Pelo que você compartilhou, ${primeiroNome}, o que você sente é real — e tem nome.`,
         descricaoEstagio:
           "Suas respostas foram registradas. A leitura completa vai chegar pelo WhatsApp em instantes, para você revisar com calma junto da Gabriela.",
         prioridades: [
@@ -108,15 +75,13 @@ Devolva o JSON conforme instruções.`;
           "Anotar em que hora do dia o inchaço piora — ajuda a identificar gatilhos.",
           "Não iniciar dieta restritiva por conta própria — pode piorar o quadro.",
         ],
-        proximoPassoTitulo: `Seu Mapa está pronto, ${data.nome.split(" ")[0]}.`,
+        proximoPassoTitulo: `Seu Mapa está pronto, ${primeiroNome}.`,
         proximoPassoMensagem:
           "Já enviamos sua leitura para o WhatsApp. Assim você guarda com você e revisa com a Gabriela quando quiser.",
       };
     }
 
-    // Salva o lead (admin — sem depender de RLS do publishable key)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
     const { data: inserted, error: insertErr } = await supabaseAdmin
       .from("leads")
       .insert({
@@ -131,7 +96,6 @@ Devolva o JSON conforme instruções.`;
       .single();
 
     if (insertErr) console.error("[submitMapa] insert error", insertErr);
-
 
     return { diagnostico, leadId: inserted?.id ?? null };
   });
