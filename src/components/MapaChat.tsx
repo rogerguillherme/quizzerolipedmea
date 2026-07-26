@@ -38,9 +38,9 @@ const QS: ChoiceQ[] = [
     key: "tempo",
     gabi: (n) => `${n}, olhando as suas pernas hoje, qual desses estágios mais se parece com elas?`,
     options: [
-      { label: "Estágio 1 — leve", short: "Estágio 1", image: estagio1Img },
-      { label: "Estágio 2 — moderado", short: "Estágio 2", image: estagio2Img },
-      { label: "Estágio 3 — avançado", short: "Estágio 3", image: estagio3Img },
+      { label: "Estágio 1 leve", short: "Estágio 1", image: estagio1Img },
+      { label: "Estágio 2 moderado", short: "Estágio 2", image: estagio2Img },
+      { label: "Estágio 3 avançado", short: "Estágio 3", image: estagio3Img },
       { label: "Não sei identificar", short: "Não sei" },
     ],
   },
@@ -566,17 +566,17 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 function reacaoParaResposta(key: string, resposta: string, nome: string): string | null {
   const n = nome || "você";
   if (key === "tempo" && resposta.startsWith("Estágio 3"))
-    return `Entendi, ${n}. Estágio mais avançado pede um cuidado bem específico — vou considerar isso.`;
+    return `Entendi, ${n}. Estágio mais avançado pede um cuidado bem específico vou considerar isso.`;
   if (key === "tempo" && resposta === "Não sei identificar")
     return "Tudo bem, é super comum não saber identificar. A gente segue com as outras perguntas.";
   if (key === "diagnostico" && resposta.startsWith("Sim"))
-    return "Ótimo que já tem o diagnóstico — isso acelera muito nosso plano.";
+    return "Ótimo que já tem o diagnóstico isso acelera muito nosso plano.";
   if (key === "sintomaMaior" && resposta.startsWith("Dor"))
     return "A dor ao toque é um sinal muito característico. Anotei.";
   if (key === "sintomaMaior" && resposta.startsWith("Inchaço"))
     return "Inchaço que piora ao longo do dia é um marcador clássico. Anotei.";
   if (key === "pesoPernas" && resposta === "Sempre")
-    return "Esse padrão é bem típico — não é você, é o lipedema.";
+    return "Esse padrão é bem típico não é você, é o lipedema.";
   if (key === "dietaExercicio" && resposta === "Muitas vezes")
     return `${n}, isso não é falta de esforço seu. Prometo.`;
   return null;
