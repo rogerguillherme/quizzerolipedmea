@@ -127,7 +127,6 @@ function LandingPage() {
           </div>
         </div>
 
-        </div>
 
         <style>{`
           @keyframes breathe {
