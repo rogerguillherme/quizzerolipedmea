@@ -45,10 +45,10 @@ function AppLayout() {
   const tabs: { to: string; label: string; icon: typeof Compass; exact?: boolean }[] = [
     { to: "/app", label: "Radar", icon: Compass, exact: true },
     { to: "/app/missoes", label: "Dicas", icon: Lightbulb },
-    { to: "/app/protocolo", label: "Protocolo", icon: CalendarCheck },
     { to: "/app/foto", label: "Refeição", icon: Camera },
-    { to: "/app/derma", label: "Método", icon: Sparkles },
+    { to: "/app/derma", label: "Premium", icon: Sparkles },
   ];
+  void CalendarCheck;
 
   return (
     <div
@@ -138,7 +138,7 @@ function AppLayout() {
           borderTop: "1px solid rgba(216,198,160,0.5)",
         }}
       >
-        <div className="mx-auto grid max-w-md grid-cols-5" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        <div className="mx-auto grid max-w-md grid-cols-4" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
           {tabs.map((t) => {
             const active = t.exact ? pathname === t.to : pathname.startsWith(t.to);
             const Icon = t.icon;

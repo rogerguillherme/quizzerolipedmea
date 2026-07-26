@@ -24,6 +24,8 @@ export type FunnelEvent =
   | "challenge_completed"
   | "derma_upgrade_clicked"
   | "derma_cta_click"
+  | "premium_upgrade_clicked"
+  | "premium_meal_demo_opened"
   | "protocol7_started"
   | "protocol7_completed"
   | "refund_requested";
