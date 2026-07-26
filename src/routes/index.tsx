@@ -89,8 +89,7 @@ function LandingPage() {
                 <span className="md:inline">e tem solução sem dietas restritas.</span>
               </h1>
               <p className="mt-1.5 md:mt-6 text-[12px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-snug md:leading-relaxed">
-                Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>, nutricionista
-                especialista em lipedema.<span className="hidden md:inline"> Respondendo 8 perguntas rápidas você recebe o seu <em className="italic">mapa personalizado</em> — direto aqui e também no seu WhatsApp.</span>
+                Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
               </p>
 
               {/* Bullets */}
