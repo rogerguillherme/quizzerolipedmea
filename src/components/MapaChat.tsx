@@ -102,12 +102,12 @@ const QS: ChoiceQ[] = [
   },
   {
     key: "objetivo",
-    gabi: () => "Última: o que você mais gostaria de ter agora?",
+    gabi: () => "Qual resultado você mais gostaria de ter agora?",
     options: [
-      { label: "Entender o que está acontecendo comigo", short: "Entender" },
+      { label: "Emagrece", short: "Emagrece" },
       { label: "Reduzir dor e inchaço no dia a dia", short: "Reduzir dor" },
-      { label: "Ter um plano alimentar personalizado", short: "Plano alimentar" },
-      { label: "Acompanhamento contínuo com profissional", short: "Acompanhamento" },
+      { label: "Desinchar as pernas", short: "Desinchar as pernas" },
+      { label: "Ter um corpo funcional de volta", short: "Ter um corpo funcional de volta" },
     ],
   },
 ];
