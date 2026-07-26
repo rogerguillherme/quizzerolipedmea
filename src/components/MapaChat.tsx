@@ -304,6 +304,8 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushUser(opt.short);
     const updated = { ...answers, [q.key]: opt.label };
     setAnswers(updated);
+    // Trava os botões enquanto a próxima mensagem é preparada
+    setStage({ kind: "submitting" });
 
     // Comentário reativo curto (opcional)
     const reacao = reacaoParaResposta(q.key, opt.label, nome);
@@ -311,11 +313,10 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
     const next = qIndex + 1;
     if (next < QS.length) {
-      setStage({ kind: "asking-choice", qIndex: next });
       await gabiSay(QS[next].gabi(nome));
+      setStage({ kind: "asking-choice", qIndex: next });
     } else {
       // Todas respondidas — submeter
-      setStage({ kind: "submitting" });
       await gabiSay(`Perfeito, ${nome}. Vou juntar tudo aqui e montar seu Mapa…`, 600);
       await enviarQuiz(updated);
     }
