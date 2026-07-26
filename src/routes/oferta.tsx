@@ -115,9 +115,7 @@ function OfertaPage() {
                   solução sem dietas restritas e sofrimento.
                 </h1>
                 <p className="mt-4 md:mt-6 text-[14px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-relaxed">
-                  Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>,
-                  nutricionista especialista em lipedema. Respondendo 8 perguntas rápidas você
-                  recebe seu mapa personalizado — direto aqui e também no seu WhatsApp.
+                  Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
                 </p>
                 <div className="mt-6 md:mt-8">
                   <CTA onClick={openQuiz} />
