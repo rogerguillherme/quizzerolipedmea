@@ -62,7 +62,7 @@ function LandingPage() {
               <div className="relative w-[62vw] max-w-[260px] md:w-full md:max-w-none aspect-[4/5] md:aspect-auto mx-auto rounded-[1.5rem] md:rounded-[1.75rem] overflow-hidden border border-[hsl(38_35%_75%)]/60 shadow-[0_24px_50px_-24px_rgba(11,42,74,0.4)] md:shadow-[0_30px_60px_-30px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
                 <img
                   src={draGabrielaAsset.url}
-                  alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema (CRN 10582)"
+                  alt="Dra. Gabriela Rosado, especialista em lipedema (CRN 10582)"
                   className="w-full h-full object-cover md:aspect-[4/5]"
                   loading="eager"
                 />

@@ -192,8 +192,7 @@ function OfertaPage() {
               <div>
                 <SectionTitle>Quem te acompanha</SectionTitle>
                 <p className="mt-5 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
-                  <strong className="font-semibold">Dra. Gabriela Rosado</strong>, nutricionista
-                  (CRN 10582) especialista em lipedema.
+                  <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
                 </p>
                 <p className="mt-3 text-[14px] md:text-base leading-relaxed text-[hsl(213_25%_35%)]">
                   Atendimento acolhedor e direto: lipedema não tem cura, mas tem direção — e cuidado
