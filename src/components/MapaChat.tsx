@@ -398,7 +398,6 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
   }
 
   async function handleReceberAcesso() {
-    if (!leadId) return;
     pushUser("Sim, pode me chamar 💙");
     setStage({ kind: "asking-telefone" });
     await gabiSay(
