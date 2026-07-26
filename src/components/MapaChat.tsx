@@ -4,6 +4,7 @@ import { Send, MessageCircle, X, Loader2, CheckCircle2, Sparkles, KeyRound, Arro
 import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
 import { track } from "@/lib/analytics";
+import { formatPhoneBR, normalizePhoneBR } from "@/lib/phone";
 import draGabrielaAsset from "@/assets/dra-gabriela.png.asset.json";
 import estagio1Img from "@/assets/estagio-1.jpg";
 import estagio2Img from "@/assets/estagio-2.jpg";
@@ -281,20 +282,21 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
   async function handleSendTelefone() {
     const val = inputText.trim();
-    const digits = val.replace(/\D/g, "");
-    if (digits.length < 10) {
-      setErro("Preciso de um número válido com DDD, tipo (11) 9 8888-7777.");
+    const normalizado = normalizePhoneBR(val);
+    if (!normalizado) {
+      setErro("Preciso do WhatsApp com DDD válido, tipo (11) 9 8888-7777.");
       return;
     }
+    const formatado = formatPhoneBR(val);
     setErro(null);
-    setTelefone(val);
+    setTelefone(normalizado);
     setInputText("");
-    pushUser(val);
+    pushUser(formatado);
     const info = regiaoPorDDD(val);
     if (info) {
       await gabiSay(`Ah, ${info.comentario}`, 700);
     }
-    await enviarAcesso(val);
+    await enviarAcesso(normalizado);
   }
 
   async function handleChoice(qIndex: number, opt: ChoiceOpt) {
@@ -490,7 +492,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
           <TextComposer
             inputRef={inputRef}
             value={inputText}
-            onChange={setInputText}
+            onChange={(v) => setInputText(formatPhoneBR(v))}
             onSend={handleSendTelefone}
             placeholder="(11) 9 8888-7777"
             inputMode="tel"

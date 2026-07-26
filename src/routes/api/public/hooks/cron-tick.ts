@@ -120,6 +120,47 @@ async function processarReengajamento(
 ) {
   const enviados: string[] = [];
 
+  // 0) Mapa iniciado há 1h+ com telefone válido, ainda sem acesso criado (user_id nulo).
+  //    Lembrete rápido pra quem viu o relatório mas não pediu o acesso pelo WhatsApp.
+  const { data: pos1h } = await supabaseAdmin
+    .from("leads")
+    .select("id, nome, telefone, respostas, created_at, user_id")
+    .eq("status", "mapa_gerado")
+    .is("user_id", null)
+    .neq("telefone", "pendente")
+    .lt("created_at", new Date(Date.now() - 1 * MS_HORA).toISOString())
+    .gt("created_at", new Date(Date.now() - 24 * MS_HORA).toISOString())
+    .limit(200);
+
+  for (const lead of pos1h ?? []) {
+    const respostas = (lead.respostas ?? {}) as LeadResp;
+    const reengaje = respostas.reengaje ?? {};
+    if (reengaje.pos1h_at) continue;
+    // Só envia se o telefone parece válido (>=10 dígitos).
+    const digits = String(lead.telefone ?? "").replace(/\D/g, "");
+    if (digits.length < 10) continue;
+    const nome = (lead.nome || "").split(" ")[0] || "amiga";
+    const msg =
+      `Oi ${nome} 💙 Aqui é da equipe da Dra. Gabriela.\n\n` +
+      `Vi que você começou seu *Mapa do Lipedema* e parou antes de receber o acesso ao app. ` +
+      `Não some — em 1 minutinho a gente termina e você já sai com suas 3 prioridades da semana.\n\n` +
+      `Quer que eu te reenvie o link do Mapa agora?`;
+    const wa = await sendWhatsApp(lead.telefone, msg);
+    await supabaseAdmin.from("whatsapp_logs").insert({
+      telefone: lead.telefone,
+      mensagem: msg,
+      status: wa.ok ? "enviado" : "falhou",
+      erro: wa.error ?? null,
+    });
+    reengaje.pos1h_at = new Date().toISOString();
+    respostas.reengaje = reengaje;
+    await supabaseAdmin
+      .from("leads")
+      .update({ respostas: respostas as never })
+      .eq("id", lead.id);
+    if (wa.ok) enviados.push(lead.id);
+  }
+
   // 1) Mapa gerado há 24h+ com telefone válido, ainda sem acesso criado.
   const { data: pos24 } = await supabaseAdmin
     .from("leads")

@@ -39,12 +39,17 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
       "@/integrations/supabase/client.server"
     );
     const { sendWhatsApp } = await import("./evolution.server");
+    const { normalizePhoneBR } = await import("./phone");
 
-    // Se o telefone chegou agora, atualiza o lead antes de prosseguir.
+    // Se o telefone chegou agora, normaliza e atualiza o lead antes de prosseguir.
     if (data.telefone) {
+      const normalizado = normalizePhoneBR(data.telefone);
+      if (!normalizado) {
+        throw new Error("Telefone inválido — preciso do WhatsApp com DDD.");
+      }
       await supabaseAdmin
         .from("leads")
-        .update({ telefone: data.telefone })
+        .update({ telefone: normalizado })
         .eq("id", data.leadId);
     }
 
@@ -58,9 +63,11 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
       throw new Error(`Lead não encontrado: ${leadErr?.message ?? "n/a"}`);
     }
 
-    if (!lead.telefone || lead.telefone === "pendente" || lead.telefone.replace(/\D/g, "").length < 8) {
+    const telefoneNorm = normalizePhoneBR(lead.telefone ?? "");
+    if (!telefoneNorm) {
       throw new Error("Telefone inválido — preciso do WhatsApp com DDD.");
     }
+    lead.telefone = telefoneNorm;
 
     const senha = gerarSenha();
     const email = emailFrom(lead.telefone);
