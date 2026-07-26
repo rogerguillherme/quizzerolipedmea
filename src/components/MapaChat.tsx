@@ -281,20 +281,21 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
   async function handleSendTelefone() {
     const val = inputText.trim();
-    const digits = val.replace(/\D/g, "");
-    if (digits.length < 10) {
-      setErro("Preciso de um número válido com DDD, tipo (11) 9 8888-7777.");
+    const normalizado = normalizePhoneBR(val);
+    if (!normalizado) {
+      setErro("Preciso do WhatsApp com DDD válido, tipo (11) 9 8888-7777.");
       return;
     }
+    const formatado = formatPhoneBR(val);
     setErro(null);
-    setTelefone(val);
+    setTelefone(normalizado);
     setInputText("");
-    pushUser(val);
+    pushUser(formatado);
     const info = regiaoPorDDD(val);
     if (info) {
       await gabiSay(`Ah, ${info.comentario}`, 700);
     }
-    await enviarAcesso(val);
+    await enviarAcesso(normalizado);
   }
 
   async function handleChoice(qIndex: number, opt: ChoiceOpt) {
