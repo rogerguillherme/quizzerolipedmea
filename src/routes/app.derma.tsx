@@ -93,7 +93,7 @@ function PremiumPlano() {
 
         <Link
           to="/upsell"
-          onClick={() => track("premium_cta_upgrade")}
+          onClick={() => track("premium_upgrade_clicked")}
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform active:scale-[0.98]"
           style={{
             background: `linear-gradient(180deg, #E7BE5C, ${GOLD})`,
@@ -168,7 +168,7 @@ function PremiumPlano() {
         </p>
         <Link
           to="/upsell"
-          onClick={() => track("premium_cta_saiba_mais")}
+          onClick={() => track("premium_upgrade_clicked")}
           className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold"
           style={{ color: NAVY }}
         >
