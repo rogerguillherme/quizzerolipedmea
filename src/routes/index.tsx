@@ -116,7 +116,7 @@ function LandingPage() {
                 className="group relative inline-flex w-full md:w-auto items-center justify-center gap-2 md:gap-3 rounded-full bg-[hsl(213_60%_17%)] text-[hsl(40_45%_95%)] px-6 py-3.5 md:px-10 md:py-5 text-[15px] md:text-lg font-medium shadow-[0_18px_40px_-18px_rgba(11,42,74,0.55)] transition-all hover:shadow-[0_22px_50px_-16px_rgba(11,42,74,0.65)] hover:-translate-y-0.5 animate-[breathe_3.4s_ease-in-out_infinite]"
               >
                 <span>Gerar Meu Mapa</span>
-                <span aria-hidden>🗺️</span>
+                <span aria-hidden>🧭</span>
                 <ArrowRight className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
               </button>
               <p className="mt-1.5 md:mt-4 text-[10.5px] md:text-xs text-center md:text-left text-[hsl(213_20%_40%)]">
