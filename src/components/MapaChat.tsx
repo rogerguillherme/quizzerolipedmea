@@ -272,12 +272,12 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     setNome(primeiroNome);
     setInputText("");
     pushUser(val);
-    setStage({ kind: "asking-choice", qIndex: 0 });
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
     await gabiSay(
       "Vou te fazer 8 perguntinhas rápidas no fim monto seu Mapa aqui na conversa. Bora?",
     );
     await gabiSay(QS[0].gabi(primeiroNome));
+    setStage({ kind: "asking-choice", qIndex: 0 });
   }
 
   async function handleSendTelefone() {
