@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Check, HelpCircle, Camera, Sparkles } from "lucide-react";
-import draGabrielaAsset from "@/assets/dra-gabriela.png.asset.json";
+import draGabrielaAsset from "@/assets/gabi-portrait.png.asset.json";
 import pratoExemplo from "@/assets/prato-exemplo.jpg";
 import { MapaQuizDialog } from "@/components/MapaQuizDialog";
 
