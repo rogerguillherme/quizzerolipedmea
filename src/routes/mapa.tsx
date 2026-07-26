@@ -34,7 +34,7 @@ export const Route = createFileRoute("/mapa")({
       {
         name: "description",
         content:
-          "Responda 8 perguntas rápidas e receba a leitura personalizada do seu lipedema, elaborada pela nutricionista Gabriela Rosado (CRN 10582).",
+          "Responda 8 perguntas rápidas e receba a leitura personalizada do seu lipedema, elaborada pela especialista Gabriela Rosado (CRN 10582).",
       },
       { name: "robots", content: "noindex" },
     ],

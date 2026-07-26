@@ -115,9 +115,7 @@ function OfertaPage() {
                   solução sem dietas restritas e sofrimento.
                 </h1>
                 <p className="mt-4 md:mt-6 text-[14px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-relaxed">
-                  Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>,
-                  nutricionista especialista em lipedema. Respondendo 8 perguntas rápidas você
-                  recebe seu mapa personalizado — direto aqui e também no seu WhatsApp.
+                  Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
                 </p>
                 <div className="mt-6 md:mt-8">
                   <CTA onClick={openQuiz} />
@@ -130,7 +128,7 @@ function OfertaPage() {
                 <div className="relative w-[55vw] max-w-[240px] md:w-full md:max-w-none aspect-[4/5] rounded-[1.25rem] md:rounded-[1.75rem] overflow-hidden border border-[hsl(38_35%_75%)]/60 shadow-[0_20px_40px_-20px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
                   <img
                     src={draGabrielaAsset.url}
-                    alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema (CRN 10582)"
+                    alt="Dra. Gabriela Rosado, especialista em lipedema (CRN 10582)"
                     className="w-full h-full object-cover"
                     loading="eager"
                   />
@@ -194,8 +192,7 @@ function OfertaPage() {
               <div>
                 <SectionTitle>Quem te acompanha</SectionTitle>
                 <p className="mt-5 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
-                  <strong className="font-semibold">Dra. Gabriela Rosado</strong>, nutricionista
-                  (CRN 10582) especialista em lipedema.
+                  <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
                 </p>
                 <p className="mt-3 text-[14px] md:text-base leading-relaxed text-[hsl(213_25%_35%)]">
                   Atendimento acolhedor e direto: lipedema não tem cura, mas tem direção — e cuidado
