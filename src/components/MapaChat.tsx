@@ -275,7 +275,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     setStage({ kind: "asking-choice", qIndex: 0 });
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
     await gabiSay(
-      "Vou te fazer 8 perguntinhas rápidas — no fim monto seu Mapa aqui na conversa. Bora?",
+      "Vou te fazer 8 perguntinhas rápidas no fim monto seu Mapa aqui na conversa. Bora?",
     );
     await gabiSay(QS[0].gabi(primeiroNome));
   }
@@ -354,7 +354,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       });
       await gabiSay("Esse é o resumo do que li nas suas respostas. 💙", 900);
       await gabiSay(
-        "Se quiser, te mando o Mapa completo no WhatsApp — é onde vou te acompanhar. Me passa seu número com DDD?",
+        "Se quiser, te mando o Mapa completo no WhatsApp é onde vou te acompanhar. Me passa seu número com DDD?",
       );
       setStage({ kind: "showing-report" });
     } catch (e) {
@@ -385,7 +385,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       if (result.whatsappEnviado) {
         await gabiSay("Prontinho! Já mandei no seu WhatsApp. Dá uma olhadinha 📲");
       } else {
-        await gabiSay("Seu acesso está pronto — anote aí, é rapidinho.");
+        await gabiSay("Seu acesso está pronto anote aí, é rapidinho.");
       }
       setStage({ kind: "done" });
     } catch (e) {
@@ -401,7 +401,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushUser("Sim, pode me chamar 💙");
     setStage({ kind: "asking-telefone" });
     await gabiSay(
-      "Perfeito! Me passa seu WhatsApp com DDD — (11) 9 8888-7777 — que já te chamo por lá.",
+      "Perfeito! Me passa seu WhatsApp com DDD (11) 9 8888-7777 que já te chamo por lá.",
     );
   }
 
