@@ -45,9 +45,9 @@ function AppLayout() {
   const tabs: { to: string; label: string; icon: typeof Compass; exact?: boolean }[] = [
     { to: "/app", label: "Radar", icon: Compass, exact: true },
     { to: "/app/missoes", label: "Dicas", icon: Lightbulb },
-    { to: "/app/foto", label: "Refeição", icon: Camera },
     { to: "/app/derma", label: "Premium", icon: Sparkles },
   ];
+  void Camera;
   void CalendarCheck;
 
   return (
