@@ -30,6 +30,7 @@ import { Route as AppFotoRouteImport } from './routes/app.foto'
 import { Route as AppExamesRouteImport } from './routes/app.exames'
 import { Route as AppDermaRouteImport } from './routes/app.derma'
 import { Route as AppAvaliacaoRouteImport } from './routes/app.avaliacao'
+import { Route as AppAnamneseRouteImport } from './routes/app.anamnese'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as AdminProtocoloRouteImport } from './routes/admin.protocolo'
 import { Route as AdminMapaRouteImport } from './routes/admin.mapa'
@@ -149,6 +150,11 @@ const AppAvaliacaoRoute = AppAvaliacaoRouteImport.update({
   path: '/avaliacao',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAnamneseRoute = AppAnamneseRouteImport.update({
+  id: '/anamnese',
+  path: '/anamnese',
+  getParentRoute: () => AppRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin_/login',
   path: '/admin/login',
@@ -235,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin/login': typeof AdminLoginRoute
+  '/app/anamnese': typeof AppAnamneseRoute
   '/app/avaliacao': typeof AppAvaliacaoRoute
   '/app/derma': typeof AppDermaRoute
   '/app/exames': typeof AppExamesRoute
@@ -269,6 +276,7 @@ export interface FileRoutesByTo {
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin/login': typeof AdminLoginRoute
+  '/app/anamnese': typeof AppAnamneseRoute
   '/app/avaliacao': typeof AppAvaliacaoRoute
   '/app/derma': typeof AppDermaRoute
   '/app/exames': typeof AppExamesRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin_/login': typeof AdminLoginRoute
+  '/app/anamnese': typeof AppAnamneseRoute
   '/app/avaliacao': typeof AppAvaliacaoRoute
   '/app/derma': typeof AppDermaRoute
   '/app/exames': typeof AppExamesRoute
@@ -344,6 +353,7 @@ export interface FileRouteTypes {
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/admin/login'
+    | '/app/anamnese'
     | '/app/avaliacao'
     | '/app/derma'
     | '/app/exames'
@@ -378,6 +388,7 @@ export interface FileRouteTypes {
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/admin/login'
+    | '/app/anamnese'
     | '/app/avaliacao'
     | '/app/derma'
     | '/app/exames'
@@ -414,6 +425,7 @@ export interface FileRouteTypes {
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/admin_/login'
+    | '/app/anamnese'
     | '/app/avaliacao'
     | '/app/derma'
     | '/app/exames'
@@ -601,6 +613,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAvaliacaoRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/anamnese': {
+      id: '/app/anamnese'
+      path: '/anamnese'
+      fullPath: '/app/anamnese'
+      preLoaderRoute: typeof AppAnamneseRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/admin_/login': {
       id: '/admin_/login'
       path: '/admin/login'
@@ -720,6 +739,7 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AppRouteChildren {
+  AppAnamneseRoute: typeof AppAnamneseRoute
   AppAvaliacaoRoute: typeof AppAvaliacaoRoute
   AppDermaRoute: typeof AppDermaRoute
   AppExamesRoute: typeof AppExamesRoute
@@ -733,6 +753,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnamneseRoute: AppAnamneseRoute,
   AppAvaliacaoRoute: AppAvaliacaoRoute,
   AppDermaRoute: AppDermaRoute,
   AppExamesRoute: AppExamesRoute,

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Camera,
   Lightbulb,
@@ -9,9 +9,17 @@ import {
   ClipboardList,
   Sparkles,
   ChevronRight,
+  CheckCircle2,
+  Circle,
+  Loader2,
+  ArrowRight,
+  Upload,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { track } from "../lib/analytics";
 import { fbqTrack } from "../lib/meta-pixel";
+import { getPremiumOnboarding } from "@/lib/anamnese.functions";
 
 export const Route = createFileRoute("/app/derma")({
   component: PremiumPlano,
