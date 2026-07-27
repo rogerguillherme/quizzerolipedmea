@@ -261,11 +261,11 @@ function OfertaPage() {
                 },
                 {
                   q: "Precisa de assinatura?",
-                  a: "Não. você recebe uma avaliação gratutiQuem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada.",
+                  a: "Não. você recebe uma avaliação gratuita. Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada pode adquirir o plano premium.",
                 },
                 {
                   q: "É indicado pra qualquer estágio?",
-                  a: "O Mapa te dá uma leitura inicial; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
+                  a: "O Mapa te dá uma leitura inicial e o primeiros passos para começar; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
                 },
               ].map((f, i) => (
                 <details
@@ -295,7 +295,7 @@ function OfertaPage() {
               Pronta para entender o que está acontecendo com o seu corpo?
             </h2>
             <p className="mt-4 text-[14px] md:text-base text-[hsl(38_55%_82%)] max-w-lg mx-auto">
-              Responda as perguntas e em 2min te envio o acesso ao seu mapa no seu WhatsApp
+              Responda as perguntas e em 2 minutos te envio o acesso ao seu mapa no seu WhatsApp
             </p>
             <div className="mt-8 flex justify-center">
               <button
