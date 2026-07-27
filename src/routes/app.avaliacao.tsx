@@ -355,7 +355,7 @@ function AvaliacaoPage() {
           {meals.map((m) => (
             <article
               key={m.id}
-              className="rounded-2xl p-4"
+              className="rounded-2xl p-3 sm:p-4"
               style={{
                 background: "rgba(255,253,247,0.95)",
                 border: "1px solid rgba(216,198,160,0.55)",
@@ -366,20 +366,20 @@ function AvaliacaoPage() {
                 <img
                   src={m.preview}
                   alt="refeição"
-                  className="h-20 w-20 shrink-0 rounded-xl object-cover"
+                  className="h-16 w-16 shrink-0 rounded-xl object-cover sm:h-20 sm:w-20"
                   style={{ border: "1px solid rgba(216,198,160,0.55)" }}
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.2em", color: "#AF7F35" }}>
                     {new Date(m.createdAt).toLocaleString("pt-BR", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}
                   </p>
-                  <p className="mt-1 text-[13px]" style={{ color: "#16324F", lineHeight: 1.45 }}>
+                  <p className="mt-1 text-[12.5px] sm:text-[13px]" style={{ color: "#16324F", lineHeight: 1.45 }}>
                     {m.feedback.sugestao}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-3 grid grid-cols-5 gap-1.5">
+              <div className="mt-3 grid grid-cols-5 gap-1">
                 {[
                   { l: "kcal", v: m.macros.kcal },
                   { l: "prot", v: `${m.macros.proteina}g` },
@@ -389,18 +389,19 @@ function AvaliacaoPage() {
                 ].map((x) => (
                   <div
                     key={x.l}
-                    className="rounded-lg py-1.5 text-center"
+                    className="min-w-0 rounded-lg px-1 py-1.5 text-center"
                     style={{ background: "rgba(22,50,79,0.05)", border: "1px solid rgba(216,198,160,0.45)" }}
                   >
-                    <p className="text-[9px] font-semibold uppercase" style={{ letterSpacing: "0.12em", color: "#5C5749" }}>
+                    <p className="text-[8.5px] font-semibold uppercase" style={{ letterSpacing: "0.1em", color: "#5C5749" }}>
                       {x.l}
                     </p>
-                    <p className="text-[12px] font-semibold" style={{ color: "#16324F" }}>
+                    <p className="truncate text-[11.5px] font-semibold" style={{ color: "#16324F" }}>
                       {x.v}
                     </p>
                   </div>
                 ))}
               </div>
+
 
               {m.feedback.pontos.length > 0 && (
                 <ul className="mt-3 space-y-1.5">
