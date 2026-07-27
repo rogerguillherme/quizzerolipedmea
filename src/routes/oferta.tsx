@@ -313,9 +313,7 @@ function OfertaPage() {
         <footer className="border-t border-[hsl(38_35%_80%)]/40 bg-[hsl(40_40%_92%)]">
           <div className="mx-auto max-w-4xl px-5 md:px-6 py-8 md:py-10">
             <p className="text-[11px] md:text-xs leading-relaxed text-[hsl(213_20%_40%)] text-center">
-              Conteúdo educacional e de estilo de vida. Não substitui avaliação médica ou
-              nutricional individualizada. Nutricionista (CRN 10582) não prescreve medicamento nem
-              exercício estruturado nesta etapa.
+              {"\n"}
             </p>
           </div>
         </footer>
