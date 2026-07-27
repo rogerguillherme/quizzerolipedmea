@@ -182,7 +182,13 @@ export const getPremiumOnboarding = createServerFn({ method: "GET" })
       anamneseCompleta,
       exameEnviado,
       exameCount: count ?? 0,
-      anamnese: anamnese ?? {},
+      anamnese: (anamnese ?? {}) as AnamnesePayload & {
+        completed_at?: string;
+        updated_at?: string;
+        last_step?: number;
+      },
+      lastStep: (anamnese as { last_step?: number } | null)?.last_step ?? 0,
+      updatedAt: (anamnese as { updated_at?: string } | null)?.updated_at ?? null,
     };
   });
 
