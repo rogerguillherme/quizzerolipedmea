@@ -295,7 +295,7 @@ function OfertaPage() {
               Pronta para entender o que está acontecendo com o seu corpo?
             </h2>
             <p className="mt-4 text-[14px] md:text-base text-[hsl(38_55%_82%)] max-w-lg mx-auto">
-              8 perguntas, 2 minutos. Seu mapa chega aqui e no seu WhatsApp.
+              Responda as perguntas e em 2min te envio o acesso ao seu mapa no seu WhatsApp
             </p>
             <div className="mt-8 flex justify-center">
               <button
