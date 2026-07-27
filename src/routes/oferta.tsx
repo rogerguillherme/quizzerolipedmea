@@ -261,11 +261,11 @@ function OfertaPage() {
                 },
                 {
                   q: "Precisa de assinatura?",
-                  a: "Não. você recebe uma avaliação gratutiQuem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada.",
+                  a: "Não. você recebe uma avaliação gratuita. Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada pode adquirir o plano premium.",
                 },
                 {
                   q: "É indicado pra qualquer estágio?",
-                  a: "O Mapa te dá uma leitura inicial; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
+                  a: "O Mapa te dá uma leitura inicial e o primeiros passos para começar; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
                 },
               ].map((f, i) => (
                 <details
