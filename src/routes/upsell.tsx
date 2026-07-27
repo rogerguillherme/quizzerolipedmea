@@ -173,9 +173,6 @@ function Derma() {
       <p className="mt-3 text-center text-[11px]" style={{ color: "#2F3128" }}>
         Turma reduzida por trimestre. Vaga sob avaliação.
       </p>
-
-      {/* Sparkles kept for potential future badge usage */}
-      <span className="hidden"><Sparkles className="size-4" /></span>
     </div>
   );
 }
