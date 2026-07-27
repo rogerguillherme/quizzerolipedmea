@@ -159,16 +159,17 @@ function AvaliacaoPage() {
   );
 
   return (
-    <div className="px-5 pt-6 pb-10">
+    <div className="px-4 pt-5 pb-10 sm:px-5 sm:pt-6">
       {/* Intro */}
       <section
-        className="relative overflow-hidden rounded-[28px] px-6 py-6"
+        className="relative overflow-hidden rounded-[24px] px-5 py-5 sm:rounded-[28px] sm:px-6 sm:py-6"
         style={{
           background: "linear-gradient(160deg, #2C5578 0%, #16324F 55%, #0D2138 100%)",
           boxShadow: "0 24px 40px -28px rgba(22,50,79,0.55)",
           color: "#F5EFE1",
         }}
       >
+
         <p
           className="text-[10px] font-semibold uppercase"
           style={{ letterSpacing: "0.28em", color: "#D9A94B" }}
