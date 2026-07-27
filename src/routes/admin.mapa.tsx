@@ -33,9 +33,22 @@ const RESPOSTA_LABELS: Record<string, string> = {
 
 function MapaAdminPage() {
   const fetchLeads = useServerFn(listQuizLeads);
+  const liberarPremium = useServerFn(enviarAcessoPremium);
+  const qc = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin", "quiz-leads"],
     queryFn: () => fetchLeads(),
+  });
+
+  const premiumMut = useMutation({
+    mutationFn: (leadId: string) => liberarPremium({ data: { leadId } }),
+    onSuccess: (r, leadId) => {
+      qc.invalidateQueries({ queryKey: ["admin", "quiz-leads"] });
+      if (r.ok) alert("Acesso Premium enviado no WhatsApp ✓");
+      else alert(`Falhou: ${r.erro ?? "erro"}`);
+      void leadId;
+    },
+    onError: (e: Error) => alert(`Erro: ${e.message}`),
   });
 
   const leads = (data ?? []) as QuizLead[];
