@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Compass, Lightbulb, Sparkles, User, Loader2, CalendarCheck, Camera } from "lucide-react";
+import { Compass, Lightbulb, Sparkles, User, Loader2, CalendarCheck, Camera, ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
