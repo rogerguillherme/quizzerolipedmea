@@ -219,7 +219,7 @@ function OfertaPage() {
                 },
                 {
                   n: 2,
-                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana, dicas pr",
+                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana e um manual de dicas praticas para aplicar rápidamente.",
                 },
                 {
                   n: 3,
