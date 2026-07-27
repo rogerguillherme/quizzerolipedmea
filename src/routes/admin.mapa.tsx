@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Search, Loader2, Phone, Calendar, FileText } from "lucide-react";
+import { Search, Loader2, Phone, Calendar, FileText, Crown, Check } from "lucide-react";
 import { listQuizLeads } from "@/lib/admin-leads.functions";
+import { enviarAcessoPremium } from "@/lib/premium-access.functions";
 
 export const Route = createFileRoute("/admin/mapa")({
   component: MapaAdminPage,
