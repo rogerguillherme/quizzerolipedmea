@@ -38,6 +38,7 @@ import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as ApiPublicWebhooksKiwifyRouteImport } from './routes/api/public/webhooks/kiwify'
 import { Route as ApiPublicWebhooksEvolutionRouteImport } from './routes/api/public/webhooks/evolution'
+import { Route as ApiPublicHooksLiberarPremiumRouteImport } from './routes/api/public/hooks/liberar-premium'
 import { Route as ApiPublicHooksCronTickRouteImport } from './routes/api/public/hooks/cron-tick'
 
 const UpsellRoute = UpsellRouteImport.update({
@@ -186,6 +187,12 @@ const ApiPublicWebhooksEvolutionRoute =
     path: '/api/public/webhooks/evolution',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksLiberarPremiumRoute =
+  ApiPublicHooksLiberarPremiumRouteImport.update({
+    id: '/api/public/hooks/liberar-premium',
+    path: '/api/public/hooks/liberar-premium',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksCronTickRoute = ApiPublicHooksCronTickRouteImport.update({
   id: '/api/public/hooks/cron-tick',
   path: '/api/public/hooks/cron-tick',
@@ -221,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
+  '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
@@ -251,6 +259,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
+  '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
@@ -284,6 +293,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
+  '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/api/public/hooks/cron-tick'
+    | '/api/public/hooks/liberar-premium'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
   fileRoutesByTo: FileRoutesByTo
@@ -348,6 +359,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/api/public/hooks/cron-tick'
+    | '/api/public/hooks/liberar-premium'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
   id:
@@ -380,6 +392,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/api/public/hooks/cron-tick'
+    | '/api/public/hooks/liberar-premium'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
   fileRoutesById: FileRoutesById
@@ -397,6 +410,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
   ApiPublicHooksCronTickRoute: typeof ApiPublicHooksCronTickRoute
+  ApiPublicHooksLiberarPremiumRoute: typeof ApiPublicHooksLiberarPremiumRoute
   ApiPublicWebhooksEvolutionRoute: typeof ApiPublicWebhooksEvolutionRoute
   ApiPublicWebhooksKiwifyRoute: typeof ApiPublicWebhooksKiwifyRoute
 }
@@ -606,6 +620,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksEvolutionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/liberar-premium': {
+      id: '/api/public/hooks/liberar-premium'
+      path: '/api/public/hooks/liberar-premium'
+      fullPath: '/api/public/hooks/liberar-premium'
+      preLoaderRoute: typeof ApiPublicHooksLiberarPremiumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/cron-tick': {
       id: '/api/public/hooks/cron-tick'
       path: '/api/public/hooks/cron-tick'
@@ -677,19 +698,10 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
   ApiPublicHooksCronTickRoute: ApiPublicHooksCronTickRoute,
+  ApiPublicHooksLiberarPremiumRoute: ApiPublicHooksLiberarPremiumRoute,
   ApiPublicWebhooksEvolutionRoute: ApiPublicWebhooksEvolutionRoute,
   ApiPublicWebhooksKiwifyRoute: ApiPublicWebhooksKiwifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

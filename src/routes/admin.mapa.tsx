@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Search, Loader2, Phone, Calendar, FileText } from "lucide-react";
+import { Search, Loader2, Phone, Calendar, FileText, Crown, Check } from "lucide-react";
 import { listQuizLeads } from "@/lib/admin-leads.functions";
+import { enviarAcessoPremium } from "@/lib/premium-access.functions";
 
 export const Route = createFileRoute("/admin/mapa")({
   component: MapaAdminPage,
@@ -32,9 +33,22 @@ const RESPOSTA_LABELS: Record<string, string> = {
 
 function MapaAdminPage() {
   const fetchLeads = useServerFn(listQuizLeads);
+  const liberarPremium = useServerFn(enviarAcessoPremium);
+  const qc = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin", "quiz-leads"],
     queryFn: () => fetchLeads(),
+  });
+
+  const premiumMut = useMutation({
+    mutationFn: (leadId: string) => liberarPremium({ data: { leadId } }),
+    onSuccess: (r, leadId) => {
+      qc.invalidateQueries({ queryKey: ["admin", "quiz-leads"] });
+      if (r.ok) alert("Acesso Premium enviado no WhatsApp ✓");
+      else alert(`Falhou: ${r.erro ?? "erro"}`);
+      void leadId;
+    },
+    onError: (e: Error) => alert(`Erro: ${e.message}`),
   });
 
   const leads = (data ?? []) as QuizLead[];
@@ -180,6 +194,38 @@ function MapaAdminPage() {
                           Sem respostas gravadas.
                         </p>
                       )}
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          disabled={
+                            !telOk ||
+                            premiumMut.isPending ||
+                            l.status === "plano_ativo"
+                          }
+                          onClick={() => {
+                            if (
+                              confirm(
+                                `Liberar acesso Premium para ${l.nome}? Isso envia a mensagem no WhatsApp e marca como plano_ativo.`,
+                              )
+                            ) {
+                              premiumMut.mutate(l.id);
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-[#0B2A4A] px-3 py-1.5 text-xs font-bold text-[#F5EBD1] shadow-sm transition hover:bg-[#0B2A4A]/90 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {premiumMut.isPending && premiumMut.variables === l.id ? (
+                            <Loader2 className="size-3 animate-spin" />
+                          ) : l.status === "plano_ativo" ? (
+                            <Check className="size-3" />
+                          ) : (
+                            <Crown className="size-3" />
+                          )}
+                          {l.status === "plano_ativo"
+                            ? "Premium ativo"
+                            : "Liberar Premium"}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
