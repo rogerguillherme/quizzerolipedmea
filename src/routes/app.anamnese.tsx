@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Save,
   Upload,
+  Check,
 } from "lucide-react";
 import {
   getPremiumOnboarding,
@@ -182,22 +183,40 @@ function AnamnesePage() {
   const initial = (st?.anamnese ?? {}) as Record<string, Record<string, string>>;
   const [step, setStep] = useState(0);
   const [state, setState] = useState<Record<string, Record<string, string>>>({});
+  const [hydrated, setHydrated] = useState(false);
+  const [savedAt, setSavedAt] = useState<string | null>(st?.updatedAt ?? null);
+
+  // Retoma do último passo salvo quando o status chega do servidor
+  useEffect(() => {
+    if (!st || hydrated) return;
+    const ls = Math.min(Math.max(st.lastStep ?? 0, 0), BLOCOS.length - 1);
+    setStep(ls);
+    setSavedAt(st.updatedAt ?? null);
+    setHydrated(true);
+  }, [st, hydrated]);
+
   const merged = useMemo(() => {
     const out: Record<string, Record<string, string>> = {};
     for (const b of BLOCOS) {
       out[b.id] = { ...(initial[b.id] ?? {}), ...(state[b.id] ?? {}) };
     }
     return out;
-    // initial só muda quando o servidor atualiza; state controla edições atuais
   }, [initial, state]);
 
   const bloco = BLOCOS[step];
   const last = step === BLOCOS.length - 1;
 
   const salvarMut = useMutation({
-    mutationFn: (opts: { concluir: boolean }) =>
-      salvar({ data: { payload: merged as AnamnesePayload, concluir: opts.concluir } }),
+    mutationFn: (opts: { concluir: boolean; silent?: boolean }) =>
+      salvar({
+        data: {
+          payload: merged as AnamnesePayload,
+          concluir: opts.concluir,
+          lastStep: step,
+        },
+      }),
     onSuccess: (_r, vars) => {
+      setSavedAt(new Date().toISOString());
       qc.invalidateQueries({ queryKey: ["premium-onboarding"] });
       if (vars.concluir) {
         navigate({ to: "/app/exames" });
@@ -205,12 +224,29 @@ function AnamnesePage() {
     },
   });
 
+  // Autosave debounced (2s após parar de digitar / trocar de passo)
+  const dirtyRef = useRef(false);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!dirtyRef.current) return;
+    const t = setTimeout(() => {
+      if (salvarMut.isPending) return;
+      salvarMut.mutate({ concluir: false, silent: true });
+      dirtyRef.current = false;
+    }, 2000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, step, hydrated]);
+
   const setCampo = (blocoId: string, campo: string, valor: string) => {
+    dirtyRef.current = true;
     setState((s) => ({
       ...s,
       [blocoId]: { ...(s[blocoId] ?? {}), [campo]: valor },
     }));
   };
+
+
 
   if (isLoading) {
     return (
@@ -265,6 +301,23 @@ function AnamnesePage() {
           {bloco.titulo}
         </h1>
         <p className="mt-1 text-sm text-[#3E4F65]">{bloco.intro}</p>
+        <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[#8A7C5C]">
+          {salvarMut.isPending ? (
+            <>
+              <Loader2 className="size-3 animate-spin" />
+              <span>Salvando rascunho…</span>
+            </>
+          ) : savedAt ? (
+            <>
+              <Check className="size-3" style={{ color: "#2E7D32" }} />
+              <span>
+                Rascunho salvo · {new Date(savedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            </>
+          ) : (
+            <span>Seu progresso é salvo automaticamente.</span>
+          )}
+        </div>
       </header>
 
       {/* Progresso */}

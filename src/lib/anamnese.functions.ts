@@ -182,7 +182,13 @@ export const getPremiumOnboarding = createServerFn({ method: "GET" })
       anamneseCompleta,
       exameEnviado,
       exameCount: count ?? 0,
-      anamnese: anamnese ?? {},
+      anamnese: (anamnese ?? {}) as AnamnesePayload & {
+        completed_at?: string;
+        updated_at?: string;
+        last_step?: number;
+      },
+      lastStep: (anamnese as { last_step?: number } | null)?.last_step ?? 0,
+      updatedAt: (anamnese as { updated_at?: string } | null)?.updated_at ?? null,
     };
   });
 
@@ -194,6 +200,7 @@ export const salvarAnamnese = createServerFn({ method: "POST" })
       .object({
         payload: AnamneseSchema,
         concluir: z.boolean().optional(),
+        lastStep: z.number().int().min(0).max(50).optional(),
       })
       .parse(input),
   )
@@ -220,6 +227,7 @@ export const salvarAnamnese = createServerFn({ method: "POST" })
       ...anamneseAtual,
       ...data.payload,
       updated_at: new Date().toISOString(),
+      ...(typeof data.lastStep === "number" ? { last_step: data.lastStep } : {}),
       ...(data.concluir ? { completed_at: new Date().toISOString() } : {}),
     };
 
