@@ -426,7 +426,8 @@ function AvaliacaoPage() {
       {tab === "analise" && (
         <section className="mt-4 space-y-4">
           <div
-            className="rounded-2xl p-5"
+            className="rounded-2xl p-4 sm:p-5"
+
             style={{
               background: "rgba(255,253,247,0.95)",
               border: "1px solid rgba(216,198,160,0.55)",
