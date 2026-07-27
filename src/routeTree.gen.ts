@@ -36,6 +36,7 @@ import { Route as AdminFunisRouteImport } from './routes/admin.funis'
 import { Route as AdminDermaRouteImport } from './routes/admin.derma'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
+import { Route as ApiPublicWebhooksKiwifyRouteImport } from './routes/api/public/webhooks/kiwify'
 import { Route as ApiPublicWebhooksEvolutionRouteImport } from './routes/api/public/webhooks/evolution'
 import { Route as ApiPublicHooksCronTickRouteImport } from './routes/api/public/hooks/cron-tick'
 
@@ -174,6 +175,11 @@ const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
   path: '/configuracoes',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicWebhooksKiwifyRoute = ApiPublicWebhooksKiwifyRouteImport.update({
+  id: '/api/public/webhooks/kiwify',
+  path: '/api/public/webhooks/kiwify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWebhooksEvolutionRoute =
   ApiPublicWebhooksEvolutionRouteImport.update({
     id: '/api/public/webhooks/evolution',
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
+  '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
+  '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -277,6 +285,7 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
+  '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -310,6 +319,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/api/public/hooks/cron-tick'
     | '/api/public/webhooks/evolution'
+    | '/api/public/webhooks/kiwify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/api/public/hooks/cron-tick'
     | '/api/public/webhooks/evolution'
+    | '/api/public/webhooks/kiwify'
   id:
     | '__root__'
     | '/'
@@ -370,6 +381,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/api/public/hooks/cron-tick'
     | '/api/public/webhooks/evolution'
+    | '/api/public/webhooks/kiwify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -386,6 +398,7 @@ export interface RootRouteChildren {
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
   ApiPublicHooksCronTickRoute: typeof ApiPublicHooksCronTickRoute
   ApiPublicWebhooksEvolutionRoute: typeof ApiPublicWebhooksEvolutionRoute
+  ApiPublicWebhooksKiwifyRoute: typeof ApiPublicWebhooksKiwifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -579,6 +592,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminConfiguracoesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/webhooks/kiwify': {
+      id: '/api/public/webhooks/kiwify'
+      path: '/api/public/webhooks/kiwify'
+      fullPath: '/api/public/webhooks/kiwify'
+      preLoaderRoute: typeof ApiPublicWebhooksKiwifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhooks/evolution': {
       id: '/api/public/webhooks/evolution'
       path: '/api/public/webhooks/evolution'
@@ -658,6 +678,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
   ApiPublicHooksCronTickRoute: ApiPublicHooksCronTickRoute,
   ApiPublicWebhooksEvolutionRoute: ApiPublicWebhooksEvolutionRoute,
+  ApiPublicWebhooksKiwifyRoute: ApiPublicWebhooksKiwifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
