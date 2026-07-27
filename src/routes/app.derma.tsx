@@ -11,6 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { track } from "../lib/analytics";
+import { fbqTrack } from "../lib/meta-pixel";
 
 export const Route = createFileRoute("/app/derma")({
   component: PremiumPlano,
