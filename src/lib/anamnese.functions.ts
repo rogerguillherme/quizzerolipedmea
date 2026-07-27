@@ -198,7 +198,7 @@ export const salvarAnamnese = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const leadId = await findLeadIdForUser(context as any);
+    const leadId = await findLeadIdForUser(context.userId);
     if (!leadId) throw new Error("Perfil não encontrado.");
 
     const { supabaseAdmin } = await import(
