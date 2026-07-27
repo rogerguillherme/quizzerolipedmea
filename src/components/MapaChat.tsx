@@ -377,6 +377,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     try {
       const result = await gerarAcesso({ data: { leadId, telefone: telefoneFinal } });
       track("purchase_completed", { step: "acesso_gerado" });
+      fbqTrack("Lead", { content_name: "Mapa do Lipedema", status: "acesso_gerado" });
       setTyping(false);
       pushMsg({
         id: crypto.randomUUID(),
