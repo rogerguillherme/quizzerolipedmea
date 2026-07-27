@@ -132,21 +132,12 @@ const AnamneseSchema = z
 
 export type AnamnesePayload = z.infer<typeof AnamneseSchema>;
 
-async function findLeadIdForUser(context: {
-  supabase: ReturnType<typeof requireSupabaseAuth> extends never ? never : any;
-  userId: string;
-}): Promise<string | null> {
-  const { data: prof } = await context.supabase
-    .from("profiles")
-    .select("id")
-    .eq("id", context.userId)
-    .maybeSingle();
-  if (!prof) return null;
+async function findLeadIdForUser(userId: string): Promise<string | null> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin
     .from("leads")
     .select("id")
-    .eq("user_id", context.userId)
+    .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
