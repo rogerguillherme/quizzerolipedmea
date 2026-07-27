@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Camera,
   Lightbulb,
@@ -93,8 +93,67 @@ function PremiumPlano() {
           com resultados a longo prazo.
         </p>
 
+      </section>
+
+      <section className="mt-6 space-y-3">
+        <p
+          className="px-1 text-[10px] font-semibold uppercase"
+          style={{ letterSpacing: "0.22em", color: GOLD }}
+        >
+          O que está incluso
+        </p>
+
+        {FEATURES.map((f) => {
+          const Icon = f.icon;
+          return (
+            <article
+              key={f.title}
+              className="flex gap-3 rounded-2xl border p-4"
+              style={{
+                background: "rgba(255,253,247,0.9)",
+                borderColor: "rgba(216,198,160,0.55)",
+              }}
+            >
+              <span
+                className="grid size-10 shrink-0 place-items-center rounded-full"
+                style={{
+                  background: `linear-gradient(180deg, #EFE3CC, #F5EFE1)`,
+                  color: NAVY,
+                  border: "1px solid rgba(175,127,53,0.35)",
+                }}
+              >
+                <Icon className="size-4" />
+              </span>
+              <div className="min-w-0">
+                <h3
+                  className="text-[15px] leading-snug"
+                  style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontWeight: 500,
+                    color: NAVY,
+                  }}
+                >
+                  {f.title}
+                </h3>
+                <p className="mt-1 text-[13px] leading-relaxed" style={{ color: "#4A4635" }}>
+                  {f.body}
+                </p>
+              </div>
+            </article>
+          );
+        })}
+      </section>
+
+      <section
+        className="mt-6 overflow-hidden rounded-3xl px-5 py-6"
+        style={{
+          background: `linear-gradient(160deg, ${NAVY} 0%, #0E2439 100%)`,
+          color: CREAM_SOFT,
+          boxShadow: "0 20px 40px -20px rgba(22,50,79,0.55)",
+        }}
+      >
         <div
-          className="mt-6 rounded-2xl px-4 py-4"
+          className="rounded-2xl px-4 py-4"
           style={{
             background: "rgba(255,253,247,0.08)",
             border: "1px solid rgba(216,198,160,0.35)",
@@ -148,76 +207,6 @@ function PremiumPlano() {
           Ativar plano premium
           <ChevronRight className="size-4" />
         </a>
-      </section>
-
-      <section className="mt-6 space-y-3">
-        <p
-          className="px-1 text-[10px] font-semibold uppercase"
-          style={{ letterSpacing: "0.22em", color: GOLD }}
-        >
-          O que está incluso
-        </p>
-
-        {FEATURES.map((f) => {
-          const Icon = f.icon;
-          return (
-            <article
-              key={f.title}
-              className="flex gap-3 rounded-2xl border p-4"
-              style={{
-                background: "rgba(255,253,247,0.9)",
-                borderColor: "rgba(216,198,160,0.55)",
-              }}
-            >
-              <span
-                className="grid size-10 shrink-0 place-items-center rounded-full"
-                style={{
-                  background: `linear-gradient(180deg, #EFE3CC, #F5EFE1)`,
-                  color: NAVY,
-                  border: "1px solid rgba(175,127,53,0.35)",
-                }}
-              >
-                <Icon className="size-4" />
-              </span>
-              <div className="min-w-0">
-                <h3
-                  className="text-[15px] leading-snug"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontWeight: 500,
-                    color: NAVY,
-                  }}
-                >
-                  {f.title}
-                </h3>
-                <p className="mt-1 text-[13px] leading-relaxed" style={{ color: "#4A4635" }}>
-                  {f.body}
-                </p>
-              </div>
-            </article>
-          );
-        })}
-      </section>
-
-      <section
-        className="mt-6 rounded-2xl border px-5 py-5 text-center"
-        style={{
-          background: "rgba(255,253,247,0.7)",
-          borderColor: "rgba(216,198,160,0.55)",
-        }}
-      >
-        <p className="text-[13px]" style={{ color: "#4A4635" }}>
-          Quer conhecer o acompanhamento completo antes de decidir?
-        </p>
-        <Link
-          to="/upsell"
-          onClick={() => track("premium_upgrade_clicked")}
-          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold"
-          style={{ color: NAVY }}
-        >
-          Ver Acompanhamento Zero Lipedema
-          <ChevronRight className="size-4" />
-        </Link>
       </section>
     </div>
   );
