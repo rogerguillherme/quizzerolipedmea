@@ -4,6 +4,7 @@ import { Send, MessageCircle, X, Loader2, CheckCircle2, Sparkles, KeyRound, Arro
 import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
 import { track } from "@/lib/analytics";
+import { fbqTrack } from "@/lib/meta-pixel";
 import { formatPhoneBR, normalizePhoneBR } from "@/lib/phone";
 import draGabrielaAsset from "@/assets/dra-gabriela.png.asset.json";
 import estagio1Img from "@/assets/estagio-1.jpg";
@@ -376,6 +377,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     try {
       const result = await gerarAcesso({ data: { leadId, telefone: telefoneFinal } });
       track("purchase_completed", { step: "acesso_gerado" });
+      fbqTrack("Lead", { content_name: "Mapa do Lipedema", status: "acesso_gerado" });
       setTyping(false);
       pushMsg({
         id: crypto.randomUUID(),
