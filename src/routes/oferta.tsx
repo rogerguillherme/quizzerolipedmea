@@ -110,7 +110,7 @@ function OfertaPage() {
                 </p>
                 <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.6rem,6.4vw,3.4rem)] md:text-6xl">
                   Não é falta de esforço.{" "}
-                  <em className="text-[hsl(38_55%_42%)] font-serif italic">É lipedema</em> — e tem
+                  <em className="text-[hsl(38_55%_42%)] font-serif italic">É lipedema</em>&nbsp;e tem
                   solução sem dietas restritas e sofrimento.
                 </h1>
                 <p className="mt-4 md:mt-6 text-[14px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-relaxed">
