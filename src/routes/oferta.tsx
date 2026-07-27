@@ -253,15 +253,15 @@ function OfertaPage() {
               {[
                 {
                   q: "Isso substitui uma consulta médica?",
-                  a: "Não. É um conteúdo educacional que te ajuda a entender seus sintomas e organizar os primeiros passos — a confirmação clínica depende de avaliação da Dra. Gabriela ou de outro profissional.",
+                  a: "Não. É um conteúdo educacional que te ajuda a entender seus sintomas e organizar os primeiros passos.",
                 },
                 {
                   q: "Isso é sobre emagrecer?",
-                  a: "Não é uma dieta restritiva nem promete emagrecimento — é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
+                  a: "Não é uma dieta restritiva nem promete emagrecimento é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
                 },
                 {
                   q: "Precisa de assinatura?",
-                  a: "Não. Por R$57 você libera o plano completo — sugestão alimentar, chá/shot indicado, lista de compras e o Protocolo de 7 Dias conduzido pelo agente de WhatsApp (tudo dentro do mesmo pagamento, sem personalização de exames). Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada.",
+                  a: "Não. você recebe uma avaliação gratutiQuem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada.",
                 },
                 {
                   q: "É indicado pra qualquer estágio?",
