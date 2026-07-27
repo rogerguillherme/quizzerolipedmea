@@ -93,15 +93,51 @@ function PremiumPlano() {
           com resultados a longo prazo.
         </p>
 
+        <div
+          className="mt-6 rounded-2xl px-4 py-4"
+          style={{
+            background: "rgba(255,253,247,0.08)",
+            border: "1px solid rgba(216,198,160,0.35)",
+          }}
+        >
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-xs opacity-70 line-through">R$ 119,90</span>
+            <span
+              className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+              style={{ background: GOLD, color: NAVY }}
+            >
+              -44% OFF
+            </span>
+          </div>
+          <div className="mt-1 flex items-baseline gap-2">
+            <span
+              className="text-3xl"
+              style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, color: GOLD }}
+            >
+              R$ 67,00
+            </span>
+          </div>
+          <p className="mt-2 text-[11px] opacity-80">
+            Use o cupom{" "}
+            <span
+              className="rounded px-1.5 py-0.5 font-mono text-[10px] font-bold"
+              style={{ background: "rgba(175,127,53,0.25)", color: GOLD }}
+            >
+              PRIMEIROACESSO
+            </span>{" "}
+            no checkout
+          </p>
+        </div>
+
         <a
           href="https://pay.kiwify.com.br/j0hsxv3"
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => {
             track("premium_upgrade_clicked");
-            fbqTrack("InitiateCheckout", { content_name: "Plano Premium Zero Lipedema 30d", value: 57, currency: "BRL" });
+            fbqTrack("InitiateCheckout", { content_name: "Plano Premium Zero Lipedema 30d", value: 67, currency: "BRL" });
           }}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform active:scale-[0.98]"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform active:scale-[0.98]"
           style={{
             background: `linear-gradient(180deg, #E7BE5C, ${GOLD})`,
             color: NAVY,
