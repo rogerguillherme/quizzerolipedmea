@@ -159,16 +159,17 @@ function AvaliacaoPage() {
   );
 
   return (
-    <div className="px-5 pt-6 pb-10">
+    <div className="px-4 pt-5 pb-10 sm:px-5 sm:pt-6">
       {/* Intro */}
       <section
-        className="relative overflow-hidden rounded-[28px] px-6 py-6"
+        className="relative overflow-hidden rounded-[24px] px-5 py-5 sm:rounded-[28px] sm:px-6 sm:py-6"
         style={{
           background: "linear-gradient(160deg, #2C5578 0%, #16324F 55%, #0D2138 100%)",
           boxShadow: "0 24px 40px -28px rgba(22,50,79,0.55)",
           color: "#F5EFE1",
         }}
       >
+
         <p
           className="text-[10px] font-semibold uppercase"
           style={{ letterSpacing: "0.28em", color: "#D9A94B" }}
@@ -176,19 +177,19 @@ function AvaliacaoPage() {
           Amostra Premium
         </p>
         <h1
-          className="mt-2"
+          className="mt-2 text-[1.25rem] sm:text-[1.5rem]"
           style={{
             fontFamily: "'Playfair Display', serif",
             fontWeight: 500,
-            fontSize: "1.5rem",
             lineHeight: 1.2,
           }}
         >
           Teste uma das <em className="italic" style={{ color: "#D9A94B" }}>funcionalidades</em> do plano premium
         </h1>
-        <p className="mt-3 text-[13.5px]" style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}>
+        <p className="mt-3 text-[12.5px] sm:text-[13.5px]" style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}>
           Fotografe sua refeição, receba um feedback rápido e veja como fica o acompanhamento dos macronutrientes no seu dia.
         </p>
+
 
         {isLoading ? (
           <div className="mt-4 inline-flex items-center gap-2 text-[12px]" style={{ color: "rgba(245,239,225,0.7)" }}>
@@ -354,7 +355,7 @@ function AvaliacaoPage() {
           {meals.map((m) => (
             <article
               key={m.id}
-              className="rounded-2xl p-4"
+              className="rounded-2xl p-3 sm:p-4"
               style={{
                 background: "rgba(255,253,247,0.95)",
                 border: "1px solid rgba(216,198,160,0.55)",
@@ -365,20 +366,20 @@ function AvaliacaoPage() {
                 <img
                   src={m.preview}
                   alt="refeição"
-                  className="h-20 w-20 shrink-0 rounded-xl object-cover"
+                  className="h-16 w-16 shrink-0 rounded-xl object-cover sm:h-20 sm:w-20"
                   style={{ border: "1px solid rgba(216,198,160,0.55)" }}
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.2em", color: "#AF7F35" }}>
                     {new Date(m.createdAt).toLocaleString("pt-BR", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}
                   </p>
-                  <p className="mt-1 text-[13px]" style={{ color: "#16324F", lineHeight: 1.45 }}>
+                  <p className="mt-1 text-[12.5px] sm:text-[13px]" style={{ color: "#16324F", lineHeight: 1.45 }}>
                     {m.feedback.sugestao}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-3 grid grid-cols-5 gap-1.5">
+              <div className="mt-3 grid grid-cols-5 gap-1">
                 {[
                   { l: "kcal", v: m.macros.kcal },
                   { l: "prot", v: `${m.macros.proteina}g` },
@@ -388,18 +389,19 @@ function AvaliacaoPage() {
                 ].map((x) => (
                   <div
                     key={x.l}
-                    className="rounded-lg py-1.5 text-center"
+                    className="min-w-0 rounded-lg px-1 py-1.5 text-center"
                     style={{ background: "rgba(22,50,79,0.05)", border: "1px solid rgba(216,198,160,0.45)" }}
                   >
-                    <p className="text-[9px] font-semibold uppercase" style={{ letterSpacing: "0.12em", color: "#5C5749" }}>
+                    <p className="text-[8.5px] font-semibold uppercase" style={{ letterSpacing: "0.1em", color: "#5C5749" }}>
                       {x.l}
                     </p>
-                    <p className="text-[12px] font-semibold" style={{ color: "#16324F" }}>
+                    <p className="truncate text-[11.5px] font-semibold" style={{ color: "#16324F" }}>
                       {x.v}
                     </p>
                   </div>
                 ))}
               </div>
+
 
               {m.feedback.pontos.length > 0 && (
                 <ul className="mt-3 space-y-1.5">
@@ -424,7 +426,8 @@ function AvaliacaoPage() {
       {tab === "analise" && (
         <section className="mt-4 space-y-4">
           <div
-            className="rounded-2xl p-5"
+            className="rounded-2xl p-4 sm:p-5"
+
             style={{
               background: "rgba(255,253,247,0.95)",
               border: "1px solid rgba(216,198,160,0.55)",
