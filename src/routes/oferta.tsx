@@ -110,7 +110,7 @@ function OfertaPage() {
                 </p>
                 <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.6rem,6.4vw,3.4rem)] md:text-6xl">
                   Não é falta de esforço.{" "}
-                  <em className="text-[hsl(38_55%_42%)] font-serif italic">É lipedema</em> — e tem
+                  <em className="text-[hsl(38_55%_42%)] font-serif italic">É lipedema</em>&nbsp;e tem
                   solução sem dietas restritas e sofrimento.
                 </h1>
                 <p className="mt-4 md:mt-6 text-[14px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-relaxed">
@@ -119,7 +119,7 @@ function OfertaPage() {
                 <div className="mt-6 md:mt-8">
                   <CTA onClick={openQuiz} />
                   <p className="mt-3 text-[11px] md:text-xs text-[hsl(213_20%_40%)]">
-                    Leitura educacional. Não substitui avaliação médica.
+                    {"\n"}
                   </p>
                 </div>
               </div>
@@ -162,13 +162,13 @@ function OfertaPage() {
           <ArcsBg />
           <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20">
             <SectionTitle>
-              O problema não é força de vontade — é o que ninguém te explicou sobre lipedema.
+              O problema não é força de vontade é o que ninguém te explicou sobre lipedema.
             </SectionTitle>
             <p className="mt-6 md:mt-8 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
               Lipedema é um acúmulo de gordura com padrão próprio, geralmente ligado a fatores
               hormonais, que não responde só à equação "coma menos, treine mais". Por isso tantas
               mulheres fazem tudo certo e não veem o resultado esperado nas pernas. Entender isso é
-              o primeiro passo — o segundo é ter um caminho estruturado pensado especificamente pra
+              o primeiro passo o segundo é ter um caminho estruturado pensado especificamente pra
               esse padrão.
             </p>
           </div>
@@ -194,8 +194,8 @@ function OfertaPage() {
                   <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
                 </p>
                 <p className="mt-3 text-[14px] md:text-base leading-relaxed text-[hsl(213_25%_35%)]">
-                  Atendimento acolhedor e direto: lipedema não tem cura, mas tem direção — e cuidado
-                  contínuo faz diferença real no seu dia a dia.
+                  Lipedema não tem cura, mas tem direção e cuidado contínuo faz diferença real no
+                  seu dia a dia.
                 </p>
               </div>
             </div>
@@ -219,11 +219,11 @@ function OfertaPage() {
                 },
                 {
                   n: 2,
-                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana.",
+                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana e um manual de dicas praticas para aplicar rápidamente.",
                 },
                 {
                   n: 3,
-                  t: "Continue pelo WhatsApp com seu plano — sugestão alimentar, chá/shot indicado e lista de compras, por R$57.",
+                  t: "Saiba como funciona o tratamento sem dietas restritivas, aprendendo a conhecer o seu corpo e moldar seus hábitos.",
                 },
               ].map((s) => (
                 <li
@@ -240,7 +240,7 @@ function OfertaPage() {
               ))}
             </ol>
             <p className="mt-6 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center md:text-left">
-              A partir de R$57 — sem assinatura obrigatória.
+              {"\n"}
             </p>
           </div>
         </section>
@@ -295,7 +295,7 @@ function OfertaPage() {
               Pronta para entender o que está acontecendo com o seu corpo?
             </h2>
             <p className="mt-4 text-[14px] md:text-base text-[hsl(38_55%_82%)] max-w-lg mx-auto">
-              8 perguntas, 2 minutos. Seu mapa chega aqui e no seu WhatsApp.
+              Responda as perguntas e em 2min te envio o acesso ao seu mapa no seu WhatsApp
             </p>
             <div className="mt-8 flex justify-center">
               <button
@@ -313,9 +313,7 @@ function OfertaPage() {
         <footer className="border-t border-[hsl(38_35%_80%)]/40 bg-[hsl(40_40%_92%)]">
           <div className="mx-auto max-w-4xl px-5 md:px-6 py-8 md:py-10">
             <p className="text-[11px] md:text-xs leading-relaxed text-[hsl(213_20%_40%)] text-center">
-              Conteúdo educacional e de estilo de vida. Não substitui avaliação médica ou
-              nutricional individualizada. Nutricionista (CRN 10582) não prescreve medicamento nem
-              exercício estruturado nesta etapa.
+              {"\n"}
             </p>
           </div>
         </footer>
