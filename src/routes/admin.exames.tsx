@@ -315,8 +315,7 @@ function ExamesAdminPage() {
                             </p>
                           )}
                         </li>
-                      ),
-                    )}
+                      ))}
                   </ul>
                 </div>
               )}
