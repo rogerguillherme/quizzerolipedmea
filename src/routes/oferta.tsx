@@ -219,11 +219,11 @@ function OfertaPage() {
                 },
                 {
                   n: 2,
-                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana.",
+                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana, dicas pr",
                 },
                 {
                   n: 3,
-                  t: "Continue pelo WhatsApp com seu plano — sugestão alimentar, chá/shot indicado e lista de compras, por R$57.",
+                  t: "Saiba como funciona o tratamento sem dietas restritivas, aprendendo a conhecer o seu corpo e moldar seus hábitos.",
                 },
               ].map((s) => (
                 <li
