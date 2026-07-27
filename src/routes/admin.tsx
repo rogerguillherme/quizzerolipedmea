@@ -13,6 +13,7 @@ import {
   MapPinned,
   Sparkles,
   Crown,
+  FlaskConical,
   Settings,
   LogOut,
   Loader2,
