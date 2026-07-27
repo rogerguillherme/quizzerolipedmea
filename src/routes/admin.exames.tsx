@@ -271,16 +271,18 @@ function ExamesAdminPage() {
                     <p className="mb-3 text-sm text-[#3E4F65]">{selected.ia_resumo}</p>
                   )}
                   <ul className="space-y-2">
-                    {(Array.isArray(selected.ia_itens) ? selected.ia_itens : []).map(
-                      (i: {
-                        exame?: string;
-                        valor?: string;
-                        referencia?: string;
-                        flag?: string;
-                        leituraNutricional?: string;
-                        direcionamento?: string;
-                        encaminharMedico?: boolean;
-                      }, idx: number) => (
+                    {(Array.isArray(selected.ia_itens)
+                      ? (selected.ia_itens as unknown as Array<{
+                          exame?: string;
+                          valor?: string;
+                          referencia?: string;
+                          flag?: string;
+                          leituraNutricional?: string;
+                          direcionamento?: string;
+                          encaminharMedico?: boolean;
+                        }>)
+                      : []
+                    ).map((i, idx) => (
                         <li
                           key={idx}
                           className="rounded-xl border border-[#F0E4C6] bg-[#FBF6EB]/60 p-3 text-xs"
