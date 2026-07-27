@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Save,
   Upload,
+  Check,
 } from "lucide-react";
 import {
   getPremiumOnboarding,
