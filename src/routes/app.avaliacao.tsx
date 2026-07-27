@@ -177,19 +177,19 @@ function AvaliacaoPage() {
           Amostra Premium
         </p>
         <h1
-          className="mt-2"
+          className="mt-2 text-[1.25rem] sm:text-[1.5rem]"
           style={{
             fontFamily: "'Playfair Display', serif",
             fontWeight: 500,
-            fontSize: "1.5rem",
             lineHeight: 1.2,
           }}
         >
           Teste uma das <em className="italic" style={{ color: "#D9A94B" }}>funcionalidades</em> do plano premium
         </h1>
-        <p className="mt-3 text-[13.5px]" style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}>
+        <p className="mt-3 text-[12.5px] sm:text-[13.5px]" style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}>
           Fotografe sua refeição, receba um feedback rápido e veja como fica o acompanhamento dos macronutrientes no seu dia.
         </p>
+
 
         {isLoading ? (
           <div className="mt-4 inline-flex items-center gap-2 text-[12px]" style={{ color: "rgba(245,239,225,0.7)" }}>
