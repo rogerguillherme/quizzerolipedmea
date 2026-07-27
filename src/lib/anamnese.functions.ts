@@ -200,6 +200,7 @@ export const salvarAnamnese = createServerFn({ method: "POST" })
       .object({
         payload: AnamneseSchema,
         concluir: z.boolean().optional(),
+        lastStep: z.number().int().min(0).max(50).optional(),
       })
       .parse(input),
   )
@@ -226,6 +227,7 @@ export const salvarAnamnese = createServerFn({ method: "POST" })
       ...anamneseAtual,
       ...data.payload,
       updated_at: new Date().toISOString(),
+      ...(typeof data.lastStep === "number" ? { last_step: data.lastStep } : {}),
       ...(data.concluir ? { completed_at: new Date().toISOString() } : {}),
     };
 
