@@ -124,7 +124,48 @@ export const Route = createFileRoute("/api/public/webhooks/kiwify")({
           console.log("[kiwify] Purchase enviado ao CAPI", orderId, value, currency);
         }
 
-        return Response.json({ ok: true, order_id: orderId, capi: result.ok });
+        // -------- Boas-vindas Premium no WhatsApp --------
+        // Localiza a lead pelo telefone/email e dispara a mensagem de acesso.
+        let welcome: { sent: boolean; error?: string } = { sent: false };
+        try {
+          const { supabaseAdmin } = await import(
+            "@/integrations/supabase/client.server"
+          );
+          const { normalizePhoneBR } = await import("@/lib/phone");
+          const telefone = normalizePhoneBR(customer.mobile ?? "");
+
+          let leadId: string | null = null;
+          if (telefone) {
+            const { data } = await supabaseAdmin
+              .from("leads")
+              .select("id")
+              .eq("telefone", telefone)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            leadId = data?.id ?? null;
+          }
+
+          if (leadId) {
+            const { enviarPremiumParaLead } = await import(
+              "@/lib/premium-access.functions"
+            );
+            const r = await enviarPremiumParaLead(leadId);
+            welcome = { sent: r.ok, error: r.erro ?? undefined };
+          } else {
+            welcome = { sent: false, error: "lead não localizada por telefone" };
+          }
+        } catch (e) {
+          welcome = { sent: false, error: (e as Error).message };
+          console.error("[kiwify] falha ao enviar boas-vindas premium", e);
+        }
+
+        return Response.json({
+          ok: true,
+          order_id: orderId,
+          capi: result.ok,
+          premium_welcome: welcome,
+        });
       },
     },
   },
