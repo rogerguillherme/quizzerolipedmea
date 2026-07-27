@@ -68,6 +68,24 @@ const FEATURES = [
 ];
 
 function PremiumPlano() {
+  const getStatus = useServerFn(getPremiumOnboarding);
+  const { data: st, isLoading } = useQuery({
+    queryKey: ["premium-onboarding"],
+    queryFn: () => getStatus(),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="grid min-h-[60vh] place-items-center">
+        <Loader2 className="size-6 animate-spin" style={{ color: NAVY }} />
+      </div>
+    );
+  }
+
+  if (st?.isPremium) {
+    return <PremiumOnboarding st={st} />;
+  }
+
   return (
     <div className="px-5 pt-5 pb-8">
       <section
@@ -78,6 +96,7 @@ function PremiumPlano() {
           boxShadow: "0 20px 40px -20px rgba(22,50,79,0.55)",
         }}
       >
+
         <div
           aria-hidden
           className="absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-20"
