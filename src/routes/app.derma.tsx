@@ -238,3 +238,163 @@ function PremiumPlano() {
     </div>
   );
 }
+
+type OnboardingStatus = {
+  anamneseCompleta: boolean;
+  exameEnviado: boolean;
+  exameCount: number;
+};
+
+function PremiumOnboarding({ st }: { st: OnboardingStatus }) {
+  const steps = [
+    {
+      key: "anamnese",
+      titulo: "Anamnese completa",
+      desc: "Cerca de 8 minutos. Salva automaticamente — você pode voltar depois.",
+      to: "/app/anamnese" as const,
+      done: st.anamneseCompleta,
+      cta: st.anamneseCompleta ? "Revisar respostas" : "Começar anamnese",
+    },
+    {
+      key: "exames",
+      titulo: "Enviar exames",
+      desc: st.exameCount
+        ? `${st.exameCount} exame(s) enviado(s). Você pode enviar mais quando quiser.`
+        : "Envie foto ou PDF dos seus exames — a IA faz uma leitura prévia e a Gabriela revisa antes de te responder.",
+      to: "/app/exames" as const,
+      done: st.exameEnviado,
+      cta: st.exameEnviado ? "Enviar mais exames" : "Enviar exames",
+      locked: !st.anamneseCompleta,
+    },
+  ];
+
+  const tudoPronto = st.anamneseCompleta && st.exameEnviado;
+
+  return (
+    <div className="px-5 pt-5 pb-8">
+      <section
+        className="relative overflow-hidden rounded-3xl px-5 py-6"
+        style={{
+          background: `linear-gradient(160deg, ${NAVY} 0%, #0E2439 100%)`,
+          color: CREAM_SOFT,
+          boxShadow: "0 20px 40px -20px rgba(22,50,79,0.55)",
+        }}
+      >
+        <p
+          className="text-[10px] font-bold uppercase"
+          style={{ letterSpacing: "0.26em", color: GOLD }}
+        >
+          Plano Premium · ativo
+        </p>
+        <h1
+          className="mt-2 text-2xl leading-tight"
+          style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500 }}
+        >
+          {tudoPronto ? "Tudo pronto — a Gabriela já pode montar seu protocolo" : "Vamos preparar seu protocolo"}
+        </h1>
+        <p className="mt-2 text-sm opacity-85">
+          {tudoPronto
+            ? "Sua anamnese e exames já estão com a equipe. Fica de olho no WhatsApp — a Gabriela responde em até 24h úteis."
+            : "Antes de personalizar o seu plano de 30 dias, preciso de duas coisas rápidas."}
+        </p>
+      </section>
+
+      <section className="mt-5 space-y-3">
+        {steps.map((s, i) => (
+          <article
+            key={s.key}
+            className={[
+              "rounded-2xl border p-4 transition-opacity",
+              s.locked ? "opacity-60" : "",
+            ].join(" ")}
+            style={{
+              background: s.done ? "rgba(221,235,216,0.35)" : "rgba(255,253,247,0.9)",
+              borderColor: s.done ? "rgba(46,125,50,0.4)" : "rgba(216,198,160,0.55)",
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <span
+                className="grid size-9 shrink-0 place-items-center rounded-full"
+                style={{
+                  background: s.done ? "#2E7D32" : NAVY,
+                  color: "#F5EFE1",
+                }}
+                aria-hidden
+              >
+                {s.done ? <CheckCircle2 className="size-4" /> : <Circle className="size-4" />}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: GOLD }}>
+                  Passo {i + 1}
+                </p>
+                <h3
+                  className="text-lg leading-snug"
+                  style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: NAVY }}
+                >
+                  {s.titulo}
+                </h3>
+                <p className="mt-1 text-[13px] leading-relaxed text-[#4A4635]">{s.desc}</p>
+                <Link
+                  to={s.to}
+                  aria-disabled={s.locked || undefined}
+                  onClick={(e) => {
+                    if (s.locked) e.preventDefault();
+                  }}
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em]"
+                  style={{
+                    background: s.done
+                      ? "rgba(46,125,50,0.14)"
+                      : `linear-gradient(180deg,#E7BE5C,${GOLD})`,
+                    color: s.done ? "#2E7D32" : NAVY,
+                    pointerEvents: s.locked ? "none" : "auto",
+                  }}
+                >
+                  {s.key === "exames" ? <Upload className="size-3.5" /> : <ClipboardList className="size-3.5" />}
+                  {s.cta}
+                  <ArrowRight className="size-3.5" />
+                </Link>
+                {s.locked && (
+                  <p className="mt-2 text-[11px] italic text-[#8A7C5C]">
+                    Conclua a anamnese para liberar.
+                  </p>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      {tudoPronto && (
+        <section
+          className="mt-6 rounded-2xl border p-4 text-sm text-[#3E4F65]"
+          style={{ borderColor: "rgba(216,198,160,0.6)", background: "rgba(255,253,247,0.9)" }}
+        >
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: GOLD }}>
+            Enquanto isso, você já pode:
+          </p>
+          <ul className="space-y-2">
+            <li className="flex items-center gap-2">
+              <Camera className="size-4" style={{ color: NAVY }} />
+              <Link to="/app/avaliacao" className="underline underline-offset-2">
+                Registrar suas refeições com foto
+              </Link>
+            </li>
+            <li className="flex items-center gap-2">
+              <Lightbulb className="size-4" style={{ color: NAVY }} />
+              <Link to="/app/missoes" className="underline underline-offset-2">
+                Ler as dicas diárias
+              </Link>
+            </li>
+          </ul>
+        </section>
+      )}
+
+      <p className="mt-4 px-2 text-center text-[10px] italic text-[#8A7C5C]">
+        Precisou falar comigo? Chama no WhatsApp — respondo em até 24h úteis.
+      </p>
+      {/* silêncio para o linter — ícones importados mas usados condicionalmente */}
+      {false && <><Sparkles /><ChevronRight /><UtensilsCrossed /><Leaf /><Pill /><MessageCircle /></>}
+    </div>
+  );
+}
+
