@@ -194,8 +194,8 @@ function OfertaPage() {
                   <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
                 </p>
                 <p className="mt-3 text-[14px] md:text-base leading-relaxed text-[hsl(213_25%_35%)]">
-                  Atendimento acolhedor e direto: lipedema não tem cura, mas tem direção — e cuidado
-                  contínuo faz diferença real no seu dia a dia.
+                  Lipedema não tem cura, mas tem direção e cuidado contínuo faz diferença real no
+                  seu dia a dia.
                 </p>
               </div>
             </div>
