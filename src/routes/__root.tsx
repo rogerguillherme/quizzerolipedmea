@@ -157,6 +157,14 @@ fbq('track', 'PageView');
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  useEffect(() => {
+    const unsub = router.subscribe("onResolved", () => {
+      const fbq = (window as any).fbq;
+      if (typeof fbq === "function") fbq("track", "PageView");
+    });
+    return () => unsub();
+  }, [router]);
   useEffect(() => {
     const KEY = "__chunk_reload_at";
     const onErr = (msg: string) => {
@@ -175,6 +183,7 @@ function RootComponent() {
       window.removeEventListener("unhandledrejection", onRej);
     };
   }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
