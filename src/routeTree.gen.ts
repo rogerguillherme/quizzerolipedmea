@@ -39,6 +39,7 @@ import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configura
 import { Route as ApiPublicWebhooksKiwifyRouteImport } from './routes/api/public/webhooks/kiwify'
 import { Route as ApiPublicWebhooksEvolutionRouteImport } from './routes/api/public/webhooks/evolution'
 import { Route as ApiPublicHooksLiberarPremiumRouteImport } from './routes/api/public/hooks/liberar-premium'
+import { Route as ApiPublicHooksEnviarMsgRouteImport } from './routes/api/public/hooks/enviar-msg'
 import { Route as ApiPublicHooksCronTickRouteImport } from './routes/api/public/hooks/cron-tick'
 
 const UpsellRoute = UpsellRouteImport.update({
@@ -193,6 +194,11 @@ const ApiPublicHooksLiberarPremiumRoute =
     path: '/api/public/hooks/liberar-premium',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksEnviarMsgRoute = ApiPublicHooksEnviarMsgRouteImport.update({
+  id: '/api/public/hooks/enviar-msg',
+  path: '/api/public/hooks/enviar-msg',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksCronTickRoute = ApiPublicHooksCronTickRouteImport.update({
   id: '/api/public/hooks/cron-tick',
   path: '/api/public/hooks/cron-tick',
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
+  '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
@@ -259,6 +266,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
+  '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
+  '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
@@ -328,6 +337,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/api/public/hooks/cron-tick'
+    | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/api/public/hooks/cron-tick'
+    | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/api/public/hooks/cron-tick'
+    | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
@@ -410,6 +422,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
   ApiPublicHooksCronTickRoute: typeof ApiPublicHooksCronTickRoute
+  ApiPublicHooksEnviarMsgRoute: typeof ApiPublicHooksEnviarMsgRoute
   ApiPublicHooksLiberarPremiumRoute: typeof ApiPublicHooksLiberarPremiumRoute
   ApiPublicWebhooksEvolutionRoute: typeof ApiPublicWebhooksEvolutionRoute
   ApiPublicWebhooksKiwifyRoute: typeof ApiPublicWebhooksKiwifyRoute
@@ -627,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksLiberarPremiumRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/enviar-msg': {
+      id: '/api/public/hooks/enviar-msg'
+      path: '/api/public/hooks/enviar-msg'
+      fullPath: '/api/public/hooks/enviar-msg'
+      preLoaderRoute: typeof ApiPublicHooksEnviarMsgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/cron-tick': {
       id: '/api/public/hooks/cron-tick'
       path: '/api/public/hooks/cron-tick'
@@ -698,6 +718,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
   ApiPublicHooksCronTickRoute: ApiPublicHooksCronTickRoute,
+  ApiPublicHooksEnviarMsgRoute: ApiPublicHooksEnviarMsgRoute,
   ApiPublicHooksLiberarPremiumRoute: ApiPublicHooksLiberarPremiumRoute,
   ApiPublicWebhooksEvolutionRoute: ApiPublicWebhooksEvolutionRoute,
   ApiPublicWebhooksKiwifyRoute: ApiPublicWebhooksKiwifyRoute,
