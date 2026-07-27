@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Compass, Lightbulb, Sparkles, User, Loader2, CalendarCheck, Camera } from "lucide-react";
+import { Compass, Lightbulb, Sparkles, User, Loader2, CalendarCheck, Camera, ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -45,6 +45,7 @@ function AppLayout() {
   const tabs: { to: string; label: string; icon: typeof Compass; exact?: boolean }[] = [
     { to: "/app", label: "Radar", icon: Compass, exact: true },
     { to: "/app/missoes", label: "Dicas", icon: Lightbulb },
+    { to: "/app/avaliacao", label: "Avaliação", icon: ClipboardList },
     { to: "/app/derma", label: "Premium", icon: Sparkles },
   ];
   void Camera;
