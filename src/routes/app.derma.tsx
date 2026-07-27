@@ -97,7 +97,10 @@ function PremiumPlano() {
           href="https://pay.kiwify.com.br/j0hsxv3"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => track("premium_upgrade_clicked")}
+          onClick={() => {
+            track("premium_upgrade_clicked");
+            fbqTrack("InitiateCheckout", { content_name: "Plano Premium Zero Lipedema 30d", value: 57, currency: "BRL" });
+          }}
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform active:scale-[0.98]"
           style={{
             background: `linear-gradient(180deg, #E7BE5C, ${GOLD})`,
