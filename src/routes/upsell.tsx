@@ -5,7 +5,7 @@ import {
   Video,
   MessagesSquare,
   Stethoscope,
-  Sparkles,
+  
   UtensilsCrossed,
   FlaskConical,
   ChevronRight,
