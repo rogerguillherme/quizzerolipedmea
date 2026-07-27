@@ -301,6 +301,23 @@ function AnamnesePage() {
           {bloco.titulo}
         </h1>
         <p className="mt-1 text-sm text-[#3E4F65]">{bloco.intro}</p>
+        <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[#8A7C5C]">
+          {salvarMut.isPending ? (
+            <>
+              <Loader2 className="size-3 animate-spin" />
+              <span>Salvando rascunho…</span>
+            </>
+          ) : savedAt ? (
+            <>
+              <Check className="size-3" style={{ color: "#2E7D32" }} />
+              <span>
+                Rascunho salvo · {new Date(savedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            </>
+          ) : (
+            <span>Seu progresso é salvo automaticamente.</span>
+          )}
+        </div>
       </header>
 
       {/* Progresso */}
