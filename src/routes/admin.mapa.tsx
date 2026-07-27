@@ -1,52 +1,59 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { Filter, Search, MessageCircle, Send } from "lucide-react";
-import {
-  getEvents,
-  getLeads,
-  getEscalations,
-  saveEscalations,
-  seedAdminDemoIfEmpty,
-  type Lead,
-  type LeadStatus,
-} from "@/lib/analytics";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Search, Loader2, Phone, Calendar, FileText } from "lucide-react";
+import { listQuizLeads } from "@/lib/admin-leads.functions";
 
 export const Route = createFileRoute("/admin/mapa")({
   component: MapaAdminPage,
 });
 
-const STATUS_LABELS: Record<LeadStatus, string> = {
-  mapa_iniciado: "Mapa iniciado",
-  mapa_completo: "Mapa completo",
-  checkout: "No checkout",
-  desafio_ativo: "Desafio ativo",
-  desafio_parado: "Parada há dias",
-  desafio_completo: "Desafio completo",
-  reembolso: "Pediu reembolso",
-  metodo_derma: "Método Derma",
+type QuizLead = {
+  id: string;
+  nome: string;
+  telefone: string;
+  respostas: Record<string, string> | null;
+  diagnostico: { estagio?: string } | null;
+  status: string;
+  created_at: string;
+};
+
+const RESPOSTA_LABELS: Record<string, string> = {
+  tempo: "Tempo com sintomas",
+  diagnostico: "Diagnóstico",
+  sintomaMaior: "Sintoma principal",
+  pesoPernas: "Peso × pernas",
+  dietaExercicio: "Dieta & exercício",
+  atividade: "Nível de atividade",
+  exames: "Exames recentes",
+  objetivo: "Objetivo",
 };
 
 function MapaAdminPage() {
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    seedAdminDemoIfEmpty();
-    setReady(true);
-  }, []);
+  const fetchLeads = useServerFn(listQuizLeads);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["admin", "quiz-leads"],
+    queryFn: () => fetchLeads(),
+  });
 
-  const events = useMemo(() => (ready ? getEvents() : []), [ready]);
-  const leads = useMemo(() => (ready ? getLeads() : []), [ready]);
+  const leads = (data ?? []) as QuizLead[];
+  const [busca, setBusca] = useState("");
+  const [expandido, setExpandido] = useState<string | null>(null);
 
-  const counts: Record<string, number> = {};
-  for (const e of events) counts[e.name] = (counts[e.name] || 0) + 1;
+  const filtered = useMemo(() => {
+    if (!busca.trim()) return leads;
+    const q = busca.toLowerCase();
+    return leads.filter((l) =>
+      `${l.nome} ${l.telefone}`.toLowerCase().includes(q),
+    );
+  }, [leads, busca]);
 
-  const steps = [
-    { key: "landing_view", label: "Abriu o link" },
-    { key: "quiz_started", label: "Iniciou o Mapa" },
-    { key: "quiz_completed", label: "Completou o Mapa" },
-    { key: "checkout_view", label: "Chegou ao checkout" },
-    { key: "purchase_completed", label: "Comprou o Desafio" },
-  ];
-  const top = counts[steps[0].key] || 1;
+  const total = leads.length;
+  const comTelefone = leads.filter(
+    (l) => l.telefone && l.telefone !== "pendente" && l.telefone.length >= 8,
+  ).length;
+  const comDiagnostico = leads.filter((l) => l.diagnostico).length;
 
   return (
     <div>
@@ -58,193 +65,140 @@ function MapaAdminPage() {
           className="mt-1 text-3xl italic text-[#0B2A4A]"
           style={{ fontFamily: '"Playfair Display", serif' }}
         >
-          Cadastros, funil e fila
+          Leads do quiz
         </h1>
+        <p className="mt-1 text-sm text-[#5A6B7F]">
+          Todas as pessoas que preencheram a avaliação do Mapa.
+        </p>
       </header>
 
+      <section className="mt-6 grid grid-cols-3 gap-2">
+        <Stat label="Total" value={total} />
+        <Stat label="Com telefone" value={comTelefone} />
+        <Stat label="Com leitura" value={comDiagnostico} />
+      </section>
+
       <section className="mt-8">
-        <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-[#8A7C5C]">
-          Funil de conversão
-        </h2>
-        <div className="mt-3 space-y-2">
-          {steps.map((s, i) => {
-            const n = counts[s.key] || 0;
-            const pct = Math.round((n / top) * 100);
-            const prev = i > 0 ? counts[steps[i - 1].key] || 0 : 0;
-            const conv = i > 0 && prev > 0 ? Math.round((n / prev) * 100) : null;
-            return (
-              <div
-                key={s.key}
-                className="rounded-2xl border border-[#E5DBC3] bg-white/70 p-4"
-              >
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-semibold text-[#0B2A4A]">{s.label}</span>
-                  <span className="tabular-nums font-bold text-[#0B2A4A]">
-                    {n}
-                    {conv !== null && (
-                      <span className="ml-2 text-xs font-normal text-[#8A7C5C]">
-                        · {conv}%
-                      </span>
-                    )}
-                  </span>
-                </div>
-                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#EFE5CE]">
-                  <div
-                    className="h-full rounded-full bg-[#0B2A4A]"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
+        <div className="flex items-center gap-2 rounded-xl border border-[#E5DBC3] bg-white/70 px-3">
+          <Search className="size-4 text-[#8A7C5C]" />
+          <input
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar por nome ou telefone"
+            className="flex-1 bg-transparent py-2 text-sm outline-none"
+          />
         </div>
-      </section>
 
-      <section className="mt-10">
-        <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-[#8A7C5C]">
-          Leads ({leads.length})
-        </h2>
-        <LeadsList leads={leads} />
-      </section>
-
-      <section className="mt-10">
-        <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-[#8A7C5C]">
-          Fila de escalonamento
-        </h2>
-        <FilaView />
-      </section>
-    </div>
-  );
-}
-
-function LeadsList({ leads }: { leads: Lead[] }) {
-  const [filtro, setFiltro] = useState<"todos" | LeadStatus>("todos");
-  const [busca, setBusca] = useState("");
-  const filtered = leads.filter((l) => {
-    if (filtro !== "todos" && l.status !== filtro) return false;
-    if (busca && !`${l.nome} ${l.telefone}`.toLowerCase().includes(busca.toLowerCase()))
-      return false;
-    return true;
-  });
-  const filtros: ("todos" | LeadStatus)[] = [
-    "todos",
-    "desafio_ativo",
-    "desafio_parado",
-    "reembolso",
-    "metodo_derma",
-  ];
-  return (
-    <div className="mt-3">
-      <div className="flex items-center gap-2 rounded-xl border border-[#E5DBC3] bg-white/70 px-3">
-        <Search className="size-4 text-[#8A7C5C]" />
-        <input
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar por nome ou telefone"
-          className="flex-1 bg-transparent py-2 text-sm outline-none"
-        />
-      </div>
-      <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
-        <Filter className="size-4 shrink-0 text-[#8A7C5C]" />
-        {filtros.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFiltro(f)}
-            className={[
-              "shrink-0 rounded-full border px-3 py-1 text-xs font-semibold",
-              filtro === f
-                ? "border-[#0B2A4A] bg-[#0B2A4A] text-[#F7F2E8]"
-                : "border-[#E5DBC3] bg-white/70 text-[#3E4F65]",
-            ].join(" ")}
-          >
-            {f === "todos" ? "Todos" : STATUS_LABELS[f]}
-          </button>
-        ))}
-      </div>
-      <div className="mt-4 divide-y divide-[#E5DBC3] overflow-hidden rounded-2xl border border-[#E5DBC3] bg-white/70">
-        {filtered.map((l) => (
-          <div key={l.id} className="grid grid-cols-[1fr_auto] items-center gap-3 p-4">
-            <div>
-              <p className="font-semibold text-[#0B2A4A]">{l.nome}</p>
-              <p className="text-xs text-[#8A7C5C]">
-                {l.telefone}
-                {l.diaDesafio ? ` · Dia ${l.diaDesafio}/7` : ""}
-              </p>
-            </div>
-            <span className="rounded-full bg-[#EFE5CE] px-2.5 py-1 text-[11px] font-bold text-[#0B2A4A]">
-              {STATUS_LABELS[l.status]}
-            </span>
-          </div>
-        ))}
-        {filtered.length === 0 && (
-          <div className="p-8 text-center text-sm text-[#8A7C5C]">
-            Nada por aqui com esse filtro.
+        {isLoading && (
+          <div className="mt-8 flex justify-center">
+            <Loader2 className="size-5 animate-spin text-[#0B2A4A]" />
           </div>
         )}
-      </div>
+
+        {error && (
+          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            Não consegui carregar os leads: {(error as Error).message}
+          </div>
+        )}
+
+        {!isLoading && !error && (
+          <div className="mt-4 space-y-2">
+            {filtered.length === 0 && (
+              <div className="rounded-2xl border border-[#E5DBC3] bg-white/70 p-8 text-center text-sm text-[#8A7C5C]">
+                Nenhum lead encontrado.
+              </div>
+            )}
+            {filtered.map((l) => {
+              const aberto = expandido === l.id;
+              const dataFmt = new Date(l.created_at).toLocaleString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              const telOk =
+                l.telefone && l.telefone !== "pendente" && l.telefone.length >= 8;
+              return (
+                <div
+                  key={l.id}
+                  className="overflow-hidden rounded-2xl border border-[#E5DBC3] bg-white/70"
+                >
+                  <button
+                    onClick={() => setExpandido(aberto ? null : l.id)}
+                    className="grid w-full grid-cols-[1fr_auto] items-center gap-3 p-4 text-left"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-[#0B2A4A]">
+                        {l.nome}
+                      </p>
+                      <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[#8A7C5C]">
+                        <span className="inline-flex items-center gap-1">
+                          <Phone className="size-3" />
+                          {telOk ? l.telefone : "sem telefone"}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <Calendar className="size-3" />
+                          {dataFmt}
+                        </span>
+                      </div>
+                    </div>
+                    <span
+                      className={[
+                        "rounded-full px-2.5 py-1 text-[11px] font-bold",
+                        l.diagnostico
+                          ? "bg-[#EFE5CE] text-[#0B2A4A]"
+                          : "bg-[#F1E9D8] text-[#8A7C5C]",
+                      ].join(" ")}
+                    >
+                      {l.diagnostico?.estagio ?? "Sem leitura"}
+                    </span>
+                  </button>
+
+                  {aberto && (
+                    <div className="border-t border-[#E5DBC3] bg-[#FBF6EA] p-4">
+                      <div className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#8A7C5C]">
+                        <FileText className="size-3" /> Respostas do quiz
+                      </div>
+                      {l.respostas ? (
+                        <dl className="space-y-2 text-sm">
+                          {Object.entries(RESPOSTA_LABELS).map(([k, label]) => {
+                            const v = l.respostas?.[k];
+                            if (!v) return null;
+                            return (
+                              <div key={k}>
+                                <dt className="text-[11px] font-semibold uppercase tracking-wide text-[#B8974D]">
+                                  {label}
+                                </dt>
+                                <dd className="text-[#0B2A4A]">{v}</dd>
+                              </div>
+                            );
+                          })}
+                        </dl>
+                      ) : (
+                        <p className="text-sm text-[#8A7C5C]">
+                          Sem respostas gravadas.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
 
-function FilaView() {
-  const [list, setList] = useState(() => getEscalations());
-  const [resposta, setResposta] = useState<Record<string, string>>({});
-  const pendentes = list.filter((e) => !e.respondido);
-  function responder(id: string) {
-    const texto = (resposta[id] || "").trim();
-    if (!texto) return;
-    const next = list.map((e) =>
-      e.id === id ? { ...e, respondido: true, resposta: texto } : e,
-    );
-    setList(next);
-    saveEscalations(next);
-    setResposta((r) => ({ ...r, [id]: "" }));
-  }
+function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="mt-3 space-y-3">
-      {pendentes.length === 0 && (
-        <div className="rounded-2xl border border-[#E5DBC3] bg-white/70 p-6 text-center text-sm text-[#8A7C5C]">
-          Tudo em dia por aqui.
-        </div>
-      )}
-      {pendentes.map((e) => (
-        <div
-          key={e.id}
-          className="rounded-2xl border border-[#E5DBC3] bg-white/70 p-4"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="font-bold text-[#0B2A4A]">{e.leadNome}</p>
-              <p className="text-xs text-[#8A7C5C]">{e.leadTelefone}</p>
-            </div>
-            <span className="rounded-full bg-[#EFE5CE] px-2 py-0.5 text-[10px] font-bold text-[#0B2A4A]">
-              Pendente
-            </span>
-          </div>
-          <div className="mt-3 flex items-start gap-2 rounded-xl bg-[#F7F2E8] p-3 text-sm">
-            <MessageCircle className="mt-0.5 size-4 shrink-0 text-[#B8974D]" />
-            <p>{e.pergunta}</p>
-          </div>
-          <textarea
-            value={resposta[e.id] || ""}
-            onChange={(ev) =>
-              setResposta((r) => ({ ...r, [e.id]: ev.target.value }))
-            }
-            rows={3}
-            placeholder="Responder como Gabriela"
-            className="mt-3 w-full rounded-xl border border-[#E5DBC3] bg-white p-3 text-sm outline-none focus:border-[#B8974D]"
-          />
-          <div className="mt-2 flex justify-end">
-            <button
-              onClick={() => responder(e.id)}
-              disabled={!resposta[e.id]?.trim()}
-              className="flex items-center gap-2 rounded-xl bg-[#0B2A4A] px-4 py-2 text-sm font-bold text-[#F7F2E8] disabled:opacity-40"
-            >
-              <Send className="size-4" /> Responder
-            </button>
-          </div>
-        </div>
-      ))}
+    <div className="rounded-2xl border border-[#E5DBC3] bg-white/70 p-3 text-center">
+      <p className="text-2xl font-bold tabular-nums text-[#0B2A4A]">{value}</p>
+      <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8A7C5C]">
+        {label}
+      </p>
     </div>
   );
 }
