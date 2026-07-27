@@ -264,6 +264,95 @@ export type Database = {
         }
         Relationships: []
       }
+      exames_leituras: {
+        Row: {
+          created_at: string
+          enviado_em: string | null
+          enviado_erro: string | null
+          enviado_status: string | null
+          ia_erro: string | null
+          ia_itens: Json
+          ia_modelo: string | null
+          ia_processado_em: string | null
+          ia_resumo: string | null
+          ia_status: string
+          id: string
+          lead_id: string | null
+          mimetype: string
+          nome_arquivo: string
+          observacao_usuaria: string | null
+          revisado_em: string | null
+          revisado_por: string | null
+          revisao_status: string
+          revisao_texto: string | null
+          storage_path: string
+          tamanho_bytes: number | null
+          telefone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enviado_em?: string | null
+          enviado_erro?: string | null
+          enviado_status?: string | null
+          ia_erro?: string | null
+          ia_itens?: Json
+          ia_modelo?: string | null
+          ia_processado_em?: string | null
+          ia_resumo?: string | null
+          ia_status?: string
+          id?: string
+          lead_id?: string | null
+          mimetype: string
+          nome_arquivo: string
+          observacao_usuaria?: string | null
+          revisado_em?: string | null
+          revisado_por?: string | null
+          revisao_status?: string
+          revisao_texto?: string | null
+          storage_path: string
+          tamanho_bytes?: number | null
+          telefone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enviado_em?: string | null
+          enviado_erro?: string | null
+          enviado_status?: string | null
+          ia_erro?: string | null
+          ia_itens?: Json
+          ia_modelo?: string | null
+          ia_processado_em?: string | null
+          ia_resumo?: string | null
+          ia_status?: string
+          id?: string
+          lead_id?: string | null
+          mimetype?: string
+          nome_arquivo?: string
+          observacao_usuaria?: string | null
+          revisado_em?: string | null
+          revisado_por?: string | null
+          revisao_status?: string
+          revisao_texto?: string | null
+          storage_path?: string
+          tamanho_bytes?: number | null
+          telefone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exames_leituras_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string

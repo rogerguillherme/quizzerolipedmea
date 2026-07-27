@@ -27,12 +27,14 @@ import { Route as AppProtocoloRouteImport } from './routes/app.protocolo'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppMissoesRouteImport } from './routes/app.missoes'
 import { Route as AppFotoRouteImport } from './routes/app.foto'
+import { Route as AppExamesRouteImport } from './routes/app.exames'
 import { Route as AppDermaRouteImport } from './routes/app.derma'
 import { Route as AppAvaliacaoRouteImport } from './routes/app.avaliacao'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as AdminProtocoloRouteImport } from './routes/admin.protocolo'
 import { Route as AdminMapaRouteImport } from './routes/admin.mapa'
 import { Route as AdminFunisRouteImport } from './routes/admin.funis'
+import { Route as AdminExamesRouteImport } from './routes/admin.exames'
 import { Route as AdminDermaRouteImport } from './routes/admin.derma'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
@@ -132,6 +134,11 @@ const AppFotoRoute = AppFotoRouteImport.update({
   path: '/foto',
   getParentRoute: () => AppRoute,
 } as any)
+const AppExamesRoute = AppExamesRouteImport.update({
+  id: '/exames',
+  path: '/exames',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDermaRoute = AppDermaRouteImport.update({
   id: '/derma',
   path: '/derma',
@@ -160,6 +167,11 @@ const AdminMapaRoute = AdminMapaRouteImport.update({
 const AdminFunisRoute = AdminFunisRouteImport.update({
   id: '/funis',
   path: '/funis',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExamesRoute = AdminExamesRouteImport.update({
+  id: '/exames',
+  path: '/exames',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminDermaRoute = AdminDermaRouteImport.update({
@@ -218,12 +230,14 @@ export interface FileRoutesByFullPath {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
+  '/admin/exames': typeof AdminExamesRoute
   '/admin/funis': typeof AdminFunisRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin/login': typeof AdminLoginRoute
   '/app/avaliacao': typeof AppAvaliacaoRoute
   '/app/derma': typeof AppDermaRoute
+  '/app/exames': typeof AppExamesRoute
   '/app/foto': typeof AppFotoRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -250,12 +264,14 @@ export interface FileRoutesByTo {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
+  '/admin/exames': typeof AdminExamesRoute
   '/admin/funis': typeof AdminFunisRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin/login': typeof AdminLoginRoute
   '/app/avaliacao': typeof AppAvaliacaoRoute
   '/app/derma': typeof AppDermaRoute
+  '/app/exames': typeof AppExamesRoute
   '/app/foto': typeof AppFotoRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -285,12 +301,14 @@ export interface FileRoutesById {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/derma': typeof AdminDermaRoute
+  '/admin/exames': typeof AdminExamesRoute
   '/admin/funis': typeof AdminFunisRoute
   '/admin/mapa': typeof AdminMapaRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin_/login': typeof AdminLoginRoute
   '/app/avaliacao': typeof AppAvaliacaoRoute
   '/app/derma': typeof AppDermaRoute
+  '/app/exames': typeof AppExamesRoute
   '/app/foto': typeof AppFotoRoute
   '/app/missoes': typeof AppMissoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -321,12 +339,14 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/crm'
     | '/admin/derma'
+    | '/admin/exames'
     | '/admin/funis'
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/admin/login'
     | '/app/avaliacao'
     | '/app/derma'
+    | '/app/exames'
     | '/app/foto'
     | '/app/missoes'
     | '/app/perfil'
@@ -353,12 +373,14 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/crm'
     | '/admin/derma'
+    | '/admin/exames'
     | '/admin/funis'
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/admin/login'
     | '/app/avaliacao'
     | '/app/derma'
+    | '/app/exames'
     | '/app/foto'
     | '/app/missoes'
     | '/app/perfil'
@@ -387,12 +409,14 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/crm'
     | '/admin/derma'
+    | '/admin/exames'
     | '/admin/funis'
     | '/admin/mapa'
     | '/admin/protocolo'
     | '/admin_/login'
     | '/app/avaliacao'
     | '/app/derma'
+    | '/app/exames'
     | '/app/foto'
     | '/app/missoes'
     | '/app/perfil'
@@ -556,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFotoRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/exames': {
+      id: '/app/exames'
+      path: '/exames'
+      fullPath: '/app/exames'
+      preLoaderRoute: typeof AppExamesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/derma': {
       id: '/app/derma'
       path: '/derma'
@@ -596,6 +627,13 @@ declare module '@tanstack/react-router' {
       path: '/funis'
       fullPath: '/admin/funis'
       preLoaderRoute: typeof AdminFunisRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/exames': {
+      id: '/admin/exames'
+      path: '/exames'
+      fullPath: '/admin/exames'
+      preLoaderRoute: typeof AdminExamesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/derma': {
@@ -661,6 +699,7 @@ interface AdminRouteChildren {
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminCrmRoute: typeof AdminCrmRoute
   AdminDermaRoute: typeof AdminDermaRoute
+  AdminExamesRoute: typeof AdminExamesRoute
   AdminFunisRoute: typeof AdminFunisRoute
   AdminMapaRoute: typeof AdminMapaRoute
   AdminProtocoloRoute: typeof AdminProtocoloRoute
@@ -671,6 +710,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminCrmRoute: AdminCrmRoute,
   AdminDermaRoute: AdminDermaRoute,
+  AdminExamesRoute: AdminExamesRoute,
   AdminFunisRoute: AdminFunisRoute,
   AdminMapaRoute: AdminMapaRoute,
   AdminProtocoloRoute: AdminProtocoloRoute,
@@ -682,6 +722,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface AppRouteChildren {
   AppAvaliacaoRoute: typeof AppAvaliacaoRoute
   AppDermaRoute: typeof AppDermaRoute
+  AppExamesRoute: typeof AppExamesRoute
   AppFotoRoute: typeof AppFotoRoute
   AppMissoesRoute: typeof AppMissoesRoute
   AppPerfilRoute: typeof AppPerfilRoute
@@ -694,6 +735,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAvaliacaoRoute: AppAvaliacaoRoute,
   AppDermaRoute: AppDermaRoute,
+  AppExamesRoute: AppExamesRoute,
   AppFotoRoute: AppFotoRoute,
   AppMissoesRoute: AppMissoesRoute,
   AppPerfilRoute: AppPerfilRoute,

@@ -13,6 +13,7 @@ import {
   MapPinned,
   Sparkles,
   Crown,
+  FlaskConical,
   Settings,
   LogOut,
   Loader2,
@@ -41,6 +42,7 @@ const NAV: Array<{
   { to: "/admin/mapa", label: "Mapa do Lipedema", icon: MapPinned, section: "apps" },
   { to: "/admin/protocolo", label: "Protocolo 7 dias", icon: Sparkles, section: "apps" },
   { to: "/admin/derma", label: "Método Derma", icon: Crown, section: "apps" },
+  { to: "/admin/exames", label: "Exames", icon: FlaskConical, section: "apps" },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings, section: "config" },
 ];
 
