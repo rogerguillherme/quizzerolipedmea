@@ -119,7 +119,7 @@ function OfertaPage() {
                 <div className="mt-6 md:mt-8">
                   <CTA onClick={openQuiz} />
                   <p className="mt-3 text-[11px] md:text-xs text-[hsl(213_20%_40%)]">
-                    {"\n"}
+                    Leitura educacional. Não substitui avaliação médica.
                   </p>
                 </div>
               </div>
