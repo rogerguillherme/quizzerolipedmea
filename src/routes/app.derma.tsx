@@ -82,7 +82,8 @@ function PremiumPlano() {
     );
   }
 
-  if (st?.isPremium) {
+  // TODO: reativar quando o Plano Acompanhamento (R$279) estiver com checkout próprio, então checar o produto certo, não só status "plano_ativo"
+  if (false && st?.isPremium) {
     return <PremiumOnboarding st={st} />;
   }
 
