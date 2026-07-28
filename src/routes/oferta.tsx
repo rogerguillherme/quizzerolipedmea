@@ -162,13 +162,13 @@ function OfertaPage() {
           <ArcsBg />
           <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20">
             <SectionTitle>
-              O problema não é força de vontade é o que ninguém te explicou sobre lipedema.
+              O problema não é força de vontade — é o que ninguém te explicou sobre lipedema.
             </SectionTitle>
             <p className="mt-6 md:mt-8 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
               Lipedema é um acúmulo de gordura com padrão próprio, geralmente ligado a fatores
               hormonais, que não responde só à equação "coma menos, treine mais". Por isso tantas
               mulheres fazem tudo certo e não veem o resultado esperado nas pernas. Entender isso é
-              o primeiro passo o segundo é ter um caminho estruturado pensado especificamente pra
+              o primeiro passo — o segundo é ter um caminho estruturado pensado especificamente pra
               esse padrão.
             </p>
           </div>
