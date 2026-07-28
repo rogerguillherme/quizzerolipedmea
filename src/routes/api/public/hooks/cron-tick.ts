@@ -176,7 +176,7 @@ async function processarReengajamento(
     if (reengaje.pos24h_at) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `Oi ${nome}! 💙 Aqui é da equipe da Dra. Gabriela.\n\n` +
+      `Oi ${nome}! 💙 Aqui é a Gabriela 💙\n\n` +
       `Vi que você começou seu Mapa do Lipedema, mas ainda não entrou no app. ` +
       `Deixei tudo pronto pra você — quer que eu te reenvie o acesso?`;
     const wa = await sendWhatsApp(lead.telefone, msg);
