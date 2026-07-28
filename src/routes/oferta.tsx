@@ -119,7 +119,7 @@ function OfertaPage() {
                 <div className="mt-6 md:mt-8">
                   <CTA onClick={openQuiz} />
                   <p className="mt-3 text-[11px] md:text-xs text-[hsl(213_20%_40%)]">
-                    {"\n"}
+                    Leitura educacional. Não substitui avaliação médica.
                   </p>
                 </div>
               </div>
@@ -162,13 +162,13 @@ function OfertaPage() {
           <ArcsBg />
           <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20">
             <SectionTitle>
-              O problema não é força de vontade é o que ninguém te explicou sobre lipedema.
+              O problema não é força de vontade — é o que ninguém te explicou sobre lipedema.
             </SectionTitle>
             <p className="mt-6 md:mt-8 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
               Lipedema é um acúmulo de gordura com padrão próprio, geralmente ligado a fatores
               hormonais, que não responde só à equação "coma menos, treine mais". Por isso tantas
               mulheres fazem tudo certo e não veem o resultado esperado nas pernas. Entender isso é
-              o primeiro passo o segundo é ter um caminho estruturado pensado especificamente pra
+              o primeiro passo — o segundo é ter um caminho estruturado pensado especificamente pra
               esse padrão.
             </p>
           </div>
@@ -194,7 +194,7 @@ function OfertaPage() {
                   <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
                 </p>
                 <p className="mt-3 text-[14px] md:text-base leading-relaxed text-[hsl(213_25%_35%)]">
-                  Lipedema não tem cura, mas tem direção e cuidado contínuo faz diferença real no
+                  Lipedema não tem cura, mas tem direção — e cuidado contínuo faz diferença real no
                   seu dia a dia.
                 </p>
               </div>
@@ -240,7 +240,7 @@ function OfertaPage() {
               ))}
             </ol>
             <p className="mt-6 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center md:text-left">
-              {"\n"}
+              A partir de R$57 — sem assinatura obrigatória.
             </p>
           </div>
         </section>
@@ -257,15 +257,15 @@ function OfertaPage() {
                 },
                 {
                   q: "Isso é sobre emagrecer?",
-                  a: "Não é uma dieta restritiva nem promete emagrecimento é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
+                  a: "Não é uma dieta restritiva nem promete emagrecimento — é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
                 },
                 {
                   q: "Precisa de assinatura?",
-                  a: "Não. você recebe uma avaliação gratuita. Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada pode adquirir o plano premium.",
+                  a: "Não. Você recebe uma avaliação gratuita (o Mapa). Quem quiser aprofundar pode adquirir o plano premium, com leitura de exames, anamnese completa e prescrição personalizada.",
                 },
                 {
                   q: "É indicado pra qualquer estágio?",
-                  a: "O Mapa te dá uma leitura inicial e o primeiros passos para começar; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
+                  a: "O Mapa te dá uma leitura inicial e os primeiros passos para começar; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
                 },
               ].map((f, i) => (
                 <details
@@ -313,7 +313,7 @@ function OfertaPage() {
         <footer className="border-t border-[hsl(38_35%_80%)]/40 bg-[hsl(40_40%_92%)]">
           <div className="mx-auto max-w-4xl px-5 md:px-6 py-8 md:py-10">
             <p className="text-[11px] md:text-xs leading-relaxed text-[hsl(213_20%_40%)] text-center">
-              {"\n"}
+              Conteúdo educacional e de estilo de vida. Não substitui avaliação médica ou nutricional individualizada. Nutricionista (CRN 10582) não prescreve medicamento nem exercício estruturado nesta etapa.
             </p>
           </div>
         </footer>
