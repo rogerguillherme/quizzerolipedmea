@@ -130,7 +130,7 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
     const primeiroNome = String(lead.nome).split(" ")[0];
     const baseUrl =
       process.env.APP_PUBLIC_URL ?? "https://quizzerolipedmea.lovable.app";
-    const loginUrl = `${baseUrl}/auth`;
+    const loginUrl = `${baseUrl}/auth?tel=${encodeURIComponent(lead.telefone)}`;
 
     const mensagem = `Oi ${primeiroNome}! Aqui é a Gabriela 💙
 
