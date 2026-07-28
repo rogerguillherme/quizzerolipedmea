@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Clock, Stethoscope, Activity, Target, HeartPulse } from "lucide-react";
+import { Loader2, Clock, Stethoscope, Activity, Target, HeartPulse, ArrowRight } from "lucide-react";
 import { getMyProfile } from "@/lib/mapa-access.functions";
 import type { Diagnostico } from "@/lib/mapa.functions";
+
 
 export const Route = createFileRoute("/app/")({
   component: GuiaMapa,
@@ -236,9 +237,66 @@ function GuiaMapa() {
           </div>
         </section>
       )}
+
+      {/* CTA Premium */}
+      <section className="mt-8">
+        <Link
+          to="/app/derma"
+          className="relative block overflow-hidden rounded-[28px] px-6 py-7 text-[color:var(--cream)]"
+          style={{
+            background:
+              "linear-gradient(160deg, #2C5578 0%, #16324F 55%, #0D2138 100%)",
+            boxShadow: "0 24px 40px -28px rgba(22,50,79,0.55)",
+          }}
+        >
+          <div
+            className="pointer-events-none absolute -right-16 -bottom-16 h-52 w-52 rounded-full"
+            style={{
+              background:
+                "radial-gradient(closest-side, rgba(217,169,75,0.35), transparent 70%)",
+            }}
+          />
+          <p
+            className="text-[10px] font-semibold uppercase"
+            style={{ letterSpacing: "0.28em", color: "#D9A94B" }}
+          >
+            Próximo passo
+          </p>
+          <h2
+            className="mt-2"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 500,
+              fontSize: "1.5rem",
+              lineHeight: 1.2,
+              color: "#F5EFE1",
+            }}
+          >
+            Conheça o <em className="italic" style={{ color: "#D9A94B" }}>Plano Premium</em>
+          </h2>
+          <p
+            className="mt-3 max-w-[40ch] text-[13.5px]"
+            style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}
+          >
+            Registro de refeições, cardápios, chás e suplementos personalizados, anamnese completa e acompanhamento contínuo, tudo em um só lugar, por R$67.
+          </p>
+          <span
+            className="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold"
+            style={{
+              background: "#D9A94B",
+              color: "#16324F",
+              boxShadow: "0 10px 20px -12px rgba(217,169,75,0.6)",
+            }}
+          >
+            Ver o Plano Premium
+            <ArrowRight className="size-4" />
+          </span>
+        </Link>
+      </section>
     </div>
   );
 }
+
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
