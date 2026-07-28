@@ -250,11 +250,12 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
         );
         const { sendWhatsApp } = await import("@/lib/evolution.server");
 
-        const cadencia = await processarCadenciaProtocolo(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          supabaseAdmin as any,
-          sendWhatsApp,
-        );
+        // TODO: Protocolo de 7 Dias descontinuado, reativar só se decidirmos voltar com isso
+        // const cadencia = await processarCadenciaProtocolo(
+        //   supabaseAdmin as any,
+        //   sendWhatsApp,
+        // );
+        const cadencia: Array<{ lead: string; dia?: number; status: string }> = [];
         const reengajados = await processarReengajamento(
           supabaseAdmin,
           sendWhatsApp,
