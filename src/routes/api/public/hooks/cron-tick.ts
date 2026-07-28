@@ -263,6 +263,7 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
 
         // suppress unused import warning
         void horasDesde;
+        void processarCadenciaProtocolo;
 
         return Response.json({
           ok: true,
