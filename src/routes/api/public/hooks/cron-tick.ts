@@ -141,7 +141,7 @@ async function processarReengajamento(
     if (digits.length < 10) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `Oi ${nome} 💙 Aqui é da equipe da Dra. Gabriela.\n\n` +
+      `Oi ${nome} 💙 Aqui é a Gabriela 💙\n\n` +
       `Vi que você começou seu *Mapa do Lipedema* e parou antes de receber o acesso ao app. ` +
       `Não some — em 1 minutinho a gente termina e você já sai com suas 3 prioridades da semana.\n\n` +
       `Quer que eu te reenvie o link do Mapa agora?`;
@@ -176,7 +176,7 @@ async function processarReengajamento(
     if (reengaje.pos24h_at) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `Oi ${nome}! 💙 Aqui é da equipe da Dra. Gabriela.\n\n` +
+      `Oi ${nome}! 💙 Aqui é a Gabriela 💙\n\n` +
       `Vi que você começou seu Mapa do Lipedema, mas ainda não entrou no app. ` +
       `Deixei tudo pronto pra você — quer que eu te reenvie o acesso?`;
     const wa = await sendWhatsApp(lead.telefone, msg);
@@ -250,11 +250,12 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
         );
         const { sendWhatsApp } = await import("@/lib/evolution.server");
 
-        const cadencia = await processarCadenciaProtocolo(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          supabaseAdmin as any,
-          sendWhatsApp,
-        );
+        // TODO: Protocolo de 7 Dias descontinuado, reativar só se decidirmos voltar com isso
+        // const cadencia = await processarCadenciaProtocolo(
+        //   supabaseAdmin as any,
+        //   sendWhatsApp,
+        // );
+        const cadencia: Array<{ lead: string; dia?: number; status: string }> = [];
         const reengajados = await processarReengajamento(
           supabaseAdmin,
           sendWhatsApp,
@@ -262,6 +263,7 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
 
         // suppress unused import warning
         void horasDesde;
+        void processarCadenciaProtocolo;
 
         return Response.json({
           ok: true,

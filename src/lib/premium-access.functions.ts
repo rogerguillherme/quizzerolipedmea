@@ -43,7 +43,7 @@ async function enviarPremiumParaLead(leadId: string) {
   if (!telefone) throw new Error("Telefone inválido.");
 
   const baseUrl = process.env.APP_PUBLIC_URL ?? "https://quizzerolipedmea.lovable.app";
-  const loginUrl = `${baseUrl}/auth`;
+  const loginUrl = `${baseUrl}/auth?tel=${encodeURIComponent(telefone)}`;
   const mensagem = buildPremiumWelcomeMessage(lead.nome, loginUrl);
 
   const wa = await sendWhatsApp(telefone, mensagem);
