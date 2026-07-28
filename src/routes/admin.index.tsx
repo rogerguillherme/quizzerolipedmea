@@ -9,6 +9,7 @@ import {
   Crown,
   TrendingUp,
   AlertTriangle,
+  Eye,
 } from "lucide-react";
 import {
   getEvents,
@@ -16,6 +17,7 @@ import {
   seedAdminDemoIfEmpty,
 } from "@/lib/analytics";
 import { listarLeadsAtencao } from "@/lib/mapa-access.functions";
+import { getTrafegoMetrics } from "@/lib/trafego.functions";
 
 export const Route = createFileRoute("/admin/")({
   component: DashboardPage,
