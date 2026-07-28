@@ -8,13 +8,13 @@ export const Route = createFileRoute("/oferta")({
   component: OfertaPage,
   head: () => ({
     meta: [
-      { title: "Mapa do Lipedema — Descubra seu perfil em 2 minutos" },
+      { title: "Mapa do Lipedema, descubra seu perfil em 2 minutos" },
       {
         name: "description",
         content:
           "Não é falta de esforço, é lipedema. Responda 8 perguntas e receba seu mapa personalizado com a Dra. Gabriela Rosado (CRN 10582).",
       },
-      { property: "og:title", content: "Mapa do Lipedema — Dra. Gabriela Rosado" },
+      { property: "og:title", content: "Mapa do Lipedema, Dra. Gabriela Rosado" },
       {
         property: "og:description",
         content:
@@ -118,9 +118,6 @@ function OfertaPage() {
                 </p>
                 <div className="mt-6 md:mt-8">
                   <CTA onClick={openQuiz} />
-                  <p className="mt-3 text-[11px] md:text-xs text-[hsl(213_20%_40%)]">
-                    Leitura educacional. Não substitui avaliação médica.
-                  </p>
                 </div>
               </div>
               <div className="order-1 md:order-2 flex justify-center">
@@ -162,13 +159,13 @@ function OfertaPage() {
           <ArcsBg />
           <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20">
             <SectionTitle>
-              O problema não é força de vontade — é o que ninguém te explicou sobre lipedema.
+              O problema não é força de vontade, é o que ninguém te explicou sobre lipedema.
             </SectionTitle>
             <p className="mt-6 md:mt-8 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
               Lipedema é um acúmulo de gordura com padrão próprio, geralmente ligado a fatores
               hormonais, que não responde só à equação "coma menos, treine mais". Por isso tantas
               mulheres fazem tudo certo e não veem o resultado esperado nas pernas. Entender isso é
-              o primeiro passo — o segundo é ter um caminho estruturado pensado especificamente pra
+              o primeiro passo. O segundo é ter um caminho estruturado pensado especificamente pra
               esse padrão.
             </p>
           </div>
@@ -194,7 +191,7 @@ function OfertaPage() {
                   <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
                 </p>
                 <p className="mt-3 text-[14px] md:text-base leading-relaxed text-[hsl(213_25%_35%)]">
-                  Lipedema não tem cura, mas tem direção — e cuidado contínuo faz diferença real no
+                  Lipedema não tem cura, mas tem direção, e cuidado contínuo faz diferença real no
                   seu dia a dia.
                 </p>
               </div>
@@ -240,7 +237,7 @@ function OfertaPage() {
               ))}
             </ol>
             <p className="mt-6 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center md:text-left">
-              A partir de R$57 — sem assinatura obrigatória.
+              A partir de R$57, sem assinatura obrigatória.
             </p>
           </div>
         </section>
@@ -257,7 +254,7 @@ function OfertaPage() {
                 },
                 {
                   q: "Isso é sobre emagrecer?",
-                  a: "Não é uma dieta restritiva nem promete emagrecimento — é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
+                  a: "Não é uma dieta restritiva nem promete emagrecimento, é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
                 },
                 {
                   q: "Precisa de assinatura?",
@@ -309,14 +306,6 @@ function OfertaPage() {
           </div>
         </section>
 
-        {/* 9. DISCLAIMER */}
-        <footer className="border-t border-[hsl(38_35%_80%)]/40 bg-[hsl(40_40%_92%)]">
-          <div className="mx-auto max-w-4xl px-5 md:px-6 py-8 md:py-10">
-            <p className="text-[11px] md:text-xs leading-relaxed text-[hsl(213_20%_40%)] text-center">
-              Conteúdo educacional e de estilo de vida. Não substitui avaliação médica ou nutricional individualizada. Nutricionista (CRN 10582) não prescreve medicamento nem exercício estruturado nesta etapa.
-            </p>
-          </div>
-        </footer>
       </main>
 
       <MapaQuizDialog open={open} onClose={() => setOpen(false)} />
