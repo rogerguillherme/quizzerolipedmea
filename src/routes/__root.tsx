@@ -159,9 +159,35 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
+    const SKEY = "__zl_sid";
+    let sid = "";
+    try {
+      sid = sessionStorage.getItem(SKEY) || "";
+      if (!sid) {
+        sid = (crypto as any)?.randomUUID?.() || String(Date.now()) + Math.random().toString(36).slice(2);
+        sessionStorage.setItem(SKEY, sid);
+      }
+    } catch {}
     const unsub = router.subscribe("onResolved", () => {
       const fbq = (window as any).fbq;
       if (typeof fbq === "function") fbq("track", "PageView");
+      try {
+        const url = new URL(window.location.href);
+        const payload = {
+          path: url.pathname + url.search,
+          referrer: document.referrer || null,
+          session_id: sid,
+          utm_source: url.searchParams.get("utm_source"),
+          utm_medium: url.searchParams.get("utm_medium"),
+          utm_campaign: url.searchParams.get("utm_campaign"),
+        };
+        const body = JSON.stringify(payload);
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon("/api/public/track", new Blob([body], { type: "application/json" }));
+        } else {
+          fetch("/api/public/track", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {});
+        }
+      } catch {}
     });
     return () => unsub();
   }, [router]);

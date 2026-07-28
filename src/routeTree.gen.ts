@@ -39,6 +39,7 @@ import { Route as AdminExamesRouteImport } from './routes/admin.exames'
 import { Route as AdminDermaRouteImport } from './routes/admin.derma'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
+import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicWebhooksKiwifyRouteImport } from './routes/api/public/webhooks/kiwify'
 import { Route as ApiPublicWebhooksEvolutionRouteImport } from './routes/api/public/webhooks/evolution'
 import { Route as ApiPublicHooksLiberarPremiumRouteImport } from './routes/api/public/hooks/liberar-premium'
@@ -195,6 +196,11 @@ const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
   path: '/configuracoes',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
+  id: '/api/public/track',
+  path: '/api/public/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWebhooksKiwifyRoute = ApiPublicWebhooksKiwifyRouteImport.update({
   id: '/api/public/webhooks/kiwify',
   path: '/api/public/webhooks/kiwify',
@@ -254,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
@@ -289,6 +296,7 @@ export interface FileRoutesByTo {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
@@ -327,6 +335,7 @@ export interface FileRoutesById {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
@@ -366,6 +375,7 @@ export interface FileRouteTypes {
     | '/protocolo/pagamento'
     | '/admin/'
     | '/app/'
+    | '/api/public/track'
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
@@ -401,6 +411,7 @@ export interface FileRouteTypes {
     | '/protocolo/pagamento'
     | '/admin'
     | '/app'
+    | '/api/public/track'
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
@@ -438,6 +449,7 @@ export interface FileRouteTypes {
     | '/protocolo/pagamento'
     | '/admin/'
     | '/app/'
+    | '/api/public/track'
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
@@ -457,6 +469,7 @@ export interface RootRouteChildren {
   UpsellRoute: typeof UpsellRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
+  ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ApiPublicHooksCronTickRoute: typeof ApiPublicHooksCronTickRoute
   ApiPublicHooksEnviarMsgRoute: typeof ApiPublicHooksEnviarMsgRoute
   ApiPublicHooksLiberarPremiumRoute: typeof ApiPublicHooksLiberarPremiumRoute
@@ -676,6 +689,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminConfiguracoesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/track': {
+      id: '/api/public/track'
+      path: '/api/public/track'
+      fullPath: '/api/public/track'
+      preLoaderRoute: typeof ApiPublicTrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhooks/kiwify': {
       id: '/api/public/webhooks/kiwify'
       path: '/api/public/webhooks/kiwify'
@@ -780,6 +800,7 @@ const rootRouteChildren: RootRouteChildren = {
   UpsellRoute: UpsellRoute,
   AdminLoginRoute: AdminLoginRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
+  ApiPublicTrackRoute: ApiPublicTrackRoute,
   ApiPublicHooksCronTickRoute: ApiPublicHooksCronTickRoute,
   ApiPublicHooksEnviarMsgRoute: ApiPublicHooksEnviarMsgRoute,
   ApiPublicHooksLiberarPremiumRoute: ApiPublicHooksLiberarPremiumRoute,
@@ -789,13 +810,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
