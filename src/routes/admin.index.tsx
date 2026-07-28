@@ -40,7 +40,9 @@ const MOTIVO_LABEL: Record<string, string> = {
 function DashboardPage() {
   const [ready, setReady] = useState(false);
   const [atencao, setAtencao] = useState<LeadAtencao[]>([]);
+  const [trafego, setTrafego] = useState<Awaited<ReturnType<typeof getTrafegoMetrics>> | null>(null);
   const carregarAtencao = useServerFn(listarLeadsAtencao);
+  const carregarTrafego = useServerFn(getTrafegoMetrics);
 
   useEffect(() => {
     seedAdminDemoIfEmpty();
@@ -51,8 +53,11 @@ function DashboardPage() {
       const { data } = await supabase.auth.getSession();
       if (cancelled || !data.session) return;
       try {
-        const rows = await carregarAtencao();
-        if (!cancelled) setAtencao(rows as LeadAtencao[]);
+        const [rows, tr] = await Promise.all([carregarAtencao(), carregarTrafego()]);
+        if (!cancelled) {
+          setAtencao(rows as LeadAtencao[]);
+          setTrafego(tr);
+        }
       } catch {
         /* silencioso */
       }
@@ -60,7 +65,7 @@ function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [carregarAtencao]);
+  }, [carregarAtencao, carregarTrafego]);
 
 
   const events = useMemo(() => (ready ? getEvents() : []), [ready]);
