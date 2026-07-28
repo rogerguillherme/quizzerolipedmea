@@ -141,7 +141,7 @@ async function processarReengajamento(
     if (digits.length < 10) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `Oi ${nome} 💙 Aqui é da equipe da Dra. Gabriela.\n\n` +
+      `Oi ${nome} 💙 Aqui é a Gabriela 💙\n\n` +
       `Vi que você começou seu *Mapa do Lipedema* e parou antes de receber o acesso ao app. ` +
       `Não some — em 1 minutinho a gente termina e você já sai com suas 3 prioridades da semana.\n\n` +
       `Quer que eu te reenvie o link do Mapa agora?`;
