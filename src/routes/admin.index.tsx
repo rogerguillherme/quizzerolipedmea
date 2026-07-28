@@ -178,6 +178,72 @@ function DashboardPage() {
         </section>
       )}
 
+      {trafego && (
+        <section className="mt-10">
+          <div className="mb-3 flex items-center gap-2">
+            <Eye className="size-4 text-[#B8974D]" />
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8A7C5C]">
+              Tráfego · hoje
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="rounded-2xl border border-[#E5DBC3] bg-white/80 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8A7C5C]">Page views</p>
+              <p className="mt-2 text-3xl italic text-[#0B2A4A] tabular-nums" style={{ fontFamily: '"Playfair Display", serif' }}>
+                {trafego.today.views}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#E5DBC3] bg-white/80 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8A7C5C]">Visitantes únicos</p>
+              <p className="mt-2 text-3xl italic text-[#0B2A4A] tabular-nums" style={{ fontFamily: '"Playfair Display", serif' }}>
+                {trafego.today.sessions}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#E5DBC3] bg-white/80 p-4 md:col-span-2">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8A7C5C]">Últimos 7 dias</p>
+              <div className="mt-3 flex h-16 items-end gap-1">
+                {trafego.daily.map((d) => {
+                  const max = Math.max(1, ...trafego.daily.map((x) => x.views));
+                  const h = Math.max(4, Math.round((d.views / max) * 60));
+                  return (
+                    <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
+                      <div className="w-full rounded-t bg-[#B8974D]" style={{ height: `${h}px` }} title={`${d.date}: ${d.views}`} />
+                      <span className="text-[9px] text-[#8A7C5C]">{d.date.slice(-2)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="rounded-2xl border border-[#E5DBC3] bg-white/80 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8A7C5C]">Páginas mais vistas hoje</p>
+              <ul className="mt-2 space-y-1 text-sm text-[#0B2A4A]">
+                {trafego.today.topPaths.length === 0 && <li className="text-[#8A7C5C]">Sem visitas ainda hoje.</li>}
+                {trafego.today.topPaths.map((p) => (
+                  <li key={p.path} className="flex justify-between gap-2">
+                    <span className="truncate font-mono text-xs">{p.path}</span>
+                    <span className="tabular-nums text-[#B8974D]">{p.count}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-[#E5DBC3] bg-white/80 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8A7C5C]">Origens de tráfego (hoje)</p>
+              <ul className="mt-2 space-y-1 text-sm text-[#0B2A4A]">
+                {trafego.today.topReferrers.length === 0 && <li className="text-[#8A7C5C]">—</li>}
+                {trafego.today.topReferrers.map((r) => (
+                  <li key={r.source} className="flex justify-between gap-2">
+                    <span className="truncate">{r.source}</span>
+                    <span className="tabular-nums text-[#B8974D]">{r.count}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="mt-10">
         <div className="mb-3 flex items-center gap-2">
           <TrendingUp className="size-4 text-[#B8974D]" />
