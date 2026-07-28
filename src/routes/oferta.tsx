@@ -257,15 +257,15 @@ function OfertaPage() {
                 },
                 {
                   q: "Isso é sobre emagrecer?",
-                  a: "Não é uma dieta restritiva nem promete emagrecimento é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
+                  a: "Não é uma dieta restritiva nem promete emagrecimento — é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
                 },
                 {
                   q: "Precisa de assinatura?",
-                  a: "Não. você recebe uma avaliação gratuita. Quem quiser aprofundar tem acesso a planos com leitura de exames, anamnese completa e prescrição personalizada pode adquirir o plano premium.",
+                  a: "Não. Você recebe uma avaliação gratuita (o Mapa). Quem quiser aprofundar pode adquirir o plano premium, com leitura de exames, anamnese completa e prescrição personalizada.",
                 },
                 {
                   q: "É indicado pra qualquer estágio?",
-                  a: "O Mapa te dá uma leitura inicial e o primeiros passos para começar; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
+                  a: "O Mapa te dá uma leitura inicial e os primeiros passos para começar; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
                 },
               ].map((f, i) => (
                 <details
