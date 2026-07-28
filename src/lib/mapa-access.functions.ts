@@ -132,7 +132,7 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
       process.env.APP_PUBLIC_URL ?? "https://quizzerolipedmea.lovable.app";
     const loginUrl = `${baseUrl}/auth`;
 
-    const mensagem = `Oi ${primeiroNome}! Aqui é da equipe da Dra. Gabriela Rosado 💙
+    const mensagem = `Oi ${primeiroNome}! Aqui é a Gabriela 💙
 
 Seu *Mapa do Lipedema* está pronto e eu já preparei um acesso exclusivo pra você no app:
 
