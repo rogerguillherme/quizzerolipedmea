@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
@@ -292,6 +292,33 @@ function AvaliacaoPage() {
           <img src={preview} alt="Sua refeição" className="w-full object-cover" style={{ maxHeight: 260 }} />
         </div>
       )}
+
+      {meals.length === 1 && (
+        <Link
+          to="/app/derma"
+          className="mt-4 block rounded-2xl px-4 py-4"
+          style={{
+            background: "rgba(255,253,247,0.9)",
+            border: "1px solid rgba(216,198,160,0.55)",
+            borderLeft: "3px solid #AF7F35",
+            boxShadow: "0 10px 24px -18px rgba(22,50,79,0.35)",
+          }}
+        >
+          <p
+            className="text-[10px] font-semibold uppercase"
+            style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
+          >
+            Plano Premium
+          </p>
+          <p className="mt-1.5 text-[13.5px]" style={{ color: "#2F3128", lineHeight: 1.5 }}>
+            Gostou do feedback? No Plano Premium isso é ilimitado, mais cardápio personalizado, anamnese completa e acompanhamento contínuo.
+          </p>
+          <p className="mt-2 text-[13px] font-semibold" style={{ color: "#16324F" }}>
+            Conhecer o Plano Premium <span style={{ color: "#AF7F35" }}>→</span>
+          </p>
+        </Link>
+      )}
+
 
       {/* Sub-tabs */}
       <div
