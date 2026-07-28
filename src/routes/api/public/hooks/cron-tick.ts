@@ -209,9 +209,9 @@ async function processarReengajamento(
     if (reengaje.pos48h_at) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `${nome}, é a Gabi 💙 Passei aqui só pra te lembrar:\n\n` +
-      `Seu Protocolo de 7 Dias tá esperando você no app — leva 2 minutinhos pra começar ` +
-      `e você já sai com a lista de compras. Sem cobrança, sem pressa.`;
+      `${nome}, é a Gabriela 💙 Passei aqui só pra te lembrar:\n\n` +
+      `Se quiser continuar com registro de refeições ilimitado, dicas diárias, cardápios, chás e suplementos personalizados, o Plano Premium tá te esperando no app, na aba Premium. R$67 o mês.\n\n` +
+      `Sem pressa, fico à disposição se tiver dúvida.`;
     const wa = await sendWhatsApp(lead.telefone, msg);
     await supabaseAdmin.from("whatsapp_logs").insert({
       telefone: lead.telefone,
