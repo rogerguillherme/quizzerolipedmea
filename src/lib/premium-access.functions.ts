@@ -9,26 +9,22 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  */
 export function buildPremiumWelcomeMessage(nome: string, loginUrl: string) {
   const primeiro = String(nome ?? "").split(" ")[0] || "linda";
-  return `Oi ${primeiro}! Aqui é a equipe da Dra. Gabriela Rosado 💙
+  return `Oi ${primeiro}! Aqui é a Gabriela 💙
 
 Seu *Plano Premium Zero Lipedema · 30 dias* foi liberado! 🎉
 
 Nos próximos 30 dias você tem:
-✅ Anamnese completa comigo e leitura dos seus exames
-✅ Cardápio 100% personalizado pro seu caso
-✅ Prescrição individual de chás, shots e suplementos
-✅ Registro de refeições por foto com feedback ilimitado
-✅ Aulas gravadas da Gabriela + Q&A ao vivo
-✅ Acesso 24h pra tirar suas dúvidas por aqui
+✅ Registro de refeições por foto, com feedback ilimitado
+✅ Dicas diárias no WhatsApp, pensadas pro seu estágio
+✅ 3 cardápios de sugestão alimentar (café, almoço, lanche e jantar)
+✅ Guia de chás e shots pra lipedema
+✅ Guia de suplementos anti-lipedema
+✅ Canal pra tirar suas dúvidas a qualquer momento
+✅ Quadro de evolução, acompanhando seu progresso
 
 🔗 Seu app: ${loginUrl}
 
-Pra começarmos, me responde aqui:
-1️⃣ Você já fez sua avaliação (Mapa)?
-2️⃣ Tem exames recentes pra me enviar? (pode mandar foto/PDF)
-3️⃣ Qual é sua maior meta pros próximos 30 dias?
-
-Bora começar essa jornada juntas ✨`;
+Qualquer coisa, me chama por aqui ✨`;
 }
 
 async function enviarPremiumParaLead(leadId: string) {
