@@ -61,6 +61,16 @@ function AuthPage() {
   const [bootstrapping, setBootstrapping] = useState(true);
 
   useEffect(() => {
+    // Pré-preenche o telefone se veio via ?tel= no link enviado por WhatsApp,
+    // pra reduzir atrito no login (a lead só precisa digitar a senha temporária).
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tel = params.get("tel");
+      if (tel) setIdentificador(tel);
+    } catch {
+      // ignore
+    }
+
     ensureAdminUser({ data: undefined } as any)
       .catch((e) => console.warn("bootstrap:", e))
       .finally(() => setBootstrapping(false));
