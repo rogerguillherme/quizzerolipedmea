@@ -335,10 +335,6 @@ function OfertaPage() {
               </button>
             </div>
 
-            <p className="mt-4 text-[12px] md:text-[13px] text-[hsl(38_45%_72%)]">
-              A partir de R$57, sem assinatura obrigatória.
-            </p>
-
           </div>
         </section>
 
