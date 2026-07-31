@@ -248,8 +248,11 @@ function OfertaPage() {
               >
                 <span>Gerar Meu Mapa</span>
                 <ArrowRight className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
-              </button>
             </div>
+            <p className="mt-4 text-[12px] md:text-[13px] text-[hsl(38_45%_72%)]">
+              A partir de R$57, sem assinatura obrigatória.
+            </p>
+
           </div>
         </section>
 
