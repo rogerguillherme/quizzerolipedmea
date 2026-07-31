@@ -93,67 +93,126 @@ function PhoneMockup() {
   const ativo = 1; // Intermediário
 
   return (
-    <div
-      className="relative w-[260px] md:w-[290px] aspect-[9/17] rounded-[2.2rem] border-[8px] border-[hsl(213_60%_17%)] bg-[hsl(213_60%_17%)] shadow-[0_30px_60px_-25px_rgba(11,42,74,0.6)]"
-      aria-hidden
-    >
-      <div className="absolute left-1/2 top-1 -translate-x-1/2 h-1.5 w-16 rounded-full bg-[hsl(40_45%_95%)]/25" />
-      <div className="h-full w-full overflow-hidden rounded-[1.6rem] bg-[hsl(40_45%_97%)] px-4 pt-6 pb-4 flex flex-col">
-        <span className="self-start rounded-full border border-[hsl(38_45%_70%)]/70 px-2.5 py-1 text-[8.5px] uppercase tracking-[0.18em] text-[hsl(38_45%_35%)]">
-          leitura, não diagnóstico
-        </span>
+    <div className="relative">
+      {/* glow atrás do celular */}
+      <div
+        className="absolute -inset-10 -z-10 rounded-full blur-3xl opacity-50"
+        style={{ background: "radial-gradient(circle, hsl(38 55% 65%), transparent 70%)" }}
+        aria-hidden
+      />
 
-        <h3 className="mt-4 font-serif text-[19px] leading-tight text-[hsl(213_60%_17%)]">
-          Seu Mapa do Lipedema
-        </h3>
+      {/* badge flutuante 1 */}
+      <div
+        className="absolute -left-8 top-10 z-20 hidden sm:flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 shadow-[0_10px_24px_-10px_rgba(11,42,74,0.4)] rotate-[-6deg]"
+        aria-hidden
+      >
+        <span className="text-[13px]">✅</span>
+        <span className="text-[10.5px] font-semibold text-[hsl(213_60%_17%)]">Pronto em 2 min</span>
+      </div>
 
-        <div className="mt-5">
-          <span className="text-[9px] uppercase tracking-[0.26em] text-[hsl(38_55%_42%)]">
-            Estágio percebido
-          </span>
-          <div className="mt-3 flex items-center gap-2">
-            {estagios.map((l, i) => (
-              <div key={l} className="flex-1">
-                <div
-                  className="h-[3px] rounded-full"
-                  style={{
-                    background:
-                      i <= ativo ? "hsl(38 55% 42%)" : "hsl(40 30% 86%)",
-                  }}
-                />
-                <p
-                  className="mt-1.5 text-[7.5px] uppercase tracking-widest"
-                  style={{
-                    color: i === ativo ? "hsl(213 60% 17%)" : "hsl(213 15% 55%)",
-                    fontWeight: i === ativo ? 700 : 500,
-                  }}
-                >
-                  {l}
-                </p>
-              </div>
+      {/* badge flutuante 2 */}
+      <div
+        className="absolute -right-6 bottom-16 z-20 hidden sm:flex items-center gap-1.5 rounded-2xl bg-[hsl(140_45%_94%)] px-3 py-2 shadow-[0_10px_24px_-10px_rgba(11,42,74,0.4)] rotate-[4deg]"
+        aria-hidden
+      >
+        <span className="text-[13px]">💬</span>
+        <span className="text-[10.5px] font-semibold text-[hsl(150_35%_28%)]">Chegou no WhatsApp!</span>
+      </div>
+
+      <div
+        className="relative w-[250px] md:w-[280px] aspect-[9/19.3] rounded-[2.6rem] bg-[hsl(213_60%_15%)] p-[9px] shadow-[0_45px_90px_-25px_rgba(11,42,74,0.55),0_0_0_1px_rgba(255,255,255,0.08)_inset] rotate-[-3deg]"
+      >
+        {/* dynamic island */}
+        <div className="absolute left-1/2 top-[11px] -translate-x-1/2 h-[20px] w-[84px] rounded-full bg-black z-20" aria-hidden />
+
+        {/* tela */}
+        <div className="relative h-full w-full overflow-hidden rounded-[2.05rem] bg-[hsl(40_45%_97%)]">
+          {/* arcos decorativos sutis */}
+          <svg className="absolute -right-16 -top-16 w-[220px] h-[220px] opacity-[0.14]" viewBox="0 0 400 400" fill="none" aria-hidden>
+            {[80, 130, 180].map((r) => (
+              <circle key={r} cx="200" cy="200" r={r} stroke="hsl(38 55% 42%)" strokeWidth="1" />
             ))}
+          </svg>
+
+          {/* status bar */}
+          <div className="relative flex items-center justify-between px-6 pt-4 text-[10px] font-semibold text-[hsl(213_60%_17%)]">
+            <span>9:41</span>
+            <div className="flex items-center gap-1 text-[9px]">
+              <span>📶</span>
+              <span>🔋</span>
+            </div>
+          </div>
+
+          <div className="relative px-5 pt-4 pb-3 flex h-[calc(100%-34px)] flex-col">
+            <span className="text-[8.5px] uppercase tracking-[0.24em] text-[hsl(38_55%_42%)]">
+              Mapa de Ana
+            </span>
+            <h3 className="mt-1.5 font-serif text-[16.5px] leading-[1.2] text-[hsl(213_60%_17%)]">
+              Faz muito sentido você sentir isso.
+            </h3>
+
+            <div className="mt-4 rounded-2xl border border-[hsl(38_35%_80%)]/70 bg-white/80 px-3.5 py-3 shadow-[0_8px_20px_-14px_rgba(11,42,74,0.3)]">
+              <div className="flex items-center justify-between">
+                <span className="text-[7.5px] uppercase tracking-[0.2em] text-[hsl(38_55%_42%)] font-semibold">
+                  Você está aqui
+                </span>
+                <span className="font-serif italic text-[8px] text-[hsl(213_30%_45%)]">
+                  leitura, não diagnóstico
+                </span>
+              </div>
+              <p className="mt-1.5 font-serif text-[13.5px] font-medium text-[hsl(213_60%_17%)]">
+                Estágio percebido: Intermediário
+              </p>
+              <div className="mt-3 flex items-center gap-1.5">
+                {estagios.map((l, i) => (
+                  <div key={l} className="flex-1">
+                    <div
+                      className="h-[3px] rounded-full"
+                      style={{ background: i <= ativo ? "hsl(38 55% 42%)" : "hsl(40 30% 86%)" }}
+                    />
+                    <p
+                      className="mt-1 text-[6.5px] uppercase tracking-widest"
+                      style={{
+                        color: i === ativo ? "hsl(213 60% 17%)" : "hsl(213 15% 55%)",
+                        fontWeight: i === ativo ? 700 : 500,
+                      }}
+                    >
+                      {l}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <span className="text-[8.5px] uppercase tracking-[0.24em] text-[hsl(38_55%_42%)]">
+                Suas 3 prioridades
+              </span>
+              <ol className="mt-2 space-y-1.5">
+                {prioridades.map((p, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="w-3.5 shrink-0 font-serif text-[11px] italic leading-none pt-0.5 text-[hsl(38_55%_42%)]">
+                      {["i", "ii", "iii"][i]}
+                    </span>
+                    <p className="text-[10.5px] leading-snug text-[hsl(213_30%_25%)]">{p}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="mt-auto pt-3">
+              <div
+                className="flex items-center justify-center gap-1.5 rounded-full py-2.5 text-[10.5px] font-semibold text-white shadow-[0_10px_20px_-8px_rgba(175,127,53,0.7)]"
+                style={{ background: "linear-gradient(180deg, hsl(38 65% 58%), hsl(38 55% 42%))" }}
+              >
+                <span>💬</span> Receber acesso no WhatsApp
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="mt-6">
-          <span className="text-[9px] uppercase tracking-[0.26em] text-[hsl(38_55%_42%)]">
-            Suas 3 prioridades
-          </span>
-          <ol className="mt-2.5 space-y-2">
-            {prioridades.map((p, i) => (
-              <li key={i} className="flex gap-2.5">
-                <span className="w-4 shrink-0 font-serif text-[12px] italic leading-none pt-0.5 text-[hsl(38_55%_42%)]">
-                  {["i", "ii", "iii"][i]}
-                </span>
-                <p className="text-[11px] leading-snug text-[hsl(213_30%_25%)]">{p}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        <div className="mt-auto rounded-xl bg-[hsl(213_60%_17%)] px-3 py-2.5 text-center text-[10px] text-[hsl(40_45%_95%)]">
-          Enviado no seu WhatsApp
-        </div>
+        {/* home indicator */}
+        <div className="absolute bottom-[7px] left-1/2 -translate-x-1/2 h-1 w-24 rounded-full bg-white/60 z-20" aria-hidden />
       </div>
     </div>
   );
