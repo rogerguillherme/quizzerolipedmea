@@ -12,13 +12,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Teste de 2 minutos com a Dra. Gabriela Rosado (CRN 10582). Descubra em que estágio do lipedema você está e receba seu mapa personalizado.",
+          "Teste de 3 minutos com a Dra. Gabriela Rosado (CRN 10582). Descubra em que estágio do lipedema você está e receba seu mapa personalizado.",
       },
       { property: "og:title", content: "Mapa do Lipedema — Dra. Gabriela Rosado" },
       {
         property: "og:description",
         content:
-          "Teste de 2 minutos. Responda 8 perguntas e receba a leitura personalizada do seu lipedema no WhatsApp.",
+          "Teste de 3 minutos. Responda 12 perguntas e receba a leitura personalizada do seu lipedema no WhatsApp.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -81,7 +81,7 @@ function LandingPage() {
             {/* Texto */}
             <div className="min-w-0 order-2 md:order-1 flex-1 min-h-0 flex flex-col justify-center">
               <p className="hidden md:block text-[11px] tracking-[0.32em] uppercase text-[hsl(38_60%_38%)] mb-6">
-                Mapa do Lipedema · Teste de 2 min
+                Mapa do Lipedema · Teste de 3 min
               </p>
               <h1 className="font-serif leading-[1.08] tracking-tight text-[clamp(1.25rem,5.6vw,1.9rem)] md:text-6xl">
                 Não é falta de esforço.{" "}
