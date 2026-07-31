@@ -695,8 +695,10 @@ function TextComposer({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="flex-1 rounded-full border px-4 py-3 text-[14px] outline-none"
+        className="flex-1 rounded-full border px-4 py-3 outline-none"
         style={{
+          // 16px evita o zoom automático do Safari/iOS ao focar o campo
+          fontSize: "16px",
           borderColor: C.line,
           background: "#FFFFFF",
           color: C.ink,
