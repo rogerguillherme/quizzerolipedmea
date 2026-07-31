@@ -130,15 +130,32 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
     const primeiroNome = String(lead.nome).split(" ")[0];
     const baseUrl =
       process.env.APP_PUBLIC_URL ?? "https://quizzerolipedmea.lovable.app";
-    const loginUrl = `${baseUrl}/auth?tel=${encodeURIComponent(lead.telefone)}`;
+
+    // Link de entrada direta: gera um magic link e manda a lead pra /entrar,
+    // que troca o token por sessão e leva pra tela onde ela escolhe a senha.
+    // Se por algum motivo o link não puder ser gerado, cai no login tradicional.
+    let loginUrl = `${baseUrl}/auth?tel=${encodeURIComponent(lead.telefone)}`;
+    try {
+      const { data: linkData, error: linkErr } =
+        await supabaseAdmin.auth.admin.generateLink({
+          type: "magiclink",
+          email,
+        });
+      const tokenHash = linkData?.properties?.hashed_token;
+      if (!linkErr && tokenHash) {
+        loginUrl = `${baseUrl}/entrar?t=${encodeURIComponent(tokenHash)}`;
+      }
+    } catch {
+      // mantém o fallback acima
+    }
 
     const mensagem = `Oi ${primeiroNome}! Aqui é a Gabriela 💙
 
 Seu *Mapa do Lipedema* está pronto e eu já preparei um acesso exclusivo pra você no app:
 
-🔗 Link: ${loginUrl}
-👤 Login: ${lead.telefone}
-🔑 Senha: ${senha}
+🔗 Toque aqui pra entrar: ${loginUrl}
+
+O link já abre o app no seu nome, você só escolhe a sua senha e pronto.
 
 Ao entrar você encontra:
 • Seu perfil personalizado
@@ -147,7 +164,7 @@ Ao entrar você encontra:
 
 Qualquer coisa, me chama aqui mesmo. ✨
 
-✨ *Teste grátis:* me manda até *3 fotos de refeições* suas nos próximos dias que eu te dou um feedback rápido de cada uma — sem compromisso.`;
+✨ *Teste grátis:* me manda até *3 fotos de refeições* suas nos próximos dias que eu te dou um feedback rápido de cada uma, sem compromisso.`;
 
     const wa = await sendWhatsApp(lead.telefone, mensagem);
 
@@ -162,7 +179,6 @@ Qualquer coisa, me chama aqui mesmo. ✨
       ok: true,
       novaConta,
       login: lead.telefone,
-      senha,
       email,
       loginUrl,
       whatsappEnviado: wa.ok,
