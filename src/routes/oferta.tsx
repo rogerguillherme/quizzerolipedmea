@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Check, HelpCircle } from "lucide-react";
 import draGabrielaAsset from "@/assets/gabi-portrait.png.asset.json";
+import gabiChaAsset from "@/assets/gabi-cha.jpg.asset.json";
+
 import { MapaQuizDialog } from "@/components/MapaQuizDialog";
 
 export const Route = createFileRoute("/oferta")({
