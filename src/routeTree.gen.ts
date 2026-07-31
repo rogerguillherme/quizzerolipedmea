@@ -13,6 +13,7 @@ import { Route as UpsellRouteImport } from './routes/upsell'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OfertaRouteImport } from './routes/oferta'
 import { Route as MapaRouteImport } from './routes/mapa'
+import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
@@ -64,6 +65,11 @@ const OfertaRoute = OfertaRouteImport.update({
 const MapaRoute = MapaRouteImport.update({
   id: '/mapa',
   path: '/mapa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DefinirSenhaRoute = DefinirSenhaRouteImport.update({
@@ -235,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
@@ -271,6 +278,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
@@ -310,6 +318,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
@@ -350,6 +359,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/definir-senha'
+    | '/entrar'
     | '/mapa'
     | '/oferta'
     | '/onboarding'
@@ -386,6 +396,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/definir-senha'
+    | '/entrar'
     | '/mapa'
     | '/oferta'
     | '/onboarding'
@@ -424,6 +435,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/definir-senha'
+    | '/entrar'
     | '/mapa'
     | '/oferta'
     | '/onboarding'
@@ -463,6 +475,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   DefinirSenhaRoute: typeof DefinirSenhaRoute
+  EntrarRoute: typeof EntrarRoute
   MapaRoute: typeof MapaRoute
   OfertaRoute: typeof OfertaRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -505,6 +518,13 @@ declare module '@tanstack/react-router' {
       path: '/mapa'
       fullPath: '/mapa'
       preLoaderRoute: typeof MapaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/definir-senha': {
@@ -794,6 +814,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   DefinirSenhaRoute: DefinirSenhaRoute,
+  EntrarRoute: EntrarRoute,
   MapaRoute: MapaRoute,
   OfertaRoute: OfertaRoute,
   OnboardingRoute: OnboardingRoute,
@@ -810,3 +831,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
