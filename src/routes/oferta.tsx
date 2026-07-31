@@ -77,7 +77,88 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Mockup ilustrativo da tela de resultado do Mapa (conteúdo fixo, não real).
+ * Replica visualmente a seção `Resultado` de src/routes/mapa.tsx.
+ */
+function PhoneMockup() {
+  const prioridades = [
+    "Reduzir a inflamação nas refeições da tarde",
+    "Ajustar hidratação e drenagem ao longo do dia",
+    "Introduzir o chá indicado pro seu padrão",
+  ];
+  const estagios = ["Inicial", "Intermediário", "Avançado"];
+  const ativo = 1; // Intermediário
+
+  return (
+    <div
+      className="relative w-[260px] md:w-[290px] aspect-[9/17] rounded-[2.2rem] border-[8px] border-[hsl(213_60%_17%)] bg-[hsl(213_60%_17%)] shadow-[0_30px_60px_-25px_rgba(11,42,74,0.6)]"
+      aria-hidden
+    >
+      <div className="absolute left-1/2 top-1 -translate-x-1/2 h-1.5 w-16 rounded-full bg-[hsl(40_45%_95%)]/25" />
+      <div className="h-full w-full overflow-hidden rounded-[1.6rem] bg-[hsl(40_45%_97%)] px-4 pt-6 pb-4 flex flex-col">
+        <span className="self-start rounded-full border border-[hsl(38_45%_70%)]/70 px-2.5 py-1 text-[8.5px] uppercase tracking-[0.18em] text-[hsl(38_45%_35%)]">
+          leitura, não diagnóstico
+        </span>
+
+        <h3 className="mt-4 font-serif text-[19px] leading-tight text-[hsl(213_60%_17%)]">
+          Seu Mapa do Lipedema
+        </h3>
+
+        <div className="mt-5">
+          <span className="text-[9px] uppercase tracking-[0.26em] text-[hsl(38_55%_42%)]">
+            Estágio percebido
+          </span>
+          <div className="mt-3 flex items-center gap-2">
+            {estagios.map((l, i) => (
+              <div key={l} className="flex-1">
+                <div
+                  className="h-[3px] rounded-full"
+                  style={{
+                    background:
+                      i <= ativo ? "hsl(38 55% 42%)" : "hsl(40 30% 86%)",
+                  }}
+                />
+                <p
+                  className="mt-1.5 text-[7.5px] uppercase tracking-widest"
+                  style={{
+                    color: i === ativo ? "hsl(213 60% 17%)" : "hsl(213 15% 55%)",
+                    fontWeight: i === ativo ? 700 : 500,
+                  }}
+                >
+                  {l}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <span className="text-[9px] uppercase tracking-[0.26em] text-[hsl(38_55%_42%)]">
+            Suas 3 prioridades
+          </span>
+          <ol className="mt-2.5 space-y-2">
+            {prioridades.map((p, i) => (
+              <li key={i} className="flex gap-2.5">
+                <span className="w-4 shrink-0 font-serif text-[12px] italic leading-none pt-0.5 text-[hsl(38_55%_42%)]">
+                  {["i", "ii", "iii"][i]}
+                </span>
+                <p className="text-[11px] leading-snug text-[hsl(213_30%_25%)]">{p}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="mt-auto rounded-xl bg-[hsl(213_60%_17%)] px-3 py-2.5 text-center text-[10px] text-[hsl(40_45%_95%)]">
+          Enviado no seu WhatsApp
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function OfertaPage() {
+
   const [open, setOpen] = useState(false);
   const openQuiz = () => setOpen(true);
 
@@ -154,22 +235,20 @@ function OfertaPage() {
           </div>
         </section>
 
-        {/* 4. POR QUE DIETA E TREINO NÃO BASTAM */}
+        {/* 4. MOCKUP DO RESULTADO */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_92%)]">
           <ArcsBg />
-          <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20">
-            <SectionTitle>
-              O problema não é força de vontade, é o que ninguém te explicou sobre lipedema.
-            </SectionTitle>
-            <p className="mt-6 md:mt-8 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
-              Lipedema é um acúmulo de gordura com padrão próprio, geralmente ligado a fatores
-              hormonais, que não responde só à equação "coma menos, treine mais". Por isso tantas
-              mulheres fazem tudo certo e não veem o resultado esperado nas pernas. Entender isso é
-              o primeiro passo. O segundo é ter um caminho estruturado pensado especificamente pra
-              esse padrão.
+          <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20 flex flex-col items-center">
+            <PhoneMockup />
+            <p className="mt-7 max-w-md text-center text-[14px] md:text-base leading-relaxed text-[hsl(213_30%_28%)]">
+              É assim que fica o seu Mapa, pronto em 2 minutos e enviado no seu WhatsApp.
             </p>
+            <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-[hsl(38_45%_65%)]/70 bg-[hsl(40_45%_97%)] px-3.5 py-1.5 text-[11px] md:text-[12px] text-[hsl(38_45%_32%)]">
+              🎁 Bônus incluso: teste grátis de análise de refeição por foto
+            </span>
           </div>
         </section>
+
 
         {/* 5. AUTORIDADE */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50">
@@ -188,59 +267,15 @@ function OfertaPage() {
               <div>
                 <SectionTitle>Quem te acompanha</SectionTitle>
                 <p className="mt-5 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
-                  <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
-                </p>
-                <p className="mt-3 text-[14px] md:text-base leading-relaxed text-[hsl(213_25%_35%)]">
-                  Lipedema não tem cura, mas tem direção, e cuidado contínuo faz diferença real no
-                  seu dia a dia.
+                  <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em
+                  lipedema. Lipedema não tem cura, mas tem direção, e cuidado contínuo faz diferença
+                  real no seu dia a dia.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-
-
-
-
-        {/* 7. COMO FUNCIONA */}
-        <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_92%)]">
-          <ArcsBg />
-          <div className="relative mx-auto max-w-5xl px-5 md:px-6 py-14 md:py-20">
-            <SectionTitle>Como funciona o Mapa do Lipedema</SectionTitle>
-            <ol className="mt-8 md:mt-10 grid md:grid-cols-3 gap-5 md:gap-6">
-              {[
-                {
-                  n: 1,
-                  t: "Responda 8 perguntas rápidas (~2 min) sobre seus sintomas e histórico.",
-                },
-                {
-                  n: 2,
-                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana e um manual de dicas praticas para aplicar rápidamente.",
-                },
-                {
-                  n: 3,
-                  t: "Saiba como funciona o tratamento sem dietas restritivas, aprendendo a conhecer o seu corpo e moldar seus hábitos.",
-                },
-              ].map((s) => (
-                <li
-                  key={s.n}
-                  className="relative rounded-2xl bg-[hsl(40_45%_97%)] border border-[hsl(38_35%_80%)]/60 p-6 shadow-[0_10px_30px_-15px_rgba(11,42,74,0.25)]"
-                >
-                  <div className="w-9 h-9 rounded-full bg-[hsl(213_60%_17%)] text-[hsl(40_45%_95%)] flex items-center justify-center font-serif text-lg mb-3">
-                    {s.n}
-                  </div>
-                  <p className="text-[14px] md:text-[15px] leading-relaxed text-[hsl(213_30%_25%)]">
-                    {s.t}
-                  </p>
-                </li>
-              ))}
-            </ol>
-            <p className="mt-6 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center md:text-left">
-              A partir de R$57, sem assinatura obrigatória.
-            </p>
-          </div>
-        </section>
 
         {/* 8. FAQ */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50">
@@ -253,17 +288,10 @@ function OfertaPage() {
                   a: "Não. É um conteúdo educacional que te ajuda a entender seus sintomas e organizar os primeiros passos.",
                 },
                 {
-                  q: "Isso é sobre emagrecer?",
-                  a: "Não é uma dieta restritiva nem promete emagrecimento, é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
-                },
-                {
                   q: "Precisa de assinatura?",
                   a: "Não. Você recebe uma avaliação gratuita (o Mapa). Quem quiser aprofundar pode adquirir o plano premium, com leitura de exames, anamnese completa e prescrição personalizada.",
                 },
-                {
-                  q: "É indicado pra qualquer estágio?",
-                  a: "O Mapa te dá uma leitura inicial e os primeiros passos para começar; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
-                },
+
               ].map((f, i) => (
                 <details
                   key={i}
@@ -303,6 +331,11 @@ function OfertaPage() {
                 <ArrowRight className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
+
+            <p className="mt-4 text-[12px] md:text-[13px] text-[hsl(38_45%_72%)]">
+              A partir de R$57, sem assinatura obrigatória.
+            </p>
+
           </div>
         </section>
 
