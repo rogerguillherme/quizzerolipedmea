@@ -97,19 +97,10 @@ const telasApp: string[] = [
 ];
 
 function PhoneMockup() {
-  const prioridades = [
-    "Reduzir a inflamação nas refeições da tarde",
-    "Ajustar hidratação e drenagem ao longo do dia",
-    "Introduzir o chá indicado pro seu padrão",
-  ];
-  const estagios = ["Inicial", "Intermediário", "Avançado"];
-  const ativo = 1; // Intermediário
-
-  // 0 = tela ilustrativa do Mapa, 1..n = telas reais do app
   const [slide, setSlide] = useState(0);
   useEffect(() => {
     const id = setInterval(
-      () => setSlide((s) => (s + 1) % (telasApp.length + 1)),
+      () => setSlide((s) => (s + 1) % telasApp.length),
       2600,
     );
     return () => clearInterval(id);
