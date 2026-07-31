@@ -83,6 +83,14 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
  * Mockup ilustrativo da tela de resultado do Mapa (conteúdo fixo, não real).
  * Replica visualmente a seção `Resultado` de src/routes/mapa.tsx.
  */
+const telasApp: string[] = [
+  appRadar1.url,
+  appRadar2.url,
+  appDicas1.url,
+  appAvaliacao.url,
+  appDicas2.url,
+];
+
 function PhoneMockup() {
   const prioridades = [
     "Reduzir a inflamação nas refeições da tarde",
@@ -91,6 +99,16 @@ function PhoneMockup() {
   ];
   const estagios = ["Inicial", "Intermediário", "Avançado"];
   const ativo = 1; // Intermediário
+
+  // 0 = tela ilustrativa do Mapa, 1..n = telas reais do app
+  const [slide, setSlide] = useState(0);
+  useEffect(() => {
+    const id = setInterval(
+      () => setSlide((s) => (s + 1) % (telasApp.length + 1)),
+      2600,
+    );
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="relative">
