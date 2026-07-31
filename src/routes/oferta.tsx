@@ -89,10 +89,9 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
  */
 const telasApp: string[] = [
   appRadar1.url,
-  appRadar2.url,
   appDicas1.url,
   appAvaliacao.url,
-  appDicas2.url,
+  appPremium.url,
 ];
 
 function PhoneMockup() {
