@@ -77,7 +77,88 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Mockup ilustrativo da tela de resultado do Mapa (conteúdo fixo, não real).
+ * Replica visualmente a seção `Resultado` de src/routes/mapa.tsx.
+ */
+function PhoneMockup() {
+  const prioridades = [
+    "Reduzir a inflamação nas refeições da tarde",
+    "Ajustar hidratação e drenagem ao longo do dia",
+    "Introduzir o chá indicado pro seu padrão",
+  ];
+  const estagios = ["Inicial", "Intermediário", "Avançado"];
+  const ativo = 1; // Intermediário
+
+  return (
+    <div
+      className="relative w-[260px] md:w-[290px] aspect-[9/17] rounded-[2.2rem] border-[8px] border-[hsl(213_60%_17%)] bg-[hsl(213_60%_17%)] shadow-[0_30px_60px_-25px_rgba(11,42,74,0.6)]"
+      aria-hidden
+    >
+      <div className="absolute left-1/2 top-1 -translate-x-1/2 h-1.5 w-16 rounded-full bg-[hsl(40_45%_95%)]/25" />
+      <div className="h-full w-full overflow-hidden rounded-[1.6rem] bg-[hsl(40_45%_97%)] px-4 pt-6 pb-4 flex flex-col">
+        <span className="self-start rounded-full border border-[hsl(38_45%_70%)]/70 px-2.5 py-1 text-[8.5px] uppercase tracking-[0.18em] text-[hsl(38_45%_35%)]">
+          leitura, não diagnóstico
+        </span>
+
+        <h3 className="mt-4 font-serif text-[19px] leading-tight text-[hsl(213_60%_17%)]">
+          Seu Mapa do Lipedema
+        </h3>
+
+        <div className="mt-5">
+          <span className="text-[9px] uppercase tracking-[0.26em] text-[hsl(38_55%_42%)]">
+            Estágio percebido
+          </span>
+          <div className="mt-3 flex items-center gap-2">
+            {estagios.map((l, i) => (
+              <div key={l} className="flex-1">
+                <div
+                  className="h-[3px] rounded-full"
+                  style={{
+                    background:
+                      i <= ativo ? "hsl(38 55% 42%)" : "hsl(40 30% 86%)",
+                  }}
+                />
+                <p
+                  className="mt-1.5 text-[7.5px] uppercase tracking-widest"
+                  style={{
+                    color: i === ativo ? "hsl(213 60% 17%)" : "hsl(213 15% 55%)",
+                    fontWeight: i === ativo ? 700 : 500,
+                  }}
+                >
+                  {l}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <span className="text-[9px] uppercase tracking-[0.26em] text-[hsl(38_55%_42%)]">
+            Suas 3 prioridades
+          </span>
+          <ol className="mt-2.5 space-y-2">
+            {prioridades.map((p, i) => (
+              <li key={i} className="flex gap-2.5">
+                <span className="w-4 shrink-0 font-serif text-[12px] italic leading-none pt-0.5 text-[hsl(38_55%_42%)]">
+                  {["i", "ii", "iii"][i]}
+                </span>
+                <p className="text-[11px] leading-snug text-[hsl(213_30%_25%)]">{p}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="mt-auto rounded-xl bg-[hsl(213_60%_17%)] px-3 py-2.5 text-center text-[10px] text-[hsl(40_45%_95%)]">
+          Enviado no seu WhatsApp
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function OfertaPage() {
+
   const [open, setOpen] = useState(false);
   const openQuiz = () => setOpen(true);
 
