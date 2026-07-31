@@ -257,7 +257,8 @@ function OfertaPage() {
               <div className="flex justify-center">
                 <div className="relative w-[55vw] max-w-[240px] md:w-full md:max-w-[320px] aspect-[4/5] rounded-[1.5rem] overflow-hidden border border-[hsl(38_35%_75%)]/60 shadow-[0_20px_40px_-20px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
                   <img
-                    src={draGabrielaAsset.url}
+                    src={gabiChaAsset.url}
+
                     alt="Dra. Gabriela Rosado"
                     className="w-full h-full object-cover"
                     loading="lazy"
