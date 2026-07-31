@@ -136,7 +136,6 @@ const Q = {
 
 type AcessoResult = {
   login: string;
-  senha: string;
   loginUrl: string;
   whatsappEnviado: boolean;
   whatsappErro: string | null;
