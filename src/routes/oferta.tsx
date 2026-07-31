@@ -207,17 +207,10 @@ function OfertaPage() {
                   a: "Não. É um conteúdo educacional que te ajuda a entender seus sintomas e organizar os primeiros passos.",
                 },
                 {
-                  q: "Isso é sobre emagrecer?",
-                  a: "Não é uma dieta restritiva nem promete emagrecimento, é sobre entender o padrão do lipedema e cuidar dele de forma sustentável.",
-                },
-                {
                   q: "Precisa de assinatura?",
                   a: "Não. Você recebe uma avaliação gratuita (o Mapa). Quem quiser aprofundar pode adquirir o plano premium, com leitura de exames, anamnese completa e prescrição personalizada.",
                 },
-                {
-                  q: "É indicado pra qualquer estágio?",
-                  a: "O Mapa te dá uma leitura inicial e os primeiros passos para começar; casos mais avançados se beneficiam ainda mais do acompanhamento com anamnese completa.",
-                },
+
               ].map((f, i) => (
                 <details
                   key={i}
