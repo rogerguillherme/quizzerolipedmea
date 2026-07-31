@@ -186,59 +186,15 @@ function OfertaPage() {
               <div>
                 <SectionTitle>Quem te acompanha</SectionTitle>
                 <p className="mt-5 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
-                  <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
-                </p>
-                <p className="mt-3 text-[14px] md:text-base leading-relaxed text-[hsl(213_25%_35%)]">
-                  Lipedema não tem cura, mas tem direção, e cuidado contínuo faz diferença real no
-                  seu dia a dia.
+                  <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em
+                  lipedema. Lipedema não tem cura, mas tem direção, e cuidado contínuo faz diferença
+                  real no seu dia a dia.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-
-
-
-
-        {/* 7. COMO FUNCIONA */}
-        <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_92%)]">
-          <ArcsBg />
-          <div className="relative mx-auto max-w-5xl px-5 md:px-6 py-14 md:py-20">
-            <SectionTitle>Como funciona o Mapa do Lipedema</SectionTitle>
-            <ol className="mt-8 md:mt-10 grid md:grid-cols-3 gap-5 md:gap-6">
-              {[
-                {
-                  n: 1,
-                  t: "Responda 8 perguntas rápidas (~2 min) sobre seus sintomas e histórico.",
-                },
-                {
-                  n: 2,
-                  t: "Receba uma leitura personalizada: seu perfil percebido + 3 prioridades pra começar essa semana e um manual de dicas praticas para aplicar rápidamente.",
-                },
-                {
-                  n: 3,
-                  t: "Saiba como funciona o tratamento sem dietas restritivas, aprendendo a conhecer o seu corpo e moldar seus hábitos.",
-                },
-              ].map((s) => (
-                <li
-                  key={s.n}
-                  className="relative rounded-2xl bg-[hsl(40_45%_97%)] border border-[hsl(38_35%_80%)]/60 p-6 shadow-[0_10px_30px_-15px_rgba(11,42,74,0.25)]"
-                >
-                  <div className="w-9 h-9 rounded-full bg-[hsl(213_60%_17%)] text-[hsl(40_45%_95%)] flex items-center justify-center font-serif text-lg mb-3">
-                    {s.n}
-                  </div>
-                  <p className="text-[14px] md:text-[15px] leading-relaxed text-[hsl(213_30%_25%)]">
-                    {s.t}
-                  </p>
-                </li>
-              ))}
-            </ol>
-            <p className="mt-6 text-[12px] md:text-[13px] text-[hsl(213_20%_45%)] text-center md:text-left">
-              A partir de R$57, sem assinatura obrigatória.
-            </p>
-          </div>
-        </section>
 
         {/* 8. FAQ */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50">
