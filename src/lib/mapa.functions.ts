@@ -23,9 +23,13 @@ export const submitMapa = createServerFn({ method: "POST" })
           tempo: z.string().min(1),
           diagnostico: z.string().min(1),
           sintomaMaior: z.string().min(1),
+          dorNivel: z.string().min(1),
           pesoPernas: z.string().min(1),
           dietaExercicio: z.string().min(1),
+          sono: z.string().min(1),
+          intestino: z.string().min(1),
           atividade: z.string().min(1),
+          sinaisNutricionais: z.string().min(1),
           exames: z.string().min(1),
           objetivo: z.string().min(1),
         }),
@@ -45,11 +49,15 @@ Respostas do Mapa:
 1. Há quanto tempo percebe inchaço/desproporção: ${r.tempo}
 2. Já recebeu diagnóstico de lipedema: ${r.diagnostico}
 3. Sintoma que mais incomoda hoje: ${r.sintomaMaior}
-4. Peso varia mas pernas não mudam: ${r.pesoPernas}
-5. Já tentou dieta e exercício sem ver diferença: ${r.dietaExercicio}
-6. Nível de atividade física hoje: ${r.atividade}
-7. Tem exames recentes (sangue, hormonal): ${r.exames}
-8. O que mais gostaria de ter agora: ${r.objetivo}
+4. Nível de dor/incômodo no dia a dia: ${r.dorNivel}
+5. Peso varia mas pernas não mudam: ${r.pesoPernas}
+6. Já tentou dieta e exercício sem ver diferença: ${r.dietaExercicio}
+7. Como anda o sono: ${r.sono}
+8. Frequência intestinal: ${r.intestino}
+9. Nível de atividade física hoje: ${r.atividade}
+10. Sinais de unhas fracas, queda de cabelo ou falta de energia: ${r.sinaisNutricionais}
+11. Tem exames recentes (sangue, hormonal): ${r.exames}
+12. O que mais gostaria de ter agora: ${r.objetivo}
 
 Devolva o JSON conforme instruções.`;
 

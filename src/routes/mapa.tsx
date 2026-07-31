@@ -30,11 +30,11 @@ export const Route = createFileRoute("/mapa")({
   component: () => <MapaPage />,
   head: () => ({
     meta: [
-      { title: "Mapa do Lipedema — Teste de 2 minutos com a Dra. Gabriela Rosado" },
+      { title: "Mapa do Lipedema — Teste de 3 minutos com a Dra. Gabriela Rosado" },
       {
         name: "description",
         content:
-          "Responda 8 perguntas rápidas e receba a leitura personalizada do seu lipedema, elaborada pela especialista Gabriela Rosado (CRN 10582).",
+          "Responda 12 perguntas rápidas e receba a leitura personalizada do seu lipedema, elaborada pela especialista Gabriela Rosado (CRN 10582).",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -47,9 +47,13 @@ type Answers = {
   tempo: string;
   diagnostico: string;
   sintomaMaior: string;
+  dorNivel: string;
   pesoPernas: string;
   dietaExercicio: string;
+  sono: string;
+  intestino: string;
   atividade: string;
+  sinaisNutricionais: string;
   exames: string;
   objetivo: string;
 };
@@ -57,15 +61,17 @@ type Answers = {
 type Step =
   | "boas-vindas"
   | "nome"
-  | "q1" | "q2" | "q3" | "q4" | "q5" | "q6" | "q7" | "q8"
+  | "q1" | "q2" | "q3" | "dorNivel" | "q4" | "q5" | "sono" | "intestino" | "q6" | "sinaisNutricionais" | "q7" | "q8"
   | "contato"
   | "gerando"
   | "resultado"
   | "acesso";
 
-const QUESTION_STEPS: Step[] = [
-  "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "contato",
-];
+const QUESTION_KEYS = [
+  "q1", "q2", "q3", "dorNivel", "q4", "q5", "sono", "intestino", "q6", "sinaisNutricionais", "q7", "q8",
+] as const;
+
+const QUESTION_STEPS: Step[] = [...QUESTION_KEYS, "contato"];
 
 const Q = {
   q1: {
@@ -75,7 +81,7 @@ const Q = {
     key: "tempo" as const,
     illustration: {
       src: estagiosAsset.url,
-      caption: "Progressão do lipedema — do estágio 1 ao 4",
+      caption: "Progressão do lipedema, do estágio 1 ao 4. Estágios mais avançados costumam vir acompanhados de nódulos.",
     },
   },
 
@@ -97,10 +103,17 @@ const Q = {
     icons: ["💢", "💧", "🩹", "⚖️"],
     key: "sintomaMaior" as const,
   },
+  dorNivel: {
+    title: "O quanto isso incomoda ou dói no seu dia a dia?",
+    nota: "Dor costuma ser um termômetro da inflamação: quanto mais inflamado o tecido, mais ele tende a doer.",
+    options: ["Bem leve", "Moderada", "Forte", "Muito forte, atrapalha o dia"],
+    icons: ["🙂", "😕", "😣", "😖"],
+    key: "dorNivel" as const,
+  },
   q4: {
     title: "Seu peso já variou bastante, mas as pernas quase não mudam?",
-    options: ["Sempre", "Às vezes", "Não notei isso"],
-    icons: ["✅", "🤷‍♀️", "❌"],
+    options: ["Sempre, as pernas não acompanham", "Às vezes", "Não emagreço em lugar nenhum", "Não notei isso"],
+    icons: ["✅", "🤷‍♀️", "⚖️", "❌"],
     key: "pesoPernas" as const,
   },
   q5: {
@@ -109,11 +122,32 @@ const Q = {
     icons: ["🥗", "🏃‍♀️", "🌸"],
     key: "dietaExercicio" as const,
   },
+  sono: {
+    title: "Como anda seu sono ultimamente?",
+    nota: "Sono ruim eleva o cortisol, hormônio do estresse, e estresse alto está bem ligado a mais inflamação no corpo.",
+    options: ["Durmo bem, acordo descansada", "Durmo mas acordo cansada", "Sono irregular, durmo pouco", "Tenho insônia frequente"],
+    icons: ["😴", "🥱", "🌙", "😵‍💫"],
+    key: "sono" as const,
+  },
+  intestino: {
+    title: "Com que frequência você vai ao banheiro?",
+    nota: "Intestino preso costuma ser sinal de que o corpo não está eliminando bem, isso pode sobrecarregar todo o processo inflamatório.",
+    options: ["Todos os dias", "A cada 2 dias", "Bem irregular", "Fico muito presa"],
+    icons: ["✅", "🔄", "⏳", "🚫"],
+    key: "intestino" as const,
+  },
   q6: {
     title: "Qual seu nível de atividade física hoje?",
     options: ["Sedentária", "Leve", "Moderada", "Intensa"],
     icons: ["🛋️", "🚶‍♀️", "🚴‍♀️", "🏋️‍♀️"],
     key: "atividade" as const,
+  },
+  sinaisNutricionais: {
+    title: "Você tem notado unhas fracas, queda de cabelo ou falta de energia?",
+    nota: "Esses sinais costumam aparecer quando faltam nutrientes importantes, vale muito olhar pra eles junto com o lipedema.",
+    options: ["Sim, vários desses", "Um ou outro, às vezes", "Não tenho notado"],
+    icons: ["💅", "🌿", "😌"],
+    key: "sinaisNutricionais" as const,
   },
   q7: {
     title: "Você tem exames recentes (sangue, hormonal)?",
@@ -150,9 +184,13 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
     tempo: "",
     diagnostico: "",
     sintomaMaior: "",
+    dorNivel: "",
     pesoPernas: "",
     dietaExercicio: "",
+    sono: "",
+    intestino: "",
     atividade: "",
+    sinaisNutricionais: "",
     exames: "",
     objetivo: "",
   });
@@ -201,9 +239,13 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
             tempo: answers.tempo,
             diagnostico: answers.diagnostico,
             sintomaMaior: answers.sintomaMaior,
+            dorNivel: answers.dorNivel,
             pesoPernas: answers.pesoPernas,
             dietaExercicio: answers.dietaExercicio,
+            sono: answers.sono,
+            intestino: answers.intestino,
             atividade: answers.atividade,
+            sinaisNutricionais: answers.sinaisNutricionais,
             exames: answers.exames,
             objetivo: answers.objetivo,
           },
@@ -320,7 +362,7 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
           />
         )}
 
-        {(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"] as const).map((k, idx) =>
+        {QUESTION_KEYS.map((k, idx) =>
           step === k ? (
             <ChoiceStep
               key={k}
@@ -328,6 +370,7 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
               title={Q[k].title}
               options={Q[k].options}
               icons={Q[k].icons}
+              nota={"nota" in Q[k] ? (Q[k] as { nota?: string }).nota : undefined}
               illustration={"illustration" in Q[k] ? (Q[k] as { illustration?: { src: string; caption?: string } }).illustration : undefined}
               value={answers[Q[k].key]}
               onChange={(v) => update(Q[k].key, v)}
@@ -426,7 +469,7 @@ function Welcome({
         className="mt-5 text-[15px] leading-relaxed"
         style={{ color: palette.inkSoft }}
       >
-        Um teste de 2 minutos com a Dra. Gabriela Rosado, nutricionista
+        Um teste de 3 minutos com a Dra. Gabriela Rosado, nutricionista
         especialista em lipedema. Ao final, você recebe seu mapa personalizado
         também no WhatsApp.
       </p>
@@ -437,7 +480,7 @@ function Welcome({
       >
         <ol className="space-y-4">
           {[
-            "Você conta como se sente hoje, em 8 perguntas rápidas.",
+            "Você conta como se sente hoje, em 12 perguntas rápidas.",
             "A gente lê seus sintomas com base no protocolo clínico da Gabriela.",
             "Seu mapa fica pronto no fim e vai também para o seu WhatsApp.",
           ].map((t, i) => (
@@ -545,6 +588,7 @@ function NomeStep({
 function ChoiceStep({
   index,
   title,
+  nota,
   options,
   icons,
   illustration,
@@ -554,6 +598,7 @@ function ChoiceStep({
 }: {
   index: number;
   title: string;
+  nota?: string;
   options: string[];
   icons?: string[];
   illustration?: { src: string; caption?: string };
@@ -561,7 +606,7 @@ function ChoiceStep({
   onChange: (v: string) => void;
   onNext: () => void;
 }) {
-  const roman = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii"][index - 1];
+  const roman = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii"][index - 1];
   return (
     <div className="pt-2">
       <span
@@ -576,6 +621,12 @@ function ChoiceStep({
       >
         {title}
       </h1>
+
+      {nota && (
+        <p className="mt-2 text-[12.5px] italic leading-relaxed" style={{ color: palette.inkSoft }}>
+          {nota}
+        </p>
+      )}
 
       {illustration && (
         <figure
