@@ -209,7 +209,20 @@ function PhoneMockup() {
               </div>
             </div>
           </div>
+
+          {/* telas reais do app passando */}
+          {telasApp.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-700"
+              style={{ opacity: slide === i + 1 ? 1 : 0 }}
+            />
+          ))}
         </div>
+
 
         {/* home indicator */}
         <div className="absolute bottom-[7px] left-1/2 -translate-x-1/2 h-1 w-24 rounded-full bg-white/60 z-20" aria-hidden />
