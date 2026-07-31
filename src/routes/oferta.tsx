@@ -154,22 +154,20 @@ function OfertaPage() {
           </div>
         </section>
 
-        {/* 4. POR QUE DIETA E TREINO NÃO BASTAM */}
+        {/* 4. MOCKUP DO RESULTADO */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_92%)]">
           <ArcsBg />
-          <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20">
-            <SectionTitle>
-              O problema não é força de vontade, é o que ninguém te explicou sobre lipedema.
-            </SectionTitle>
-            <p className="mt-6 md:mt-8 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
-              Lipedema é um acúmulo de gordura com padrão próprio, geralmente ligado a fatores
-              hormonais, que não responde só à equação "coma menos, treine mais". Por isso tantas
-              mulheres fazem tudo certo e não veem o resultado esperado nas pernas. Entender isso é
-              o primeiro passo. O segundo é ter um caminho estruturado pensado especificamente pra
-              esse padrão.
+          <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20 flex flex-col items-center">
+            <PhoneMockup />
+            <p className="mt-7 max-w-md text-center text-[14px] md:text-base leading-relaxed text-[hsl(213_30%_28%)]">
+              É assim que fica o seu Mapa, pronto em 2 minutos e enviado no seu WhatsApp.
             </p>
+            <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-[hsl(38_45%_65%)]/70 bg-[hsl(40_45%_97%)] px-3.5 py-1.5 text-[11px] md:text-[12px] text-[hsl(38_45%_32%)]">
+              🎁 Bônus incluso: teste grátis de análise de refeição por foto
+            </span>
           </div>
         </section>
+
 
         {/* 5. AUTORIDADE */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50">
