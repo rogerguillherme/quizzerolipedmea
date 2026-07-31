@@ -97,19 +97,10 @@ const telasApp: string[] = [
 ];
 
 function PhoneMockup() {
-  const prioridades = [
-    "Reduzir a inflamação nas refeições da tarde",
-    "Ajustar hidratação e drenagem ao longo do dia",
-    "Introduzir o chá indicado pro seu padrão",
-  ];
-  const estagios = ["Inicial", "Intermediário", "Avançado"];
-  const ativo = 1; // Intermediário
-
-  // 0 = tela ilustrativa do Mapa, 1..n = telas reais do app
   const [slide, setSlide] = useState(0);
   useEffect(() => {
     const id = setInterval(
-      () => setSlide((s) => (s + 1) % (telasApp.length + 1)),
+      () => setSlide((s) => (s + 1) % telasApp.length),
       2600,
     );
     return () => clearInterval(id);
@@ -148,92 +139,8 @@ function PhoneMockup() {
         {/* dynamic island */}
         <div className="absolute left-1/2 top-[11px] -translate-x-1/2 h-[20px] w-[84px] rounded-full bg-black z-20" aria-hidden />
 
-        {/* tela */}
+        {/* tela: telas reais do app passando */}
         <div className="relative h-full w-full overflow-hidden rounded-[2.05rem] bg-[hsl(40_45%_97%)]">
-          {/* arcos decorativos sutis */}
-          <svg className="absolute -right-16 -top-16 w-[220px] h-[220px] opacity-[0.14]" viewBox="0 0 400 400" fill="none" aria-hidden>
-            {[80, 130, 180].map((r) => (
-              <circle key={r} cx="200" cy="200" r={r} stroke="hsl(38 55% 42%)" strokeWidth="1" />
-            ))}
-          </svg>
-
-          {/* status bar */}
-          <div className="relative flex items-center justify-between px-6 pt-4 text-[10px] font-semibold text-[hsl(213_60%_17%)]">
-            <span>9:41</span>
-            <div className="flex items-center gap-1 text-[9px]">
-              <span>📶</span>
-              <span>🔋</span>
-            </div>
-          </div>
-
-          <div className="relative px-5 pt-4 pb-3 flex h-[calc(100%-34px)] flex-col">
-            <span className="text-[8.5px] uppercase tracking-[0.24em] text-[hsl(38_55%_42%)]">
-              Mapa da Marina
-            </span>
-            <h3 className="mt-1.5 font-serif text-[16.5px] leading-[1.2] text-[hsl(213_60%_17%)]">
-              Faz muito sentido você sentir isso.
-            </h3>
-
-            <div className="mt-4 rounded-2xl border border-[hsl(38_35%_80%)]/70 bg-white/80 px-3.5 py-3 shadow-[0_8px_20px_-14px_rgba(11,42,74,0.3)]">
-              <div className="flex items-center justify-between">
-                <span className="text-[7.5px] uppercase tracking-[0.2em] text-[hsl(38_55%_42%)] font-semibold">
-                  Você está aqui
-                </span>
-                <span className="font-serif italic text-[8px] text-[hsl(213_30%_45%)]">
-                  leitura, não diagnóstico
-                </span>
-              </div>
-              <p className="mt-1.5 font-serif text-[13.5px] font-medium text-[hsl(213_60%_17%)]">
-                Estágio percebido: Intermediário
-              </p>
-              <div className="mt-3 flex items-center gap-1.5">
-                {estagios.map((l, i) => (
-                  <div key={l} className="flex-1">
-                    <div
-                      className="h-[3px] rounded-full"
-                      style={{ background: i <= ativo ? "hsl(38 55% 42%)" : "hsl(40 30% 86%)" }}
-                    />
-                    <p
-                      className="mt-1 text-[6.5px] uppercase tracking-widest"
-                      style={{
-                        color: i === ativo ? "hsl(213 60% 17%)" : "hsl(213 15% 55%)",
-                        fontWeight: i === ativo ? 700 : 500,
-                      }}
-                    >
-                      {l}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <span className="text-[8.5px] uppercase tracking-[0.24em] text-[hsl(38_55%_42%)]">
-                Suas 3 prioridades
-              </span>
-              <ol className="mt-2 space-y-1.5">
-                {prioridades.map((p, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="w-3.5 shrink-0 font-serif text-[11px] italic leading-none pt-0.5 text-[hsl(38_55%_42%)]">
-                      {["i", "ii", "iii"][i]}
-                    </span>
-                    <p className="text-[10.5px] leading-snug text-[hsl(213_30%_25%)]">{p}</p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-
-            <div className="mt-auto pt-3">
-              <div
-                className="flex items-center justify-center gap-1.5 rounded-full py-2.5 text-[10.5px] font-semibold text-white shadow-[0_10px_20px_-8px_rgba(175,127,53,0.7)]"
-                style={{ background: "linear-gradient(180deg, hsl(38 65% 58%), hsl(38 55% 42%))" }}
-              >
-                <span>💬</span> Receber acesso no WhatsApp
-              </div>
-            </div>
-          </div>
-
-          {/* telas reais do app passando */}
           {telasApp.map((src, i) => (
             <img
               key={src}
@@ -241,7 +148,7 @@ function PhoneMockup() {
               alt=""
               aria-hidden
               className="absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-700"
-              style={{ opacity: slide === i + 1 ? 1 : 0 }}
+              style={{ opacity: slide === i ? 1 : 0 }}
             />
           ))}
         </div>
