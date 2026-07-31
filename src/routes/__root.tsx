@@ -76,7 +76,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      // maximum-scale=1 impede o zoom automático do iOS ao focar inputs no quiz
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0B2A4A" },
       { title: "Mapa do Lipedema — leitura gratuita com Gabriela Rosado" },
       {
