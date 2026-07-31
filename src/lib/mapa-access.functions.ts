@@ -15,11 +15,10 @@ function emailFrom(telefone: string) {
   return `wa${digits}@zerolipedema.app`;
 }
 
-// Senha aleatória, curta e fácil de digitar no celular.
-// Ex: "zero7834". A lead só vê essa senha pelo WhatsApp.
+// Senha interna, usada só pra criar a conta no Auth. A lead nunca vê esse valor:
+// ela entra pelo link direto (magic link) e escolhe a própria senha em /definir-senha.
 function gerarSenha(): string {
-  const n = Math.floor(1000 + Math.random() * 9000);
-  return `zero${n}`;
+  return `zl-${crypto.randomUUID()}`;
 }
 
 // ---------------- Criar acesso pós-quiz -----------------
