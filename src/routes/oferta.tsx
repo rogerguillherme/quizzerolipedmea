@@ -1,8 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Check, HelpCircle } from "lucide-react";
 import draGabrielaAsset from "@/assets/gabi-portrait.png.asset.json";
 import gabiChaAsset from "@/assets/gabi-cha.jpg.asset.json";
+import appRadar1 from "@/assets/app-00_28_09.jpg.asset.json";
+import appRadar2 from "@/assets/app-00_28_08.jpg.asset.json";
+import appDicas1 from "@/assets/app-00_28_09_1.jpg.asset.json";
+import appAvaliacao from "@/assets/app-00_28_10.jpg.asset.json";
+import appDicas2 from "@/assets/app-00_28_10_1.jpg.asset.json";
 
 import { MapaQuizDialog } from "@/components/MapaQuizDialog";
 
@@ -83,6 +88,14 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
  * Mockup ilustrativo da tela de resultado do Mapa (conteúdo fixo, não real).
  * Replica visualmente a seção `Resultado` de src/routes/mapa.tsx.
  */
+const telasApp: string[] = [
+  appRadar1.url,
+  appRadar2.url,
+  appDicas1.url,
+  appAvaliacao.url,
+  appDicas2.url,
+];
+
 function PhoneMockup() {
   const prioridades = [
     "Reduzir a inflamação nas refeições da tarde",
@@ -91,6 +104,16 @@ function PhoneMockup() {
   ];
   const estagios = ["Inicial", "Intermediário", "Avançado"];
   const ativo = 1; // Intermediário
+
+  // 0 = tela ilustrativa do Mapa, 1..n = telas reais do app
+  const [slide, setSlide] = useState(0);
+  useEffect(() => {
+    const id = setInterval(
+      () => setSlide((s) => (s + 1) % (telasApp.length + 1)),
+      2600,
+    );
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="relative">
@@ -145,7 +168,7 @@ function PhoneMockup() {
 
           <div className="relative px-5 pt-4 pb-3 flex h-[calc(100%-34px)] flex-col">
             <span className="text-[8.5px] uppercase tracking-[0.24em] text-[hsl(38_55%_42%)]">
-              Mapa de Ana
+              Mapa da Marina
             </span>
             <h3 className="mt-1.5 font-serif text-[16.5px] leading-[1.2] text-[hsl(213_60%_17%)]">
               Faz muito sentido você sentir isso.
@@ -209,7 +232,20 @@ function PhoneMockup() {
               </div>
             </div>
           </div>
+
+          {/* telas reais do app passando */}
+          {telasApp.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-700"
+              style={{ opacity: slide === i + 1 ? 1 : 0 }}
+            />
+          ))}
         </div>
+
 
         {/* home indicator */}
         <div className="absolute bottom-[7px] left-1/2 -translate-x-1/2 h-1 w-24 rounded-full bg-white/60 z-20" aria-hidden />
