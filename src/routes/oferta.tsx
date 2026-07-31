@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Check, HelpCircle } from "lucide-react";
 import draGabrielaAsset from "@/assets/gabi-portrait.png.asset.json";
 import gabiChaAsset from "@/assets/gabi-cha.jpg.asset.json";
-import appRadar1 from "@/assets/app-00_28_09.jpg.asset.json";
-import appRadar2 from "@/assets/app-00_28_08.jpg.asset.json";
-import appDicas1 from "@/assets/app-00_28_09_1.jpg.asset.json";
-import appAvaliacao from "@/assets/app-00_28_10.jpg.asset.json";
-import appDicas2 from "@/assets/app-00_28_10_1.jpg.asset.json";
+import appRadar1 from "@/assets/mockup-8.png.asset.json";
+import appDicas1 from "@/assets/mockup-9.png.asset.json";
+import appPremium from "@/assets/mockup-10.png.asset.json";
+import appAvaliacao from "@/assets/mockup-11.png.asset.json";
 
 import { MapaQuizDialog } from "@/components/MapaQuizDialog";
 
@@ -90,10 +89,9 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
  */
 const telasApp: string[] = [
   appRadar1.url,
-  appRadar2.url,
   appDicas1.url,
   appAvaliacao.url,
-  appDicas2.url,
+  appPremium.url,
 ];
 
 function PhoneMockup() {
