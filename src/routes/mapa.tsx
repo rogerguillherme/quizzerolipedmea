@@ -136,7 +136,6 @@ const Q = {
 
 type AcessoResult = {
   login: string;
-  senha: string;
   loginUrl: string;
   whatsappEnviado: boolean;
   whatsappErro: string | null;
@@ -229,7 +228,6 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
       const result = await gerarAcesso({ data: { leadId } });
       setAcesso({
         login: result.login,
-        senha: result.senha,
         loginUrl: result.loginUrl,
         whatsappEnviado: result.whatsappEnviado,
         whatsappErro: result.whatsappErro,
@@ -958,17 +956,6 @@ function AcessoStep({
               {data.login}
             </p>
           </div>
-          <div>
-            <p className="text-[11px] uppercase tracking-wider" style={{ color: palette.inkSoft }}>
-              Senha
-            </p>
-            <p
-              className="mt-1 font-semibold tabular-nums"
-              style={{ color: palette.ink, fontFamily: "'Fraunces', serif" }}
-            >
-              {data.senha}
-            </p>
-          </div>
         </div>
 
         <a
@@ -980,12 +967,12 @@ function AcessoStep({
             boxShadow: `0 14px 32px -14px ${palette.ink}AA, inset 0 1px 0 #FFFFFF22`,
           }}
         >
-          Entrar no meu app <ArrowRight className="size-4" />
+          Entrar e criar minha senha <ArrowRight className="size-4" />
         </a>
 
         {!data.whatsappEnviado && (
           <p className="mt-3 text-[11px] leading-relaxed text-center" style={{ color: palette.inkSoft }}>
-            O envio automático pelo WhatsApp falhou, mas você pode entrar direto acima com o login/senha.
+            O envio automático pelo WhatsApp falhou, mas você pode entrar direto pelo botão acima.
           </p>
         )}
       </div>
