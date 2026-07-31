@@ -168,7 +168,7 @@ function PhoneMockup() {
 
           <div className="relative px-5 pt-4 pb-3 flex h-[calc(100%-34px)] flex-col">
             <span className="text-[8.5px] uppercase tracking-[0.24em] text-[hsl(38_55%_42%)]">
-              Mapa de Ana
+              Mapa da Marina
             </span>
             <h3 className="mt-1.5 font-serif text-[16.5px] leading-[1.2] text-[hsl(213_60%_17%)]">
               Faz muito sentido você sentir isso.
