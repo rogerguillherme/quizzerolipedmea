@@ -1,8 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Check, HelpCircle } from "lucide-react";
 import draGabrielaAsset from "@/assets/gabi-portrait.png.asset.json";
 import gabiChaAsset from "@/assets/gabi-cha.jpg.asset.json";
+import appRadar1 from "@/assets/app-00_28_09.jpg.asset.json";
+import appRadar2 from "@/assets/app-00_28_08.jpg.asset.json";
+import appDicas1 from "@/assets/app-00_28_09_1.jpg.asset.json";
+import appAvaliacao from "@/assets/app-00_28_10.jpg.asset.json";
+import appDicas2 from "@/assets/app-00_28_10_1.jpg.asset.json";
 
 import { MapaQuizDialog } from "@/components/MapaQuizDialog";
 
