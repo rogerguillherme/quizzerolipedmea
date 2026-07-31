@@ -228,7 +228,6 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
       const result = await gerarAcesso({ data: { leadId } });
       setAcesso({
         login: result.login,
-        senha: result.senha,
         loginUrl: result.loginUrl,
         whatsappEnviado: result.whatsappEnviado,
         whatsappErro: result.whatsappErro,
