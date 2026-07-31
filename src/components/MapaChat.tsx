@@ -180,7 +180,7 @@ type Msg =
   | { id: string; from: "gabi"; text: string }
   | { id: string; from: "user"; text: string }
   | { id: string; from: "system"; kind: "report"; diagnostico: Diagnostico; nome: string }
-  | { id: string; from: "system"; kind: "acesso"; login: string; senha: string; loginUrl: string; whatsappEnviado: boolean };
+  | { id: string; from: "system"; kind: "acesso"; login: string; loginUrl: string; whatsappEnviado: boolean };
 
 type Stage =
   | { kind: "asking-nome" }
@@ -384,14 +384,13 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
         from: "system",
         kind: "acesso",
         login: result.login,
-        senha: result.senha,
         loginUrl: result.loginUrl,
         whatsappEnviado: result.whatsappEnviado,
       });
       if (result.whatsappEnviado) {
         await gabiSay("Prontinho! Já mandei no seu WhatsApp. Dá uma olhadinha 📲");
       } else {
-        await gabiSay("Seu acesso está pronto anote aí, é rapidinho.");
+        await gabiSay("Seu acesso já está pronto. Toque no botão acima pra entrar e criar sua senha.");
       }
       setStage({ kind: "done" });
     } catch (e) {
@@ -464,7 +463,6 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
               <AcessoCard
                 key={m.id}
                 login={m.login}
-                senha={m.senha}
                 loginUrl={m.loginUrl}
                 whatsappEnviado={m.whatsappEnviado}
               />
@@ -847,12 +845,10 @@ function ReportCard({ nome, diagnostico }: { nome: string; diagnostico: Diagnost
 
 function AcessoCard({
   login,
-  senha,
   loginUrl,
   whatsappEnviado,
 }: {
   login: string;
-  senha: string;
   loginUrl: string;
   whatsappEnviado: boolean;
 }) {
@@ -881,11 +877,6 @@ function AcessoCard({
             <br />
             <span className="font-semibold tabular-nums">{login}</span>
           </p>
-          <p>
-            <span className="text-[11px] uppercase tracking-wider" style={{ color: C.inkSoft }}>Senha</span>
-            <br />
-            <span className="font-semibold tabular-nums">{senha}</span>
-          </p>
         </div>
         <a
           href={loginUrl}
@@ -895,7 +886,7 @@ function AcessoCard({
             color: "#FFF",
           }}
         >
-          Entrar no meu app <ArrowRight className="size-3.5" />
+          Entrar e criar minha senha <ArrowRight className="size-3.5" />
         </a>
         {!whatsappEnviado && (
           <p className="mt-2 text-[11px]" style={{ color: C.inkSoft }}>
