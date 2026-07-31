@@ -273,8 +273,16 @@ function OfertaPage() {
                 <SectionTitle>Quem te acompanha</SectionTitle>
                 <p className="mt-5 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
                   <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em
-                  lipedema. Lipedema não tem cura, mas tem direção, e cuidado contínuo faz diferença
-                  real no seu dia a dia.
+                  lipedema, com anos de consultório dedicados a entender o padrão hormonal e
+                  inflamatório por trás do inchaço e da dor nas pernas. A metodologia Zero Lipedema
+                  nasceu dessa prática real, já aplicada com dezenas de mulheres, e segue evoluindo
+                  a cada caso.
+                </p>
+                <p className="mt-4 text-[15px] md:text-lg leading-relaxed text-[hsl(213_30%_25%)]">
+                  Não é mais uma dieta restritiva, ninguém vai te dizer só pra cortar doce e fritura
+                  e "vai emagrecer". É sobre reduzir a inflamação do seu corpo, ajustar hábitos
+                  reais do seu dia a dia e manter o resultado de forma consistente, sem viver de
+                  dieta.
                 </p>
               </div>
             </div>
