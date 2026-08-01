@@ -72,15 +72,32 @@ export function OfertaBackground3D() {
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
+        // Sprite radial suave: sem isso o Points renderiza quadrados duros.
+        const sprite = document.createElement("canvas");
+        sprite.width = sprite.height = 64;
+        const ctx = sprite.getContext("2d");
+        if (ctx) {
+          const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+          g.addColorStop(0, "rgba(255,255,255,1)");
+          g.addColorStop(0.35, "rgba(255,255,255,0.55)");
+          g.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, 64, 64);
+        }
+        const spriteTexture = new THREE.CanvasTexture(sprite);
+
         const material = new THREE.PointsMaterial({
           // Dourado da paleta da página: hsl(38 55% 42%)
           color: new THREE.Color("hsl(38, 55%, 42%)"),
-          size: 0.55,
+          map: spriteTexture,
+          alphaMap: spriteTexture,
+          size: 1.1,
           sizeAttenuation: true,
           transparent: true,
-          opacity: 0.22,
+          opacity: 0.28,
           depthWrite: false,
         });
+
 
         const points = new THREE.Points(geometry, material);
         scene.add(points);
