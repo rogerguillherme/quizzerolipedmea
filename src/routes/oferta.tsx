@@ -9,6 +9,7 @@ import appPremium from "@/assets/mockup-10.png.asset.json";
 import appAvaliacao from "@/assets/mockup-11.png.asset.json";
 
 import { MapaQuizDialog } from "@/components/MapaQuizDialog";
+import { OfertaBackground3D } from "@/components/OfertaBackground3D";
 
 export const Route = createFileRoute("/oferta")({
   component: OfertaPage,
