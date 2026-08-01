@@ -159,9 +159,10 @@ export function OfertaBackground3D() {
           cancelAnimationFrame(raf);
           window.removeEventListener("resize", onResize);
           document.removeEventListener("visibilitychange", onVisibility);
-          scene.remove(points);
+          for (const o of orbs) scene.remove(o.mesh);
           geometry.dispose();
           material.dispose();
+
 
           renderer.dispose();
           renderer.forceContextLoss?.();
