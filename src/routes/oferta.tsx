@@ -167,10 +167,12 @@ function OfertaPage() {
 
   return (
     <>
+      <OfertaBackground3D />
       <main
-        className="min-h-[100dvh] bg-[hsl(40_45%_95%)] text-[hsl(213_60%_17%)]"
-        style={{ background: CREAM }}
+        className="relative min-h-[100dvh] text-[hsl(213_60%_17%)]"
+        style={{ background: `${CREAM}` }}
       >
+
         {/* Header */}
         <header className="relative">
           <div className="mx-auto max-w-6xl px-5 md:px-6 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3 flex items-center justify-between">
