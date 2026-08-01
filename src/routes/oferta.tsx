@@ -253,7 +253,7 @@ function OfertaPage() {
 
         {/* 3. VALIDAÇÃO DA DOR */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50">
-          <div className="mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20">
+          <div className="mx-auto max-w-4xl px-5 md:px-8 py-16 md:py-28">
             <SectionTitle>Se algo aqui soa familiar, você não está exagerando.</SectionTitle>
             <ul className="mt-8 md:mt-10 space-y-4 md:space-y-5 text-[15px] md:text-lg text-[hsl(213_30%_25%)]">
               {[
@@ -274,7 +274,7 @@ function OfertaPage() {
         {/* 4. MOCKUP DO RESULTADO */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(40_40%_92%)]">
           <ArcsBg />
-          <div className="relative mx-auto max-w-4xl px-5 md:px-6 py-14 md:py-20 flex flex-col items-center">
+          <div className="relative mx-auto max-w-4xl px-5 md:px-8 py-16 md:py-28 flex flex-col items-center">
             <PhoneMockup />
             <p className="mt-7 max-w-md text-center text-[14px] md:text-base leading-relaxed text-[hsl(213_30%_28%)]">
               É assim que fica o seu Mapa, pronto em 3 minutos e enviado no seu WhatsApp.
@@ -288,7 +288,7 @@ function OfertaPage() {
 
         {/* 5. AUTORIDADE */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50">
-          <div className="mx-auto max-w-5xl px-5 md:px-6 py-14 md:py-20">
+          <div className="mx-auto max-w-5xl px-5 md:px-8 py-16 md:py-28">
             <div className="grid md:grid-cols-[0.85fr_1.15fr] gap-8 md:gap-12 items-center">
               <div className="flex justify-center">
                 <div className="relative w-[55vw] max-w-[240px] md:w-full md:max-w-[320px] aspect-[4/5] rounded-[1.5rem] overflow-hidden border border-[hsl(38_35%_75%)]/60 shadow-[0_20px_40px_-20px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
@@ -324,7 +324,7 @@ function OfertaPage() {
 
         {/* 8. FAQ */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50">
-          <div className="mx-auto max-w-3xl px-5 md:px-6 py-14 md:py-20">
+          <div className="mx-auto max-w-3xl px-5 md:px-8 py-16 md:py-28">
             <SectionTitle>Perguntas frequentes</SectionTitle>
             <div className="mt-8 space-y-3">
               {[
@@ -360,7 +360,7 @@ function OfertaPage() {
 
         {/* 10. CTA FINAL */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50 bg-[hsl(213_60%_17%)] text-[hsl(40_45%_95%)]">
-          <div className="relative mx-auto max-w-3xl px-5 md:px-6 py-14 md:py-20 text-center">
+          <div className="relative mx-auto max-w-3xl px-5 md:px-8 py-16 md:py-28 text-center">
             <h2 className="font-serif text-[clamp(1.6rem,4.8vw,2.4rem)] leading-tight">
               Pronta para entender o que está acontecendo com o seu corpo?
             </h2>
