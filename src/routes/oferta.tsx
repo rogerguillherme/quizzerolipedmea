@@ -9,6 +9,7 @@ import appPremium from "@/assets/mockup-10.png.asset.json";
 import appAvaliacao from "@/assets/mockup-11.png.asset.json";
 
 import { MapaQuizDialog } from "@/components/MapaQuizDialog";
+import { OfertaBackground3D } from "@/components/OfertaBackground3D";
 
 export const Route = createFileRoute("/oferta")({
   component: OfertaPage,
@@ -166,10 +167,12 @@ function OfertaPage() {
 
   return (
     <>
-      <main
-        className="min-h-[100dvh] bg-[hsl(40_45%_95%)] text-[hsl(213_60%_17%)]"
-        style={{ background: CREAM }}
-      >
+      {/* camada de fundo creme fixa + partículas 3D por trás de todo o conteúdo */}
+      <div className="fixed inset-0 -z-20" style={{ background: CREAM }} aria-hidden />
+      <OfertaBackground3D />
+      <main className="relative min-h-[100dvh] text-[hsl(213_60%_17%)]">
+
+
         {/* Header */}
         <header className="relative">
           <div className="mx-auto max-w-6xl px-5 md:px-6 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3 flex items-center justify-between">
