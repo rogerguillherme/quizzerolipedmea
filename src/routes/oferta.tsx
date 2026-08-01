@@ -64,17 +64,30 @@ function ArcsBg() {
   );
 }
 
-function CTA({ onClick, label = "Gerar Meu Mapa" }: { onClick: () => void; label?: string }) {
+function CTA({
+  onClick,
+  label = "Gerar Meu Mapa",
+  variant = "navy",
+}: {
+  onClick: () => void;
+  label?: string;
+  variant?: "navy" | "gold";
+}) {
+  const styles =
+    variant === "gold"
+      ? "bg-[hsl(38_55%_58%)] text-[hsl(213_60%_12%)] shadow-[0_18px_40px_-18px_rgba(0,0,0,0.6)]"
+      : "bg-[hsl(213_60%_17%)] text-[hsl(40_45%_95%)] shadow-[0_18px_40px_-18px_rgba(11,42,74,0.55)]";
   return (
     <button
       onClick={onClick}
-      className="group inline-flex w-full md:w-auto items-center justify-center gap-3 rounded-full bg-[hsl(213_60%_17%)] text-[hsl(40_45%_95%)] px-7 py-4 md:px-10 md:py-5 text-[15px] md:text-lg font-medium shadow-[0_18px_40px_-18px_rgba(11,42,74,0.55)] transition-all hover:shadow-[0_22px_50px_-16px_rgba(11,42,74,0.65)] hover:-translate-y-0.5"
+      className={`group inline-flex w-full md:w-auto items-center justify-center gap-3 rounded-full px-7 py-4 md:px-10 md:py-5 text-[15px] md:text-lg font-medium transition-all hover:-translate-y-0.5 ${styles}`}
     >
       <span>{label}</span>
       <ArrowRight className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
     </button>
   );
 }
+
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
@@ -173,52 +186,70 @@ function OfertaPage() {
       <main className="relative min-h-[100dvh] text-[hsl(213_60%_17%)]">
 
 
-        {/* Header */}
-        <header className="relative">
-          <div className="mx-auto max-w-6xl px-5 md:px-6 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3 flex items-center justify-between">
-            <span className="text-[10px] md:text-[11px] tracking-[0.28em] uppercase text-[hsl(38_45%_40%)] font-medium">
-              Zero Lipedema
-            </span>
-            <span className="text-[10px] md:text-[11px] tracking-[0.24em] uppercase text-[hsl(38_45%_40%)]">
-              CRN 10582
-            </span>
-          </div>
-        </header>
-
-        {/* 2. HERO */}
-        <section className="relative">
+        {/* Header + HERO com foto de fundo full-bleed */}
+        <section className="relative isolate overflow-hidden">
+          {/* foto de fundo */}
+          <img
+            src={draGabrielaAsset.url}
+            alt="Dra. Gabriela Rosado, especialista em lipedema (CRN 10582)"
+            className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
+            loading="eager"
+          />
+          {/* overlay em gradiente safira */}
+          <div
+            className="absolute inset-0 -z-10"
+            aria-hidden
+            style={{
+              background:
+                "linear-gradient(to bottom, hsl(213 60% 17% / 0.45) 0%, hsl(213 60% 17% / 0.62) 45%, hsl(213 60% 17% / 0.9) 100%)",
+            }}
+          />
           <ArcsBg />
-          <div className="relative mx-auto max-w-6xl px-5 md:px-6 pt-6 md:pt-14 pb-12 md:pb-20">
-            <div className="grid md:grid-cols-[1.1fr_0.9fr] gap-8 md:gap-14 items-center">
-              <div className="order-2 md:order-1">
-                <p className="hidden md:block text-[11px] tracking-[0.32em] uppercase text-[hsl(38_60%_38%)] mb-6">
-                  Mapa do Lipedema · Teste de 3 min
-                </p>
-                <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.6rem,6.4vw,3.4rem)] md:text-6xl">
-                  Não é falta de esforço.{" "}
-                  <em className="text-[hsl(38_55%_42%)] font-serif italic">É lipedema</em>&nbsp;e tem
-                  solução sem dietas restritas e sofrimento.
-                </h1>
-                <p className="mt-4 md:mt-6 text-[14px] md:text-lg text-[hsl(213_30%_28%)] max-w-xl leading-relaxed">
-                  Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
-                </p>
-                <div className="mt-6 md:mt-8">
-                  <CTA onClick={openQuiz} />
-                </div>
-              </div>
-              <div className="order-1 md:order-2 flex justify-center">
-                <div className="relative w-[55vw] max-w-[240px] md:w-full md:max-w-none aspect-[4/5] rounded-[1.25rem] md:rounded-[1.75rem] overflow-hidden border border-[hsl(38_35%_75%)]/60 shadow-[0_20px_40px_-20px_rgba(11,42,74,0.35)] bg-[hsl(40_30%_92%)]">
-                  <img
-                    src={draGabrielaAsset.url}
-                    alt="Dra. Gabriela Rosado, especialista em lipedema (CRN 10582)"
-                    className="w-full h-full object-cover"
-                    loading="eager"
-                  />
-                </div>
+
+          {/* Header */}
+          <header className="relative">
+            <div className="mx-auto max-w-6xl px-5 md:px-8 pt-[max(env(safe-area-inset-top),1rem)] pb-4 flex items-center justify-between">
+              <span className="text-[10px] md:text-[11px] tracking-[0.28em] uppercase text-[hsl(40_45%_92%)]/80 font-medium">
+                Zero Lipedema
+              </span>
+              <span className="text-[10px] md:text-[11px] tracking-[0.24em] uppercase text-[hsl(40_45%_92%)]/80">
+                CRN 10582
+              </span>
+            </div>
+          </header>
+
+          <div className="relative mx-auto max-w-6xl px-5 md:px-8 pt-16 md:pt-28 pb-28 md:pb-40">
+            <div className="max-w-2xl">
+              <p className="hidden md:block text-[11px] tracking-[0.32em] uppercase text-[hsl(38_65%_72%)] mb-7">
+                Mapa do Lipedema · Teste de 3 min
+              </p>
+              <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.75rem,6.8vw,3.4rem)] md:text-6xl text-[hsl(40_45%_95%)] [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">
+                Não é falta de esforço.{" "}
+                <em className="text-[hsl(38_70%_68%)] font-serif italic">É lipedema</em>&nbsp;e tem
+                solução sem dietas restritas e sofrimento.
+              </h1>
+              <p className="mt-5 md:mt-7 text-[15px] md:text-lg text-[hsl(40_35%_88%)] max-w-xl leading-relaxed">
+                Sou a <strong className="font-semibold">Dra. Gabriela Rosado</strong>, especialista em lipedema.
+              </p>
+              <div className="mt-8 md:mt-10">
+                <CTA onClick={openQuiz} variant="gold" />
               </div>
             </div>
           </div>
+
+          {/* transição suave para o fundo creme */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-40 md:h-56 backdrop-blur-[2px]"
+            aria-hidden
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent 0%, hsl(40 45% 95% / 0.55) 55%, hsl(40 45% 95%) 100%)",
+              maskImage: "linear-gradient(to bottom, transparent, black 40%)",
+              WebkitMaskImage: "linear-gradient(to bottom, transparent, black 40%)",
+            }}
+          />
         </section>
+
 
         {/* 3. VALIDAÇÃO DA DOR */}
         <section className="relative border-t border-[hsl(38_35%_80%)]/50">
