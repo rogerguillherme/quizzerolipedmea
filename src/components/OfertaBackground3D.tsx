@@ -81,7 +81,7 @@ export function OfertaBackground3D() {
             void main() {
               float d = length(vUv - vec2(0.5));
               float a = 1.0 - smoothstep(0.0, 0.5, d);
-              gl_FragColor = vec4(uColor, a * a * uOpacity);
+              gl_FragColor = vec4(vUv.x, vUv.y, 0.0, 1.0);
             }
           `,
         });
