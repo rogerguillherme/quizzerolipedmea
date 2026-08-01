@@ -167,11 +167,11 @@ function OfertaPage() {
 
   return (
     <>
+      {/* camada de fundo creme fixa + partículas 3D por trás de todo o conteúdo */}
+      <div className="fixed inset-0 -z-20" style={{ background: CREAM }} aria-hidden />
       <OfertaBackground3D />
-      <main
-        className="relative min-h-[100dvh] text-[hsl(213_60%_17%)]"
-        style={{ background: `${CREAM}` }}
-      >
+      <main className="relative min-h-[100dvh] text-[hsl(213_60%_17%)]">
+
 
         {/* Header */}
         <header className="relative">
