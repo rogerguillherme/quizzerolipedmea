@@ -187,7 +187,7 @@ function OfertaPage() {
 
 
         {/* Header + HERO com foto de fundo full-bleed */}
-        <section className="relative isolate overflow-hidden">
+        <section className="relative isolate overflow-hidden flex min-h-[94dvh] md:min-h-[100dvh] flex-col">
           {/* foto de fundo */}
           <img
             src={draGabrielaAsset.url}
@@ -201,7 +201,7 @@ function OfertaPage() {
             aria-hidden
             style={{
               background:
-                "linear-gradient(to bottom, hsl(213 60% 17% / 0.45) 0%, hsl(213 60% 17% / 0.62) 45%, hsl(213 60% 17% / 0.9) 100%)",
+                "linear-gradient(to bottom, hsl(213 60% 17% / 0.42) 0%, hsl(213 60% 17% / 0.4) 35%, hsl(213 60% 17% / 0.78) 68%, hsl(213 60% 17% / 0.92) 100%)",
             }}
           />
           <ArcsBg />
@@ -218,12 +218,13 @@ function OfertaPage() {
             </div>
           </header>
 
-          <div className="relative mx-auto max-w-6xl px-5 md:px-8 pt-16 md:pt-28 pb-28 md:pb-40">
+          {/* bloco de texto ancorado no fim da seção, logo acima da transição */}
+          <div className="relative z-10 mt-auto mx-auto w-full max-w-6xl px-5 md:px-8 pt-20 pb-32 md:pb-44">
             <div className="max-w-2xl">
               <p className="hidden md:block text-[11px] tracking-[0.32em] uppercase text-[hsl(38_65%_72%)] mb-7">
                 Mapa do Lipedema · Teste de 3 min
               </p>
-              <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.75rem,6.8vw,3.4rem)] md:text-6xl text-[hsl(40_45%_95%)] [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">
+              <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.75rem,6.8vw,3.4rem)] md:text-6xl text-[hsl(40_45%_95%)] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
                 Não é falta de esforço.{" "}
                 <em className="text-[hsl(38_70%_68%)] font-serif italic">É lipedema</em>&nbsp;e tem
                 solução sem dietas restritas e sofrimento.
@@ -236,6 +237,7 @@ function OfertaPage() {
               </div>
             </div>
           </div>
+
 
           {/* transição suave para o fundo creme */}
           <div
