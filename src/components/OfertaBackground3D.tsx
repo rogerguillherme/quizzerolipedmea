@@ -53,83 +53,80 @@ export function OfertaBackground3D() {
         renderer.domElement.style.display = "block";
         container.appendChild(renderer.domElement);
 
-        // ~44 partículas: suficiente para a sensação de "poeira de luz",
+        // ~44 orbes: suficiente para a sensação de "poeira de luz",
         // barato o bastante para celulares modestos.
         const COUNT = 44;
-        const positions = new Float32Array(COUNT * 3);
-        const drift = new Float32Array(COUNT * 3);
 
-        for (let i = 0; i < COUNT; i++) {
-          positions[i * 3 + 0] = (Math.random() - 0.5) * 26;
-          positions[i * 3 + 1] = (Math.random() - 0.5) * 18;
-          positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-          // Deriva bem lenta, predominantemente vertical.
-          drift[i * 3 + 0] = (Math.random() - 0.5) * 0.012;
-          drift[i * 3 + 1] = 0.006 + Math.random() * 0.012;
-          drift[i * 3 + 2] = (Math.random() - 0.5) * 0.006;
-        }
-
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-
-        // Shader próprio: PointsMaterial desenharia quadrados duros.
-        // Aqui o alpha cai radialmente a partir do centro do ponto,
-        // resultando em orbes difusos tipo "poeira de luz".
+        // Um plano compartilhado com alpha radial no fragment shader.
+        // (Points/PointsMaterial renderiza quadrados duros em vários drivers.)
+        const geometry = new THREE.PlaneGeometry(1, 1);
         const material = new THREE.ShaderMaterial({
           transparent: true,
           depthWrite: false,
           uniforms: {
             uColor: { value: new THREE.Color("hsl(38, 55%, 42%)") },
-            uOpacity: { value: 0.28 },
-            uSize: { value: 90 * Math.min(window.devicePixelRatio || 1, 1.5) },
+            uOpacity: { value: 0.26 },
           },
           vertexShader: `
-            uniform float uSize;
+            varying vec2 vUv;
             void main() {
-              vec4 mv = modelViewMatrix * vec4(position, 1.0);
-              gl_PointSize = uSize / -mv.z;
-              gl_Position = projectionMatrix * mv;
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
             }
           `,
           fragmentShader: `
             uniform vec3 uColor;
             uniform float uOpacity;
+            varying vec2 vUv;
             void main() {
-              float d = length(gl_PointCoord - vec2(0.5));
+              float d = length(vUv - vec2(0.5));
               float a = smoothstep(0.5, 0.0, d);
               gl_FragColor = vec4(uColor, a * a * uOpacity);
             }
           `,
         });
 
+        const orbs: Array<{
+          mesh: InstanceType<typeof THREE.Mesh>;
+          dx: number;
+          dy: number;
+        }> = [];
 
-
-        const points = new THREE.Points(geometry, material);
-        scene.add(points);
-
-        const posAttr = geometry.getAttribute("position") as InstanceType<
-          typeof THREE.BufferAttribute
-        >;
+        for (let i = 0; i < COUNT; i++) {
+          const mesh = new THREE.Mesh(geometry, material);
+          const s = 0.8 + Math.random() * 2.2;
+          mesh.scale.set(s, s, 1);
+          mesh.position.set(
+            (Math.random() - 0.5) * 30,
+            (Math.random() - 0.5) * 20,
+            (Math.random() - 0.5) * 6,
+          );
+          scene.add(mesh);
+          orbs.push({
+            mesh,
+            // Deriva bem lenta, predominantemente vertical.
+            dx: (Math.random() - 0.5) * 0.008,
+            dy: 0.004 + Math.random() * 0.008,
+          });
+        }
 
         let raf = 0;
         let running = true;
 
         const tick = () => {
           raf = requestAnimationFrame(tick);
-          const arr = posAttr.array as Float32Array;
-          for (let i = 0; i < COUNT; i++) {
-            arr[i * 3 + 0] += drift[i * 3 + 0]!;
-            arr[i * 3 + 1] += drift[i * 3 + 1]!;
-            arr[i * 3 + 2] += drift[i * 3 + 2]!;
-            // Reciclagem quando sai do topo do frustum visível.
-            if (arr[i * 3 + 1]! > 9) {
-              arr[i * 3 + 1] = -9;
-              arr[i * 3 + 0] = (Math.random() - 0.5) * 26;
+          for (const o of orbs) {
+            o.mesh.position.x += o.dx;
+            o.mesh.position.y += o.dy;
+            // Reciclagem quando sai do topo da área visível.
+            if (o.mesh.position.y > 11) {
+              o.mesh.position.y = -11;
+              o.mesh.position.x = (Math.random() - 0.5) * 30;
             }
           }
-          posAttr.needsUpdate = true;
           renderer.render(scene, camera);
         };
+
 
         const start = () => {
           if (running) return;
