@@ -165,7 +165,6 @@ export function OfertaBackground3D() {
           scene.remove(points);
           geometry.dispose();
           material.dispose();
-          spriteTexture.dispose();
 
           renderer.dispose();
           renderer.forceContextLoss?.();
