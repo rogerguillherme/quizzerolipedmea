@@ -82,8 +82,9 @@ function PremiumPlano() {
     );
   }
 
-  // TODO: reativar quando o Plano Acompanhamento (R$279) estiver com checkout próprio, então checar o produto certo, não só status "plano_ativo"
-  const PREMIUM_ONBOARDING_ENABLED = false;
+  // Anamnese completa + envio de exames/prescrição fazem parte do Plano Premium (R$67),
+  // liberados assim que `isPremium` for true.
+  const PREMIUM_ONBOARDING_ENABLED = true;
   if (PREMIUM_ONBOARDING_ENABLED && st?.isPremium) {
     return <PremiumOnboarding st={st!} />;
   }
