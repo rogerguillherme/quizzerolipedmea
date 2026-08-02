@@ -99,7 +99,7 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
           status: "recebido",
         });
 
-        // -------- Teste grátis de 3 fotos de refeição (pré-plano R$57) --------
+        // -------- Teste grátis de 3 fotos de refeição (pré-plano R$67) --------
         // Se for imagem recebida do lead, tenta rodar o feedback multimodal.
         if (!fromMe && isImage) {
           const { data: lead } = await supabaseAdmin
@@ -126,7 +126,7 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
             const { sendWhatsApp } = await import("@/lib/evolution.server");
 
             if (usadas >= 3) {
-              const msg = `Oi ${primeiroNome} 💛 Seu *teste grátis de 3 fotos* já foi usado.\n\nPra continuar recebendo feedback ilimitado das suas refeições + o *plano completo* (sugestão alimentar, chás/shots e lista de compras) por *R$57* — sem assinatura — é só me responder aqui que eu te passo os próximos passos.`;
+              const msg = `Oi ${primeiroNome} 💛 Seu *teste grátis de 3 fotos* já foi usado.\n\nPra continuar recebendo feedback ilimitado das suas refeições + o *plano completo* (sugestão alimentar, chás/shots e lista de compras) por *R$67* — sem assinatura — é só me responder aqui que eu te passo os próximos passos.`;
               const wa = await sendWhatsApp(telefone, msg);
               await supabaseAdmin.from("whatsapp_logs").insert({
                 telefone,

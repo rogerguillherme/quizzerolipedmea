@@ -152,13 +152,15 @@ async function processarReengajamento(
       status: wa.ok ? "enviado" : "falhou",
       erro: wa.error ?? null,
     });
-    reengaje.pos1h_at = new Date().toISOString();
-    respostas.reengaje = reengaje;
-    await supabaseAdmin
-      .from("leads")
-      .update({ respostas: respostas as never })
-      .eq("id", lead.id);
-    if (wa.ok) enviados.push(lead.id);
+    if (wa.ok) {
+      reengaje.pos1h_at = new Date().toISOString();
+      respostas.reengaje = reengaje;
+      await supabaseAdmin
+        .from("leads")
+        .update({ respostas: respostas as never })
+        .eq("id", lead.id);
+      enviados.push(lead.id);
+    }
   }
 
   // 1) Mapa gerado há 24h+ com telefone válido, ainda sem acesso criado.
@@ -186,13 +188,15 @@ async function processarReengajamento(
       status: wa.ok ? "enviado" : "falhou",
       erro: wa.error ?? null,
     });
-    reengaje.pos24h_at = new Date().toISOString();
-    respostas.reengaje = reengaje;
-    await supabaseAdmin
-      .from("leads")
-      .update({ respostas: respostas as never })
-      .eq("id", lead.id);
-    if (wa.ok) enviados.push(lead.id);
+    if (wa.ok) {
+      reengaje.pos24h_at = new Date().toISOString();
+      respostas.reengaje = reengaje;
+      await supabaseAdmin
+        .from("leads")
+        .update({ respostas: respostas as never })
+        .eq("id", lead.id);
+      enviados.push(lead.id);
+    }
   }
 
   const baseUrl =
@@ -226,13 +230,15 @@ async function processarReengajamento(
       status: wa.ok ? "enviado" : "falhou",
       erro: wa.error ?? null,
     });
-    reengaje.pos2h_foto_at = new Date().toISOString();
-    respostas.reengaje = reengaje;
-    await supabaseAdmin
-      .from("leads")
-      .update({ respostas: respostas as never })
-      .eq("id", lead.id);
-    if (wa.ok) enviados.push(lead.id);
+    if (wa.ok) {
+      reengaje.pos2h_foto_at = new Date().toISOString();
+      respostas.reengaje = reengaje;
+      await supabaseAdmin
+        .from("leads")
+        .update({ respostas: respostas as never })
+        .eq("id", lead.id);
+      enviados.push(lead.id);
+    }
   }
 
   // 2) Acesso criado há 48h+ e ainda não iniciou o Protocolo.
@@ -262,13 +268,15 @@ async function processarReengajamento(
       status: wa.ok ? "enviado" : "falhou",
       erro: wa.error ?? null,
     });
-    reengaje.pos48h_at = new Date().toISOString();
-    respostas.reengaje = reengaje;
-    await supabaseAdmin
-      .from("leads")
-      .update({ respostas: respostas as never })
-      .eq("id", lead.id);
-    if (wa.ok) enviados.push(lead.id);
+    if (wa.ok) {
+      reengaje.pos48h_at = new Date().toISOString();
+      respostas.reengaje = reengaje;
+      await supabaseAdmin
+        .from("leads")
+        .update({ respostas: respostas as never })
+        .eq("id", lead.id);
+      enviados.push(lead.id);
+    }
   }
 
   return enviados;
