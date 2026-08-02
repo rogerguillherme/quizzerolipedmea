@@ -195,6 +195,46 @@ async function processarReengajamento(
     if (wa.ok) enviados.push(lead.id);
   }
 
+  const baseUrl =
+    process.env.APP_PUBLIC_URL ?? "https://quizzerolipedmea.lovable.app";
+
+  // 2.5) Acesso criado entre 2h e 48h atrás e ainda não testou nenhuma foto por IA.
+  const { data: pos2hFoto } = await supabaseAdmin
+    .from("leads")
+    .select("id, nome, telefone, respostas, updated_at")
+    .eq("status", "acesso_criado")
+    .lt("updated_at", new Date(Date.now() - 2 * MS_HORA).toISOString())
+    .gt("updated_at", new Date(Date.now() - 48 * MS_HORA).toISOString())
+    .limit(200);
+
+  for (const lead of pos2hFoto ?? []) {
+    const respostas = (lead.respostas ?? {}) as LeadResp;
+    const reengaje = respostas.reengaje ?? {};
+    if (reengaje.pos2h_foto_at) continue;
+    const teste = (respostas.teste_fotos as { usadas?: number } | undefined) ?? {};
+    if (Number(teste.usadas ?? 0) > 0) continue;
+    const nome = (lead.nome || "").split(" ")[0] || "amiga";
+    const msg =
+      `Oi ${nome}! 💙 Aqui é a Gabriela 💙\n\n` +
+      `Vi que você ainda não testou uma coisa bem legal que já está liberada pra você: me manda uma foto de qualquer refeição sua que eu te dou um feedback na hora, se aquele alimento ajuda ou atrapalha o seu quadro.\n\n` +
+      `É grátis, são 3 fotos de teste, sem compromisso.\n\n` +
+      `🔗 Testa aqui: ${baseUrl}/app/avaliacao`;
+    const wa = await sendWhatsApp(lead.telefone, msg);
+    await supabaseAdmin.from("whatsapp_logs").insert({
+      telefone: lead.telefone,
+      mensagem: msg,
+      status: wa.ok ? "enviado" : "falhou",
+      erro: wa.error ?? null,
+    });
+    reengaje.pos2h_foto_at = new Date().toISOString();
+    respostas.reengaje = reengaje;
+    await supabaseAdmin
+      .from("leads")
+      .update({ respostas: respostas as never })
+      .eq("id", lead.id);
+    if (wa.ok) enviados.push(lead.id);
+  }
+
   // 2) Acesso criado há 48h+ e ainda não iniciou o Protocolo.
   const { data: pos48 } = await supabaseAdmin
     .from("leads")
@@ -209,9 +249,12 @@ async function processarReengajamento(
     if (reengaje.pos48h_at) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `${nome}, é a Gabriela 💙 Passei aqui só pra te lembrar:\n\n` +
-      `Se quiser continuar com registro de refeições ilimitado, dicas diárias, cardápios, chás e suplementos personalizados, o Plano Premium tá te esperando no app, na aba Premium. R$67 o mês.\n\n` +
-      `Sem pressa, fico à disposição se tiver dúvida.`;
+      `${nome}, aqui é a Gabriela 💙\n\n` +
+      `Voltando pra te fazer um convite direto: hoje eu libero seu acesso ao Plano Premium Zero Lipedema por um valor de inauguração, de R$119 por apenas R$67, sem assinatura obrigatória.\n\n` +
+      `Você entra com cardápio pensado pra reduzir a inflamação (não pra passar fome), chás e suplementos que ajudam a controlar o quadro, e o registro de refeição por foto pra eu te acompanhar de perto.\n\n` +
+      `Tem 7 dias de garantia: se não fizer sentido pra você, é só me chamar que devolvo, sem burocracia. E como bônus, libero todos os meus guias e receitas práticas.\n\n` +
+      `🔗 Pra ativar: ${baseUrl}/app/derma\n\n` +
+      `Qualquer dúvida, me chama por aqui. ✨`;
     const wa = await sendWhatsApp(lead.telefone, msg);
     await supabaseAdmin.from("whatsapp_logs").insert({
       telefone: lead.telefone,
