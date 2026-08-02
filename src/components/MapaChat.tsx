@@ -210,6 +210,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
   const submit = useServerFn(submitMapa);
   const gerarAcesso = useServerFn(criarAcessoMapa);
+  const navigate = useNavigate();
 
   // Track quiz start
   useEffect(() => {
