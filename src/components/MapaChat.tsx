@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useNavigate } from "@tanstack/react-router";
 import { Send, MessageCircle, X, Loader2, CheckCircle2, Sparkles, KeyRound, ArrowRight } from "lucide-react";
 import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
 import { fbqTrack } from "@/lib/meta-pixel";
 import { formatPhoneBR, normalizePhoneBR } from "@/lib/phone";
