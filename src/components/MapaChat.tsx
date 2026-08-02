@@ -6,7 +6,7 @@ import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
-import { fbqTrack } from "@/lib/meta-pixel";
+import { trackMeta } from "@/lib/meta-track";
 import { formatPhoneBR, normalizePhoneBR } from "@/lib/phone";
 import draGabrielaAsset from "@/assets/dra-gabriela.png.asset.json";
 import estagio1Img from "@/assets/estagio-1.jpg";
@@ -215,6 +215,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
   // Track quiz start
   useEffect(() => {
     track("quiz_started");
+    trackMeta("QuizIniciado", { content_name: "Mapa do Lipedema" });
   }, []);
 
   // Auto-scroll
@@ -353,6 +354,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       setDiagnostico(result.diagnostico);
       setLeadId(result.leadId ?? null);
       track("quiz_completed");
+      trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
       setTyping(false);
       pushMsg({
         id: crypto.randomUUID(),
@@ -384,7 +386,8 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     try {
       const result = await gerarAcesso({ data: { leadId, telefone: telefoneFinal } });
       track("purchase_completed", { step: "acesso_gerado" });
-      fbqTrack("Lead", { content_name: "Mapa do Lipedema", status: "acesso_gerado" });
+      trackMeta("Lead", { content_name: "Mapa do Lipedema", status: "acesso_gerado" }, { phone: telefoneFinal, firstName: nome, externalId: leadId ?? telefoneFinal });
+      trackMeta("CompleteRegistration", { content_name: "Acesso ao app Zero Lipedema", status: "acesso_criado" }, { phone: telefoneFinal, firstName: nome, externalId: leadId ?? telefoneFinal });
       setTyping(false);
       pushMsg({
         id: crypto.randomUUID(),

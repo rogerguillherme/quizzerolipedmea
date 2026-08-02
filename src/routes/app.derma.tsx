@@ -18,7 +18,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { track } from "../lib/analytics";
-import { fbqTrack } from "../lib/meta-pixel";
+import { trackMeta } from "../lib/meta-track";
 import { getPremiumOnboarding } from "@/lib/anamnese.functions";
 
 export const Route = createFileRoute("/app/derma")({
@@ -224,7 +224,7 @@ function PremiumPlano() {
           rel="noopener noreferrer"
           onClick={() => {
             track("premium_upgrade_clicked");
-            fbqTrack("InitiateCheckout", { content_name: "Plano Premium Zero Lipedema 30d", value: 67, currency: "BRL" });
+            trackMeta("InitiateCheckout", { content_name: "Plano Premium Zero Lipedema 30d", content_type: "product", value: 67, currency: "BRL" });
           }}
           className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform active:scale-[0.98]"
           style={{
