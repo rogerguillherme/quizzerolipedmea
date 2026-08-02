@@ -193,6 +193,7 @@ Qualquer coisa, me chama aqui mesmo. ✨
       login: lead.telefone,
       email,
       loginUrl,
+      autoLoginToken,
       whatsappEnviado: wa.ok,
       whatsappErro: wa.error ?? null,
     };
