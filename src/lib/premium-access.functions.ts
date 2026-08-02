@@ -22,6 +22,8 @@ Nos próximos 30 dias você tem:
 ✅ Canal pra tirar suas dúvidas a qualquer momento
 ✅ Quadro de evolução, acompanhando seu progresso
 
+📋 Agora um passo importante: preencha sua anamnese (leva só alguns minutos) e me envie seus exames recentes, ou peça sua prescrição personalizada, direto no app. É assim que eu monto o seu protocolo sob medida.
+
 🔗 Seu app: ${loginUrl}
 
 Qualquer coisa, me chama por aqui ✨`;
