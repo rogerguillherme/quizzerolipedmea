@@ -25,5 +25,6 @@ export const sendMetaEvent = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => schema.parse(data))
   .handler(async ({ data }) => {
     const { capiFromClient } = await import("@/lib/meta-capi.server");
-    return capiFromClient(data);
+    const res = await capiFromClient(data);
+    return { ok: res.ok, status: res.status };
   });
