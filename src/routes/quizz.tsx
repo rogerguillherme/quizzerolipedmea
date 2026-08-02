@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { MapaChat } from "@/components/MapaChat";
+import { trackMeta } from "@/lib/meta-track";
 
 export const Route = createFileRoute("/quizz")({
   component: QuizzPage,
@@ -24,6 +26,10 @@ export const Route = createFileRoute("/quizz")({
 });
 
 function QuizzPage() {
+  useEffect(() => {
+    trackMeta("ViewContent", { content_name: "Quiz do Mapa do Lipedema", content_type: "product" });
+  }, []);
+
   return (
     <main className="min-h-[100dvh] overflow-y-auto" style={{ background: "#F5EFE1" }}>
       <MapaChat />

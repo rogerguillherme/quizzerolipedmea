@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { Camera, Loader2, Sparkles, Lock, RefreshCw, ClipboardList, BarChart3, Utensils } from "lucide-react";
 import { analisarFotoApp, getMealTestStatus } from "@/lib/meal-test.functions";
+import { trackMeta } from "@/lib/meta-track";
 
 export const Route = createFileRoute("/app/avaliacao")({
   component: AvaliacaoPage,
@@ -103,6 +104,7 @@ function AvaliacaoPage() {
       return { res, previewUrl: URL.createObjectURL(file), seed: `${file.size}-${file.name}-${Date.now()}` };
     },
     onSuccess: ({ res, previewUrl, seed }) => {
+      trackMeta("TesteFotoIA", { content_name: "Analise nutricional por foto" });
       qc.invalidateQueries({ queryKey: ["meal-test-status"] });
       if (res.esgotado) {
         setAviso("esgotado");
