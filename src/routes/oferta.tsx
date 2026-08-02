@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { trackMeta } from "@/lib/meta-track";
 import { ArrowRight, Check, HelpCircle } from "lucide-react";
 import draGabrielaAsset from "@/assets/gabi-portrait.png.asset.json";
 import gabiChaAsset from "@/assets/gabi-cha.jpg.asset.json";
@@ -176,7 +177,21 @@ function PhoneMockup() {
 function OfertaPage() {
 
   const [open, setOpen] = useState(false);
-  const openQuiz = () => setOpen(true);
+
+  // Visualização da página de venda: base de otimização/retargeting da Meta.
+  useEffect(() => {
+    trackMeta("ViewContent", {
+      content_name: "Oferta Zero Lipedema",
+      content_type: "product",
+      value: 67,
+      currency: "BRL",
+    });
+  }, []);
+
+  const openQuiz = () => {
+    trackMeta("QuizAberto", { content_name: "Mapa do Lipedema", source: "oferta" });
+    setOpen(true);
+  };
 
   return (
     <>

@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { trackMeta } from "../lib/meta-track";
 
 function NotFoundComponent() {
   return (
@@ -137,7 +138,6 @@ t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', '${META_PIXEL_ID}');
-fbq('track', 'PageView');
 `,
           }}
         />
@@ -170,8 +170,7 @@ function RootComponent() {
       }
     } catch {}
     const unsub = router.subscribe("onResolved", () => {
-      const fbq = (window as any).fbq;
-      if (typeof fbq === "function") fbq("track", "PageView");
+      trackMeta("PageView");
       try {
         const url = new URL(window.location.href);
         const payload = {

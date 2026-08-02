@@ -87,3 +87,50 @@ export async function sendCapiEvent(evt: CapiEvent): Promise<{
   const body = await res.json().catch(() => ({}));
   return { ok: res.ok, status: res.status, body };
 }
+
+/**
+ * Recebe um evento originado no navegador (via server function) e completa com
+ * IP / user agent reais do request antes de mandar pra Conversions API.
+ */
+export async function capiFromClient(input: {
+  eventName: string;
+  eventId: string;
+  eventSourceUrl?: string;
+  phone?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  externalId?: string;
+  fbp?: string;
+  fbc?: string;
+  customData?: Record<string, unknown>;
+}) {
+  const { getRequestHeader, getRequestIP } = await import("@tanstack/react-start/server");
+  let clientIp: string | undefined;
+  let userAgent: string | undefined;
+  try {
+    clientIp = getRequestIP({ xForwardedFor: true });
+    userAgent = getRequestHeader("user-agent") ?? undefined;
+  } catch {
+    /* fora de contexto de request */
+  }
+
+  return sendCapiEvent({
+    eventName: input.eventName,
+    eventId: input.eventId,
+    actionSource: "website",
+    eventSourceUrl: input.eventSourceUrl,
+    user: {
+      email: input.email,
+      phone: input.phone,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      externalId: input.externalId,
+      fbp: input.fbp,
+      fbc: input.fbc,
+      clientIp,
+      userAgent,
+    },
+    customData: input.customData,
+  });
+}
