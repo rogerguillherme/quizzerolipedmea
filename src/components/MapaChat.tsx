@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useNavigate } from "@tanstack/react-router";
 import { Send, MessageCircle, X, Loader2, CheckCircle2, Sparkles, KeyRound, ArrowRight } from "lucide-react";
 import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
 import { fbqTrack } from "@/lib/meta-pixel";
 import { formatPhoneBR, normalizePhoneBR } from "@/lib/phone";
@@ -208,6 +210,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
   const submit = useServerFn(submitMapa);
   const gerarAcesso = useServerFn(criarAcessoMapa);
+  const navigate = useNavigate();
 
   // Track quiz start
   useEffect(() => {
@@ -391,6 +394,20 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
         loginUrl: result.loginUrl,
         whatsappEnviado: result.whatsappEnviado,
       });
+      // Entrada direta: troca o token por sessão aqui mesmo e leva pra escolher a senha.
+      if (result.autoLoginToken) {
+        await gabiSay("Prontinho! Estou te levando pro seu app agora 💙");
+        const { data: sessao, error: otpErr } = await supabase.auth.verifyOtp({
+          type: "magiclink",
+          token_hash: result.autoLoginToken,
+        });
+        if (!otpErr && sessao?.session) {
+          setStage({ kind: "done" });
+          navigate({ to: "/definir-senha" });
+          return;
+        }
+      }
+
       if (result.whatsappEnviado) {
         await gabiSay("Prontinho! Já mandei no seu WhatsApp. Dá uma olhadinha 📲");
       } else {
