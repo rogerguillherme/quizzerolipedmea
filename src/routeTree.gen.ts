@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpsellRouteImport } from './routes/upsell'
+import { Route as QuizzRouteImport } from './routes/quizz'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OfertaRouteImport } from './routes/oferta'
 import { Route as MapaRouteImport } from './routes/mapa'
@@ -50,6 +51,11 @@ import { Route as ApiPublicHooksCronTickRouteImport } from './routes/api/public/
 const UpsellRoute = UpsellRouteImport.update({
   id: '/upsell',
   path: '/upsell',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizzRoute = QuizzRouteImport.update({
+  id: '/quizz',
+  path: '/quizz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -245,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/quizz': typeof QuizzRoute
   '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
@@ -282,6 +289,7 @@ export interface FileRoutesByTo {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/quizz': typeof QuizzRoute
   '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/quizz': typeof QuizzRoute
   '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/crm': typeof AdminCrmRoute
@@ -363,6 +372,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/quizz'
     | '/upsell'
     | '/admin/configuracoes'
     | '/admin/crm'
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/quizz'
     | '/upsell'
     | '/admin/configuracoes'
     | '/admin/crm'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/quizz'
     | '/upsell'
     | '/admin/configuracoes'
     | '/admin/crm'
@@ -479,6 +491,7 @@ export interface RootRouteChildren {
   MapaRoute: typeof MapaRoute
   OfertaRoute: typeof OfertaRoute
   OnboardingRoute: typeof OnboardingRoute
+  QuizzRoute: typeof QuizzRoute
   UpsellRoute: typeof UpsellRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
@@ -497,6 +510,13 @@ declare module '@tanstack/react-router' {
       path: '/upsell'
       fullPath: '/upsell'
       preLoaderRoute: typeof UpsellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quizz': {
+      id: '/quizz'
+      path: '/quizz'
+      fullPath: '/quizz'
+      preLoaderRoute: typeof QuizzRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -818,6 +838,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapaRoute: MapaRoute,
   OfertaRoute: OfertaRoute,
   OnboardingRoute: OnboardingRoute,
+  QuizzRoute: QuizzRoute,
   UpsellRoute: UpsellRoute,
   AdminLoginRoute: AdminLoginRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
