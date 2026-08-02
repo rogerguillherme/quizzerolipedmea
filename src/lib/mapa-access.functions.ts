@@ -165,6 +165,19 @@ Qualquer coisa, me chama aqui mesmo. ✨
 
 ✨ *Teste grátis:* me manda até *3 fotos de refeições* suas nos próximos dias que eu te dou um feedback rápido de cada uma, sem compromisso.`;
 
+    // Segundo token, exclusivo para entrar direto no navegador ao terminar o quiz.
+    // Precisa ser um token diferente do enviado no WhatsApp: magic link é de uso único.
+    let autoLoginToken: string | null = null;
+    try {
+      const { data: autoLink } = await supabaseAdmin.auth.admin.generateLink({
+        type: "magiclink",
+        email,
+      });
+      autoLoginToken = autoLink?.properties?.hashed_token ?? null;
+    } catch {
+      autoLoginToken = null;
+    }
+
     const wa = await sendWhatsApp(lead.telefone, mensagem);
 
     await supabaseAdmin.from("whatsapp_logs").insert({
