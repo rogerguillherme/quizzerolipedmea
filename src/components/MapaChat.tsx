@@ -7,6 +7,7 @@ import { criarAcessoMapa } from "@/lib/mapa-access.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
 import { trackMeta } from "@/lib/meta-track";
+import { fbqTrack } from "@/lib/meta-pixel";
 import { formatPhoneBR, normalizePhoneBR } from "@/lib/phone";
 import draGabrielaAsset from "@/assets/dra-gabriela.png.asset.json";
 import estagio1Img from "@/assets/estagio-1.jpg";
