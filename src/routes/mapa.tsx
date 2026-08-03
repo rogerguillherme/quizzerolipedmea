@@ -13,6 +13,7 @@ import {
 import { submitMapa, type Diagnostico } from "../lib/mapa.functions";
 import { criarAcessoMapa } from "../lib/mapa-access.functions";
 import { track } from "../lib/analytics";
+import { fbqTrack } from "@/lib/meta-pixel";
 import estagiosAsset from "@/assets/estagios-lipedema.png.asset.json";
 
 // Paleta editorial (bege/creme + azul profundo + dourado)
