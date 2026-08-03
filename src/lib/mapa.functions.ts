@@ -105,5 +105,27 @@ Devolva o JSON conforme instruções.`;
 
     if (insertErr) console.error("[submitMapa] insert error", insertErr);
 
-    return { diagnostico, leadId: inserted?.id ?? null };
+    // Evento "Lead" (Conversions API). O mesmo eventId volta pro navegador para
+    // que o Pixel dispare com eventID idêntico e a Meta deduplique os dois lados.
+    let metaEventId: string | null = null;
+    if (inserted?.id) {
+      metaEventId = `lead-mapa-${inserted.id}`;
+      const [firstName, ...rest] = data.nome.trim().split(/\s+/);
+      try {
+        const { capiFromClient } = await import("@/lib/meta-capi.server");
+        await capiFromClient({
+          eventName: "Lead",
+          eventId: metaEventId,
+          phone: data.telefone || undefined,
+          firstName: firstName || undefined,
+          lastName: rest.join(" ") || undefined,
+          externalId: inserted.id,
+          customData: { content_name: "Mapa do Lipedema" },
+        });
+      } catch (e) {
+        console.error("[submitMapa] falha ao enviar Lead ao CAPI", e);
+      }
+    }
+
+    return { diagnostico, leadId: inserted?.id ?? null, metaEventId };
   });

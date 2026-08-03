@@ -7,6 +7,7 @@ import { criarAcessoMapa } from "@/lib/mapa-access.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
 import { trackMeta } from "@/lib/meta-track";
+import { fbqTrack } from "@/lib/meta-pixel";
 import { formatPhoneBR, normalizePhoneBR } from "@/lib/phone";
 import draGabrielaAsset from "@/assets/dra-gabriela.png.asset.json";
 import estagio1Img from "@/assets/estagio-1.jpg";
@@ -355,6 +356,13 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       setLeadId(result.leadId ?? null);
       track("quiz_completed");
       trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
+      // Pixel do navegador com o MESMO eventID enviado pelo servidor (dedupe Meta).
+      if (result.metaEventId) {
+        fbqTrack("Lead", {
+          content_name: "Mapa do Lipedema",
+          eventID: result.metaEventId,
+        });
+      }
       setTyping(false);
       pushMsg({
         id: crypto.randomUUID(),

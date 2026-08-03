@@ -13,6 +13,7 @@ import {
 import { submitMapa, type Diagnostico } from "../lib/mapa.functions";
 import { criarAcessoMapa } from "../lib/mapa-access.functions";
 import { track } from "../lib/analytics";
+import { fbqTrack } from "@/lib/meta-pixel";
 import estagiosAsset from "@/assets/estagios-lipedema.png.asset.json";
 
 // Paleta editorial (bege/creme + azul profundo + dourado)
@@ -254,6 +255,13 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
       setDiagnostico(result.diagnostico);
       setLeadId(result.leadId ?? null);
       track("quiz_completed");
+      // Pixel do navegador com o MESMO eventID enviado pelo servidor (dedupe Meta).
+      if (result.metaEventId) {
+        fbqTrack("Lead", {
+          content_name: "Mapa do Lipedema",
+          eventID: result.metaEventId,
+        });
+      }
       setStep("resultado");
     } catch (e) {
       console.error(e);
