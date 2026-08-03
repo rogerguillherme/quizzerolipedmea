@@ -355,6 +355,13 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       setLeadId(result.leadId ?? null);
       track("quiz_completed");
       trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
+      // Pixel do navegador com o MESMO eventID enviado pelo servidor (dedupe Meta).
+      if (result.metaEventId) {
+        fbqTrack("Lead", {
+          content_name: "Mapa do Lipedema",
+          eventID: result.metaEventId,
+        });
+      }
       setTyping(false);
       pushMsg({
         id: crypto.randomUUID(),
