@@ -339,8 +339,9 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       const result = await submit({
         data: {
           nome,
-          // Telefone chega DEPOIS do report; envia vazio aqui.
-          telefone: "",
+          // Telefone já foi coletado e validado ANTES do quiz.
+          telefone,
+
           respostas: {
             tempo: finalAnswers.tempo || "",
             diagnostico: finalAnswers.diagnostico || "",
