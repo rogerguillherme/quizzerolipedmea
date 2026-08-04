@@ -246,8 +246,22 @@ function ExamesAdminPage() {
                     <ExternalLink className="size-3.5" /> Abrir arquivo
                   </button>
                   <button
-                    onClick={() => reMut.mutate(selected.id)}
+                    onClick={() => {
+                      // A reanálise substitui o texto: confirma antes de
+                      // descartar edições ainda não salvas.
+                      const editado = texto !== (selected.revisao_texto ?? "");
+                      if (
+                        editado &&
+                        !window.confirm(
+                          "Você editou o texto e ainda não salvou. A reanálise da IA vai substituir o que você escreveu. Continuar?",
+                        )
+                      ) {
+                        return;
+                      }
+                      reMut.mutate(selected.id);
+                    }}
                     disabled={reMut.isPending}
+
                     className="inline-flex items-center gap-1.5 rounded-full border border-[#E5DBC3] px-3 py-1.5 text-xs font-semibold text-[#0B2A4A] hover:bg-[#F5ECD4] disabled:opacity-60"
                   >
                     {reMut.isPending ? (
