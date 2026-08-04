@@ -186,9 +186,7 @@ export async function fetchMetaInsights(since: string, until: string) {
 
   const rows: MetaAdRow[] = (json.data ?? []).map((r) => {
     const actions = (r["actions"] as Array<{ action_type: string; value: string }>) ?? [];
-    const leads = actions
-      .filter((a) => LEAD_ACTION_TYPES.has(a.action_type))
-      .reduce((acc, a) => acc + num(a.value), 0);
+    const leads = countLeads(actions);
     return {
       adId: String(r["ad_id"] ?? ""),
       adName: String(r["ad_name"] ?? "(sem nome)"),
