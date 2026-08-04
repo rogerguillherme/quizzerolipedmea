@@ -124,18 +124,37 @@ const LEAD_ACTION_TYPES = new Set([
   "onsite_conversion.lead_grouped",
 ]);
 
-/** Busca insights por anúncio no período informado (YYYY-MM-DD). */
+/**
+ * Campanha de lipedema (a conta tem campanhas de outros produtos misturadas).
+ * Pode ser sobrescrita por env sem novo deploy de código.
+ */
+const LIPEDEMA_CAMPAIGN_ID = "52547312091169";
+
+function campaignId(): string {
+  return process.env["META_LIPEDEMA_CAMPAIGN_ID"] || LIPEDEMA_CAMPAIGN_ID;
+}
+
+/**
+ * Busca insights por anúncio no período informado (YYYY-MM-DD),
+ * restrito à campanha de lipedema e somente a anúncios ativos.
+ */
 export async function fetchMetaInsights(since: string, until: string) {
   const { token, expiresAt, renewed } = await getValidMetaToken();
-  const accountId = requireEnv("META_AD_ACCOUNT_ID");
 
-  const url = new URL(`${GRAPH}/${accountId}/insights`);
+  const url = new URL(`${GRAPH}/${campaignId()}/insights`);
   url.searchParams.set(
     "fields",
     "campaign_name,adset_name,ad_name,ad_id,spend,impressions,clicks,cpm,cpc,ctr,actions",
   );
   url.searchParams.set("level", "ad");
   url.searchParams.set("time_range", JSON.stringify({ since, until }));
+  // Exclui anúncios pausados/arquivados do agregado.
+  url.searchParams.set(
+    "filtering",
+    JSON.stringify([
+      { field: "ad.effective_status", operator: "IN", value: ["ACTIVE"] },
+    ]),
+  );
   url.searchParams.set("limit", "200");
   url.searchParams.set("access_token", token);
 
