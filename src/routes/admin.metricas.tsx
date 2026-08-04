@@ -1,10 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { BarChart3, Loader2, RefreshCw, AlertTriangle } from "lucide-react";
 import { getMetricasUnificadas } from "@/lib/meta-ads.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/metricas")({
+  // A sessão do admin vive no localStorage; sem SSR não há bearer token
+  // para anexar à server function protegida.
+  ssr: false,
   component: MetricasPage,
 });
 
@@ -20,6 +24,7 @@ function fmtDate(d: Date) {
 
 function MetricasPage() {
   const carregar = useServerFn(getMetricasUnificadas);
+  const navigate = useNavigate();
   const [since, setSince] = useState(fmtDate(new Date(Date.now() - 6 * 86_400_000)));
   const [until, setUntil] = useState(fmtDate(new Date()));
   const [dados, setDados] = useState<Dados | null>(null);
@@ -30,19 +35,32 @@ function MetricasPage() {
     setLoading(true);
     setErro(null);
     try {
+      // Sem sessão válida a server function responde 401 e a tela quebra:
+      // confirma o login antes de chamar e manda pro /admin/login se preciso.
+      const { data: sessao } = await supabase.auth.getSession();
+      if (!sessao.session) {
+        navigate({ to: "/admin/login" });
+        return;
+      }
       const r = await carregar({ data: { since, until } });
       setDados(r);
     } catch (e) {
-      setErro(e instanceof Error ? e.message : "Não consegui carregar as métricas.");
+      const msg = e instanceof Error ? e.message : "";
+      if (/unauthorized|authorization header/i.test(msg)) {
+        navigate({ to: "/admin/login" });
+        return;
+      }
+      setErro(msg || "Não consegui carregar as métricas.");
     } finally {
       setLoading(false);
     }
-  }, [carregar, since, until]);
+  }, [carregar, navigate, since, until]);
 
   useEffect(() => {
     void buscar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const meta = dados?.meta ?? null;
 
