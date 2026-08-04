@@ -280,10 +280,9 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushUser(val);
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
     await gabiSay(
-      "Vou te fazer perguntinhas rápidas no fim monto seu Mapa aqui na conversa. Combinado?",
+      "Antes de começar, me passa seu WhatsApp com DDD (11) 9 8888-7777? É por lá que eu te mando o seu Mapa completo depois.",
     );
-    await gabiSay(QS[0].gabi(primeiroNome));
-    setStage({ kind: "asking-choice", qIndex: 0 });
+    setStage({ kind: "asking-telefone" });
   }
 
   async function handleSendTelefone() {
@@ -298,12 +297,18 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     setTelefone(normalizado);
     setInputText("");
     pushUser(formatado);
+    setStage({ kind: "submitting" });
     const info = regiaoPorDDD(val);
     if (info) {
       await gabiSay(`Ah, ${info.comentario}`, 700);
     }
-    await enviarAcesso(normalizado);
+    await gabiSay(
+      "Agora sim vou te fazer perguntinhas rápidas e no fim monto seu Mapa aqui na conversa. Combinado?",
+    );
+    await gabiSay(QS[0].gabi(nome || "você"));
+    setStage({ kind: "asking-choice", qIndex: 0 });
   }
+
 
   async function handleChoice(qIndex: number, opt: ChoiceOpt) {
     const q = QS[qIndex];
