@@ -379,8 +379,9 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       });
       await gabiSay("Esse é o resumo do que li nas suas respostas. 💙", 900);
       await gabiSay(
-        "Vou te mandar o seu Mapa completo no WhatsApp, me passa seu número com DDD?",
+        "Posso te mandar o Mapa completo no seu WhatsApp e já liberar seu acesso ao app?",
       );
+
       setStage({ kind: "showing-report" });
     } catch (e) {
       console.error(e);
