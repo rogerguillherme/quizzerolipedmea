@@ -60,7 +60,7 @@ function CRMPage() {
   const fetchTags = useServerFn(listTags);
   const newTag = useServerFn(createTag);
   const setTags = useServerFn(setConversationTags);
-  const seed = useServerFn(seedDemoConversation);
+  
 
   const [convs, setConvs] = useState<Conv[]>([]);
   const [tags, setTagsList] = useState<Tag[]>([]);
