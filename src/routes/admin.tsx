@@ -37,6 +37,7 @@ const NAV: Array<{
   section: "geral" | "apps" | "config";
 }> = [
   { to: "/admin", label: "Visão geral", icon: LayoutDashboard, section: "geral" },
+  { to: "/admin/metricas", label: "Métricas & Anúncios", icon: BarChart3, section: "geral" },
   { to: "/admin/crm", label: "CRM & Chat", icon: MessageSquare, section: "geral" },
   { to: "/admin/funis", label: "Funis de mensagem", icon: GitBranch, section: "geral" },
   { to: "/admin/mapa", label: "Mapa do Lipedema", icon: MapPinned, section: "apps" },
