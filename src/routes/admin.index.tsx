@@ -11,11 +11,8 @@ import {
   AlertTriangle,
   Eye,
 } from "lucide-react";
-import {
-  getEvents,
-  getLeads,
-  seedAdminDemoIfEmpty,
-} from "@/lib/analytics";
+import { getDashboardKpis } from "@/lib/admin-leads.functions";
+
 import { listarLeadsAtencao } from "@/lib/mapa-access.functions";
 import { getTrafegoMetrics } from "@/lib/trafego.functions";
 
