@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "integrations_config service only" ON public.integrations_config;
