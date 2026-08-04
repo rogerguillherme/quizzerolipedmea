@@ -302,9 +302,15 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     if (info) {
       await gabiSay(`Ah, ${info.comentario}`, 700);
     }
+    // Se o Mapa já foi gerado, esse telefone é só a reconfirmação para criar o acesso.
+    if (leadId) {
+      await enviarAcesso(normalizado);
+      return;
+    }
     await gabiSay(
       "Agora sim vou te fazer perguntinhas rápidas e no fim monto seu Mapa aqui na conversa. Combinado?",
     );
+
     await gabiSay(QS[0].gabi(nome || "você"));
     setStage({ kind: "asking-choice", qIndex: 0 });
   }
