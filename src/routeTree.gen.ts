@@ -35,6 +35,7 @@ import { Route as AppAvaliacaoRouteImport } from './routes/app.avaliacao'
 import { Route as AppAnamneseRouteImport } from './routes/app.anamnese'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as AdminProtocoloRouteImport } from './routes/admin.protocolo'
+import { Route as AdminMetricasRouteImport } from './routes/admin.metricas'
 import { Route as AdminMapaRouteImport } from './routes/admin.mapa'
 import { Route as AdminFunisRouteImport } from './routes/admin.funis'
 import { Route as AdminExamesRouteImport } from './routes/admin.exames'
@@ -178,6 +179,11 @@ const AdminProtocoloRoute = AdminProtocoloRouteImport.update({
   path: '/protocolo',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMetricasRoute = AdminMetricasRouteImport.update({
+  id: '/metricas',
+  path: '/metricas',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMapaRoute = AdminMapaRouteImport.update({
   id: '/mapa',
   path: '/mapa',
@@ -259,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/admin/exames': typeof AdminExamesRoute
   '/admin/funis': typeof AdminFunisRoute
   '/admin/mapa': typeof AdminMapaRoute
+  '/admin/metricas': typeof AdminMetricasRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin/login': typeof AdminLoginRoute
   '/app/anamnese': typeof AppAnamneseRoute
@@ -297,6 +304,7 @@ export interface FileRoutesByTo {
   '/admin/exames': typeof AdminExamesRoute
   '/admin/funis': typeof AdminFunisRoute
   '/admin/mapa': typeof AdminMapaRoute
+  '/admin/metricas': typeof AdminMetricasRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin/login': typeof AdminLoginRoute
   '/app/anamnese': typeof AppAnamneseRoute
@@ -338,6 +346,7 @@ export interface FileRoutesById {
   '/admin/exames': typeof AdminExamesRoute
   '/admin/funis': typeof AdminFunisRoute
   '/admin/mapa': typeof AdminMapaRoute
+  '/admin/metricas': typeof AdminMetricasRoute
   '/admin/protocolo': typeof AdminProtocoloRoute
   '/admin_/login': typeof AdminLoginRoute
   '/app/anamnese': typeof AppAnamneseRoute
@@ -380,6 +389,7 @@ export interface FileRouteTypes {
     | '/admin/exames'
     | '/admin/funis'
     | '/admin/mapa'
+    | '/admin/metricas'
     | '/admin/protocolo'
     | '/admin/login'
     | '/app/anamnese'
@@ -418,6 +428,7 @@ export interface FileRouteTypes {
     | '/admin/exames'
     | '/admin/funis'
     | '/admin/mapa'
+    | '/admin/metricas'
     | '/admin/protocolo'
     | '/admin/login'
     | '/app/anamnese'
@@ -458,6 +469,7 @@ export interface FileRouteTypes {
     | '/admin/exames'
     | '/admin/funis'
     | '/admin/mapa'
+    | '/admin/metricas'
     | '/admin/protocolo'
     | '/admin_/login'
     | '/app/anamnese'
@@ -687,6 +699,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtocoloRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/metricas': {
+      id: '/admin/metricas'
+      path: '/metricas'
+      fullPath: '/admin/metricas'
+      preLoaderRoute: typeof AdminMetricasRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/mapa': {
       id: '/admin/mapa'
       path: '/mapa'
@@ -781,6 +800,7 @@ interface AdminRouteChildren {
   AdminExamesRoute: typeof AdminExamesRoute
   AdminFunisRoute: typeof AdminFunisRoute
   AdminMapaRoute: typeof AdminMapaRoute
+  AdminMetricasRoute: typeof AdminMetricasRoute
   AdminProtocoloRoute: typeof AdminProtocoloRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -792,6 +812,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminExamesRoute: AdminExamesRoute,
   AdminFunisRoute: AdminFunisRoute,
   AdminMapaRoute: AdminMapaRoute,
+  AdminMetricasRoute: AdminMetricasRoute,
   AdminProtocoloRoute: AdminProtocoloRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
