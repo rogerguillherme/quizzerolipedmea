@@ -71,9 +71,17 @@ function ExamesAdminPage() {
 
   const selected = rows.find((r) => r.id === selId) ?? null;
 
-  // Quando muda a seleção, hidrata o textarea
-  useMemo(() => {
-    if (selected) setTexto(selected.revisao_texto ?? "");
+  // Hidrata o textarea SOMENTE ao trocar de exame. Os refetches de 15s e as
+  // invalidações das mutations não podem apagar o que a Gabriela já digitou.
+  const hidratadoRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!selected) {
+      hidratadoRef.current = null;
+      return;
+    }
+    if (hidratadoRef.current === selected.id) return;
+    hidratadoRef.current = selected.id;
+    setTexto(selected.revisao_texto ?? "");
   }, [selected]);
 
   const abrirArquivo = async () => {
@@ -84,8 +92,14 @@ function ExamesAdminPage() {
 
   const reMut = useMutation({
     mutationFn: (id: string) => reanalisar({ data: { id } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "exames"] }),
+    onSuccess: async () => {
+      // A reanálise reescreve o texto no servidor: liberamos a hidratação
+      // para que o novo texto da IA apareça no textarea.
+      hidratadoRef.current = null;
+      await qc.invalidateQueries({ queryKey: ["admin", "exames"] });
+    },
   });
+
   const saveMut = useMutation({
     mutationFn: (opts: { id: string; status: "aprovado" | "editado" | "recusado" }) =>
       salvar({ data: { id: opts.id, texto, status: opts.status } }),
