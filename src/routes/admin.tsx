@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
+  BarChart3,
   MessageSquare,
   GitBranch,
   MapPinned,
