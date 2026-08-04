@@ -1,0 +1,2 @@
+DELETE FROM public.crm_messages WHERE conversation_id IN (SELECT id FROM public.crm_conversations WHERE telefone = '5511999999999' AND nome = 'Maria (demo)');
+DELETE FROM public.crm_conversations WHERE telefone = '5511999999999' AND nome = 'Maria (demo)';

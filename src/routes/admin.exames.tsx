@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -71,9 +71,17 @@ function ExamesAdminPage() {
 
   const selected = rows.find((r) => r.id === selId) ?? null;
 
-  // Quando muda a seleção, hidrata o textarea
-  useMemo(() => {
-    if (selected) setTexto(selected.revisao_texto ?? "");
+  // Hidrata o textarea SOMENTE ao trocar de exame. Os refetches de 15s e as
+  // invalidações das mutations não podem apagar o que a Gabriela já digitou.
+  const hidratadoRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!selected) {
+      hidratadoRef.current = null;
+      return;
+    }
+    if (hidratadoRef.current === selected.id) return;
+    hidratadoRef.current = selected.id;
+    setTexto(selected.revisao_texto ?? "");
   }, [selected]);
 
   const abrirArquivo = async () => {
@@ -84,8 +92,14 @@ function ExamesAdminPage() {
 
   const reMut = useMutation({
     mutationFn: (id: string) => reanalisar({ data: { id } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "exames"] }),
+    onSuccess: async () => {
+      // A reanálise reescreve o texto no servidor: liberamos a hidratação
+      // para que o novo texto da IA apareça no textarea.
+      hidratadoRef.current = null;
+      await qc.invalidateQueries({ queryKey: ["admin", "exames"] });
+    },
   });
+
   const saveMut = useMutation({
     mutationFn: (opts: { id: string; status: "aprovado" | "editado" | "recusado" }) =>
       salvar({ data: { id: opts.id, texto, status: opts.status } }),
@@ -232,8 +246,22 @@ function ExamesAdminPage() {
                     <ExternalLink className="size-3.5" /> Abrir arquivo
                   </button>
                   <button
-                    onClick={() => reMut.mutate(selected.id)}
+                    onClick={() => {
+                      // A reanálise substitui o texto: confirma antes de
+                      // descartar edições ainda não salvas.
+                      const editado = texto !== (selected.revisao_texto ?? "");
+                      if (
+                        editado &&
+                        !window.confirm(
+                          "Você editou o texto e ainda não salvou. A reanálise da IA vai substituir o que você escreveu. Continuar?",
+                        )
+                      ) {
+                        return;
+                      }
+                      reMut.mutate(selected.id);
+                    }}
                     disabled={reMut.isPending}
+
                     className="inline-flex items-center gap-1.5 rounded-full border border-[#E5DBC3] px-3 py-1.5 text-xs font-semibold text-[#0B2A4A] hover:bg-[#F5ECD4] disabled:opacity-60"
                   >
                     {reMut.isPending ? (

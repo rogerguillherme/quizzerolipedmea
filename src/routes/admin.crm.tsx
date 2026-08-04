@@ -20,8 +20,8 @@ import {
   listTags,
   createTag,
   setConversationTags,
-  seedDemoConversation,
 } from "@/lib/crm.functions";
+
 
 export const Route = createFileRoute("/admin/crm")({
   component: CRMPage,
@@ -60,7 +60,7 @@ function CRMPage() {
   const fetchTags = useServerFn(listTags);
   const newTag = useServerFn(createTag);
   const setTags = useServerFn(setConversationTags);
-  const seed = useServerFn(seedDemoConversation);
+  
 
   const [convs, setConvs] = useState<Conv[]>([]);
   const [tags, setTagsList] = useState<Tag[]>([]);
@@ -83,17 +83,12 @@ function CRMPage() {
     (async () => {
       const c = await refreshList();
       setTagsList((await fetchTags()) as Tag[]);
-      if (c.length === 0) {
-        const r = await seed();
-        if (r?.id) {
-          const c2 = await refreshList();
-          setSelected(c2[0]?.id ?? null);
-        }
-      } else {
-        setSelected(c[0]?.id ?? null);
-      }
+      // Sem conversas ainda? A lista fica vazia mesmo. Nada de criar
+      // conversa fictícia no banco real.
+      setSelected(c[0]?.id ?? null);
       setLoading(false);
     })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   MessageSquare,
@@ -11,11 +11,8 @@ import {
   AlertTriangle,
   Eye,
 } from "lucide-react";
-import {
-  getEvents,
-  getLeads,
-  seedAdminDemoIfEmpty,
-} from "@/lib/analytics";
+import { getDashboardKpis } from "@/lib/admin-leads.functions";
+
 import { listarLeadsAtencao } from "@/lib/mapa-access.functions";
 import { getTrafegoMetrics } from "@/lib/trafego.functions";
 
@@ -38,25 +35,29 @@ const MOTIVO_LABEL: Record<string, string> = {
 };
 
 function DashboardPage() {
-  const [ready, setReady] = useState(false);
   const [atencao, setAtencao] = useState<LeadAtencao[]>([]);
   const [trafego, setTrafego] = useState<Awaited<ReturnType<typeof getTrafegoMetrics>> | null>(null);
+  const [kpiData, setKpiData] = useState<Awaited<ReturnType<typeof getDashboardKpis>> | null>(null);
   const carregarAtencao = useServerFn(listarLeadsAtencao);
   const carregarTrafego = useServerFn(getTrafegoMetrics);
+  const carregarKpis = useServerFn(getDashboardKpis);
 
   useEffect(() => {
-    seedAdminDemoIfEmpty();
-    setReady(true);
     let cancelled = false;
     (async () => {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data } = await supabase.auth.getSession();
       if (cancelled || !data.session) return;
       try {
-        const [rows, tr] = await Promise.all([carregarAtencao(), carregarTrafego()]);
+        const [rows, tr, kp] = await Promise.all([
+          carregarAtencao(),
+          carregarTrafego(),
+          carregarKpis(),
+        ]);
         if (!cancelled) {
           setAtencao(rows as LeadAtencao[]);
           setTrafego(tr);
+          setKpiData(kp);
         }
       } catch {
         /* silencioso */
@@ -65,27 +66,22 @@ function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [carregarAtencao, carregarTrafego]);
+  }, [carregarAtencao, carregarTrafego, carregarKpis]);
 
-
-  const events = useMemo(() => (ready ? getEvents() : []), [ready]);
-  const leads = useMemo(() => (ready ? getLeads() : []), [ready]);
-
-  const counts: Record<string, number> = {};
-  for (const e of events) counts[e.name] = (counts[e.name] || 0) + 1;
-
+  // KPIs vêm do banco real; enquanto carregam mostramos "—" em vez de números falsos.
   const kpis = [
-    { label: "Leads no sistema", value: String(leads.length) },
-    { label: "Mapas completos", value: String(counts.quiz_completed || 0) },
-    { label: "Compras", value: String(counts.purchase_completed || 0) },
+    { label: "Leads no sistema", value: kpiData ? String(kpiData.leads) : "—" },
+    { label: "Mapas completos", value: kpiData ? String(kpiData.mapasCompletos) : "—" },
+    { label: "Compras", value: kpiData ? String(kpiData.compras) : "—" },
     {
       label: "Conversão",
       value:
-        counts.landing_view && counts.purchase_completed
-          ? `${Math.round((counts.purchase_completed / counts.landing_view) * 100)}%`
+        kpiData && kpiData.conversao !== null
+          ? `${Math.round(kpiData.conversao * 100)}%`
           : "—",
     },
   ];
+
 
   const cards: Array<{
     to: string;
