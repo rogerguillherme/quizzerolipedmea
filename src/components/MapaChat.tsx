@@ -280,10 +280,9 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     pushUser(val);
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
     await gabiSay(
-      "Vou te fazer perguntinhas rápidas no fim monto seu Mapa aqui na conversa. Combinado?",
+      "Antes de começar, me passa seu WhatsApp com DDD (11) 9 8888-7777? É por lá que eu te mando o seu Mapa completo depois.",
     );
-    await gabiSay(QS[0].gabi(primeiroNome));
-    setStage({ kind: "asking-choice", qIndex: 0 });
+    setStage({ kind: "asking-telefone" });
   }
 
   async function handleSendTelefone() {
@@ -298,12 +297,24 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     setTelefone(normalizado);
     setInputText("");
     pushUser(formatado);
+    setStage({ kind: "submitting" });
     const info = regiaoPorDDD(val);
     if (info) {
       await gabiSay(`Ah, ${info.comentario}`, 700);
     }
-    await enviarAcesso(normalizado);
+    // Se o Mapa já foi gerado, esse telefone é só a reconfirmação para criar o acesso.
+    if (leadId) {
+      await enviarAcesso(normalizado);
+      return;
+    }
+    await gabiSay(
+      "Agora sim vou te fazer perguntinhas rápidas e no fim monto seu Mapa aqui na conversa. Combinado?",
+    );
+
+    await gabiSay(QS[0].gabi(nome || "você"));
+    setStage({ kind: "asking-choice", qIndex: 0 });
   }
+
 
   async function handleChoice(qIndex: number, opt: ChoiceOpt) {
     const q = QS[qIndex];
@@ -334,8 +345,9 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       const result = await submit({
         data: {
           nome,
-          // Telefone chega DEPOIS do report; envia vazio aqui.
-          telefone: "",
+          // Telefone já foi coletado e validado ANTES do quiz.
+          telefone,
+
           respostas: {
             tempo: finalAnswers.tempo || "",
             diagnostico: finalAnswers.diagnostico || "",
@@ -373,8 +385,9 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       });
       await gabiSay("Esse é o resumo do que li nas suas respostas. 💙", 900);
       await gabiSay(
-        "Vou te mandar o seu Mapa completo no WhatsApp, me passa seu número com DDD?",
+        "Posso te mandar o Mapa completo no seu WhatsApp e já liberar seu acesso ao app?",
       );
+
       setStage({ kind: "showing-report" });
     } catch (e) {
       console.error(e);
@@ -429,17 +442,22 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       console.error(e);
       setTyping(false);
       setErro("Não consegui gerar seu acesso agora. Tenta de novo em alguns segundos?");
-      setStage({ kind: "asking-telefone" });
+      setStage({ kind: "showing-report" });
     }
   }
 
   async function handleReceberAcesso() {
     pushUser("Sim, pode me chamar 💙");
-    setStage({ kind: "asking-telefone" });
-    await gabiSay(
-      "Perfeito! Me passa seu WhatsApp com DDD (11) 9 8888-7777 que já te chamo por lá.",
-    );
+    const tel = telefone || normalizePhoneBR(inputText);
+    if (!tel) {
+      // Caso raríssimo: telefone perdido. Volta a pedir antes de criar o acesso.
+      setStage({ kind: "asking-telefone" });
+      await gabiSay("Só confirma pra mim seu WhatsApp com DDD (11) 9 8888-7777?");
+      return;
+    }
+    await enviarAcesso(tel);
   }
+
 
   // ---- Render ----
   return (
