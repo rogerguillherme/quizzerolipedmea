@@ -436,17 +436,22 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       console.error(e);
       setTyping(false);
       setErro("Não consegui gerar seu acesso agora. Tenta de novo em alguns segundos?");
-      setStage({ kind: "asking-telefone" });
+      setStage({ kind: "showing-report" });
     }
   }
 
   async function handleReceberAcesso() {
     pushUser("Sim, pode me chamar 💙");
-    setStage({ kind: "asking-telefone" });
-    await gabiSay(
-      "Perfeito! Me passa seu WhatsApp com DDD (11) 9 8888-7777 que já te chamo por lá.",
-    );
+    const tel = telefone || normalizePhoneBR(inputText);
+    if (!tel) {
+      // Caso raríssimo: telefone perdido. Volta a pedir antes de criar o acesso.
+      setStage({ kind: "asking-telefone" });
+      await gabiSay("Só confirma pra mim seu WhatsApp com DDD (11) 9 8888-7777?");
+      return;
+    }
+    await enviarAcesso(tel);
   }
+
 
   // ---- Render ----
   return (
