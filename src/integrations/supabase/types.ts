@@ -353,6 +353,36 @@ export type Database = {
           },
         ]
       }
+      integrations_config: {
+        Row: {
+          config_key: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          provider: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          config_key: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          provider: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          config_key?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          provider?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
