@@ -118,11 +118,28 @@ function num(v: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-const LEAD_ACTION_TYPES = new Set([
-  "lead",
-  "offsite_conversion.fb_pixel_lead",
-  "onsite_conversion.lead_grouped",
-]);
+/**
+ * A API do Meta reporta o MESMO lead em categorias diferentes:
+ * `lead` é o agregado e `offsite_conversion.fb_pixel_lead` é a mesma
+ * conversão vista pelo Pixel. Somar as duas duplicava o número no painel.
+ * Por isso pegamos o maior valor entre elas, e somamos à parte apenas os
+ * leads nativos (onsite), que são de fato eventos distintos.
+ */
+const LEAD_ACTION_TYPES = ["lead", "offsite_conversion.fb_pixel_lead"] as const;
+const ONSITE_LEAD_ACTION_TYPES = ["onsite_conversion.lead_grouped"] as const;
+
+function countLeads(actions: Array<{ action_type: string; value: string }>): number {
+  const byType = new Map<string, number>();
+  for (const a of actions) {
+    byType.set(a.action_type, Math.max(byType.get(a.action_type) ?? 0, num(a.value)));
+  }
+  const offsite = Math.max(...LEAD_ACTION_TYPES.map((t) => byType.get(t) ?? 0), 0);
+  const onsite = ONSITE_LEAD_ACTION_TYPES.reduce(
+    (acc, t) => acc + (byType.get(t) ?? 0),
+    0,
+  );
+  return offsite + onsite;
+}
 
 /**
  * Campanha de lipedema (a conta tem campanhas de outros produtos misturadas).
