@@ -909,24 +909,28 @@ function Resultado({
         </ol>
       </div>
 
-      <div className="mt-auto pt-4">
+      {/* Oferta na mesma tela: VSL + Plano Premium R$67, sem exigir conta/login. */}
+      <OfertaPremiumInline nome={nome} origem="mapa_resultado" />
+
+      {/* Caminho secundário: quem não quer comprar agora entra na régua de nutrição. */}
+      <div className="pt-6">
         <button
           onClick={handle}
           disabled={enviando}
-          className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-semibold transition-transform active:scale-[0.98] disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-full border px-5 py-3 text-[13px] font-medium transition-transform active:scale-[0.98] disabled:opacity-60"
           style={{
-            background: `linear-gradient(180deg, ${palette.goldSoft}, ${palette.gold})`,
-            color: "#FFFFFF",
-            boxShadow: `0 10px 30px -12px ${palette.gold}88, inset 0 1px 0 #FFFFFF66`,
+            borderColor: palette.creamDark,
+            background: "#FFFBF2",
+            color: palette.inkSoft,
           }}
         >
           {enviando ? (
             <>
-              <Loader2 className="size-5 animate-spin" /> Criando seu acesso e enviando no WhatsApp…
+              <Loader2 className="size-4 animate-spin" /> Enviando no seu WhatsApp…
             </>
           ) : (
             <>
-              <MessageCircle className="size-5" /> Receber acesso no WhatsApp
+              <MessageCircle className="size-4" /> Prefiro receber meu mapa no WhatsApp primeiro
             </>
           )}
         </button>
@@ -941,7 +945,7 @@ function Resultado({
           className="mt-2 text-center text-[10px] leading-tight"
           style={{ color: palette.inkSoft }}
         >
-          Ao confirmar, criamos seu acesso e enviamos login e senha no seu WhatsApp em segundos. Leitura educacional — Gabriela Rosado, CRN 10582.
+          Leitura educacional — Gabriela Rosado, CRN 10582.
         </p>
       </div>
     </div>
