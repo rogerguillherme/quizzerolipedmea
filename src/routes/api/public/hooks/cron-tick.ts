@@ -269,7 +269,7 @@ async function processarReengajamento(
     const msg =
       `${nome}, aqui é a Gabriela 💙\n\n` +
       `Voltando pra te fazer um convite direto: hoje eu libero seu acesso ao Plano Premium Zero Lipedema por um valor de inauguração, de R$119 por apenas R$67, sem assinatura obrigatória.\n\n` +
-      `Você entra com cardápio pensado pra reduzir a inflamação (não pra passar fome), chás e suplementos que ajudam a controlar o quadro, e o registro de refeição por foto pra eu te acompanhar de perto.\n\n` +
+      `O centro do plano é a Rotina Zero Lipedema: a gente ajusta uma refeição por semana, começando pelo café da manhã, sem contar caloria e sem passar fome. E você pode fotografar seu prato pra receber a leitura na hora, o que ajuda, o que atrapalha e o que ajustar na próxima refeição.\n\n` +
       `Tem 7 dias de garantia: se não fizer sentido pra você, é só me chamar que devolvo, sem burocracia. E como bônus, libero todos os meus guias e receitas práticas.\n\n` +
       `🔗 Pra ativar: ${CHECKOUT_URL}\n\n` +
       `Qualquer dúvida, me chama por aqui. ✨`;

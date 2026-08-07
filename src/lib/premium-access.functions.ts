@@ -1,33 +1,36 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { PREMIUM_FEATURES } from "@/lib/premium-features";
 
 /**
  * Mensagem de boas-vindas do acesso Premium (30 dias).
  * Enviada automaticamente após compra confirmada (Kiwify) e disponível
  * como ação manual no /admin/mapa ("Liberar Premium").
+ *
+ * A lista de entregáveis é derivada de `PREMIUM_FEATURES` para não duplicar
+ * o conteúdo da oferta. Anamnese, exames e prescrição personalizada NÃO são
+ * deste plano (pertencem ao plano de R$297) e não devem ser prometidos aqui.
  */
 export function buildPremiumWelcomeMessage(nome: string, loginUrl: string) {
   const primeiro = String(nome ?? "").split(" ")[0] || "linda";
+  const itens = PREMIUM_FEATURES.map((f) => `✅ ${f.titulo}`).join("\n");
   return `Oi ${primeiro}! Aqui é a Gabriela 💙
 
 Seu *Plano Premium Zero Lipedema · 30 dias* foi liberado! 🎉
 
 Nos próximos 30 dias você tem:
-✅ Registro de refeições por foto, com feedback ilimitado
-✅ Dicas diárias no WhatsApp, pensadas pro seu estágio
-✅ 3 cardápios de sugestão alimentar (café, almoço, lanche e jantar)
-✅ Guia de chás e shots pra lipedema
-✅ Guia de suplementos anti-lipedema
-✅ Canal pra tirar suas dúvidas a qualquer momento
-✅ Quadro de evolução, acompanhando seu progresso
+${itens}
 
-📋 Agora um passo importante: preencha sua anamnese (leva só alguns minutos) e me envie seus exames recentes, ou peça sua prescrição personalizada, direto no app. É assim que eu monto o seu protocolo sob medida.
+🌱 Seu próximo passo é entrar no app e começar a missão da Semana 1 da Rotina Zero Lipedema: o café da manhã. É uma refeição de cada vez, no seu ritmo.
+
+📸 E sempre que quiser, manda a foto da sua refeição que eu te devolvo o feedback.
 
 🔗 Seu app: ${loginUrl}
 
 Qualquer coisa, me chama por aqui ✨`;
 }
+
 
 async function enviarPremiumParaLead(leadId: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
