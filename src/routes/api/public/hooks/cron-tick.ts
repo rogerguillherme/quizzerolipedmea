@@ -252,15 +252,16 @@ async function processarReengajamento(
     }
   }
 
-  // 2) Acesso criado há 48h+ e ainda não iniciou o Protocolo.
+  // 2) 48h+ após o Mapa/acesso: pitch do Plano Premium (R$67), direto pro checkout.
   const { data: pos48 } = await supabaseAdmin
     .from("leads")
-    .select("id, nome, telefone, respostas, updated_at")
-    .eq("status", "acesso_criado")
-    .lt("updated_at", new Date(Date.now() - 48 * MS_HORA).toISOString())
-    .limit(200);
+    .select("id, nome, telefone, respostas, status, created_at, updated_at")
+    .in("status", ["mapa_gerado", "acesso_criado"])
+    .neq("telefone", "pendente")
+    .limit(500);
 
   for (const lead of pos48 ?? []) {
+    if (refTempo(lead) > Date.now() - 48 * MS_HORA) continue;
     const respostas = (lead.respostas ?? {}) as LeadResp;
     const reengaje = respostas.reengaje ?? {};
     if (reengaje.pos48h_at) continue;
@@ -270,7 +271,7 @@ async function processarReengajamento(
       `Voltando pra te fazer um convite direto: hoje eu libero seu acesso ao Plano Premium Zero Lipedema por um valor de inauguração, de R$119 por apenas R$67, sem assinatura obrigatória.\n\n` +
       `Você entra com cardápio pensado pra reduzir a inflamação (não pra passar fome), chás e suplementos que ajudam a controlar o quadro, e o registro de refeição por foto pra eu te acompanhar de perto.\n\n` +
       `Tem 7 dias de garantia: se não fizer sentido pra você, é só me chamar que devolvo, sem burocracia. E como bônus, libero todos os meus guias e receitas práticas.\n\n` +
-      `🔗 Pra ativar: ${baseUrl}/app/derma\n\n` +
+      `🔗 Pra ativar: ${CHECKOUT_URL}\n\n` +
       `Qualquer dúvida, me chama por aqui. ✨`;
     const wa = await sendWhatsApp(lead.telefone, msg);
     await supabaseAdmin.from("whatsapp_logs").insert({
