@@ -83,7 +83,7 @@ export function OfertaPremiumInline({
   useEffect(() => {
     if (jaDisparou.current) return;
     jaDisparou.current = true;
-    track("upsell_viewed", { origem });
+    track("checkout_view", { origem, plano: "premium_67" });
     trackMeta("ViewContent", {
       content_name: "Plano Premium Zero Lipedema 30d",
       content_type: "product",
@@ -96,7 +96,7 @@ export function OfertaPremiumInline({
   const primeiroNome = (nome || "").trim().split(/\s+/)[0];
 
   function handleCheckout() {
-    track("checkout_started", { origem, valor: 67 });
+    track("premium_upgrade_clicked", { origem, valor: 67 });
     trackMeta("InitiateCheckout", {
       content_name: "Plano Premium Zero Lipedema 30d",
       content_type: "product",
