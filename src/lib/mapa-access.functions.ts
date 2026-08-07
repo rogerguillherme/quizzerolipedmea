@@ -9,18 +9,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  * - testarEvolution / salvarEvolutionConfig: administração da Evolution API.
  */
 
-
-function emailFrom(telefone: string) {
-  const digits = telefone.replace(/\D/g, "");
-  return `wa${digits}@zerolipedema.app`;
-}
-
-// Senha interna, usada só pra criar a conta no Auth. A lead nunca vê esse valor:
-// ela entra pelo link direto (magic link) e escolhe a própria senha em /definir-senha.
-function gerarSenha(): string {
-  return `zl-${crypto.randomUUID()}`;
-}
-
 // ---------------- Criar acesso pós-quiz -----------------
 
 export const criarAcessoMapa = createServerFn({ method: "POST" })
