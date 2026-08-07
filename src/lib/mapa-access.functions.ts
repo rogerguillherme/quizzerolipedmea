@@ -68,85 +68,28 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
     }
     lead.telefone = telefoneNorm;
 
-    const senha = gerarSenha();
-    const email = emailFrom(lead.telefone);
-    let userId = lead.user_id as string | null;
-    let novaConta = false;
-
-    if (!userId) {
-      const { data: created, error: createErr } =
-        await supabaseAdmin.auth.admin.createUser({
-          email,
-          password: senha,
-          email_confirm: true,
-          user_metadata: {
-            nome: lead.nome,
-            telefone: lead.telefone,
-          },
-        });
-      if (createErr || !created?.user) {
-        // conta já pode existir — tenta atualizar por email
-        const { data: list } = await supabaseAdmin.auth.admin.listUsers();
-        const found = list?.users?.find((u) => u.email === email);
-        if (!found) {
-          throw new Error(
-            `Falha ao criar acesso: ${createErr?.message ?? "usuário não localizado"}`,
-          );
-        }
-        userId = found.id;
-        await supabaseAdmin.auth.admin.updateUserById(userId, { password: senha });
-      } else {
-        userId = created.user.id;
-        novaConta = true;
-      }
-
-      const diag = lead.diagnostico as { estagio?: string } | null;
-      await supabaseAdmin.from("profiles").upsert(
-        {
-          id: userId,
-          nome: lead.nome,
-          telefone: lead.telefone,
-          perfil: diag?.estagio ?? null,
-          respostas: lead.respostas,
-          diagnostico: lead.diagnostico,
-          senha_temporaria: true,
-        },
-        { onConflict: "id" },
-      );
-
-      await supabaseAdmin
-        .from("leads")
-        .update({ user_id: userId, status: "acesso_criado" })
-        .eq("id", lead.id);
-    } else {
-      await supabaseAdmin.auth.admin.updateUserById(userId, { password: senha });
-      await supabaseAdmin
-        .from("profiles")
-        .update({ senha_temporaria: true })
-        .eq("id", userId);
-    }
+    // Cria (ou reutiliza) a conta no Auth + profile. Mesma lógica usada no
+    // fluxo pós-compra, centralizada em account-access.server.
+    const { ensureAcessoLead, gerarLoginUrl } = await import("./account-access.server");
+    const { userId, email, novaConta } = await ensureAcessoLead(
+      {
+        id: lead.id,
+        nome: lead.nome,
+        telefone: lead.telefone,
+        respostas: lead.respostas,
+        diagnostico: lead.diagnostico,
+        user_id: (lead.user_id as string | null) ?? null,
+      },
+      "acesso_criado",
+    );
+    void userId;
 
     const primeiroNome = String(lead.nome).split(" ")[0];
-    const baseUrl =
-      process.env.APP_PUBLIC_URL ?? "https://quizzerolipedmea.lovable.app";
 
     // Link de entrada direta: gera um magic link e manda a lead pra /entrar,
     // que troca o token por sessão e leva pra tela onde ela escolhe a senha.
     // Se por algum motivo o link não puder ser gerado, cai no login tradicional.
-    let loginUrl = `${baseUrl}/auth?tel=${encodeURIComponent(lead.telefone)}`;
-    try {
-      const { data: linkData, error: linkErr } =
-        await supabaseAdmin.auth.admin.generateLink({
-          type: "magiclink",
-          email,
-        });
-      const tokenHash = linkData?.properties?.hashed_token;
-      if (!linkErr && tokenHash) {
-        loginUrl = `${baseUrl}/entrar?t=${encodeURIComponent(tokenHash)}`;
-      }
-    } catch {
-      // mantém o fallback acima
-    }
+    const loginUrl = await gerarLoginUrl(email, lead.telefone);
 
     const mensagem = `Oi ${primeiroNome}! Aqui é a Gabriela 💙
 
