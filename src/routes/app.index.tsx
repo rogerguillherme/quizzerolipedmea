@@ -278,7 +278,7 @@ function GuiaMapa() {
             className="mt-3 max-w-[40ch] text-[13.5px]"
             style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}
           >
-            Registro de refeições, cardápios, chás e suplementos personalizados, anamnese completa e acompanhamento contínuo, tudo em um só lugar, por R$67.
+            A Rotina Zero Lipedema, uma refeição nova por semana, com registro de refeições por foto, plano alimentar anti-inflamatório e os guias práticos, por R$67.
           </p>
           <span
             className="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold"

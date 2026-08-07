@@ -2,10 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Camera,
   Lightbulb,
-  UtensilsCrossed,
-  Leaf,
-  Pill,
-  MessageCircle,
   ClipboardList,
   Sparkles,
   ChevronRight,
@@ -15,11 +11,13 @@ import {
   ArrowRight,
   Upload,
 } from "lucide-react";
+
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { track } from "../lib/analytics";
 import { trackMeta } from "../lib/meta-track";
 import { getPremiumOnboarding } from "@/lib/anamnese.functions";
+import { PREMIUM_FEATURES } from "@/lib/premium-features";
 
 export const Route = createFileRoute("/app/derma")({
   component: PremiumPlano,
@@ -29,43 +27,8 @@ const NAVY = "#16324F";
 const GOLD = "#AF7F35";
 const CREAM_SOFT = "#FBF6E9";
 
-const FEATURES = [
-  {
-    icon: Camera,
-    title: "Registro de Refeições com Fotos",
-    body: "Fotografe o prato e receba na hora análise nutricional, pontos de atenção e tenha tudo registrado.",
-  },
-  {
-    icon: Lightbulb,
-    title: "Dicas diárias no WhatsApp",
-    body: "Todos os dias uma orientação prática pensada para o seu estágio de lipedema.",
-  },
-  {
-    icon: UtensilsCrossed,
-    title: "3 cardápios de sugestão alimentar",
-    body: "Opções de cardápios práticos anti-inflamatorios, café, almoço, lanches e jantar.",
-  },
-  {
-    icon: Leaf,
-    title: "Guia de chás e shots para lipedema",
-    body: "Combinações drenantes, anti-inflamatórias e circulatórias com posologia clara.",
-  },
-  {
-    icon: Pill,
-    title: "Guia de suplementos anti-lipedema",
-    body: "O que realmente ajuda, dosagens de referência e o que evitar.",
-  },
-  {
-    icon: MessageCircle,
-    title: "Canal para tirar para dúvidas",
-    body: "Canal\u00a0 respostas rápidas quando você mais precisa tirar duvidas, pedir dicas, sugestões a um clique.",
-  },
-  {
-    icon: ClipboardList,
-    title: "Quadro de Evolução",
-    body: "Acompanhamento contínuo do seu progresso via WhatsApp com simples feedbacks diários da sua rotina e tudo fica registrado na plataforma.",
-  },
-];
+const FEATURES = PREMIUM_FEATURES;
+
 
 function PremiumPlano() {
   const getStatus = useServerFn(getPremiumOnboarding);
@@ -134,10 +97,10 @@ function PremiumPlano() {
         </p>
 
         {FEATURES.map((f) => {
-          const Icon = f.icon;
+          const Icon = f.icone;
           return (
             <article
-              key={f.title}
+              key={f.titulo}
               className="flex gap-3 rounded-2xl border p-4"
               style={{
                 background: "rgba(255,253,247,0.9)",
@@ -163,10 +126,10 @@ function PremiumPlano() {
                     color: NAVY,
                   }}
                 >
-                  {f.title}
+                  {f.titulo}
                 </h3>
                 <p className="mt-1 text-[13px] leading-relaxed" style={{ color: "#4A4635" }}>
-                  {f.body}
+                  {f.descricao}
                 </p>
               </div>
             </article>
@@ -396,7 +359,8 @@ function PremiumOnboarding({ st }: { st: OnboardingStatus }) {
         Precisou falar comigo? Chama no WhatsApp — respondo em até 24h úteis.
       </p>
       {/* silêncio para o linter — ícones importados mas usados condicionalmente */}
-      {false && <><Sparkles /><ChevronRight /><UtensilsCrossed /><Leaf /><Pill /><MessageCircle /></>}
+      {false && <><Sparkles /><ChevronRight /></>}
+
     </div>
   );
 }
