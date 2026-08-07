@@ -134,7 +134,9 @@ export const Route = createFileRoute("/api/public/webhooks/kiwify")({
           const { normalizePhoneBR } = await import("@/lib/phone");
           const telefone = normalizePhoneBR(customer.mobile ?? "");
 
+          const emailCompra = (customer.email ?? "").trim().toLowerCase() || null;
           let leadId: string | null = null;
+
           if (telefone) {
             const { data } = await supabaseAdmin
               .from("leads")
@@ -146,15 +148,43 @@ export const Route = createFileRoute("/api/public/webhooks/kiwify")({
             leadId = data?.id ?? null;
           }
 
-          if (leadId) {
-            const { enviarPremiumParaLead } = await import(
-              "@/lib/premium-access.functions"
-            );
-            const r = await enviarPremiumParaLead(leadId);
-            welcome = { sent: r.ok, error: r.erro ?? undefined };
-          } else {
-            welcome = { sent: false, error: "lead não localizada por telefone" };
+          // A lead pode ter digitado outro telefone no checkout: tenta pelo e-mail.
+          if (!leadId && emailCompra) {
+            const { data } = await supabaseAdmin
+              .from("leads")
+              .select("id")
+              .eq("email", emailCompra)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            leadId = data?.id ?? null;
           }
+
+          // Nenhuma compra pode ficar sem acesso: cria a lead com os dados da Kiwify.
+          if (!leadId) {
+            const nomeCompra =
+              String(customer.full_name ?? customer.first_name ?? "").trim() || "Cliente";
+            const { data: novaLead, error: novaErr } = await supabaseAdmin
+              .from("leads")
+              .insert({
+                nome: nomeCompra,
+                telefone: telefone || `kiwify-${orderId ?? Date.now()}`,
+                email: emailCompra,
+                origem: "compra_direta",
+                status: "plano_ativo",
+              })
+              .select("id")
+              .single();
+            if (novaErr) throw novaErr;
+            leadId = novaLead.id;
+            console.log("[kiwify] lead criada a partir da compra", leadId, orderId);
+          }
+
+          const { enviarPremiumParaLead } = await import(
+            "@/lib/premium-access.functions"
+          );
+          const r = await enviarPremiumParaLead(leadId);
+          welcome = { sent: r.ok, error: r.erro ?? undefined };
         } catch (e) {
           welcome = { sent: false, error: (e as Error).message };
           console.error("[kiwify] falha ao enviar boas-vindas premium", e);
