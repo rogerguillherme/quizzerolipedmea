@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  Camera,
+  Lightbulb,
+  ClipboardList,
   Sparkles,
   ChevronRight,
   CheckCircle2,
@@ -8,6 +11,7 @@ import {
   ArrowRight,
   Upload,
 } from "lucide-react";
+
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { track } from "../lib/analytics";
@@ -93,10 +97,10 @@ function PremiumPlano() {
         </p>
 
         {FEATURES.map((f) => {
-          const Icon = f.icon;
+          const Icon = f.icone;
           return (
             <article
-              key={f.title}
+              key={f.titulo}
               className="flex gap-3 rounded-2xl border p-4"
               style={{
                 background: "rgba(255,253,247,0.9)",
@@ -122,11 +126,16 @@ function PremiumPlano() {
                     color: NAVY,
                   }}
                 >
-                  {f.title}
+                  {f.titulo}
                 </h3>
                 <p className="mt-1 text-[13px] leading-relaxed" style={{ color: "#4A4635" }}>
-                  {f.body}
+                  {f.descricao}
                 </p>
+              </div>
+            </article>
+          );
+        })}
+
               </div>
             </article>
           );
