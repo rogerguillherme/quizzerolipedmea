@@ -70,7 +70,6 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
       },
       "acesso_criado",
     );
-    void userId;
 
     const primeiroNome = String(lead.nome).split(" ")[0];
 
