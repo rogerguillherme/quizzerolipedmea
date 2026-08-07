@@ -178,9 +178,10 @@ async function processarReengajamento(
     if (reengaje.pos24h_at) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `Oi ${nome}! 💙 Aqui é a Gabriela 💙\n\n` +
-      `Vi que você começou seu Mapa do Lipedema, mas ainda não entrou no app. ` +
-      `Deixei tudo pronto pra você — quer que eu te reenvie o acesso?`;
+      `Oi ${nome}! 💙 Aqui é a Gabriela.\n\n` +
+      `Ontem você fez o seu Mapa do Lipedema e viu o resultado, mas a gente não seguiu conversando. ` +
+      `Sem cobrança nenhuma, tá? Só quero te deixar um próximo passo prático: me manda por aqui uma foto de uma refeição sua que eu te digo se aquele prato ajuda ou atrapalha o seu quadro. É de graça.\n\n` +
+      `E se preferir, me conta o que mais te incomoda hoje que eu te oriento por aqui mesmo. ✨`;
     const wa = await sendWhatsApp(lead.telefone, msg);
     await supabaseAdmin.from("whatsapp_logs").insert({
       telefone: lead.telefone,
