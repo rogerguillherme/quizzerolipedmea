@@ -150,10 +150,10 @@ export function OfertaPremiumInline({
         </p>
 
         {FEATURES.map((f) => {
-          const Icon = f.icon;
+          const Icon = f.icone;
           return (
             <article
-              key={f.title}
+              key={f.titulo}
               className="flex gap-3 rounded-2xl border p-3.5"
               style={{
                 background: "rgba(255,253,247,0.9)",
@@ -179,12 +179,13 @@ export function OfertaPremiumInline({
                     color: NAVY,
                   }}
                 >
-                  {f.title}
+                  {f.titulo}
                 </h3>
                 <p className="mt-1 text-[12.5px] leading-relaxed" style={{ color: "#4A4635" }}>
-                  {f.body}
+                  {f.descricao}
                 </p>
               </div>
+
             </article>
           );
         })}
