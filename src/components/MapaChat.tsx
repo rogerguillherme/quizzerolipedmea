@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
 import { trackMeta } from "@/lib/meta-track";
 import { fbqTrack } from "@/lib/meta-pixel";
+import { OfertaPremiumInline, KIWIFY_CHECKOUT_URL } from "@/components/OfertaPremiumInline";
 import { formatPhoneBR, normalizePhoneBR } from "@/lib/phone";
 import draGabrielaAsset from "@/assets/dra-gabriela.png.asset.json";
 import estagio1Img from "@/assets/estagio-1.jpg";
@@ -520,6 +521,10 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
           return null;
         })}
         {typing && <TypingBubble />}
+        {/* Oferta inline logo após o resultado: VSL + Plano Premium R$67, sem login. */}
+        {stage.kind === "showing-report" && diagnostico && (
+          <OfertaPremiumInline nome={nome} origem="mapa_chat" className="pb-2" />
+        )}
       </div>
 
       {/* Composer */}
@@ -570,8 +575,19 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
 
         {stage.kind === "showing-report" && diagnostico && (
           <div className="grid grid-cols-1 gap-2">
-            <button
-              onClick={handleReceberAcesso}
+            <a
+              href={KIWIFY_CHECKOUT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() =>
+                trackMeta("InitiateCheckout", {
+                  content_name: "Plano Premium Zero Lipedema 30d",
+                  content_type: "product",
+                  value: 67,
+                  currency: "BRL",
+                  origem: "mapa_chat",
+                })
+              }
               className="flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-[14px] font-semibold transition active:scale-[0.98]"
               style={{
                 background: `linear-gradient(180deg, ${C.goldSoft}, ${C.gold})`,
@@ -579,14 +595,14 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
                 boxShadow: `0 10px 24px -12px ${C.gold}88`,
               }}
             >
-              <MessageCircle className="size-4" /> Sim, pode me chamar no WhatsApp
-            </button>
+              <Sparkles className="size-4" /> Quero meu plano de 30 dias · R$67
+            </a>
             <button
-              onClick={onClose}
-              className="rounded-full px-4 py-2 text-[12px]"
-              style={{ color: C.inkSoft }}
+              onClick={handleReceberAcesso}
+              className="flex items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-[12.5px]"
+              style={{ borderColor: C.line, background: "#FFFBF2", color: C.inkSoft }}
             >
-              Agora não
+              <MessageCircle className="size-4" /> Prefiro receber meu mapa no WhatsApp primeiro
             </button>
           </div>
         )}
