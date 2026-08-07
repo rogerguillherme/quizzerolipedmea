@@ -200,19 +200,30 @@ async function processarReengajamento(
     }
   }
 
-  const baseUrl =
-    process.env.APP_PUBLIC_URL ?? "https://quizzerolipedmea.lovable.app";
+  const CHECKOUT_URL = "https://pay.kiwify.com.br/j0hsxv3";
 
-  // 2.5) Acesso criado entre 2h e 48h atrás e ainda não testou nenhuma foto por IA.
+  // Referência de tempo: leads em "mapa_gerado" podem nunca ter updated_at tocado,
+  // então usamos created_at pra elas.
+  const refTempo = (lead: { status?: string; created_at?: string; updated_at?: string }) =>
+    new Date(
+      (lead.status === "acesso_criado" ? lead.updated_at : lead.created_at) ??
+        lead.created_at ??
+        lead.updated_at ??
+        0,
+    ).getTime();
+
+  // 2.5) Entre 2h e 48h após o Mapa/acesso e ainda não testou nenhuma foto por IA.
   const { data: pos2hFoto } = await supabaseAdmin
     .from("leads")
-    .select("id, nome, telefone, respostas, updated_at")
-    .eq("status", "acesso_criado")
-    .lt("updated_at", new Date(Date.now() - 2 * MS_HORA).toISOString())
-    .gt("updated_at", new Date(Date.now() - 48 * MS_HORA).toISOString())
-    .limit(200);
+    .select("id, nome, telefone, respostas, status, created_at, updated_at")
+    .in("status", ["mapa_gerado", "acesso_criado"])
+    .neq("telefone", "pendente")
+    .gt("created_at", new Date(Date.now() - 60 * MS_HORA).toISOString())
+    .limit(500);
 
   for (const lead of pos2hFoto ?? []) {
+    const ref = refTempo(lead);
+    if (ref > Date.now() - 2 * MS_HORA || ref < Date.now() - 48 * MS_HORA) continue;
     const respostas = (lead.respostas ?? {}) as LeadResp;
     const reengaje = respostas.reengaje ?? {};
     if (reengaje.pos2h_foto_at) continue;
@@ -220,10 +231,9 @@ async function processarReengajamento(
     if (Number(teste.usadas ?? 0) > 0) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `Oi ${nome}! 💙 Aqui é a Gabriela 💙\n\n` +
-      `Vi que você ainda não testou uma coisa bem legal que já está liberada pra você: me manda uma foto de qualquer refeição sua que eu te dou um feedback na hora, se aquele alimento ajuda ou atrapalha o seu quadro.\n\n` +
-      `É grátis, são 3 fotos de teste, sem compromisso.\n\n` +
-      `🔗 Testa aqui: ${baseUrl}/app/avaliacao`;
+      `Oi ${nome}! 💙 Aqui é a Gabriela.\n\n` +
+      `Tem uma coisa bem legal que você ainda não testou: me manda aqui mesmo, respondendo esta mensagem, uma foto de qualquer refeição sua que eu te dou um feedback na hora, se aquele prato ajuda ou atrapalha o seu quadro.\n\n` +
+      `É grátis, são 3 fotos de teste, sem compromisso. É só mandar a foto por aqui. ✨`;
     const wa = await sendWhatsApp(lead.telefone, msg);
     await supabaseAdmin.from("whatsapp_logs").insert({
       telefone: lead.telefone,
