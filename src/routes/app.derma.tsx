@@ -135,11 +135,6 @@ function PremiumPlano() {
             </article>
           );
         })}
-
-              </div>
-            </article>
-          );
-        })}
       </section>
 
       <section
