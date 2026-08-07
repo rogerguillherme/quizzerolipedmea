@@ -127,5 +127,36 @@ Devolva o JSON conforme instruções.`;
       }
     }
 
+    // Entrega o Mapa no WhatsApp automaticamente (promessa feita na tela do quiz).
+    // Não cria conta no Auth: o objetivo aqui é só entregar o resultado e abrir o canal.
+    const digits = (data.telefone ?? "").replace(/\D/g, "");
+    if (digits.length >= 10) {
+      const primeiroNome = data.nome.trim().split(/\s+/)[0] || "amiga";
+      const prioridades = (diagnostico.prioridades ?? [])
+        .slice(0, 3)
+        .map((p, i) => `${i + 1}. ${p}`)
+        .join("\n");
+      const msg =
+        `Oi ${primeiroNome}! 💙 Aqui é a Gabriela.\n\n` +
+        `${diagnostico.aberturaValidadora}\n\n` +
+        `*Seu Mapa do Lipedema*\n` +
+        `Estágio: ${diagnostico.estagio}\n` +
+        `${diagnostico.descricaoEstagio}\n\n` +
+        `*Suas 3 prioridades agora:*\n${prioridades}\n\n` +
+        `Se quiser, me manda por aqui uma foto de uma refeição sua que eu te dou um feedback na hora, se aquele prato ajuda ou atrapalha o seu quadro. É de graça, sem compromisso. ✨`;
+      try {
+        const { sendWhatsApp } = await import("@/lib/evolution.server");
+        const wa = await sendWhatsApp(data.telefone, msg);
+        await supabaseAdmin.from("whatsapp_logs").insert({
+          telefone: data.telefone,
+          mensagem: msg,
+          status: wa.ok ? "enviado" : "falhou",
+          erro: wa.error ?? null,
+        });
+      } catch (e) {
+        console.error("[submitMapa] falha ao enviar Mapa no WhatsApp", e);
+      }
+    }
+
     return { diagnostico, leadId: inserted?.id ?? null, metaEventId };
   });
