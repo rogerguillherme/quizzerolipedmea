@@ -386,7 +386,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       });
       await gabiSay("Esse é o resumo do que li nas suas respostas. 💙", 900);
       await gabiSay(
-        "Posso te mandar o Mapa completo no seu WhatsApp e já liberar seu acesso ao app?",
+        "Agora deixa eu te mostrar como a gente trabalha isso nos próximos 30 dias, é só assistir aqui embaixo. 👇",
       );
 
       setStage({ kind: "showing-report" });
