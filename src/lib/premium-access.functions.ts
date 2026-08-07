@@ -33,10 +33,11 @@ async function enviarPremiumParaLead(leadId: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { sendWhatsApp } = await import("./evolution.server");
   const { normalizePhoneBR } = await import("./phone");
+  const { ensureAcessoLead, gerarLoginUrl } = await import("./account-access.server");
 
   const { data: lead, error } = await supabaseAdmin
     .from("leads")
-    .select("id, nome, telefone, status")
+    .select("id, nome, telefone, status, respostas, diagnostico, user_id")
     .eq("id", leadId)
     .single();
   if (error || !lead) throw new Error(`Lead não encontrado: ${error?.message ?? ""}`);
@@ -44,9 +45,30 @@ async function enviarPremiumParaLead(leadId: string) {
   const telefone = normalizePhoneBR(lead.telefone ?? "");
   if (!telefone) throw new Error("Telefone inválido.");
 
-  const baseUrl = process.env.APP_PUBLIC_URL ?? "https://quizzerolipedmea.lovable.app";
-  const loginUrl = `${baseUrl}/auth?tel=${encodeURIComponent(telefone)}`;
+  // No fluxo novo a compra pode acontecer antes de existir qualquer conta:
+  // garantimos o usuário no Auth antes de mandar o link de acesso.
+  const { email } = await ensureAcessoLead(
+    {
+      id: lead.id,
+      nome: lead.nome,
+      telefone,
+      respostas: lead.respostas,
+      diagnostico: lead.diagnostico,
+      user_id: (lead.user_id as string | null) ?? null,
+    },
+    // A compra já está confirmada: a lead entra direto como cliente ativa.
+    "plano_ativo",
+  );
+
+  const loginUrl = await gerarLoginUrl(email, telefone);
   const mensagem = buildPremiumWelcomeMessage(lead.nome, loginUrl);
+
+  // Quem confirma o pagamento é a Kiwify, não a entrega da mensagem:
+  // o status vira plano_ativo mesmo se o WhatsApp falhar.
+  await supabaseAdmin
+    .from("leads")
+    .update({ status: "plano_ativo" })
+    .eq("id", lead.id);
 
   const wa = await sendWhatsApp(telefone, mensagem);
 
@@ -57,14 +79,7 @@ async function enviarPremiumParaLead(leadId: string) {
     erro: wa.error ?? null,
   });
 
-  if (wa.ok) {
-    await supabaseAdmin
-      .from("leads")
-      .update({ status: "plano_ativo" })
-      .eq("id", lead.id);
-  }
-
-  return { ok: wa.ok, erro: wa.error ?? null };
+  return { ok: wa.ok, erro: wa.error ?? null, loginUrl };
 }
 
 export { enviarPremiumParaLead };
