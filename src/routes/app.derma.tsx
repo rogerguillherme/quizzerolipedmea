@@ -359,7 +359,8 @@ function PremiumOnboarding({ st }: { st: OnboardingStatus }) {
         Precisou falar comigo? Chama no WhatsApp — respondo em até 24h úteis.
       </p>
       {/* silêncio para o linter — ícones importados mas usados condicionalmente */}
-      {false && <><Sparkles /><ChevronRight /><UtensilsCrossed /><Leaf /><Pill /><MessageCircle /></>}
+      {false && <><Sparkles /><ChevronRight /></>}
+
     </div>
   );
 }
