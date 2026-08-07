@@ -521,6 +521,10 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
           return null;
         })}
         {typing && <TypingBubble />}
+        {/* Oferta inline logo após o resultado: VSL + Plano Premium R$67, sem login. */}
+        {stage.kind === "showing-report" && diagnostico && (
+          <OfertaPremiumInline nome={nome} origem="mapa_chat" className="pb-2" />
+        )}
       </div>
 
       {/* Composer */}
