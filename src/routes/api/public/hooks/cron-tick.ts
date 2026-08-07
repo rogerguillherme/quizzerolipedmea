@@ -141,10 +141,10 @@ async function processarReengajamento(
     if (digits.length < 10) continue;
     const nome = (lead.nome || "").split(" ")[0] || "amiga";
     const msg =
-      `Oi ${nome} 💙 Aqui é a Gabriela 💙\n\n` +
-      `Vi que você começou seu *Mapa do Lipedema* e parou antes de receber o acesso ao app. ` +
-      `Não some — em 1 minutinho a gente termina e você já sai com suas 3 prioridades da semana.\n\n` +
-      `Quer que eu te reenvie o link do Mapa agora?`;
+      `Oi ${nome} 💙 Aqui é a Gabriela.\n\n` +
+      `Vi que você fez o seu *Mapa do Lipedema* hoje e recebeu o resultado com as suas 3 prioridades. ` +
+      `Passei aqui só pra saber: ficou alguma dúvida sobre o que apareceu no seu Mapa?\n\n` +
+      `Pode me perguntar por aqui, eu leio com calma e te respondo. ✨`;
     const wa = await sendWhatsApp(lead.telefone, msg);
     await supabaseAdmin.from("whatsapp_logs").insert({
       telefone: lead.telefone,
