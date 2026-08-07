@@ -1,12 +1,5 @@
 import { useEffect, useRef } from "react";
 import {
-  Camera,
-  Lightbulb,
-  UtensilsCrossed,
-  Leaf,
-  Pill,
-  MessageCircle,
-  ClipboardList,
   Sparkles,
   ChevronRight,
   Play,
@@ -14,6 +7,7 @@ import {
 } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { trackMeta } from "@/lib/meta-track";
+import { PREMIUM_FEATURES } from "@/lib/premium-features";
 
 const NAVY = "#16324F";
 const GOLD = "#AF7F35";
@@ -21,44 +15,9 @@ const CREAM_SOFT = "#FBF6E9";
 
 export const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/j0hsxv3";
 
-/** Mesmos benefícios exibidos em /app/derma — mantidos em sincronia de propósito. */
-const FEATURES = [
-  {
-    icon: Camera,
-    title: "Registro de Refeições com Fotos",
-    body: "Fotografe o prato e receba na hora análise nutricional, pontos de atenção e tenha tudo registrado.",
-  },
-  {
-    icon: Lightbulb,
-    title: "Dicas diárias no WhatsApp",
-    body: "Todos os dias uma orientação prática pensada para o seu estágio de lipedema.",
-  },
-  {
-    icon: UtensilsCrossed,
-    title: "3 cardápios de sugestão alimentar",
-    body: "Opções de cardápios práticos anti-inflamatórios: café, almoço, lanches e jantar.",
-  },
-  {
-    icon: Leaf,
-    title: "Guia de chás e shots para lipedema",
-    body: "Combinações drenantes, anti-inflamatórias e circulatórias com posologia clara.",
-  },
-  {
-    icon: Pill,
-    title: "Guia de suplementos anti-lipedema",
-    body: "O que realmente ajuda, dosagens de referência e o que evitar.",
-  },
-  {
-    icon: MessageCircle,
-    title: "Canal para tirar dúvidas",
-    body: "Respostas rápidas quando você mais precisa: dúvidas, dicas e sugestões a um clique.",
-  },
-  {
-    icon: ClipboardList,
-    title: "Quadro de Evolução",
-    body: "Acompanhamento contínuo do seu progresso via WhatsApp, com feedbacks diários registrados na plataforma.",
-  },
-] as const;
+/** Mesmos benefícios exibidos em /app/derma — fonte única em premium-features.ts. */
+const FEATURES = PREMIUM_FEATURES;
+
 
 export interface OfertaPremiumInlineProps {
   /** Primeiro nome da lead, usado só no texto de abertura. */
