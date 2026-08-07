@@ -59,7 +59,7 @@ export const criarAcessoMapa = createServerFn({ method: "POST" })
     // Cria (ou reutiliza) a conta no Auth + profile. Mesma lógica usada no
     // fluxo pós-compra, centralizada em account-access.server.
     const { ensureAcessoLead, gerarLoginUrl } = await import("./account-access.server");
-    const { userId, email, novaConta } = await ensureAcessoLead(
+    const { email, novaConta } = await ensureAcessoLead(
       {
         id: lead.id,
         nome: lead.nome,
