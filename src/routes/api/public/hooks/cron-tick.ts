@@ -7,9 +7,14 @@ import {
   RECEITAS_PRATICAS,
   ESCALONAMENTO_DIAS_SEM_RESPOSTA,
 } from "@/lib/protocolo7";
+import { dicaParaDia } from "@/lib/dicas-rotina";
+import { horaLocal } from "@/lib/data-local";
 
 const MS_HORA = 60 * 60 * 1000;
 const MS_DIA = 24 * MS_HORA;
+/** Janela de envio (hora local de São Paulo): 08h até 10h. */
+const JANELA_INICIO = 8;
+const JANELA_FIM = 10;
 
 type Jornada = {
   ativa?: boolean;
