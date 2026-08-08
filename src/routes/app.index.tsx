@@ -115,11 +115,8 @@ function Hoje() {
       Number(hojeISO.replaceAll("-", "")) % FRASES_REFORCO.length
     ] ?? FRASES_REFORCO[0]!;
 
-  const dataExtenso = agora.toLocaleDateString("pt-BR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
+  const dataExtenso = dataExtensoSP(agora);
+
 
   return (
     <div className="px-5 pt-6 pb-8">
