@@ -175,6 +175,7 @@ async function processarReengajamento(
     let msg = "";
 
     if (idade >= 6 * MS_DIA && !reengaje.pos6d_at) {
+      // +6 dias — última chamada.
       chave = "pos6d_at";
       msg =
         `${oi}, aqui é a Gabriela 💙\n\n` +
@@ -182,6 +183,7 @@ async function processarReengajamento(
         `Se agora não é a hora, tudo bem. Seu Mapa continua valendo e eu sigo por aqui quando você quiser retomar.\n\n` +
         `🔗 ${CHECKOUT_URL}`;
     } else if (idade >= 68 * MS_HORA && !reengaje.pos48h_at) {
+      // +68h — pitch do plano.
       chave = "pos48h_at";
       msg =
         `${oi}, aqui é a Gabriela 💙\n\n` +
@@ -190,20 +192,23 @@ async function processarReengajamento(
         `Tem 7 dias de garantia: se não fizer sentido pra você, é só me chamar que devolvo, sem burocracia. E como bônus, libero todos os meus guias e receitas práticas.\n\n` +
         `🔗 Pra ativar: ${CHECKOUT_URL}\n\n` +
         `Qualquer dúvida, me chama por aqui. ✨`;
-    } else if (idade >= 44 * MS_HORA && !reengaje.pos2h_foto_at && !jaTestouFoto) {
+    } else if (idade >= 44 * MS_HORA && !reengaje.pos2h_foto_at) {
+      // +44h — quebra de objeção ("já tentei de tudo", "não tenho tempo").
       chave = "pos2h_foto_at";
+      msg =
+        `${oi} 💙 Aqui é a Gabriela.\n\n` +
+        `A frase que eu mais escuto é: "eu já tentei de tudo e nada funciona". Faz sentido, porque quase tudo que te ofereceram foi dieta restritiva, e lipedema não responde a restrição, responde a inflamação.\n\n` +
+        `Por isso a Rotina Zero Lipedema muda uma refeição por semana, não a sua vida inteira de uma vez. Semana 1 é só o café da manhã. Leva alguns minutos por dia e você não precisa contar caloria nem passar fome.\n\n` +
+        `Se ficou alguma dúvida, me pergunta aqui que eu respondo. ✨`;
+    } else if (idade >= 20 * MS_HORA && !reengaje.pos1h_at && !jaTestouFoto) {
+      // +20h — convite pro teste grátis de foto.
+      chave = "pos1h_at";
       msg =
         `${oi}! 💙 Aqui é a Gabriela.\n\n` +
         `Tem uma coisa bem legal que você ainda não testou: me manda aqui mesmo, respondendo esta mensagem, uma foto de qualquer refeição sua que eu te dou um feedback na hora, se aquele prato ajuda ou atrapalha o seu quadro.\n\n` +
         `É grátis, são 3 fotos de teste, sem compromisso. É só mandar a foto por aqui. ✨`;
-    } else if (idade >= 20 * MS_HORA && !reengaje.pos1h_at) {
-      chave = "pos1h_at";
-      msg =
-        `${oi} 💙 Aqui é a Gabriela.\n\n` +
-        `Vi que você fez o seu *Mapa do Lipedema* e recebeu o resultado com as suas 3 prioridades. ` +
-        `Passei aqui só pra saber: ficou alguma dúvida sobre o que apareceu no seu Mapa?\n\n` +
-        `Pode me perguntar por aqui, eu leio com calma e te respondo. ✨`;
     }
+
 
     if (!chave) continue;
 
