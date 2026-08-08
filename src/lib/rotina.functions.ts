@@ -8,23 +8,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { MIN_DIAS_AVANCAR } from "@/lib/rotina-content";
+import { hojeISO, diasEntre } from "@/lib/data-local";
 
-/** Data local (America/Sao_Paulo) no formato YYYY-MM-DD. */
-function hojeISO(): string {
-  const fmt = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  return fmt.format(new Date());
-}
-
-function diasEntre(aISO: string, bISO: string): number {
-  const a = Date.parse(`${aISO}T00:00:00Z`);
-  const b = Date.parse(`${bISO}T00:00:00Z`);
-  return Math.round((a - b) / 86_400_000);
-}
 
 /** Sequência de dias consecutivos terminando hoje ou ontem. */
 function calcularSequencia(datas: readonly string[], hoje: string): number {
