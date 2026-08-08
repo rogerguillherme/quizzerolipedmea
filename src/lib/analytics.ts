@@ -1,6 +1,12 @@
-// Lightweight funnel analytics + demo lead store, backed by localStorage.
-// Ready to be swapped for a real backend endpoint — the shape of track()
-// mirrors what the backend event would carry (name, ts, phone, meta).
+// Funnel analytics: grava no localStorage (usado por telas do admin) E envia
+// para o banco, que é a única fonte capaz de atribuir lead/venda a anúncio.
+
+import {
+  enviarBeacon,
+  getAtribuicao,
+  getSessionId,
+  normalizePath,
+} from "./atribuicao";
 
 const EVENTS_KEY = "zl:events";
 const LEADS_KEY = "zl:leads";
@@ -9,6 +15,30 @@ const NOTIF_KEY = "zl:notif";
 const REFUND_KEY = "zl:refunds";
 
 const isBrowser = typeof window !== "undefined";
+
+// leadId corrente da sessão, para amarrar os eventos do funil ao lead.
+let leadIdAtual: string | null = null;
+
+export function setTrackLeadId(leadId: string | null) {
+  leadIdAtual = leadId;
+  if (!isBrowser || !leadId) return;
+  try {
+    localStorage.setItem("zl:lead_id", leadId);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getTrackLeadId(): string | null {
+  if (leadIdAtual) return leadIdAtual;
+  if (!isBrowser) return null;
+  try {
+    return localStorage.getItem("zl:lead_id");
+  } catch {
+    return null;
+  }
+}
+
 
 export type FunnelEvent =
   | "landing_view"
