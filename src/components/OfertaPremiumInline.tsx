@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { trackMeta } from "@/lib/meta-track";
-import { PREMIUM_FEATURES } from "@/lib/premium-features";
+import { PremiumFeaturesCarousel } from "@/components/PremiumFeaturesCarousel";
 
 const NAVY = "#16324F";
 const GOLD = "#AF7F35";
@@ -15,8 +15,7 @@ const CREAM_SOFT = "#FBF6E9";
 
 export const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/j0hsxv3";
 
-/** Mesmos benefícios exibidos em /app/derma — fonte única em premium-features.ts. */
-const FEATURES = PREMIUM_FEATURES;
+
 
 
 export interface OfertaPremiumInlineProps {
@@ -141,7 +140,7 @@ export function OfertaPremiumInline({
       </div>
 
       {/* ---------- Oferta R$67 ---------- */}
-      <div className="mt-6 space-y-2.5">
+      <div className="mt-6">
         <p
           className="text-[10px] font-semibold uppercase"
           style={{ letterSpacing: "0.22em", color: GOLD }}
@@ -149,47 +148,11 @@ export function OfertaPremiumInline({
           Plano Premium · 30 dias · o que está incluso
         </p>
 
-        {FEATURES.map((f) => {
-          const Icon = f.icone;
-          return (
-            <article
-              key={f.titulo}
-              className="flex gap-3 rounded-2xl border p-3.5"
-              style={{
-                background: "rgba(255,253,247,0.9)",
-                borderColor: "rgba(216,198,160,0.55)",
-              }}
-            >
-              <span
-                className="grid size-9 shrink-0 place-items-center rounded-full"
-                style={{
-                  background: "linear-gradient(180deg, #EFE3CC, #F5EFE1)",
-                  color: NAVY,
-                  border: "1px solid rgba(175,127,53,0.35)",
-                }}
-              >
-                <Icon className="size-4" />
-              </span>
-              <div className="min-w-0">
-                <h3
-                  className="text-[14px] leading-snug"
-                  style={{
-                    fontFamily: "'Fraunces', serif",
-                    fontWeight: 500,
-                    color: NAVY,
-                  }}
-                >
-                  {f.titulo}
-                </h3>
-                <p className="mt-1 text-[12.5px] leading-relaxed" style={{ color: "#4A4635" }}>
-                  {f.descricao}
-                </p>
-              </div>
-
-            </article>
-          );
-        })}
+        <div className="mt-3">
+          <PremiumFeaturesCarousel />
+        </div>
       </div>
+
 
       <div
         className="mt-5 overflow-hidden rounded-3xl px-5 py-6"
