@@ -12,6 +12,13 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { trackMeta } from "../lib/meta-track";
+import {
+  capturarAtribuicao,
+  enviarBeacon,
+  getAtribuicao,
+  getSessionId,
+  normalizePath,
+} from "../lib/atribuicao";
 
 function NotFoundComponent() {
   return (
@@ -175,7 +182,6 @@ function RootComponent() {
         utm_medium: atribuicao.utm_medium ?? null,
         utm_campaign: atribuicao.utm_campaign ?? null,
       });
-      track("page_view");
     });
     return () => unsub();
   }, [router]);
