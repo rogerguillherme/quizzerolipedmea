@@ -6,6 +6,7 @@ import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { setTrackLeadId, track } from "@/lib/analytics";
+import { getAtribuicao } from "@/lib/atribuicao";
 import { trackMeta } from "@/lib/meta-track";
 import { fbqTrack } from "@/lib/meta-pixel";
 import { OfertaPremiumInline, KIWIFY_CHECKOUT_URL } from "@/components/OfertaPremiumInline";

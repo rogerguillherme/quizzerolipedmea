@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import { submitMapa, type Diagnostico } from "../lib/mapa.functions";
 import { criarAcessoMapa } from "../lib/mapa-access.functions";
-import { track } from "../lib/analytics";
+import { setTrackLeadId, track } from "../lib/analytics";
+import { getAtribuicao } from "../lib/atribuicao";
 import { fbqTrack } from "@/lib/meta-pixel";
 import { OfertaPremiumInline } from "@/components/OfertaPremiumInline";
 import estagiosAsset from "@/assets/estagios-lipedema.png.asset.json";
