@@ -78,11 +78,19 @@ export function mensagemPara(
   const i = varianteDoLead(leadId, lista.length);
   const bruto = renderCadencia(lista[i] ?? lista[0]!, vars);
   // Nome vazio deixaria ", deixa eu te perguntar" — limpa a pontuação órfã.
-  return bruto
+  const limpo = bruto
     .replace(/(^|\n)[ \t]*,[ \t]*/g, "$1")
     .replace(/[ \t]{2,}/g, " ")
     .trim();
+  // Se a vírgula órfã foi removida do começo, a frase passa a abrir em
+  // minúscula ("faz 2 dias..."). Sobe a primeira letra.
+  const comeouComToken = /^\s*\{\w+\}\s*,/.test(lista[i] ?? "");
+  if (comeouComToken && /^[a-záàâãéêíóôõúç]/.test(limpo)) {
+    return limpo.charAt(0).toUpperCase() + limpo.slice(1);
+  }
+  return limpo;
 }
+
 
 /* ------------------------------------------------------------------ */
 /* Personalização a partir das respostas do Mapa                       */
