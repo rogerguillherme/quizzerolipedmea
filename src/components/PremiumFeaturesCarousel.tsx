@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { PREMIUM_FEATURES } from "@/lib/premium-features";
 
 
-const NAVY = "#16324F";
-const GOLD = "#AF7F35";
+import { NAVY, GOLD, INK } from "@/lib/tokens";
 
 const INTERVALO_MS = 4500;
 
@@ -12,8 +11,12 @@ const INTERVALO_MS = 4500;
  * Avança sozinho e para de vez assim que a pessoa interage (arrastar, clicar
  * numa bolinha ou rolar na horizontal) — a partir daí ela controla o ritmo.
  * Respeita `prefers-reduced-motion`: sem autoplay e sem scroll suave.
+ *
+ * @param bleed  Quando true (padrão), o trilho sangra 20px para cada lado com
+ *               `-mx-5`/`px-5`. Use apenas dentro de um container com `px-5`;
+ *               passe `bleed={false}` em qualquer outro padding de página.
  */
-export function PremiumFeaturesCarousel() {
+export function PremiumFeaturesCarousel({ bleed = true }: { bleed?: boolean }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [ativo, setAtivo] = useState(0);
   const [pausado, setPausado] = useState(false);
@@ -72,13 +75,17 @@ export function PremiumFeaturesCarousel() {
         onPointerDown={() => setPausado(true)}
         onTouchStart={() => setPausado(true)}
         onWheel={() => setPausado(true)}
-        className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        aria-roledescription="carrossel"
+        aria-label="Benefícios do Plano Zero Lipedema"
+        className={`${bleed ? "-mx-5 px-5" : ""} flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
       >
         {PREMIUM_FEATURES.map((f, i) => {
           return (
             <article
               key={f.id}
-              className="w-[84%] max-w-[330px] shrink-0 snap-center overflow-hidden rounded-3xl border"
+              aria-roledescription="slide"
+              aria-label={`Benefício ${i + 1} de ${PREMIUM_FEATURES.length}: ${f.titulo}`}
+              className="w-[84%] max-w-[330px] shrink-0 snap-center overflow-hidden rounded-[24px] border"
               style={{
                 background: "rgba(255,253,247,0.97)",
                 borderColor: "rgba(216,198,160,0.7)",
@@ -86,7 +93,7 @@ export function PremiumFeaturesCarousel() {
               }}
             >
               <div
-                className="relative h-40 w-full overflow-hidden rounded-t-3xl"
+                className="relative h-40 w-full overflow-hidden rounded-t-[24px]"
                 style={{ background: "#F7EEDC", aspectRatio: "1000 / 477" }}
               >
                 <img
@@ -108,7 +115,7 @@ export function PremiumFeaturesCarousel() {
                   }}
                 />
                 <span
-                  className="absolute bottom-3 left-4 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.14em]"
+                  className="absolute bottom-3 left-4 rounded-full px-2 py-0.5 text-[11px] font-bold tracking-[0.14em]"
                   style={{ background: "rgba(22,50,79,0.45)", color: "#FBF6E9" }}
                 >
                   {String(i + 1).padStart(2, "0")} / {String(PREMIUM_FEATURES.length).padStart(2, "0")}
@@ -117,12 +124,12 @@ export function PremiumFeaturesCarousel() {
 
               <div className="px-5 pb-5 pt-4">
                 <h3
-                  className="text-[19px] leading-snug"
+                  className="text-[20px] leading-snug"
                   style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: NAVY }}
                 >
                   {f.titulo}
                 </h3>
-                <p className="mt-2 text-[13.5px] leading-relaxed" style={{ color: "#4A4635" }}>
+                <p className="mt-2 text-[14px] leading-relaxed" style={{ color: INK }}>
                   {f.descricao}
                 </p>
               </div>
@@ -131,7 +138,7 @@ export function PremiumFeaturesCarousel() {
         })}
       </div>
 
-      <div className="mt-3 flex items-center justify-center gap-1.5">
+      <div className="mt-1 flex items-center justify-center">
         {PREMIUM_FEATURES.map((f, i) => (
           <button
             key={f.id}
@@ -142,12 +149,19 @@ export function PremiumFeaturesCarousel() {
               setPausado(true);
               irPara(i);
             }}
-            className="h-1.5 rounded-full transition-all"
-            style={{
-              width: i === ativo ? 20 : 6,
-              background: i === ativo ? GOLD : "rgba(22,50,79,0.18)",
-            }}
-          />
+            // Visual de 6px, mas área de toque de 44px (WCAG 2.5.8).
+            className="flex min-h-[44px] items-center justify-center bg-transparent"
+            style={{ padding: "14px 6px" }}
+          >
+            <span
+              aria-hidden
+              className="block h-1.5 rounded-full transition-all"
+              style={{
+                width: i === ativo ? 20 : 6,
+                background: i === ativo ? GOLD : "rgba(22,50,79,0.18)",
+              }}
+            />
+          </button>
         ))}
       </div>
     </div>
