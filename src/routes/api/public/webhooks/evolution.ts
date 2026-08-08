@@ -86,9 +86,6 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
 
         const pushName = (data?.pushName as string | undefined) ?? null;
 
-        const { supabaseAdmin } = await import(
-          "@/integrations/supabase/client.server"
-        );
 
         // Upsert conversa por telefone
         const { data: existing } = await supabaseAdmin
