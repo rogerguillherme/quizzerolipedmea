@@ -1,3 +1,8 @@
+import {
+  PRE_IMEDIATA,
+  mensagemPara,
+  varsDoLead,
+} from "@/lib/cadencia-copy";
 import { createServerFn } from "@tanstack/react-start";
 import { generateText } from "ai";
 import { z } from "zod";
@@ -143,7 +148,10 @@ Devolva o JSON conforme instruções.`;
         `Estágio: ${diagnostico.estagio}\n` +
         `${diagnostico.descricaoEstagio}\n\n` +
         `*Suas 3 prioridades agora:*\n${prioridades}\n\n` +
-        `Se quiser, me manda por aqui uma foto de uma refeição sua que eu te dou um feedback na hora, se aquele prato ajuda ou atrapalha o seu quadro. É de graça, sem compromisso. ✨`;
+        // Termina em pergunta fácil, citando uma resposta específica dela.
+        mensagemPara(PRE_IMEDIATA, inserted?.id ?? data.telefone, {
+          sintoma: varsDoLead({ respostas: data.respostas })["sintoma"] ?? "",
+        });
       try {
         const { sendWhatsApp } = await import("@/lib/evolution.server");
         const wa = await sendWhatsApp(data.telefone, msg);
