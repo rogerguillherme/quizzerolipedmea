@@ -80,6 +80,8 @@ function RegistrarPage() {
   const [meals, setMeals] = useState<MealEntry[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  // Guarda a última foto enviada para permitir "Tentar de novo" sem refotografar.
+  const [ultimoArquivo, setUltimoArquivo] = useState<File | null>(null);
   const [lastFeedback, setLastFeedback] = useState<Feedback | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const cameraAberta = useRef(false);
@@ -180,6 +182,7 @@ function RegistrarPage() {
 
   function handleFile(file: File) {
     setPreview(URL.createObjectURL(file));
+    setUltimoArquivo(file);
     setAviso(null);
     setLastFeedback(null);
     mut.mutate(file);
