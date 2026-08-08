@@ -160,37 +160,26 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
-    const SKEY = "__zl_sid";
-    let sid = "";
-    try {
-      sid = sessionStorage.getItem(SKEY) || "";
-      if (!sid) {
-        sid = (crypto as any)?.randomUUID?.() || String(Date.now()) + Math.random().toString(36).slice(2);
-        sessionStorage.setItem(SKEY, sid);
-      }
-    } catch {}
+    // Primeiro toque precisa ser capturado antes de qualquer navegação interna.
+    capturarAtribuicao();
+    const sid = getSessionId();
     const unsub = router.subscribe("onResolved", () => {
       trackMeta("PageView");
-      try {
-        const url = new URL(window.location.href);
-        const payload = {
-          path: url.pathname + url.search,
-          referrer: document.referrer || null,
-          session_id: sid,
-          utm_source: url.searchParams.get("utm_source"),
-          utm_medium: url.searchParams.get("utm_medium"),
-          utm_campaign: url.searchParams.get("utm_campaign"),
-        };
-        const body = JSON.stringify(payload);
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon("/api/public/track", new Blob([body], { type: "application/json" }));
-        } else {
-          fetch("/api/public/track", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {});
-        }
-      } catch {}
+      const atribuicao = getAtribuicao();
+      enviarBeacon("/api/public/track", {
+        // Só o pathname: query e hash vão em campos próprios.
+        path: normalizePath(),
+        referrer: typeof document !== "undefined" ? document.referrer || null : null,
+        session_id: sid,
+        utm_source: atribuicao.utm_source ?? null,
+        utm_medium: atribuicao.utm_medium ?? null,
+        utm_campaign: atribuicao.utm_campaign ?? null,
+      });
+      track("page_view");
     });
     return () => unsub();
   }, [router]);
+
   useEffect(() => {
     const KEY = "__chunk_reload_at";
     const onErr = (msg: string) => {
