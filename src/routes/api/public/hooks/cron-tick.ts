@@ -311,10 +311,12 @@ async function processarReengajamento(
   supabaseAdmin: any,
   sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
   lote: Lote,
+  entradas: Map<string, Entrada>,
 ) {
   const enviados: string[] = [];
   const agoraMin = minutoDoDiaLocal();
-  if (agoraMin < JANELA_INICIO_MIN || agoraMin >= JANELA_FIM_MIN) return enviados;
+  // Fast-track pode sair até as 21h; a régua fria só na janela da manhã.
+  if (agoraMin < JANELA_INICIO_MIN || agoraMin >= 21 * 60) return enviados;
 
   const CHECKOUT_URL = "https://pay.kiwify.com.br/j0hsxv3";
 
@@ -344,8 +346,8 @@ async function processarReengajamento(
     if (lote.abortado || lote.enviadas >= LOTE_MAX) break;
 
     const respostas = (lead.respostas ?? {}) as LeadResp;
+    // 1. Número inválido sai de tudo.
     if (leadInvalido(respostas)) continue;
-    if (!leadNaJanela(lead.id, agoraMin)) continue;
 
     const reengaje = respostas.reengaje ?? {};
     const digits = String(lead.telefone ?? "").replace(/\D/g, "");
@@ -365,7 +367,24 @@ async function processarReengajamento(
     let msg = "";
     const vars = { oi, nome: vocativo, link: CHECKOUT_URL };
 
-    if (idade >= 6 * MS_DIA && !reengaje.pos6d_at) {
+    // Comportamento da lead: respondeu nas últimas 48h?
+    const entrada = entradas.get(chaveTelefone(lead.telefone));
+    const intencao = entrada ? temIntencaoCompra(entrada.texto) : false;
+    let fastTrack = false;
+
+    if (intencao && !reengaje.pos48h_at) {
+      // 3. Intenção de compra: pula direto pra oferta, sem esperar cronograma.
+      fastTrack = true;
+      chave = PRE_POS68H.chave;
+      msg = copy(PRE_POS68H, lead.id, vars);
+    } else if (entrada) {
+      // 4. Respondeu: a conversa é da Gabriela e do agente. Nada programado.
+      await marcarPausa(supabaseAdmin, lead.id, respostas, entrada.em);
+      continue;
+    } else if (!leadNaJanela(lead.id, agoraMin) || agoraMin >= JANELA_FIM_MIN) {
+      // 5. Silêncio: régua normal, no horário próprio do lead.
+      continue;
+    } else if (idade >= 6 * MS_DIA && !reengaje.pos6d_at) {
       chave = PRE_POS6D.chave;
       msg = copy(PRE_POS6D, lead.id, vars);
     } else if (idade >= 68 * MS_HORA && !reengaje.pos48h_at) {
@@ -380,6 +399,7 @@ async function processarReengajamento(
     }
 
     if (!chave) continue;
+
 
     const r = await enviarComControle(
       supabaseAdmin,
