@@ -249,11 +249,16 @@ async function processarReengajamento(
     .select("id, nome, telefone, respostas, status, created_at, updated_at")
     .in("status", ["mapa_gerado", "acesso_criado"])
     .neq("telefone", "pendente")
+    // Nunca gastamos chamada de API com número que já sabemos ser inexistente.
+    .or(
+      "respostas->atencao->>motivo.is.null,respostas->atencao->>motivo.neq.numero_invalido",
+    )
     .gt("created_at", new Date(Date.now() - 14 * MS_DIA).toISOString())
     .limit(500);
 
   for (const lead of leads ?? []) {
     const respostas = (lead.respostas ?? {}) as LeadResp;
+    if (leadInvalido(respostas)) continue;
     const reengaje = respostas.reengaje ?? {};
     const digits = String(lead.telefone ?? "").replace(/\D/g, "");
     if (digits.length < 10) continue;
@@ -306,23 +311,27 @@ async function processarReengajamento(
 
     if (!chave) continue;
 
-    const wa = await sendWhatsApp(lead.telefone, msg);
-    await supabaseAdmin.from("whatsapp_logs").insert({
-      telefone: lead.telefone,
-      mensagem: msg,
-      status: wa.ok ? "enviado" : "falhou",
-      erro: wa.error ?? null,
-    });
-    if (wa.ok) {
+    const r = await enviarComControle(
+      supabaseAdmin,
+      sendWhatsApp,
+      lead as { id: string; telefone: string },
+      respostas,
+      chave,
+      msg,
+    );
+
+    // Sucesso ou teto de falhas atingido: grava a flag e não tenta mais esse passo.
+    if (r.ok || r.desistir) {
       reengaje[chave] = new Date().toISOString();
       respostas.reengaje = reengaje;
       await supabaseAdmin
         .from("leads")
         .update({ respostas: respostas as never })
         .eq("id", lead.id);
-      enviados.push(lead.id);
+      if (r.ok) enviados.push(lead.id);
     }
   }
+
 
   return enviados;
 }
