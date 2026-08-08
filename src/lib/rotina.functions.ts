@@ -97,8 +97,9 @@ async function carregarEstado(context: Ctx) {
   // Semanas consideradas concluídas: as anteriores à atual, mais a atual
   // quando a rotina inteira já foi encerrada.
   const semanasConcluidas = Array.from({ length: 4 }, (_, i) => i + 1).filter(
-    (n) => n < semanaAtual || (progresso?.concluida_em && n <= semanaAtual),
+    (n) => n < semanaAtual || (Boolean(progresso?.concluida_em) && n <= semanaAtual),
   );
+
 
   return {
     isPremium: await ehPremium(userId),
