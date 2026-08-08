@@ -9,6 +9,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { CHA_INDICADO } from "../lib/protocolo7";
+import { DICAS } from "../lib/dicas";
 
 export const Route = createFileRoute("/app/missoes")({
   component: Missoes,
@@ -23,48 +24,12 @@ const CARD = {
 const NAVY = "#16324F";
 const GOLD = "#AF7F35";
 
-type Dica = {
-  id: string;
-  titulo: string;
-  descricao: string;
-  icon: React.ReactNode;
-  detalhe: string;
+const ICONES: Record<string, React.ReactNode> = {
+  utensils: <Utensils className="size-4" />,
+  leaf: <Leaf className="size-4" />,
+  heart: <HeartPulse className="size-4" />,
+  quote: <MessageSquareQuote className="size-4" />,
 };
-
-const DICAS: Dica[] = [
-  {
-    id: "aliados",
-    titulo: "Alimentos que ajudam no dia a dia",
-    descricao: "Itens simples, de qualquer mercado.",
-    icon: <Utensils className="size-4" />,
-    detalhe:
-      "Frutas (banana, mamão, laranja, maçã), arroz integral, batata-doce, mandioca, ovo, frango grelhado, peixe (tilápia, sardinha), feijão, lentilha, folhas (alface, couve), brócolis, abobrinha, azeite de oliva no lugar do óleo comum, água, água de coco, chá de gengibre e chá de camomila.",
-  },
-  {
-    id: "evitar",
-    titulo: "Alimentos que costumam piorar",
-    descricao: "Reduza esses itens da rotina.",
-    icon: <Leaf className="size-4" />,
-    detalhe:
-      "Pão francês e pão de forma em excesso, salgadinhos de pacote, biscoito recheado, refrigerante e suco de caixinha, embutidos (presunto, salsicha, mortadela), molho de tomate pronto e caldo em cubo, frituras (salgados de padaria, batata frita), açúcar de mesa em excesso e macarrão instantâneo.",
-  },
-  {
-    id: "refeicao",
-    titulo: "Exemplo de refeições do dia",
-    descricao: "Modelo para trocar dentro da mesma lógica.",
-    icon: <HeartPulse className="size-4" />,
-    detalhe:
-      "Café: pão integral + ovo mexido + mamão, ou iogurte natural + banana + castanhas. Almoço: arroz + feijão + frango grelhado + salada, ou arroz + feijão + peixe assado + abobrinha. Tarde: banana com chá de gengibre, ou maçã com um punhado de castanhas. Jantar: sopa de legumes com frango desfiado, ou omelete de claras + salada de folhas.",
-  },
-  {
-    id: "olhos",
-    titulo: "Lipedema é mudança da hábitos",
-    descricao: "Aprenda a se alimentar bem sem dietas restritas",
-    icon: <MessageSquareQuote className="size-4" />,
-    detalhe:
-      "Quando você entende o que faz seu lipedema piorar, o controle do seu corpo está nas suas mãos, sem ficar dependendo de dietas prontas e restitivas.",
-  },
-];
 
 function Missoes() {
   const [aberta, setAberta] = useState<string | null>(null);
@@ -116,7 +81,7 @@ function Missoes() {
                     color: GOLD,
                   }}
                 >
-                  {d.icon}
+                  {ICONES[d.iconKey]}
                 </span>
                 <div className="flex-1">
                   <p className="text-[14px] font-semibold" style={{ color: NAVY }}>
