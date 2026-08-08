@@ -178,7 +178,7 @@ function Hoje() {
           checkinFeito ? (
             <div className="mt-5">
               <div
-                className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold"
+                className="animate-check-pop inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold"
                 style={{ background: "rgba(217,169,75,0.18)", border: "1px solid rgba(217,169,75,0.45)", color: GOLD_SOFT }}
               >
                 <Check className="size-3.5" /> Missão de hoje cumprida
@@ -186,10 +186,11 @@ function Hoje() {
               <p className="mt-3 text-[13px]" style={{ color: "rgba(245,239,225,0.86)", lineHeight: 1.55 }}>
                 {frase}
               </p>
-              <p className="mt-1.5 text-[12px]" style={{ color: "rgba(245,239,225,0.65)" }}>
-                {sequencia === 1 ? "1 dia seguido" : `${sequencia} dias seguidos`}
+              <p className="mt-1.5 text-[12.5px]" style={{ color: "rgba(245,239,225,0.75)" }}>
+                {textoSequencia(sequencia, totalCheckins)}
               </p>
             </div>
+
           ) : (
             <button
               type="button"
