@@ -103,9 +103,9 @@ Devolva o JSON conforme instruções.`;
       .insert({
         nome: data.nome,
         telefone: data.telefone && data.telefone.length >= 8 ? data.telefone : "pendente",
-        respostas: data.atribuicao
+        respostas: (data.atribuicao
           ? { ...data.respostas, atribuicao: data.atribuicao }
-          : data.respostas,
+          : data.respostas) as never,
         origem: "mapa",
         status: "mapa_gerado",
         diagnostico,

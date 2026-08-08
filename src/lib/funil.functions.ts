@@ -52,7 +52,7 @@ export const getFunilReal = createServerFn({ method: "POST" })
 
     const sessoesUnicas = new Set(rowsViews.map((v) => v.session_id).filter(Boolean));
     const sessoesPorEvento = (nome: string) =>
-      new Set(rowsEventos.filter((e) => e.nome === nome).map((e) => e.session_id ?? e.id ?? "")).size;
+      new Set(rowsEventos.filter((e) => e.nome === nome).map((e) => e.session_id ?? e.lead_id ?? "")).size;
 
     const comTelefone = rowsLeads.filter(
       (l) => l.telefone && l.telefone !== "pendente" && l.telefone.replace(/\D/g, "").length >= 10,
