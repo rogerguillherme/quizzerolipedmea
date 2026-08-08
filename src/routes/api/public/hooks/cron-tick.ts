@@ -234,20 +234,29 @@ async function processarReengajamento(
 }
 
 /**
- * Cadência pós-compra: uma dica por dia, por 28 dias, para quem está com
- * `plano_ativo`. A dica respeita a semana que a paciente realmente está
- * vivendo na Rotina (não o calendário), e roda na mesma janela da manhã.
- * Idempotência por `respostas.rotina_dicas.dias_enviados`.
+ * Cadência pós-compra da Rotina Zero Lipedema (`status = 'plano_ativo'`).
+ *
+ * Cinco tipos de toque, todos idempotentes por `respostas.rotina_msgs` e
+ * limitados a UMA mensagem por lead por dia (`ultimo_envio`, data local):
+ *   1. D0 + 4h  · lembrete de acesso (só entre 08h e 21h, para não acordar ninguém)
+ *   2. Diário   · dica do dia, janela 08h-10h, respeitando a semana vivida
+ *   3. Retomada · 2+ dias sem check-in, janela 08h-10h, no máximo a cada 3 dias
+ *   4. Semana   · fechamento de cada semana concluída
+ *   5. Final    · conclusão dos 28 dias + convite do Método Derma (R$297)
  */
 async function processarCadenciaRotina(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseAdmin: any,
   sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
 ) {
-  const resultados: Array<{ lead: string; dia: number; status: string }> = [];
+  const resultados: Array<{ lead: string; tipo: string; status: string }> = [];
 
   const hora = horaLocal();
-  if (hora < JANELA_INICIO || hora >= JANELA_FIM) return resultados;
+  const janelaManha = hora >= JANELA_INICIO && hora < JANELA_FIM;
+  const janelaDia = hora >= JANELA_INICIO && hora < 21;
+  if (!janelaDia) return resultados;
+
+  const hoje = hojeISO();
 
   const { data: leads } = await supabaseAdmin
     .from("leads")
@@ -258,40 +267,138 @@ async function processarCadenciaRotina(
 
   for (const lead of leads ?? []) {
     const respostas = (lead.respostas ?? {}) as LeadResp;
-    const controle =
-      (respostas.rotina_dicas as
-        | { inicio?: string; dias_enviados?: number[] }
+    const msgs =
+      (respostas.rotina_msgs as
+        | {
+            inicio?: string;
+            ultimo_envio?: string;
+            acesso_4h?: string;
+            dias_enviados?: number[];
+            semanas_fechadas?: number[];
+            retomada_em?: string;
+            conclusao?: string;
+          }
         | undefined) ?? {};
 
-    const inicio =
-      controle.inicio ?? lead.updated_at ?? lead.created_at ?? new Date().toISOString();
-    const dia = diasDesde(inicio) + 1;
-    if (dia < 1 || dia > 28) continue;
+    // Uma mensagem por lead por dia, sem exceção.
+    if (msgs.ultimo_envio === hoje) continue;
 
-    const enviados = new Set(controle.dias_enviados ?? []);
-    if (enviados.has(dia)) continue;
+    const inicioISO =
+      msgs.inicio ?? lead.updated_at ?? lead.created_at ?? new Date().toISOString();
+    const inicio = new Date(inicioISO);
+    const horasDesdeCompra = (Date.now() - inicio.getTime()) / MS_HORA;
+    const dia = Math.floor(horasDesdeCompra / 24) + 1;
 
-    // Semana vivida de verdade: se ela não avançou, não recebe conteúdo adiantado.
-    let semanaAtual = Math.min(4, Math.ceil(dia / 7));
-    if (lead.user_id) {
-      const { data: prog } = await supabaseAdmin
-        .from("rotina_progresso")
-        .select("semana_atual")
-        .eq("user_id", lead.user_id)
-        .maybeSingle();
-      if (prog?.semana_atual) {
-        semanaAtual = Math.min(4, Math.max(1, Number(prog.semana_atual)));
+    const nome = (lead.nome || "").split(" ")[0] || "";
+    const ola = nome ? `${nome}, ` : "";
+
+    let tipo: string | null = null;
+    let msg = "";
+    const proximo = { ...msgs, inicio: inicioISO };
+
+    // 1. Lembrete de acesso — 4h depois da compra.
+    if (!msgs.acesso_4h && horasDesdeCompra >= 4) {
+      tipo = "acesso_4h";
+      msg =
+        `${ola}aqui é a Gabriela 💙\n\n` +
+        `Passei só pra lembrar que seu acesso já está liberado. Abre o app, toca em *Rotina* na barra de baixo e começa a missão da *Semana 1*: o café da manhã.\n\n` +
+        `Não precisa mudar tudo hoje. Uma refeição de cada vez já é o suficiente pra começar.`;
+      proximo.acesso_4h = new Date().toISOString();
+    } else if (janelaManha) {
+      // Estado real da Rotina: semana vivida e último check-in.
+      let semanaAtual = Math.min(4, Math.max(1, Math.ceil(dia / 7)));
+      let ultimoCheckin: string | null = null;
+      let totalCheckins = 0;
+
+      if (lead.user_id) {
+        const { data: prog } = await supabaseAdmin
+          .from("rotina_progresso")
+          .select("semana_atual")
+          .eq("user_id", lead.user_id)
+          .maybeSingle();
+        if (prog?.semana_atual) {
+          semanaAtual = Math.min(4, Math.max(1, Number(prog.semana_atual)));
+        }
+
+        const { data: checkins } = await supabaseAdmin
+          .from("rotina_checkins")
+          .select("data")
+          .eq("user_id", lead.user_id)
+          .order("data", { ascending: false })
+          .limit(50);
+        totalCheckins = checkins?.length ?? 0;
+        ultimoCheckin = (checkins?.[0]?.data as string | undefined) ?? null;
+      }
+
+      const diasSemCheckin = ultimoCheckin
+        ? diasEntre(hoje, ultimoCheckin)
+        : dia - 1;
+
+      const semanasFechadas = new Set<number>(proximo.semanas_fechadas ?? []);
+      const semanaConcluida = Math.min(4, Math.floor(dia / 7));
+      const diasEnviados = new Set<number>(proximo.dias_enviados ?? []);
+
+      if (dia > 28 && !msgs.conclusao) {
+        // 5. Conclusão dos 28 dias + convite do plano de R$297.
+        tipo = "conclusao";
+        msg =
+          `${ola}você chegou ao fim dos 28 dias da Rotina Zero Lipedema 💙\n\n` +
+          `Suas quatro refeições principais estão ajustadas, sem dieta e sem contar caloria. Só isso já muda muita coisa no inchaço e na dor.\n\n` +
+          `Se você quiser ir além, existe o passo seguinte: o *Método Derma*, meu acompanhamento de 90 dias com anamnese completa, leitura dos seus exames e prescrição personalizada, por R$297.\n\n` +
+          `Se fizer sentido pra você, responde *QUERO SABER* aqui que eu te explico direitinho como funciona.`;
+        proximo.conclusao = new Date().toISOString();
+      } else if (
+        semanaConcluida >= 1 &&
+        semanaConcluida <= 4 &&
+        !semanasFechadas.has(semanaConcluida)
+      ) {
+        // 4. Fechamento de semana.
+        const foco = ["o café da manhã", "o almoço", "o lanche", "o jantar"][
+          semanaConcluida - 1
+        ];
+        const proximaFoco = ["o almoço", "o lanche", "o jantar", ""][
+          semanaConcluida - 1
+        ];
+        tipo = `semana_${semanaConcluida}`;
+        msg =
+          `${ola}fim da Semana ${semanaConcluida} 💙\n\n` +
+          `Você passou sete dias ajustando ${foco}. Repara no que mudou: inchaço ao acordar, disposição, roupa no fim do dia.\n\n` +
+          (proximaFoco
+            ? `A partir de agora a gente ajusta ${proximaFoco}, mantendo o que você já conquistou. Abre a aba *Rotina* pra ver a missão nova.`
+            : `Abre a aba *Progresso* pra ver sua sequência completa.`);
+        semanasFechadas.add(semanaConcluida);
+        proximo.semanas_fechadas = Array.from(semanasFechadas).sort((a, b) => a - b);
+      } else if (diasSemCheckin >= 2 && totalCheckins > 0) {
+        // 3. Retomada — no máximo a cada 3 dias.
+        const ultimaRetomada = proximo.retomada_em
+          ? diasEntre(hoje, isoLocal(new Date(proximo.retomada_em)))
+          : 99;
+        if (ultimaRetomada >= 3) {
+          tipo = "retomada";
+          msg =
+            `${ola}faz ${diasSemCheckin} dias sem check-in e eu passei aqui sem cobrança nenhuma 💙\n\n` +
+            `Rotina que funciona é a que aceita falha. Não precisa recomeçar do zero: é só cumprir a missão de hoje e marcar no app, na aba *Hoje*.\n\n` +
+            `Se algo travou, me conta aqui que a gente ajusta juntas.`;
+          proximo.retomada_em = new Date().toISOString();
+        }
+      }
+
+      // 2. Dica do dia — só se nada mais importante foi disparado.
+      if (!tipo && dia >= 1 && dia <= 28 && !diasEnviados.has(dia)) {
+        const dica = dicaParaDia(dia, semanaAtual);
+        if (dica) {
+          tipo = `dica_${dia}`;
+          msg =
+            `${ola}dia ${dia} da sua Rotina 💙\n\n` +
+            `${dica.texto}\n\n` +
+            `Quando cumprir a missão de hoje, marca lá no app na aba *Hoje*.`;
+          diasEnviados.add(dia);
+          proximo.dias_enviados = Array.from(diasEnviados).sort((a, b) => a - b);
+        }
       }
     }
 
-    const dica = dicaParaDia(dia, semanaAtual);
-    if (!dica) continue;
-
-    const nome = (lead.nome || "").split(" ")[0] || "";
-    const msg =
-      `${nome ? `${nome}, ` : ""}dia ${dia} da sua Rotina 💙\n\n` +
-      `${dica.texto}\n\n` +
-      `Quando cumprir a missão de hoje, marca lá no app na aba *Hoje*.`;
+    if (!tipo || !msg) continue;
 
     const wa = await sendWhatsApp(lead.telefone, msg);
     await supabaseAdmin.from("whatsapp_logs").insert({
@@ -302,23 +409,21 @@ async function processarCadenciaRotina(
     });
 
     if (wa.ok) {
-      enviados.add(dia);
-      respostas.rotina_dicas = {
-        inicio,
-        dias_enviados: Array.from(enviados).sort((a, b) => a - b),
-      };
+      proximo.ultimo_envio = hoje;
+      respostas.rotina_msgs = proximo;
       await supabaseAdmin
         .from("leads")
         .update({ respostas: respostas as never })
         .eq("id", lead.id);
-      resultados.push({ lead: lead.id, dia, status: "enviado" });
+      resultados.push({ lead: lead.id, tipo, status: "enviado" });
     } else {
-      resultados.push({ lead: lead.id, dia, status: "falhou" });
+      resultados.push({ lead: lead.id, tipo, status: "falhou" });
     }
   }
 
   return resultados;
 }
+
 
 
 export const Route = createFileRoute("/api/public/hooks/cron-tick")({
