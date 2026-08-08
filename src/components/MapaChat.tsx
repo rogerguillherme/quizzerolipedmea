@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Send, MessageCircle, X, Loader2, CheckCircle2, Sparkles, KeyRound, ArrowRight } from "lucide-react";
 import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
+import { salvarMapaSessao } from "@/lib/mapa-sessao";
 import { supabase } from "@/integrations/supabase/client";
 import { setTrackLeadId, track } from "@/lib/analytics";
 import { getAtribuicao } from "@/lib/atribuicao";
@@ -197,7 +198,18 @@ type Stage =
   | { kind: "done" };
 
 // ------------- Componente principal -------------
-export function MapaChat({ onClose }: { onClose?: () => void }) {
+export function MapaChat({
+  onClose,
+  destino = "app",
+}: {
+  onClose?: () => void;
+  /**
+   * "app": fluxo antigo (cria acesso e leva pra /definir-senha).
+   * "plano": funil novo — o quiz só gera o Mapa e joga a lead na landing
+   * /plano, onde o popup entrega o resultado e captura o WhatsApp.
+   */
+  destino?: "app" | "plano";
+}) {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [stage, setStage] = useState<Stage>({ kind: "asking-nome" });
   const [typing, setTyping] = useState(false);
@@ -281,6 +293,16 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     setInputText("");
     pushUser(val);
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
+    if (destino === "plano") {
+      // No funil novo o WhatsApp é pedido depois, no popup da landing — aqui
+      // a gente não interrompe o quiz com pedido de contato.
+      await gabiSay(
+        "Vou te fazer perguntinhas rápidas e no fim monto seu Mapa. Combinado?",
+      );
+      await gabiSay(QS[0].gabi(primeiroNome));
+      setStage({ kind: "asking-choice", qIndex: 0 });
+      return;
+    }
     await gabiSay(
       "Antes de começar, me passa seu WhatsApp com DDD (11) 9 8888-7777? É por lá que eu te mando o seu Mapa completo depois.",
     );
@@ -374,6 +396,22 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       setLeadId(result.leadId ?? null);
       setTrackLeadId(result.leadId ?? null);
       track("quiz_completed");
+      if (destino === "plano") {
+        // Guarda o Mapa na sessão e leva pra landing: o popup de lá mostra o
+        // resultado e pede o WhatsApp.
+        salvarMapaSessao({
+          leadId: result.leadId ?? null,
+          nome,
+          telefone,
+          diagnostico: result.diagnostico,
+        });
+        trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
+        setTyping(false);
+        await gabiSay("Prontinho, seu Mapa ficou pronto. Já te mostro aqui 💙", 700);
+        setStage({ kind: "done" });
+        navigate({ to: "/plano" });
+        return;
+      }
       trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
       // Pixel do navegador com o MESMO eventID enviado pelo servidor (dedupe Meta).
       if (result.metaEventId) {
