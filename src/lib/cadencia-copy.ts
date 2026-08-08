@@ -23,6 +23,10 @@ export interface MensagemCadencia {
   variantes: readonly string[];
   /** Quantidade de mensagens em que o texto sai quebrado (derivado de `---`). */
   partes?: number;
+  /** Tokens obrigatórios: se algum vier vazio, usa `fallback`. */
+  requer?: readonly string[];
+  /** Versões sem os tokens de `requer`, para quando o dado não existe. */
+  fallback?: readonly string[];
 }
 
 /** Hash estável (FNV-1a) de um uuid/string qualquer. Sempre positivo. */
@@ -55,14 +59,28 @@ export function renderCadencia(
   );
 }
 
-/** Escolhe a variante do lead e já renderiza os tokens. */
+/**
+ * Escolhe a variante do lead e já renderiza os tokens.
+ * Se algum token de `requer` estiver vazio, cai na variante de fallback —
+ * nunca sai frase com `{sintoma}` cru nem com buraco no meio.
+ */
 export function mensagemPara(
   msg: MensagemCadencia,
   leadId: string,
   vars: Record<string, string | number> = {},
 ): string {
-  const i = varianteDoLead(leadId, msg.variantes.length);
-  return renderCadencia(msg.variantes[i] ?? msg.variantes[0]!, vars).trim();
+  const faltando = (msg.requer ?? []).some(
+    (k) => !String(vars[k] ?? "").trim(),
+  );
+  const lista =
+    faltando && msg.fallback?.length ? msg.fallback : msg.variantes;
+  const i = varianteDoLead(leadId, lista.length);
+  const bruto = renderCadencia(lista[i] ?? lista[0]!, vars);
+  // Nome vazio deixaria ", deixa eu te perguntar" — limpa a pontuação órfã.
+  return bruto
+    .replace(/(^|\n)[ \t]*,[ \t]*/g, "$1")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
 }
 
 /* ------------------------------------------------------------------ */
@@ -277,17 +295,17 @@ Comece por aí, sem pressa. Uma refeição de cada vez já muda bastante coisa.`
 export const ROT_DICA: MensagemCadencia = {
   chave: "dica",
   variantes: [
-    `{nome}dia {dia} da sua Rotina.
+    `Dia {dia} da sua Rotina.
 
 {dica}
 
 Quando cumprir a missão de hoje, marca lá no app na aba Hoje.`,
-    `{nome}chegamos no dia {dia}.
+    `Dia {dia}.
 
 {dica}
 
 Depois de cumprir a missão, é só marcar no app, na aba Hoje 💙`,
-    `{nome}dia {dia} por aqui.
+    `Dia {dia} por aqui.
 
 {dica}
 
