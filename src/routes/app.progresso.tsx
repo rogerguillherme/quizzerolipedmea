@@ -38,9 +38,8 @@ export const Route = createFileRoute("/app/progresso")({
   }),
 });
 
-const NAVY = "#16324F";
-const GOLD = "#AF7F35";
-const GOLD_SOFT = "#D9A94B";
+import { NAVY, GOLD, GOLD_LIGHT as GOLD_SOFT, GOLD_LABEL, INK_SOFT } from "@/lib/tokens";
+import { textoSequencia } from "@/lib/streak";
 
 const CARD = {
   background: "rgba(255,253,247,0.9)",
@@ -127,7 +126,7 @@ function Progresso() {
 
   return (
     <div className="px-5 pt-6 pb-8">
-      <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+      <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
         Seu histórico
       </p>
       <h1
@@ -147,24 +146,24 @@ function Progresso() {
         }}
       >
         <div>
-          <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.22em", color: GOLD_SOFT }}>
+          <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.22em", color: GOLD_SOFT }}>
             Sequência
           </p>
           <p className="mt-1" style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", lineHeight: 1 }}>
             {sequencia}
           </p>
-          <p className="mt-1 text-[11.5px]" style={{ color: "rgba(245,239,225,0.7)" }}>
+          <p className="mt-1 text-[12.5px]" style={{ color: "rgba(245,239,225,0.7)" }}>
             {sequencia === 1 ? "dia seguido" : "dias seguidos"}
           </p>
         </div>
         <div style={{ borderLeft: "1px solid rgba(245,239,225,0.16)", paddingLeft: "1rem" }}>
-          <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.22em", color: GOLD_SOFT }}>
+          <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.22em", color: GOLD_SOFT }}>
             Recorde
           </p>
           <p className="mt-1" style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", lineHeight: 1 }}>
             {recorde}
           </p>
-          <p className="mt-1 text-[11.5px]" style={{ color: "rgba(245,239,225,0.7)" }}>
+          <p className="mt-1 text-[12.5px]" style={{ color: "rgba(245,239,225,0.7)" }}>
             {recorde === 1 ? "dia seguido" : "dias seguidos"}
           </p>
         </div>
@@ -172,7 +171,7 @@ function Progresso() {
 
       {/* Calendário */}
       <section className="mt-6 rounded-[24px] p-5" style={CARD}>
-        <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+        <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
           Últimas 4 semanas
         </p>
         <div className="mt-3 grid grid-cols-7 gap-1.5">
@@ -188,7 +187,7 @@ function Progresso() {
             />
           ))}
         </div>
-        <p className="mt-3 text-[11.5px]" style={{ color: "#5C5749" }}>
+        <p className="mt-3 text-[12.5px]" style={{ color: INK_SOFT }}>
           {datas.size === 0
             ? "Seus check-ins aparecem aqui."
             : `${datas.size} ${datas.size === 1 ? "dia registrado" : "dias registrados"} no total.`}
@@ -197,7 +196,7 @@ function Progresso() {
 
       {/* Semanas da Rotina */}
       <section className="mt-6">
-        <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+        <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
           Semanas da Rotina
         </p>
         <div className="mt-3 space-y-2">
@@ -212,16 +211,16 @@ function Progresso() {
                   style={
                     concluida
                       ? { background: "linear-gradient(180deg, #D9A94B, #AF7F35)", color: NAVY }
-                      : { background: "rgba(22,50,79,0.06)", color: "#5C5749", border: "1px solid rgba(216,198,160,0.5)" }
+                      : { background: "rgba(22,50,79,0.06)", color: INK_SOFT, border: "1px solid rgba(216,198,160,0.5)" }
                   }
                 >
                   {n}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13.5px] font-semibold" style={{ color: NAVY }}>
+                  <p className="text-[14px] font-semibold" style={{ color: NAVY }}>
                     {s.refeicao}
                   </p>
-                  <p className="text-[11.5px]" style={{ color: "#5C5749" }}>
+                  <p className="text-[12.5px]" style={{ color: INK_SOFT }}>
                     {concluida ? "Concluída" : atual ? "Em andamento" : "A seguir"}
                   </p>
                 </div>
@@ -233,11 +232,11 @@ function Progresso() {
 
       {/* Refeições registradas */}
       <section className="mt-6">
-        <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+        <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
           Refeições registradas
         </p>
         {meals.length === 0 ? (
-          <p className="mt-2.5 text-[12.5px]" style={{ color: "#5C5749" }}>
+          <p className="mt-2.5 text-[12.5px]" style={{ color: INK_SOFT }}>
             Você ainda não registrou refeições.{" "}
             <Link to="/app/registrar" style={{ color: NAVY, fontWeight: 600 }}>
               Registrar agora →
@@ -275,7 +274,7 @@ function Progresso() {
           aria-expanded={mapaAberto}
         >
           <div className="flex-1">
-            <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+            <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
               Histórico
             </p>
             <p className="mt-0.5 text-[14px] font-semibold" style={{ color: NAVY }}>
@@ -290,7 +289,7 @@ function Progresso() {
 
         {mapaAberto && (
           <div className="px-5 pb-5">
-            <p className="text-[12px]" style={{ color: "#5C5749" }}>
+            <p className="text-[12px]" style={{ color: INK_SOFT }}>
               Estágio percebido:{" "}
               <strong style={{ color: NAVY }}>{diagnostico?.estagio ?? "Indeterminado"}</strong>
             </p>
@@ -317,7 +316,7 @@ function Progresso() {
                     <div className="flex-1">
                       <p
                         className="text-[10.5px] font-semibold uppercase"
-                        style={{ letterSpacing: "0.16em", color: GOLD }}
+                        style={{ letterSpacing: "0.16em", color: GOLD_LABEL }}
                       >
                         {meta.label}
                       </p>
@@ -332,7 +331,7 @@ function Progresso() {
 
             {prioridades.length > 0 && (
               <div className="mt-4">
-                <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+                <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
                   Suas 3 prioridades
                 </p>
                 <ul className="mt-2 space-y-1.5">
@@ -359,7 +358,7 @@ function Progresso() {
             color: "#F5EFE1",
           }}
         >
-          <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_SOFT }}>
+          <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_SOFT }}>
             Próximo passo
           </p>
           <h2
@@ -404,7 +403,7 @@ function Progresso() {
             )}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
-                <p className="text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.2em", color: GOLD }}>
+                <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.2em", color: GOLD_LABEL }}>
                   {new Date(aberta.createdAt).toLocaleString("pt-BR", {
                     day: "2-digit",
                     month: "short",
@@ -416,7 +415,7 @@ function Progresso() {
                   <X className="size-4" style={{ color: NAVY }} />
                 </button>
               </div>
-              <p className="mt-2 text-[13.5px]" style={{ color: NAVY, lineHeight: 1.5 }}>
+              <p className="mt-2 text-[14px]" style={{ color: NAVY, lineHeight: 1.5 }}>
                 {aberta.feedback.sugestao}
               </p>
               {aberta.feedback.pontos.length > 0 && (
@@ -442,10 +441,10 @@ function Progresso() {
                     className="min-w-0 rounded-lg px-1 py-1.5 text-center"
                     style={{ background: "rgba(22,50,79,0.05)", border: "1px solid rgba(216,198,160,0.45)" }}
                   >
-                    <p className="text-[8.5px] font-semibold uppercase" style={{ letterSpacing: "0.1em", color: "#5C5749" }}>
+                    <p className="text-[8.5px] font-semibold uppercase" style={{ letterSpacing: "0.1em", color: INK_SOFT }}>
                       {x.l}
                     </p>
-                    <p className="truncate text-[11.5px] font-semibold" style={{ color: NAVY }}>
+                    <p className="truncate text-[12.5px] font-semibold" style={{ color: NAVY }}>
                       {x.v}
                     </p>
                   </div>
