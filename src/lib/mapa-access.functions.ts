@@ -227,10 +227,7 @@ export const listarLeadsAtencao = createServerFn({ method: "GET" })
           at?.criado_em ?? regua.pausadaEm ?? regua.fastTrackEm ?? l.updated_at,
 
         // Estado da régua: em que passo está, se pausou por resposta, etc.
-        regua: descreverRegua(
-          l.respostas as Record<string, unknown>,
-          l.status,
-        ),
+        regua,
       };
     });
   });
