@@ -212,34 +212,35 @@ function RotinaPage() {
         <section className="mt-5">
           {estado?.checkinHoje ? (
             <div
-              className={`${CARD_BASE} px-5 py-5 text-center`}
+              className={`${CARD_BASE} animate-check-pop px-5 py-5 text-center`}
               style={{
                 ...CARD_STYLE,
                 borderColor: BORDER_GOLD,
               }}
             >
               <p
-                className="text-[15px] font-semibold"
+                className="text-[16px] font-semibold"
                 style={{ color: NAVY, fontFamily: "'Nunito', sans-serif" }}
               >
                 Missão de hoje concluída ✓
               </p>
-              {(estado?.sequencia ?? 0) > 0 && (
-                <p className="mt-1 text-[13px]" style={{ color: GOLD }}>
-                  {estado?.sequencia} {estado?.sequencia === 1 ? "dia" : "dias"} seguidos
-                </p>
-              )}
-              <p className="mt-2 text-[13px] leading-relaxed text-[#5C5749]">{frase}</p>
+              <p className="mt-1 text-[14px]" style={{ color: GOLD_LABEL }}>
+                {textoSequencia(estado?.sequencia ?? 0, estado?.totalCheckins ?? 0)}
+              </p>
+              <p className="mt-2 text-[14px] leading-relaxed" style={{ color: INK_SOFT }}>
+                {frase}
+              </p>
               <button
                 type="button"
                 onClick={() => desfazerMut.mutate()}
                 disabled={desfazerMut.isPending}
-                className="mt-3 text-[12px] underline underline-offset-2 opacity-70"
-                style={{ color: NAVY }}
+                className="mt-3 text-[12.5px] underline underline-offset-2"
+                style={{ color: INK_SOFT }}
               >
                 {desfazerMut.isPending ? "Desfazendo..." : "Desfazer check-in de hoje"}
               </button>
             </div>
+
           ) : (
             <button
               type="button"
