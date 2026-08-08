@@ -42,14 +42,15 @@ function AppLayout() {
     );
   }
 
+  // Ciclo diário: abrir (Hoje) → ação (Registrar / Rotina) → recompensa (Progresso).
+  // "Premium" saiu da nav: /app/derma é alcançada por card contextual na Hoje.
   const tabs: { to: string; label: string; icon: typeof Compass; exact?: boolean }[] = [
-    { to: "/app", label: "Radar", icon: Compass, exact: true },
-    { to: "/app/missoes", label: "Dicas", icon: Lightbulb },
-    { to: "/app/avaliacao", label: "Avaliação", icon: ClipboardList },
-    { to: "/app/derma", label: "Premium", icon: Sparkles },
+    { to: "/app", label: "Hoje", icon: Sun, exact: true },
+    { to: "/app/registrar", label: "Registrar", icon: Camera },
+    { to: "/app/rotina", label: "Rotina", icon: CalendarCheck },
+    { to: "/app/progresso", label: "Progresso", icon: TrendingUp },
   ];
-  void Camera;
-  void CalendarCheck;
+
 
   return (
     <div
