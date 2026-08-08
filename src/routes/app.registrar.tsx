@@ -245,9 +245,9 @@ function RegistrarPage() {
 
       <p className="mt-2.5 text-center text-[12px]" style={{ color: "#5C5749" }}>
         {registradasHoje === 0
-          ? "Nenhuma refeição registrada hoje."
+          ? "Nenhuma refeição registrada hoje ainda. Quando comer, tira uma foto do prato."
           : registradasHoje === 1
-          ? "1 refeição registrada hoje."
+          ? "1 refeição registrada hoje. Já é um começo."
           : `${registradasHoje} refeições registradas hoje.`}
       </p>
 
