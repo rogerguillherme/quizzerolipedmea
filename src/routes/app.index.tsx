@@ -9,6 +9,8 @@ import { getDicaDoDia } from "@/lib/dicas";
 import { getMyProfile } from "@/lib/mapa-access.functions";
 import { getMealTestStatus } from "@/lib/meal-test.functions";
 import { contarHoje, listarRefeicoesRemotas, loadLocalMeals } from "@/lib/refeicoes";
+import { dataExtenso as dataExtensoSP, hojeISO as hojeISOLocal, horaLocal } from "@/lib/data-local";
+
 
 export const Route = createFileRoute("/app/")({
   component: Hoje,
