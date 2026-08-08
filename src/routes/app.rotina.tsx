@@ -177,12 +177,11 @@ function RotinaPage() {
             <span>
               {dias} de {META_DIAS_SEMANA} dias com check-in
             </span>
-            {(estado?.sequencia ?? 0) > 1 && (
-              <span className="inline-flex items-center gap-1" style={{ color: GOLD_LIGHT }}>
-                <Flame className="size-3.5" />
-                {estado?.sequencia} dias seguidos
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1" style={{ color: GOLD_LIGHT }}>
+              <Flame className="size-3.5" />
+              {textoSequencia(estado?.sequencia ?? 0, estado?.totalCheckins ?? 0)}
+            </span>
+
           </div>
           <div
             className="mt-2 h-2 w-full overflow-hidden rounded-full"
