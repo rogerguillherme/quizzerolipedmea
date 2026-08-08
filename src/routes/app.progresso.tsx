@@ -22,6 +22,7 @@ import { getMyProfile } from "@/lib/mapa-access.functions";
 import { getMealTestStatus } from "@/lib/meal-test.functions";
 import { listarRefeicoesRemotas, loadLocalMeals, type MealEntry } from "@/lib/refeicoes";
 import type { Diagnostico } from "@/lib/mapa.functions";
+import { isoLocal } from "@/lib/data-local";
 
 export const Route = createFileRoute("/app/progresso")({
   component: Progresso,
@@ -63,14 +64,7 @@ const LABELS_Q: Record<string, { icon: React.ReactNode; label: string }> = {
   objetivo: { icon: <Target className="size-3.5" />, label: "Objetivo agora" },
 };
 
-function isoLocal(d: Date): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(d);
-}
+
 
 function Progresso() {
   const fetchRotina = useServerFn(getRotina);
