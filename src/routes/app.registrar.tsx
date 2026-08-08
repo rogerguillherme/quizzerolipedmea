@@ -80,6 +80,8 @@ function RegistrarPage() {
   const [meals, setMeals] = useState<MealEntry[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  // Guarda a última foto enviada para permitir "Tentar de novo" sem refotografar.
+  const [ultimoArquivo, setUltimoArquivo] = useState<File | null>(null);
   const [lastFeedback, setLastFeedback] = useState<Feedback | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const cameraAberta = useRef(false);
@@ -180,6 +182,7 @@ function RegistrarPage() {
 
   function handleFile(file: File) {
     setPreview(URL.createObjectURL(file));
+    setUltimoArquivo(file);
     setAviso(null);
     setLastFeedback(null);
     mut.mutate(file);
@@ -325,8 +328,23 @@ function RegistrarPage() {
           }}
         >
           {aviso}
+          {ultimoArquivo && (
+            <button
+              type="button"
+              onClick={() => {
+                setAviso(null);
+                mut.mutate(ultimoArquivo);
+              }}
+              disabled={mut.isPending}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[12.5px] font-semibold disabled:opacity-60"
+              style={{ background: "rgba(255,253,247,0.95)", border: "1px solid #AF7F35", color: "#16324F" }}
+            >
+              {mut.isPending ? "Analisando..." : "Tentar de novo"}
+            </button>
+          )}
         </div>
       )}
+
 
       {preview && lastFeedback && (
         <div className="mt-4 overflow-hidden rounded-2xl" style={{ border: "1px solid rgba(216,198,160,0.55)" }}>

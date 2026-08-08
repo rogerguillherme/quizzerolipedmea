@@ -26,15 +26,23 @@ export const Route = createFileRoute("/app/")({
   }),
 });
 
-const NAVY = "#16324F";
-const GOLD = "#AF7F35";
-const GOLD_SOFT = "#D9A94B";
+import {
+  NAVY,
+  GOLD,
+  GOLD_LIGHT as GOLD_SOFT,
+  GOLD_LABEL,
+  INK,
+  INK_SOFT,
+  CARD_STYLE,
+  GRADIENT_GOLD,
+  SHADOW,
+  truncarPalavra,
+} from "@/lib/tokens";
+import { textoSequencia } from "@/lib/streak";
 
-const CARD = {
-  background: "rgba(255,253,247,0.9)",
-  border: "1px solid rgba(216,198,160,0.55)",
-  boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
-};
+
+const CARD = CARD_STYLE;
+
 
 /** Saudação pelo horário de São Paulo, não pelo fuso do aparelho. */
 function saudacao(d: Date): string {
@@ -107,7 +115,9 @@ function Hoje() {
   const diasNaSemana = rotina?.diasNaSemana ?? 0;
   const checkinFeito = Boolean(rotina?.checkinHoje);
   const sequencia = rotina?.sequencia ?? 0;
+  const totalCheckins = rotina?.totalCheckins ?? 0;
   const dica = getDicaDoDia(hojeISO);
+
 
   // Frase determinística pelo dia, para não trocar a cada render.
   const frase =
@@ -172,7 +182,7 @@ function Hoje() {
           checkinFeito ? (
             <div className="mt-5">
               <div
-                className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold"
+                className="animate-check-pop inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold"
                 style={{ background: "rgba(217,169,75,0.18)", border: "1px solid rgba(217,169,75,0.45)", color: GOLD_SOFT }}
               >
                 <Check className="size-3.5" /> Missão de hoje cumprida
@@ -180,22 +190,24 @@ function Hoje() {
               <p className="mt-3 text-[13px]" style={{ color: "rgba(245,239,225,0.86)", lineHeight: 1.55 }}>
                 {frase}
               </p>
-              <p className="mt-1.5 text-[12px]" style={{ color: "rgba(245,239,225,0.65)" }}>
-                {sequencia === 1 ? "1 dia seguido" : `${sequencia} dias seguidos`}
+              <p className="mt-1.5 text-[12.5px]" style={{ color: "rgba(245,239,225,0.75)" }}>
+                {textoSequencia(sequencia, totalCheckins)}
               </p>
             </div>
+
           ) : (
             <button
               type="button"
               disabled={mut.isPending}
               onClick={() => mut.mutate()}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13.5px] font-semibold uppercase transition-opacity disabled:opacity-60"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[14px] font-semibold uppercase transition-opacity disabled:opacity-60"
               style={{
-                background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
+                background: GRADIENT_GOLD,
                 color: NAVY,
                 letterSpacing: "0.14em",
-                boxShadow: "0 12px 24px -14px rgba(175,127,53,0.65)",
+                boxShadow: SHADOW.gold,
               }}
+
             >
               {mut.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
               Cumpri a missão de hoje
@@ -204,7 +216,11 @@ function Hoje() {
         ) : (
           <>
             <div className="relative mt-4">
-              <div className="select-none" style={{ filter: "blur(4px)", opacity: 0.75 }} aria-hidden>
+              <div
+                className="pointer-events-none select-none"
+                style={{ filter: "blur(4px)", opacity: 0.75 }}
+                aria-hidden="true"
+              >
                 <p className="text-[13px]" style={{ lineHeight: 1.6 }}>
                   {semana.entra.slice(0, 3).join(" · ")}
                 </p>
@@ -215,20 +231,22 @@ function Hoje() {
               <span
                 className="absolute right-0 top-0 grid size-8 place-items-center rounded-full"
                 style={{ background: "rgba(245,239,225,0.14)", color: GOLD_SOFT }}
+                aria-hidden="true"
               >
                 <Lock className="size-3.5" />
               </span>
             </div>
             <Link
               to="/app/derma"
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13.5px] font-semibold uppercase"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[14px] font-semibold uppercase"
               style={{
-                background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
+                background: GRADIENT_GOLD,
                 color: NAVY,
                 letterSpacing: "0.14em",
-                boxShadow: "0 12px 24px -14px rgba(175,127,53,0.65)",
+                boxShadow: SHADOW.gold,
               }}
             >
+
               Liberar a Rotina
             </Link>
           </>
@@ -251,7 +269,7 @@ function Hoje() {
         )}
       </section>
 
-      {/* 3. Registrar refeição */}
+      {/* 3. Registrar refeição — ação secundária: o check-in é a primária do dia. */}
       <section className="mt-4">
         <Link
           to="/app/registrar"
@@ -259,15 +277,14 @@ function Hoje() {
           className="flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13px] font-semibold uppercase"
           style={{
             background: "rgba(255,253,247,0.95)",
-            border: "1px solid rgba(216,198,160,0.7)",
+            border: `1px solid ${GOLD}`,
             color: NAVY,
             letterSpacing: "0.14em",
-            boxShadow: "0 10px 24px -20px rgba(22,50,79,0.35)",
           }}
         >
           <Camera className="size-4" style={{ color: GOLD }} /> Registrar refeição
         </Link>
-        <p className="mt-2 text-center text-[11.5px]" style={{ color: "#5C5749" }}>
+        <p className="mt-2 text-center text-[12.5px]" style={{ color: INK_SOFT }}>
           {refeicoesHoje === 0
             ? "Nenhuma refeição registrada hoje."
             : refeicoesHoje === 1
@@ -279,22 +296,30 @@ function Hoje() {
       {/* 4. Progresso da semana */}
       <section className="mt-6">
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+          <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
             Progresso da semana
           </p>
-          <p className="text-[11.5px] font-semibold" style={{ color: NAVY }}>
+          <p className="text-[12.5px] font-semibold" style={{ color: NAVY }}>
             {Math.min(diasNaSemana, META_DIAS_SEMANA)} de {META_DIAS_SEMANA} dias
           </p>
         </div>
-        <div className="mt-2.5 flex items-center gap-1.5">
+        <div
+          className="mt-2.5 flex items-center gap-1.5"
+          role="progressbar"
+          aria-label="Dias de check-in nesta semana"
+          aria-valuenow={Math.min(diasNaSemana, META_DIAS_SEMANA)}
+          aria-valuemin={0}
+          aria-valuemax={META_DIAS_SEMANA}
+        >
           {Array.from({ length: META_DIAS_SEMANA }, (_, i) => {
             const feito = i < diasNaSemana;
             return (
               <span
                 key={i}
-                className="h-2 flex-1 rounded-full"
+                aria-hidden
+                className="h-2 flex-1 rounded-full transition-colors duration-300"
                 style={{
-                  background: feito ? "linear-gradient(90deg, #D9A94B, #AF7F35)" : "rgba(22,50,79,0.1)",
+                  background: feito ? GRADIENT_GOLD : "rgba(22,50,79,0.1)",
                 }}
               />
             );
@@ -304,18 +329,17 @@ function Hoje() {
 
       {/* 5. Dica do dia */}
       <section className="mt-6 rounded-[24px] p-5" style={CARD}>
-        <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+        <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
           Dica do dia
         </p>
         <p
-          className="mt-2 text-[15px]"
+          className="mt-2 text-[16px]"
           style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: NAVY }}
         >
           {dica.titulo}
         </p>
-        <p className="mt-1.5 text-[12.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
-          {dica.detalhe.slice(0, 180)}
-          {dica.detalhe.length > 180 ? "…" : ""}
+        <p className="mt-1.5 text-[12.5px]" style={{ color: INK, lineHeight: 1.55 }}>
+          {truncarPalavra(dica.detalhe, 180)}
         </p>
         <Link
           to="/app/missoes"
@@ -327,25 +351,27 @@ function Hoje() {
         <Link
           to="/app/guias"
           className="mt-3 ml-4 inline-flex items-center gap-1.5 text-[12.5px]"
-          style={{ color: "#5C5749" }}
+          style={{ color: INK_SOFT }}
         >
           guias <ArrowRight className="size-3.5" style={{ color: GOLD }} />
         </Link>
       </section>
 
+
       {/* 6. Card do plano — só para quem ainda não comprou */}
       {!pago && (
         <section className="mt-6">
           <Link to="/app/derma" className="block rounded-[24px] px-5 py-5" style={CARD}>
-            <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+            <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
               Plano Zero Lipedema
             </p>
-            <p className="mt-1.5 text-[13.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
+            <p className="mt-1.5 text-[14px]" style={{ color: INK, lineHeight: 1.55 }}>
               A Rotina completa das 4 semanas, registro de refeições por foto sem limite e os guias práticos, por R$67.
             </p>
-            <p className="mt-2.5 text-[13px] font-semibold" style={{ color: NAVY }}>
+            <p className="mt-2.5 text-[14px] font-semibold" style={{ color: NAVY }}>
               Ver o plano <span style={{ color: GOLD }}>→</span>
             </p>
+
           </Link>
         </section>
       )}
