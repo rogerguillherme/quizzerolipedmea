@@ -155,6 +155,11 @@ function PremiumPlano() {
           Ativar plano premium
           <ChevronRight className="size-4" />
         </a>
+
+        <p className="mt-3 text-center text-[11.5px] opacity-80">
+          Pagamento único, sem assinatura. Você tem 7 dias de garantia: se não
+          fizer sentido pra você, é só me chamar que devolvo o valor.
+        </p>
       </section>
     </div>
   );
