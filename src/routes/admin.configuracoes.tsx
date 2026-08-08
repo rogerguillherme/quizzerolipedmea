@@ -253,6 +253,11 @@ function EvolutionTab() {
       </div>
 
       <div className="lg:col-span-2">
+        <WebhookPanel />
+      </div>
+
+      <div className="lg:col-span-2">
+
         <p className="text-[11px] font-bold uppercase tracking-wider text-[#8A7C5C]">
           Últimos envios ({logs.length})
         </p>
