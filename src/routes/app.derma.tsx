@@ -42,11 +42,12 @@ function PremiumPlano() {
     );
   }
 
-  // Pós-compra do Plano Premium (R$67): a entrega é a Rotina Zero Lipedema.
+  // Pós-compra do Plano Premium (R$67): a entrega é a Rotina Zero Lipedema,
+  // que agora vive na rota própria /app/rotina.
   // Anamnese, leitura de exames e prescrição personalizada NÃO fazem parte
   // deste plano (são exclusivos do plano de R$297) e não aparecem aqui.
   if (st?.isPremium) {
-    return <RotinaPreview />;
+    return <Navigate to="/app/rotina" replace />;
   }
 
   return (
