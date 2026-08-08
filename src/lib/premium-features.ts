@@ -23,7 +23,7 @@ export interface PremiumFeature {
  *
  * A ordem importa: a Rotina e o registro por foto são o destaque da oferta,
  * os guias vêm depois. Qualquer alteração aqui se propaga para a página de
- * oferta (`OfertaPremiumInline`), para a aba Premium do app (`/app/derma`)
+ * oferta (`OfertaPremiumInline`), para a página do plano (`/app/derma`)
  * e para a mensagem de boas-vindas no WhatsApp.
  *
  * Importante: anamnese, leitura de exames e prescrição personalizada NÃO
