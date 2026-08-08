@@ -141,10 +141,16 @@ function Hoje() {
             color: NAVY,
           }}
         >
-          {saudacao(agora)},{" "}
-          <em className="italic" style={{ color: GOLD }}>
-            {nome}
-          </em>
+          {nome ? (
+            <>
+              {saudacao(agora)},{" "}
+              <em className="italic" style={{ color: GOLD }}>
+                {nome}
+              </em>
+            </>
+          ) : (
+            saudacao(agora)
+          )}
         </h1>
         <p className="mt-1 text-[12px] capitalize" style={{ color: "#5C5749" }}>
           {dataExtenso}
