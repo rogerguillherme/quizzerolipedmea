@@ -38,6 +38,8 @@ import {
   SHADOW,
   truncarPalavra,
 } from "@/lib/tokens";
+import { textoSequencia } from "@/lib/streak";
+
 
 const CARD = CARD_STYLE;
 
