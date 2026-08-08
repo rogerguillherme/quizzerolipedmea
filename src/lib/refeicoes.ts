@@ -6,6 +6,7 @@
  * Quem não comprou continua em localStorage (ver `LOCAL_STORAGE_KEY`).
  */
 import { supabase } from "@/integrations/supabase/client";
+import { isoLocal } from "@/lib/data-local";
 
 export const LOCAL_STORAGE_KEY = "zl_avaliacao_meals_v1";
 const BUCKET = "refeicoes";
@@ -140,8 +141,8 @@ export async function listarRefeicoesRemotas(limite = 60): Promise<MealEntry[]> 
 
 /** Quantas refeições foram registradas hoje (banco ou local). */
 export function contarHoje(meals: readonly MealEntry[]): number {
-  const hoje = new Date().toDateString();
-  return meals.filter((m) => new Date(m.createdAt).toDateString() === hoje).length;
+  const hoje = isoLocal();
+  return meals.filter((m) => isoLocal(new Date(m.createdAt)) === hoje).length;
 }
 
 /**

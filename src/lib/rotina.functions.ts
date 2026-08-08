@@ -8,23 +8,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { MIN_DIAS_AVANCAR } from "@/lib/rotina-content";
+import { hojeISO, diasEntre } from "@/lib/data-local";
 
-/** Data local (America/Sao_Paulo) no formato YYYY-MM-DD. */
-function hojeISO(): string {
-  const fmt = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  return fmt.format(new Date());
-}
-
-function diasEntre(aISO: string, bISO: string): number {
-  const a = Date.parse(`${aISO}T00:00:00Z`);
-  const b = Date.parse(`${bISO}T00:00:00Z`);
-  return Math.round((a - b) / 86_400_000);
-}
 
 /** Sequência de dias consecutivos terminando hoje ou ontem. */
 function calcularSequencia(datas: readonly string[], hoje: string): number {
@@ -98,7 +83,10 @@ async function carregarEstado(context: Ctx) {
     }
   }
 
-  const semanaAtual = Number(progresso?.semana_atual ?? 1);
+  // Usuária nova (ou linha recém-criada): sempre cai na Semana 1, nunca NaN.
+  const bruta = Number(progresso?.semana_atual);
+  const semanaAtual = Number.isFinite(bruta) ? Math.min(4, Math.max(1, bruta)) : 1;
+
 
   const { data: checkins } = await supabase
     .from("rotina_checkins")
@@ -112,8 +100,9 @@ async function carregarEstado(context: Ctx) {
   // Semanas consideradas concluídas: as anteriores à atual, mais a atual
   // quando a rotina inteira já foi encerrada.
   const semanasConcluidas = Array.from({ length: 4 }, (_, i) => i + 1).filter(
-    (n) => n < semanaAtual || (progresso?.concluida_em && n <= semanaAtual),
+    (n) => n < semanaAtual || (Boolean(progresso?.concluida_em) && n <= semanaAtual),
   );
+
 
   return {
     isPremium: await ehPremium(userId),

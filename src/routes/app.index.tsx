@@ -9,6 +9,8 @@ import { getDicaDoDia } from "@/lib/dicas";
 import { getMyProfile } from "@/lib/mapa-access.functions";
 import { getMealTestStatus } from "@/lib/meal-test.functions";
 import { contarHoje, listarRefeicoesRemotas, loadLocalMeals } from "@/lib/refeicoes";
+import { dataExtenso as dataExtensoSP, hojeISO as hojeISOLocal, horaLocal } from "@/lib/data-local";
+
 
 export const Route = createFileRoute("/app/")({
   component: Hoje,
@@ -34,22 +36,14 @@ const CARD = {
   boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
 };
 
+/** Saudação pelo horário de São Paulo, não pelo fuso do aparelho. */
 function saudacao(d: Date): string {
-  const h = d.getHours();
+  const h = horaLocal(d);
   if (h < 12) return "Bom dia";
   if (h < 18) return "Boa tarde";
   return "Boa noite";
 }
 
-/** YYYY-MM-DD local, mesma base usada pela Rotina. */
-function hojeISOLocal(): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-}
 
 function Hoje() {
   const qc = useQueryClient();
@@ -121,11 +115,8 @@ function Hoje() {
       Number(hojeISO.replaceAll("-", "")) % FRASES_REFORCO.length
     ] ?? FRASES_REFORCO[0]!;
 
-  const dataExtenso = agora.toLocaleDateString("pt-BR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
+  const dataExtenso = dataExtensoSP(agora);
+
 
   return (
     <div className="px-5 pt-6 pb-8">
