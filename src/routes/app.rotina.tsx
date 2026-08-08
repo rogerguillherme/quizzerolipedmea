@@ -405,9 +405,24 @@ function RotinaPage() {
           );
         })}
       </section>
+
+      {/* Materiais de apoio: os 3 guias que acompanham a Rotina. */}
+      <section className="mt-7">
+        <p
+          className="text-[10px] font-bold uppercase tracking-[0.24em]"
+          style={{ color: GOLD }}
+        >
+          Materiais de apoio
+        </p>
+        <p className="mt-1.5 mb-3 text-[12.5px] leading-relaxed text-[#5C5749]">
+          Para consultar sempre que precisar, em qualquer semana.
+        </p>
+        <GuiasCards />
+      </section>
     </div>
   );
 }
+
 
 function MissaoCard({
   semana,
