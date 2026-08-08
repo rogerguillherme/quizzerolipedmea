@@ -121,8 +121,8 @@ async function processarCadenciaProtocolo(
 /**
  * Régua pré-venda. Quatro toques, todos na janela da manhã (08h-10h de São
  * Paulo) para não mandar mensagem de madrugada:
- *   +20h  · dúvida sobre o Mapa
- *   +44h  · convite pro teste grátis de foto
+ *   +20h  · convite pro teste grátis de foto
+ *   +44h  · quebra de objeção ("já tentei de tudo")
  *   +68h  · oferta do Plano Premium (R$67)
  *   +6d   · última chamada
  * Cada toque é idempotente via `respostas.reengaje`.
