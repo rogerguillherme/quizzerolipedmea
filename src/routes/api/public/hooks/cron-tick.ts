@@ -415,7 +415,14 @@ async function processarReengajamento(
 
     // Sucesso ou teto de falhas atingido: grava a flag e não tenta mais esse passo.
     if (r.ok || r.desistir) {
-      reengaje[chave] = new Date().toISOString();
+      const agora = new Date().toISOString();
+      reengaje[chave] = agora;
+      if (fastTrack) {
+        // Os passos intermediários não podem sair depois, fora de contexto.
+        reengaje.pos1h_at = reengaje.pos1h_at ?? agora;
+        reengaje.pos2h_foto_at = reengaje.pos2h_foto_at ?? agora;
+        respostas.fast_track_em = agora;
+      }
       respostas.reengaje = reengaje;
       await supabaseAdmin
         .from("leads")
@@ -423,6 +430,7 @@ async function processarReengajamento(
         .eq("id", lead.id);
       if (r.ok) enviados.push(lead.id);
     }
+
   }
 
   return enviados;
