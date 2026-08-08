@@ -12,7 +12,8 @@
  * Convenções:
  * - `---` em uma linha separa a mensagem em partes; o helper de envio manda
  *   cada bloco como uma mensagem, com 30-60s entre elas.
- * - Tokens `{nome}`, `{oi}`, `{link}`, etc. são trocados por `renderCadencia`.
+ * - Tokens `{nome}`, `{sintoma}`, `{objetivo}`, `{link}` são trocados por
+ *   `renderCadencia` (valores vêm de `varsDoLead`).
  * - 💙 aparece no máximo em uma mensagem a cada três, e no meio do texto.
  */
 
