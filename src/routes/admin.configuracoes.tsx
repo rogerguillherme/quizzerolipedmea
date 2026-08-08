@@ -17,6 +17,8 @@ import {
   salvarEvolutionConfig,
   testarEvolution,
   getWhatsAppLogs,
+  getEvolutionWebhook,
+  setEvolutionWebhook,
 } from "@/lib/admin-evolution.functions";
 import {
   getAppSettings,
@@ -290,6 +292,159 @@ function EvolutionTab() {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+
+// ===== WEBHOOK DO WHATSAPP =====
+const WEBHOOK_PATH = "/api/public/webhooks/evolution";
+const DOMINIO_PADRAO = "https://zerolipedema.com.br";
+
+type WebhookInfo = Awaited<ReturnType<typeof getEvolutionWebhook>>;
+
+function WebhookPanel() {
+  const carregar = useServerFn(getEvolutionWebhook);
+  const configurar = useServerFn(setEvolutionWebhook);
+
+  const [info, setInfo] = useState<WebhookInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [urlDesejada, setUrlDesejada] = useState(DOMINIO_PADRAO + WEBHOOK_PATH);
+  const [resultado, setResultado] = useState<string>("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setInfo((await carregar()) as WebhookInfo);
+      } catch (e) {
+        setResultado((e as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [carregar]);
+
+  const atual = info?.remoto;
+  const iguais =
+    Boolean(atual?.url) && atual?.url?.trim() === urlDesejada.trim();
+
+  return (
+    <section className="rounded-2xl border border-[#E5DBC3] bg-white/70 p-5">
+      <div className="flex items-center gap-2">
+        <Webhook className="size-4 text-[#0B2A4A]" />
+        <p className="text-sm font-bold text-[#0B2A4A]">Webhook do WhatsApp</p>
+      </div>
+      <p className="mt-1 text-xs text-[#8A7C5C]">
+        Sem webhook configurado na instância, nenhuma resposta da lead chega ao
+        CRM — a régua não pausa e o fast-track não dispara.
+      </p>
+
+      {loading ? (
+        <div className="grid place-items-center py-8">
+          <Loader2 className="size-5 animate-spin text-[#0B2A4A]" />
+        </div>
+      ) : (
+        <>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="rounded-xl bg-[#FBF6EB] p-3">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#8A7C5C]">
+                Configurado hoje na Evolution
+              </p>
+              <p className="mt-1 break-all font-mono text-xs text-[#0B2A4A]">
+                {atual?.url || "nenhuma"}
+              </p>
+              <p className="mt-1 text-xs text-[#8A7C5C]">
+                {atual?.enabled ? "ativo" : "inativo"} ·{" "}
+                {atual?.events?.length ? atual.events.join(", ") : "sem eventos"}
+              </p>
+              {!atual?.ok && (
+                <p className="mt-2 whitespace-pre-wrap break-all rounded-lg bg-red-50 p-2 font-mono text-[11px] text-red-700">
+                  {atual?.error ??
+                    `HTTP ${atual?.httpStatus ?? "?"}: ${atual?.raw ?? ""}`}
+                </p>
+              )}
+            </div>
+
+            <div
+              className={[
+                "rounded-xl p-3",
+                iguais ? "bg-emerald-50" : "bg-amber-50",
+              ].join(" ")}
+            >
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#8A7C5C]">
+                URL esperada
+              </p>
+              <input
+                value={urlDesejada}
+                onChange={(e) => setUrlDesejada(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-[#E5DBC3] bg-white px-2 py-1.5 font-mono text-xs"
+              />
+              <p className="mt-1 text-xs text-[#8A7C5C]">
+                {iguais ? "Bate com a configuração atual." : "Diferente do que está na instância."}
+              </p>
+              <button
+                type="button"
+                onClick={() => navigator.clipboard?.writeText(urlDesejada)}
+                className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#0B2A4A]"
+              >
+                <Copy className="size-3" /> copiar
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <Metric label="Entradas 24h" value={info?.entradas.h24 ?? 0} />
+            <Metric label="Entradas 7 dias" value={info?.entradas.d7 ?? 0} />
+            <Metric label="Entradas no total" value={info?.entradas.total ?? 0} />
+          </div>
+
+          <p className="mt-3 text-xs text-[#8A7C5C]">
+            Última chamada recebida no webhook:{" "}
+            {info?.ultimoHit?.em
+              ? `${new Date(info.ultimoHit.em).toLocaleString("pt-BR")} · ${info.ultimoHit.event ?? "?"}`
+              : "nenhuma registrada"}
+          </p>
+
+          <button
+            onClick={async () => {
+              setSalvando(true);
+              setResultado("");
+              try {
+                const r = await configurar({ data: { url: urlDesejada } });
+                setResultado(JSON.stringify(r, null, 2));
+                setInfo((await carregar()) as WebhookInfo);
+              } catch (e) {
+                setResultado((e as Error).message);
+              } finally {
+                setSalvando(false);
+              }
+            }}
+            disabled={salvando}
+            className="mt-4 flex items-center gap-2 rounded-xl bg-[#0B2A4A] px-4 py-2 text-sm font-bold text-[#F7F2E8] disabled:opacity-60"
+          >
+            <Save className="size-4" />
+            {salvando ? "Configurando..." : "Configurar webhook"}
+          </button>
+
+          {resultado && (
+            <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap break-all rounded-xl bg-[#0B2A4A] p-3 font-mono text-[11px] text-[#F7F2E8]">
+              {resultado}
+            </pre>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-xl border border-[#E5DBC3] bg-white p-3">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-[#8A7C5C]">
+        {label}
+      </p>
+      <p className="mt-0.5 text-2xl font-bold text-[#0B2A4A]">{value}</p>
     </div>
   );
 }
