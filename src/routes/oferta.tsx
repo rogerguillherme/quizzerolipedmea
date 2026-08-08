@@ -351,7 +351,7 @@ function OfertaPage() {
                 },
                 {
                   q: "Precisa de assinatura?",
-                  a: "Não. Você recebe uma avaliação gratuita (o Mapa). Quem quiser aprofundar pode adquirir o plano premium, com leitura de exames, anamnese completa e prescrição personalizada.",
+                  a: "Não. O Mapa é gratuito e o Plano Premium é pagamento único de R$67, sem renovação automática. Você tem 7 dias de garantia: se não fizer sentido, devolvemos o valor.",
                 },
 
               ].map((f, i) => (
