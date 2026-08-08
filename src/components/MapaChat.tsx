@@ -5,7 +5,7 @@ import { Send, MessageCircle, X, Loader2, CheckCircle2, Sparkles, KeyRound, Arro
 import { submitMapa, type Diagnostico } from "@/lib/mapa.functions";
 import { criarAcessoMapa } from "@/lib/mapa-access.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { track } from "@/lib/analytics";
+import { setTrackLeadId, track } from "@/lib/analytics";
 import { trackMeta } from "@/lib/meta-track";
 import { fbqTrack } from "@/lib/meta-pixel";
 import { OfertaPremiumInline, KIWIFY_CHECKOUT_URL } from "@/components/OfertaPremiumInline";
@@ -329,6 +329,9 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
     const reacao = reacaoParaResposta(q.key, opt.label, nome);
     if (reacao) await gabiSay(reacao, 550);
 
+    // quiz_step mostra em qual pergunta a mulher desiste.
+    track("quiz_step", { pergunta: qIndex + 1, chave: q.key, total: QS.length });
+
     const next = qIndex + 1;
     if (next < QS.length) {
       await gabiSay(QS[next].gabi(nome));
@@ -348,6 +351,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
           nome,
           // Telefone já foi coletado e validado ANTES do quiz.
           telefone,
+          atribuicao: getAtribuicao() as Record<string, unknown>,
 
           respostas: {
             tempo: finalAnswers.tempo || "",
@@ -367,6 +371,7 @@ export function MapaChat({ onClose }: { onClose?: () => void }) {
       });
       setDiagnostico(result.diagnostico);
       setLeadId(result.leadId ?? null);
+      setTrackLeadId(result.leadId ?? null);
       track("quiz_completed");
       trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
       // Pixel do navegador com o MESMO eventID enviado pelo servidor (dedupe Meta).
