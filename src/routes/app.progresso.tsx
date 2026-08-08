@@ -250,7 +250,7 @@ function Progresso() {
         </p>
         {meals.length === 0 ? (
           <p className="mt-2.5 text-[12.5px]" style={{ color: INK_SOFT }}>
-            Você ainda não registrou refeições.{" "}
+            Você ainda não registrou refeições. Comece pela próxima.{" "}
             <Link to="/app/registrar" style={{ color: NAVY, fontWeight: 600 }}>
               Registrar agora →
             </Link>
