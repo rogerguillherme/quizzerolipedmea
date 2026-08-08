@@ -14,7 +14,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { track } from "../lib/analytics";
 import { trackMeta } from "../lib/meta-track";
 import { getPremiumOnboarding } from "@/lib/anamnese.functions";
-import { PREMIUM_FEATURES } from "@/lib/premium-features";
+import { PremiumFeaturesCarousel } from "@/components/PremiumFeaturesCarousel";
 
 export const Route = createFileRoute("/app/derma")({
   component: PremiumPlano,
@@ -24,7 +24,7 @@ const NAVY = "#16324F";
 const GOLD = "#AF7F35";
 const CREAM_SOFT = "#FBF6E9";
 
-const FEATURES = PREMIUM_FEATURES;
+
 
 
 function PremiumPlano() {
