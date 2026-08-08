@@ -137,13 +137,44 @@ export const getMyProfile = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("profiles")
       .select(
-        "id, nome, telefone, perfil, respostas, diagnostico, senha_temporaria, created_at",
+        "id, nome, telefone, perfil, respostas, diagnostico, senha_temporaria, created_at, mapa_popup_visto_em, mapa_popup_aberturas",
       )
       .eq("id", context.userId)
       .maybeSingle();
     if (error) throw error;
     return data;
   });
+
+// ---------------- Popup do Mapa do Lipedema -----------------
+// `abertura` conta quantas vezes o sheet subiu (limite de 3 exibições
+// automáticas); `visto` só é gravado quando ela chega ao passo final.
+
+export const registrarMapaPopup = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ evento: z.enum(["abertura", "visto"]) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: atual, error: readErr } = await context.supabase
+      .from("profiles")
+      .select("mapa_popup_aberturas")
+      .eq("id", context.userId)
+      .maybeSingle();
+    if (readErr) throw readErr;
+
+    const patch =
+      data.evento === "visto"
+        ? { mapa_popup_visto_em: new Date().toISOString() }
+        : { mapa_popup_aberturas: (atual?.mapa_popup_aberturas ?? 0) + 1 };
+
+    const { error } = await context.supabase
+      .from("profiles")
+      .update(patch)
+      .eq("id", context.userId);
+    if (error) throw error;
+    return { ok: true } as const;
+  });
+
 
 // ---------------- Fila de atenção (admin) -----------------
 // Leads marcados com respostas.atencao (envio falhou / 3+ dias sem responder).

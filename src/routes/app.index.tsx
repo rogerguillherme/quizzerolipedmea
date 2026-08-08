@@ -6,10 +6,13 @@ import { ArrowRight, Camera, Check, Loader2, Lock } from "lucide-react";
 import { getRotina, registrarCheckin } from "@/lib/rotina.functions";
 import { FRASES_REFORCO, META_DIAS_SEMANA, getSemana } from "@/lib/rotina-content";
 import { getDicaDoDia } from "@/lib/dicas";
-import { getMyProfile } from "@/lib/mapa-access.functions";
+import { getMyProfile, registrarMapaPopup } from "@/lib/mapa-access.functions";
 import { getMealTestStatus } from "@/lib/meal-test.functions";
 import { contarHoje, listarRefeicoesRemotas, loadLocalMeals } from "@/lib/refeicoes";
 import { dataExtenso as dataExtensoSP, hojeISO as hojeISOLocal, horaLocal } from "@/lib/data-local";
+import { MapaSheet } from "@/components/MapaSheet";
+import type { Diagnostico } from "@/lib/mapa.functions";
+
 
 
 export const Route = createFileRoute("/app/")({
@@ -91,12 +94,48 @@ function Hoje() {
     };
   }, [status, pago]);
 
+
+  // ---- Popup do Mapa do Lipedema ----
+  // Só abre depois que o perfil terminou de carregar, no máximo 3 vezes, e
+  // enquanto ela não tiver chegado ao último passo.
+  const marcarPopup = useServerFn(registrarMapaPopup);
+  const perfil = profile as
+    | {
+        nome?: string;
+        respostas?: Record<string, unknown> | null;
+        diagnostico?: Diagnostico | null;
+        mapa_popup_visto_em?: string | null;
+        mapa_popup_aberturas?: number | null;
+      }
+    | undefined;
+  const diagnostico = perfil?.diagnostico ?? null;
+  const [mapaAberto, setMapaAberto] = useState(false);
+  const [autoAvaliado, setAutoAvaliado] = useState(false);
+
+  useEffect(() => {
+    if (autoAvaliado) return;
+    if (profile === undefined || status === undefined) return;
+    setAutoAvaliado(true);
+    if (!diagnostico) return;
+    if (perfil?.mapa_popup_visto_em) return;
+    if ((perfil?.mapa_popup_aberturas ?? 0) >= 3) return;
+    setMapaAberto(true);
+    void Promise.resolve(marcarPopup({ data: { evento: "abertura" } })).catch(() => {});
+  }, [profile, status, autoAvaliado, diagnostico, perfil, marcarPopup]);
+
+  const concluirMapa = () => {
+    void Promise.resolve(marcarPopup({ data: { evento: "visto" } }))
+      .then(() => qc.invalidateQueries({ queryKey: ["my-profile"] }))
+      .catch(() => {});
+  };
+
   const mut = useMutation({
     mutationFn: () => checkin({ data: {} }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["rotina"] });
     },
   });
+
 
   if (isLoading) {
     return (
@@ -381,6 +420,31 @@ function Hoje() {
           </Link>
         </section>
       )}
+
+      {/* 7. Link discreto para reabrir o Mapa */}
+      {diagnostico && (
+        <p className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={() => setMapaAberto(true)}
+            className="text-[12.5px] underline underline-offset-4"
+            style={{ color: INK_SOFT }}
+          >
+            ver meu Mapa
+          </button>
+        </p>
+      )}
+
+      {mapaAberto && diagnostico && (
+        <MapaSheet
+          diagnostico={diagnostico}
+          respostas={perfil?.respostas ?? null}
+          pago={pago}
+          onClose={() => setMapaAberto(false)}
+          onConcluir={concluirMapa}
+        />
+      )}
     </div>
+
   );
 }
