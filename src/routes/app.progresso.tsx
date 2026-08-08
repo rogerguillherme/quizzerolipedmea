@@ -105,6 +105,8 @@ function Progresso() {
   const datas = new Set<string>(rotina?.todasDatas ?? []);
   const sequencia = rotina?.sequencia ?? 0;
   const recorde = rotina?.recorde ?? 0;
+  const totalCheckins = rotina?.totalCheckins ?? datas.size;
+
   const semanasConcluidas = new Set<number>(rotina?.semanasConcluidas ?? []);
   const semanaAtual = rotina?.semanaAtual ?? 1;
 
