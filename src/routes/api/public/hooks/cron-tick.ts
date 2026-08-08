@@ -1,20 +1,49 @@
-// Cron hourly: cadência do Protocolo (dias 2-7) + reengajamento leve + fila de atenção.
+// Cron hourly: cadência pré-compra + cadência da Rotina (pós-compra).
 // Chamado por pg_cron via pg_net (ver migração scheduled_cron_tick).
 // Endpoint público — validamos com apikey (anon key do Supabase).
+//
+// PROTEÇÃO DO NÚMERO (prioridade sobre a copy):
+// - nada de rajada: 8-25s entre mensagens, 30-60s entre partes da mesma mensagem
+// - teto de 60 mensagens por execução (a régua é idempotente, o resto fica pra hora seguinte)
+// - 429 / rate limit derruba o lote inteiro, que retoma no tique seguinte
+// - horário próprio por lead (8h + hash(id) % 120 min) em vez de 8h em ponto pra todo mundo
+// - 3 variantes de texto por mensagem, escolhidas pelo hash do lead
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  DICAS_7_DIAS,
-  RECEITAS_PRATICAS,
-  ESCALONAMENTO_DIAS_SEM_RESPOSTA,
-} from "@/lib/protocolo7";
 import { dicaParaDia } from "@/lib/dicas-rotina";
-import { horaLocal, hojeISO, isoLocal, diasEntre } from "@/lib/data-local";
+import { hojeISO, isoLocal, diasEntre, minutoDoDiaLocal } from "@/lib/data-local";
+import {
+  PRE_POS20H,
+  PRE_POS44H,
+  PRE_POS68H,
+  PRE_POS6D,
+  ROT_ACESSO_4H,
+  ROT_DICA,
+  ROT_RETOMADA,
+  ROT_SEMANA,
+  ROT_CONCLUSAO,
+  mensagemPara,
+  offsetMinutosDoLead,
+  type MensagemCadencia,
+} from "@/lib/cadencia-copy";
 
 const MS_HORA = 60 * 60 * 1000;
 const MS_DIA = 24 * MS_HORA;
-/** Janela de envio (hora local de São Paulo): 08h até 10h. */
-const JANELA_INICIO = 8;
-const JANELA_FIM = 10;
+
+/** Janela de envio (minutos desde a meia-noite, São Paulo): 08h00 até 11h00. */
+const JANELA_INICIO_MIN = 8 * 60;
+const JANELA_FIM_MIN = 11 * 60;
+
+/** Teto de mensagens por execução do cron. */
+const LOTE_MAX = 60;
+/** Intervalo entre mensagens de leads diferentes. */
+const PAUSA_MIN_MS = 8_000;
+const PAUSA_MAX_MS = 25_000;
+/** Intervalo entre as partes de uma mesma mensagem. */
+const PARTE_MIN_MS = 30_000;
+const PARTE_MAX_MS = 60_000;
+
+/** Máximo de tentativas por passo antes de desistir daquele passo. */
+const MAX_FALHAS_POR_PASSO = 3;
 
 type Jornada = {
   ativa?: boolean;
@@ -31,8 +60,25 @@ type LeadResp = Record<string, unknown> & {
   envio_falhas?: Record<string, number>;
 };
 
-/** Máximo de tentativas por passo antes de desistir daquele passo. */
-const MAX_FALHAS_POR_PASSO = 3;
+/** Estado compartilhado do lote em uma execução do cron. */
+type Lote = {
+  enviadas: number;
+  abortado: boolean;
+};
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function aleatorio(minMs: number, maxMs: number) {
+  return Math.floor(minMs + Math.random() * (maxMs - minMs));
+}
+
+/** Lead está dentro do horário próprio dele (8h + offset, até 11h)? */
+function leadNaJanela(leadId: string, minutoAgora: number): boolean {
+  const inicio = JANELA_INICIO_MIN + offsetMinutosDoLead(leadId);
+  return minutoAgora >= inicio && minutoAgora < JANELA_FIM_MIN;
+}
 
 /** Detecta resposta da Evolution indicando que o número não existe no WhatsApp. */
 function numeroInexistente(erro?: string): boolean {
@@ -43,6 +89,18 @@ function numeroInexistente(erro?: string): boolean {
     e.includes("exists:false") ||
     e.includes("numbernotexists") ||
     e.includes("notexistsonwhatsapp")
+  );
+}
+
+/** Erro de limite de taxa: para o lote inteiro imediatamente. */
+function erroRateLimit(erro?: string): boolean {
+  if (!erro) return false;
+  const e = erro.toLowerCase();
+  return (
+    e.includes("429") ||
+    e.includes("rate limit") ||
+    e.includes("rate-limit") ||
+    e.includes("too many requests")
   );
 }
 
@@ -58,11 +116,17 @@ type ResultadoEnvio = {
   desistir: boolean;
   /** true quando o número não existe: pular o lead inteiro. */
   invalido: boolean;
+  /** true quando o lote foi abortado (rate limit / teto): não gravar flag. */
+  abortado: boolean;
 };
 
 /**
- * Envio único com controle de falhas. Sempre registra em `whatsapp_logs`.
- * Mutação de `respostas` (contador/atenção) é persistida aqui mesmo.
+ * Único ponto de envio das duas cadências. Cuida de:
+ * - espaçamento aleatório entre mensagens (8-25s) e entre partes (30-60s)
+ * - quebra em várias mensagens quando o texto traz o separador `---`
+ * - teto de lote e parada imediata em rate limit
+ * - contador de falhas por passo e marcação de número inexistente
+ * Sempre registra em `whatsapp_logs`.
  */
 async function enviarComControle(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,150 +136,90 @@ async function enviarComControle(
   respostas: LeadResp,
   chave: string,
   mensagem: string,
+  lote: Lote,
 ): Promise<ResultadoEnvio> {
-  const wa = await sendWhatsApp(lead.telefone, mensagem);
+  const partes = mensagem
+    .split(/^\s*---\s*$/m)
+    .map((p) => p.trim())
+    .filter(Boolean);
 
-  await supabaseAdmin.from("whatsapp_logs").insert({
-    telefone: lead.telefone,
-    mensagem,
-    status: wa.ok ? "enviado" : "falhou",
-    erro: wa.error ?? null,
-  });
+  for (let i = 0; i < partes.length; i++) {
+    if (lote.abortado || lote.enviadas >= LOTE_MAX) {
+      return { ok: false, desistir: false, invalido: false, abortado: true };
+    }
 
-  if (wa.ok) return { ok: true, desistir: false, invalido: false };
+    // Nada de rajada: espera antes de cada envio (menos no primeiro do lote).
+    if (lote.enviadas > 0) {
+      await sleep(
+        i === 0
+          ? aleatorio(PAUSA_MIN_MS, PAUSA_MAX_MS)
+          : aleatorio(PARTE_MIN_MS, PARTE_MAX_MS),
+      );
+    }
 
-  if (numeroInexistente(wa.error)) {
-    respostas.atencao = {
-      motivo: "numero_invalido",
-      criado_em: new Date().toISOString(),
-      detalhe: (wa.error ?? "").slice(0, 200),
-    };
+    const texto = partes[i]!;
+    const wa = await sendWhatsApp(lead.telefone, texto);
+    lote.enviadas += 1;
+
+    await supabaseAdmin.from("whatsapp_logs").insert({
+      telefone: lead.telefone,
+      mensagem: texto,
+      status: wa.ok ? "enviado" : "falhou",
+      erro: wa.error ?? null,
+    });
+
+    if (wa.ok) continue;
+
+    if (erroRateLimit(wa.error)) {
+      lote.abortado = true;
+      return { ok: false, desistir: false, invalido: false, abortado: true };
+    }
+
+    if (numeroInexistente(wa.error)) {
+      respostas.atencao = {
+        motivo: "numero_invalido",
+        criado_em: new Date().toISOString(),
+        detalhe: (wa.error ?? "").slice(0, 200),
+      };
+      await supabaseAdmin
+        .from("leads")
+        .update({ respostas: respostas as never })
+        .eq("id", lead.id);
+      return { ok: false, desistir: true, invalido: true, abortado: false };
+    }
+
+    const falhas = { ...(respostas.envio_falhas ?? {}) };
+    falhas[chave] = (falhas[chave] ?? 0) + 1;
+    respostas.envio_falhas = falhas;
+    const desistir = (falhas[chave] ?? 0) >= MAX_FALHAS_POR_PASSO;
+
     await supabaseAdmin
       .from("leads")
       .update({ respostas: respostas as never })
       .eq("id", lead.id);
-    return { ok: false, desistir: true, invalido: true };
+
+    return { ok: false, desistir, invalido: false, abortado: false };
   }
 
-  const falhas = { ...(respostas.envio_falhas ?? {}) };
-  falhas[chave] = (falhas[chave] ?? 0) + 1;
-  respostas.envio_falhas = falhas;
-  const desistir = falhas[chave] >= MAX_FALHAS_POR_PASSO;
+  return { ok: true, desistir: false, invalido: false, abortado: false };
+}
 
-  await supabaseAdmin
-    .from("leads")
-    .update({ respostas: respostas as never })
-    .eq("id", lead.id);
-
-  return { ok: false, desistir, invalido: false };
+/** Monta o texto da variante do lead. */
+function copy(
+  msg: MensagemCadencia,
+  leadId: string,
+  vars: Record<string, string | number> = {},
+) {
+  return mensagemPara(msg, leadId, vars);
 }
 
 function diasDesde(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / MS_DIA);
 }
 
-function horasDesde(iso: string): number {
-  return Math.floor((Date.now() - new Date(iso).getTime()) / MS_HORA);
-}
-
-
-async function processarCadenciaProtocolo(
-  supabaseAdmin: Awaited<ReturnType<typeof import("@/integrations/supabase/client.server").supabaseAdmin.from>> extends never ? never : import("@supabase/supabase-js").SupabaseClient,
-  sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
-) {
-  const { data: leads } = await supabaseAdmin
-    .from("leads")
-    .select("id, nome, telefone, respostas")
-    .eq("status", "protocolo_7d_ativo")
-    .limit(500);
-
-  const resultados: Array<{ lead: string; dia?: number; status: string }> = [];
-
-  for (const lead of leads ?? []) {
-    const respostas = (lead.respostas ?? {}) as LeadResp;
-    if (leadInvalido(respostas)) continue;
-    const j = respostas.jornada_7dias;
-    if (!j?.ativa || !j.iniciado_em) continue;
-
-    const diaAtual = Math.min(7, diasDesde(j.iniciado_em) + 1);
-    const enviados = new Set(j.dias_enviados ?? []);
-
-    // Envia todos os dias devidos que ainda não foram enviados (idempotente).
-    for (let d = 2; d <= diaAtual; d++) {
-      if (enviados.has(d)) continue;
-      const dica = DICAS_7_DIAS.find((x) => x.dia === d);
-      if (!dica) continue;
-
-      const receita = RECEITAS_PRATICAS.find((r) => r.dia === d);
-      const feedbackAnterior = j.feedback?.[String(d - 1)] ? "" :
-        `\n\nComo foi ontem? Responde só: *Sim* / *Mais ou menos* / *Não*.`;
-
-      const receitaBloco = receita
-        ? `\n\n🥣 *Receita de hoje — ${receita.titulo}*\n${receita.descricao}\n` +
-          receita.passos.map((p, i) => `${i + 1}. ${p}`).join("\n")
-        : "";
-
-      const msg =
-        `Dia ${d} · ${dica.titulo}\n\n${dica.texto}` +
-        receitaBloco +
-        (d < 7 ? feedbackAnterior : "\n\nHoje é o último dia — dá uma olhada no seu progresso no app 💙");
-
-      const r = await enviarComControle(
-        supabaseAdmin,
-        sendWhatsApp,
-        lead as { id: string; telefone: string },
-        respostas,
-        `protocolo_dia_${d}`,
-        msg,
-      );
-
-      if (r.ok || r.desistir) {
-        // Em caso de desistência, marcamos o dia como enviado para não repetir.
-        enviados.add(d);
-        j.dias_enviados = Array.from(enviados).sort((a, b) => a - b);
-        respostas.jornada_7dias = j;
-        await supabaseAdmin
-          .from("leads")
-          .update({ respostas: respostas as never })
-          .eq("id", lead.id);
-        resultados.push({
-          lead: lead.id,
-          dia: d,
-          status: r.ok ? "enviado" : r.invalido ? "numero_invalido" : "desistiu",
-        });
-        if (!r.ok) break;
-      } else {
-        resultados.push({ lead: lead.id, dia: d, status: "falhou" });
-        break; // pra não empilhar mensagens no mesmo lead se a API tá fora
-      }
-    }
-
-
-    // Fila de atenção: 3+ dias sem responder feedback.
-    const refFeedback = j.ultimo_feedback_em ?? j.iniciado_em;
-    if (
-      refFeedback &&
-      diasDesde(refFeedback) >= ESCALONAMENTO_DIAS_SEM_RESPOSTA &&
-      !respostas.atencao
-    ) {
-      respostas.atencao = {
-        motivo: "sem_feedback_3d",
-        criado_em: new Date().toISOString(),
-      };
-      await supabaseAdmin
-        .from("leads")
-        .update({ respostas: respostas as never })
-        .eq("id", lead.id);
-    }
-  }
-
-  return resultados;
-}
-
 /**
- * Régua pré-venda. Quatro toques, todos na janela da manhã (08h-10h de São
- * Paulo) para não mandar mensagem de madrugada:
- *   +20h  · convite pro teste grátis de foto
+ * Régua pré-venda. Quatro toques, cada lead no horário próprio dele:
+ *   +20h  · convite pro teste grátis de foto (primeira mensagem: se apresenta)
  *   +44h  · quebra de objeção ("já tentei de tudo")
  *   +68h  · oferta do Plano Premium (R$67)
  *   +6d   · última chamada
@@ -225,12 +229,11 @@ async function processarReengajamento(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseAdmin: any,
   sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
+  lote: Lote,
 ) {
   const enviados: string[] = [];
-
-  // Fora da janela da manhã não enviamos nada da régua pré-venda.
-  const hora = horaLocal();
-  if (hora < JANELA_INICIO || hora >= JANELA_FIM) return enviados;
+  const agoraMin = minutoDoDiaLocal();
+  if (agoraMin < JANELA_INICIO_MIN || agoraMin >= JANELA_FIM_MIN) return enviados;
 
   const CHECKOUT_URL = "https://pay.kiwify.com.br/j0hsxv3";
 
@@ -257,57 +260,43 @@ async function processarReengajamento(
     .limit(500);
 
   for (const lead of leads ?? []) {
+    if (lote.abortado || lote.enviadas >= LOTE_MAX) break;
+
     const respostas = (lead.respostas ?? {}) as LeadResp;
     if (leadInvalido(respostas)) continue;
+    if (!leadNaJanela(lead.id, agoraMin)) continue;
+
     const reengaje = respostas.reengaje ?? {};
     const digits = String(lead.telefone ?? "").replace(/\D/g, "");
     if (digits.length < 10) continue;
 
     const idade = Date.now() - refTempo(lead);
     const nome = (lead.nome || "").split(" ")[0] || "";
+    // Abertura completa só na primeira mensagem que a lead recebe.
+    const primeira = Object.keys(reengaje).length === 0;
     const oi = nome ? `Oi ${nome}` : "Oi";
+    const vocativo = primeira ? "" : nome ? `${nome}, ` : "";
     const teste = (respostas.teste_fotos as { usadas?: number } | undefined) ?? {};
     const jaTestouFoto = Number(teste.usadas ?? 0) > 0;
 
     // Um toque por lead por execução: escolhemos o mais recente devido.
     let chave: string | null = null;
     let msg = "";
+    const vars = { oi, nome: vocativo, link: CHECKOUT_URL };
 
     if (idade >= 6 * MS_DIA && !reengaje.pos6d_at) {
-      // +6 dias — última chamada.
-      chave = "pos6d_at";
-      msg =
-        `${oi}, aqui é a Gabriela 💙\n\n` +
-        `Essa é a minha última mensagem sobre isso, prometo. O acesso ao *Plano Premium Zero Lipedema* segue por R$67, sem assinatura, com 7 dias de garantia.\n\n` +
-        `Se agora não é a hora, tudo bem. Seu Mapa continua valendo e eu sigo por aqui quando você quiser retomar.\n\n` +
-        `🔗 ${CHECKOUT_URL}`;
+      chave = PRE_POS6D.chave;
+      msg = copy(PRE_POS6D, lead.id, vars);
     } else if (idade >= 68 * MS_HORA && !reengaje.pos48h_at) {
-      // +68h — pitch do plano.
-      chave = "pos48h_at";
-      msg =
-        `${oi}, aqui é a Gabriela 💙\n\n` +
-        `Voltando pra te fazer um convite direto: hoje eu libero seu acesso ao Plano Premium Zero Lipedema por um valor de inauguração, de R$119 por apenas R$67, sem assinatura obrigatória.\n\n` +
-        `O centro do plano é a Rotina Zero Lipedema: a gente ajusta uma refeição por semana, começando pelo café da manhã, sem contar caloria e sem passar fome. E você pode fotografar seu prato pra receber a leitura na hora, o que ajuda, o que atrapalha e o que ajustar na próxima refeição.\n\n` +
-        `Tem 7 dias de garantia: se não fizer sentido pra você, é só me chamar que devolvo, sem burocracia. E como bônus, libero todos os meus guias e receitas práticas.\n\n` +
-        `🔗 Pra ativar: ${CHECKOUT_URL}\n\n` +
-        `Qualquer dúvida, me chama por aqui. ✨`;
+      chave = PRE_POS68H.chave;
+      msg = copy(PRE_POS68H, lead.id, vars);
     } else if (idade >= 44 * MS_HORA && !reengaje.pos2h_foto_at) {
-      // +44h — quebra de objeção ("já tentei de tudo", "não tenho tempo").
-      chave = "pos2h_foto_at";
-      msg =
-        `${oi} 💙 Aqui é a Gabriela.\n\n` +
-        `A frase que eu mais escuto é: "eu já tentei de tudo e nada funciona". Faz sentido, porque quase tudo que te ofereceram foi dieta restritiva, e lipedema não responde a restrição, responde a inflamação.\n\n` +
-        `Por isso a Rotina Zero Lipedema muda uma refeição por semana, não a sua vida inteira de uma vez. Semana 1 é só o café da manhã. Leva alguns minutos por dia e você não precisa contar caloria nem passar fome.\n\n` +
-        `Se ficou alguma dúvida, me pergunta aqui que eu respondo. ✨`;
+      chave = PRE_POS44H.chave;
+      msg = copy(PRE_POS44H, lead.id, vars);
     } else if (idade >= 20 * MS_HORA && !reengaje.pos1h_at && !jaTestouFoto) {
-      // +20h — convite pro teste grátis de foto.
-      chave = "pos1h_at";
-      msg =
-        `${oi}! 💙 Aqui é a Gabriela.\n\n` +
-        `Tem uma coisa bem legal que você ainda não testou: me manda aqui mesmo, respondendo esta mensagem, uma foto de qualquer refeição sua que eu te dou um feedback na hora, se aquele prato ajuda ou atrapalha o seu quadro.\n\n` +
-        `É grátis, são 3 fotos de teste, sem compromisso. É só mandar a foto por aqui. ✨`;
+      chave = PRE_POS20H.chave;
+      msg = copy(PRE_POS20H, lead.id, vars);
     }
-
 
     if (!chave) continue;
 
@@ -318,7 +307,10 @@ async function processarReengajamento(
       respostas,
       chave,
       msg,
+      lote,
     );
+
+    if (r.abortado) break;
 
     // Sucesso ou teto de falhas atingido: grava a flag e não tenta mais esse passo.
     if (r.ok || r.desistir) {
@@ -332,7 +324,6 @@ async function processarReengajamento(
     }
   }
 
-
   return enviados;
 }
 
@@ -341,9 +332,9 @@ async function processarReengajamento(
  *
  * Cinco tipos de toque, todos idempotentes por `respostas.rotina_msgs` e
  * limitados a UMA mensagem por lead por dia (`ultimo_envio`, data local):
- *   1. D0 + 4h  · lembrete de acesso (só entre 08h e 21h, para não acordar ninguém)
- *   2. Diário   · dica do dia, janela 08h-10h, respeitando a semana vivida
- *   3. Retomada · 2+ dias sem check-in, janela 08h-10h, no máximo a cada 3 dias
+ *   1. D0 + 4h  · lembrete de acesso (entre 08h e 21h, para não acordar ninguém)
+ *   2. Diário   · dica do dia, no horário próprio do lead (8h + offset)
+ *   3. Retomada · 2+ dias sem check-in, no máximo a cada 3 dias
  *   4. Semana   · fechamento de cada semana concluída
  *   5. Final    · conclusão dos 28 dias + convite do Método Derma (R$297)
  */
@@ -351,12 +342,12 @@ async function processarCadenciaRotina(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseAdmin: any,
   sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
+  lote: Lote,
 ) {
   const resultados: Array<{ lead: string; tipo: string; status: string }> = [];
 
-  const hora = horaLocal();
-  const janelaManha = hora >= JANELA_INICIO && hora < JANELA_FIM;
-  const janelaDia = hora >= JANELA_INICIO && hora < 21;
+  const agoraMin = minutoDoDiaLocal();
+  const janelaDia = agoraMin >= JANELA_INICIO_MIN && agoraMin < 21 * 60;
   if (!janelaDia) return resultados;
 
   const hoje = hojeISO();
@@ -373,6 +364,8 @@ async function processarCadenciaRotina(
     .limit(500);
 
   for (const lead of leads ?? []) {
+    if (lote.abortado || lote.enviadas >= LOTE_MAX) break;
+
     const respostas = (lead.respostas ?? {}) as LeadResp;
     if (leadInvalido(respostas)) continue;
 
@@ -404,14 +397,13 @@ async function processarCadenciaRotina(
     let tipo: string | null = null;
     let msg = "";
     const proximo = { ...msgs, inicio: inicioISO };
+    // Horário próprio do lead para os toques da manhã.
+    const janelaManha = leadNaJanela(lead.id, agoraMin);
 
     // 1. Lembrete de acesso — 4h depois da compra.
     if (!msgs.acesso_4h && horasDesdeCompra >= 4) {
       tipo = "acesso_4h";
-      msg =
-        `${ola}aqui é a Gabriela 💙\n\n` +
-        `Passei só pra lembrar que seu acesso já está liberado. Abre o app, toca em *Rotina* na barra de baixo e começa a missão da *Semana 1*: o café da manhã.\n\n` +
-        `Não precisa mudar tudo hoje. Uma refeição de cada vez já é o suficiente pra começar.`;
+      msg = copy(ROT_ACESSO_4H, lead.id, { nome: ola });
       proximo.acesso_4h = new Date().toISOString();
     } else if (janelaManha) {
       // Estado real da Rotina: semana vivida e último check-in.
@@ -439,9 +431,7 @@ async function processarCadenciaRotina(
         ultimoCheckin = (checkins?.[0]?.data as string | undefined) ?? null;
       }
 
-      const diasSemCheckin = ultimoCheckin
-        ? diasEntre(hoje, ultimoCheckin)
-        : dia - 1;
+      const diasSemCheckin = ultimoCheckin ? diasEntre(hoje, ultimoCheckin) : dia - 1;
 
       const semanasFechadas = new Set<number>(proximo.semanas_fechadas ?? []);
       const semanaConcluida = Math.min(4, Math.floor(dia / 7));
@@ -450,11 +440,7 @@ async function processarCadenciaRotina(
       if (dia > 28 && !msgs.conclusao) {
         // 5. Conclusão dos 28 dias + convite do plano de R$297.
         tipo = "conclusao";
-        msg =
-          `${ola}você chegou ao fim dos 28 dias da Rotina Zero Lipedema 💙\n\n` +
-          `Suas quatro refeições principais estão ajustadas, sem dieta e sem contar caloria. Só isso já muda muita coisa no inchaço e na dor.\n\n` +
-          `Se você quiser ir além, existe o passo seguinte: o *Método Derma*, meu acompanhamento de 90 dias com anamnese completa, leitura dos seus exames e prescrição personalizada, por R$297.\n\n` +
-          `Se fizer sentido pra você, responde *QUERO SABER* aqui que eu te explico direitinho como funciona.`;
+        msg = copy(ROT_CONCLUSAO, lead.id, { nome: ola });
         proximo.conclusao = new Date().toISOString();
       } else if (
         semanaConcluida >= 1 &&
@@ -464,17 +450,19 @@ async function processarCadenciaRotina(
         // 4. Fechamento de semana.
         const foco = ["o café da manhã", "o almoço", "o lanche", "o jantar"][
           semanaConcluida - 1
-        ];
+        ]!;
         const proximaFoco = ["o almoço", "o lanche", "o jantar", ""][
           semanaConcluida - 1
-        ];
+        ]!;
         tipo = `semana_${semanaConcluida}`;
-        msg =
-          `${ola}fim da Semana ${semanaConcluida} 💙\n\n` +
-          `Você passou sete dias ajustando ${foco}. Repara no que mudou: inchaço ao acordar, disposição, roupa no fim do dia.\n\n` +
-          (proximaFoco
-            ? `A partir de agora a gente ajusta ${proximaFoco}, mantendo o que você já conquistou. Abre a aba *Rotina* pra ver a missão nova.`
-            : `Abre a aba *Progresso* pra ver sua sequência completa.`);
+        msg = copy(ROT_SEMANA, lead.id, {
+          nome: ola,
+          semana: semanaConcluida,
+          foco,
+          proximo: proximaFoco
+            ? `A partir de agora a gente ajusta ${proximaFoco}, mantendo o que você já conquistou. Abre a aba Rotina pra ver a missão nova.`
+            : `Abre a aba Progresso pra ver sua sequência completa.`,
+        });
         semanasFechadas.add(semanaConcluida);
         proximo.semanas_fechadas = Array.from(semanasFechadas).sort((a, b) => a - b);
       } else if (diasSemCheckin >= 2 && totalCheckins > 0) {
@@ -484,10 +472,7 @@ async function processarCadenciaRotina(
           : 99;
         if (ultimaRetomada >= 3) {
           tipo = "retomada";
-          msg =
-            `${ola}faz ${diasSemCheckin} dias sem check-in e eu passei aqui sem cobrança nenhuma 💙\n\n` +
-            `Rotina que funciona é a que aceita falha. Não precisa recomeçar do zero: é só cumprir a missão de hoje e marcar no app, na aba *Hoje*.\n\n` +
-            `Se algo travou, me conta aqui que a gente ajusta juntas.`;
+          msg = copy(ROT_RETOMADA, lead.id, { nome: ola, dias: diasSemCheckin });
           proximo.retomada_em = new Date().toISOString();
         }
       }
@@ -497,10 +482,7 @@ async function processarCadenciaRotina(
         const dica = dicaParaDia(dia, semanaAtual);
         if (dica) {
           tipo = `dica_${dia}`;
-          msg =
-            `${ola}dia ${dia} da sua Rotina 💙\n\n` +
-            `${dica.texto}\n\n` +
-            `Quando cumprir a missão de hoje, marca lá no app na aba *Hoje*.`;
+          msg = copy(ROT_DICA, lead.id, { nome: ola, dia, dica: dica.texto });
           diasEnviados.add(dia);
           proximo.dias_enviados = Array.from(diasEnviados).sort((a, b) => a - b);
         }
@@ -516,7 +498,10 @@ async function processarCadenciaRotina(
       respostas,
       `rotina_${tipo}`,
       msg,
+      lote,
     );
+
+    if (r.abortado) break;
 
     if (r.ok || r.desistir) {
       // Teto de falhas: grava as flags do passo assim mesmo e segue em frente.
@@ -536,11 +521,8 @@ async function processarCadenciaRotina(
     }
   }
 
-
   return resultados;
 }
-
-
 
 export const Route = createFileRoute("/api/public/hooks/cron-tick")({
   server: {
@@ -561,27 +543,26 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
         );
         const { sendWhatsApp } = await import("@/lib/evolution.server");
 
-        // TODO: Protocolo de 7 Dias descontinuado, reativar só se decidirmos voltar com isso
-        // const cadencia = await processarCadenciaProtocolo(
-        //   supabaseAdmin as any,
-        //   sendWhatsApp,
-        // );
-        const cadencia: Array<{ lead: string; dia?: number; status: string }> = [];
+        // Lote compartilhado: teto e parada por rate limit valem para as duas cadências.
+        const lote: Lote = { enviadas: 0, abortado: false };
+
         const reengajados = await processarReengajamento(
           supabaseAdmin,
           sendWhatsApp,
+          lote,
         );
-        const rotina = await processarCadenciaRotina(supabaseAdmin, sendWhatsApp);
-
-        // suppress unused import warning
-        void horasDesde;
-        void processarCadenciaProtocolo;
+        const rotina = await processarCadenciaRotina(
+          supabaseAdmin,
+          sendWhatsApp,
+          lote,
+        );
 
         return Response.json({
           ok: true,
-          cadencia,
           reengajados,
           rotina,
+          enviadas: lote.enviadas,
+          abortado: lote.abortado,
           ts: new Date().toISOString(),
         });
       },
