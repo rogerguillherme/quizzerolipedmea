@@ -12,7 +12,7 @@
  * Convenções:
  * - `---` em uma linha separa a mensagem em partes; o helper de envio manda
  *   cada bloco como uma mensagem, com 30-60s entre elas.
- * - Tokens `{nome}`, `{sintoma}`, `{objetivo}`, `{link}` são trocados por
+ * - Tokens `{nome}, `, `{sintoma}`, `{objetivo}`, `{link}` são trocados por
  *   `renderCadencia` (valores vêm de `varsDoLead`).
  * - 💙 aparece no máximo em uma mensagem a cada três, e no meio do texto.
  */
@@ -78,11 +78,19 @@ export function mensagemPara(
   const i = varianteDoLead(leadId, lista.length);
   const bruto = renderCadencia(lista[i] ?? lista[0]!, vars);
   // Nome vazio deixaria ", deixa eu te perguntar" — limpa a pontuação órfã.
-  return bruto
+  const limpo = bruto
     .replace(/(^|\n)[ \t]*,[ \t]*/g, "$1")
     .replace(/[ \t]{2,}/g, " ")
     .trim();
+  // Se a vírgula órfã foi removida do começo, a frase passa a abrir em
+  // minúscula ("faz 2 dias..."). Sobe a primeira letra.
+  const comeouComToken = /^\s*\{\w+\}\s*,/.test(lista[i] ?? "");
+  if (comeouComToken && /^[a-záàâãéêíóôõúç]/.test(limpo)) {
+    return limpo.charAt(0).toUpperCase() + limpo.slice(1);
+  }
+  return limpo;
 }
+
 
 /* ------------------------------------------------------------------ */
 /* Personalização a partir das respostas do Mapa                       */
@@ -274,17 +282,17 @@ export const ROT_ACESSO_4H: MensagemCadencia = {
   chave: "acesso_4h",
   partes: 2,
   variantes: [
-    `{nome}aqui é a Gabriela.
+    `{nome}, aqui é a Gabriela.
 ---
 Passei só pra lembrar que seu acesso já está liberado. Abre o app, toca em Rotina na barra de baixo e começa a missão da Semana 1: o café da manhã.
 
 Não precisa mudar tudo hoje. Uma refeição de cada vez já é o suficiente pra começar.`,
-    `{nome}é a Gabriela 💙
+    `{nome}, é a Gabriela 💙
 ---
 Seu acesso já está no ar. Entra no app, toca em Rotina lá embaixo e começa pela missão da Semana 1, que é o café da manhã.
 
 Não tenta virar sua alimentação inteira hoje. Uma refeição por vez resolve.`,
-    `{nome}passando rapidinho, é a Gabriela.
+    `{nome}, passando rapidinho, é a Gabriela.
 ---
 Só confirmando que está tudo liberado pra você. No app, a aba Rotina abre a missão da Semana 1: café da manhã.
 
@@ -319,17 +327,17 @@ export const ROT_RETOMADA: MensagemCadencia = {
   chave: "retomada",
   partes: 2,
   variantes: [
-    `{nome}faz {dias} dias sem check-in e eu passei aqui sem cobrança nenhuma.
+    `{nome}, faz {dias} dias sem check-in e eu passei aqui sem cobrança nenhuma.
 ---
 Rotina que funciona é a que aceita falha. Não precisa recomeçar do zero: é só cumprir a missão de hoje e marcar no app, na aba Hoje.
 
 Se algo travou, me conta aqui que a gente ajusta juntas.`,
-    `{nome}vi que faz {dias} dias sem check-in. Não vim cobrar, vim lembrar 💙
+    `{nome}, vi que faz {dias} dias sem check-in. Não vim cobrar, vim lembrar 💙
 ---
 Falhar faz parte, e você não perdeu nada. É só fazer a missão de hoje e marcar na aba Hoje do app.
 
 Se alguma coisa atrapalhou, me conta que a gente resolve juntas.`,
-    `{nome}são {dias} dias sem marcar check-in, e está tudo bem.
+    `{nome}, são {dias} dias sem marcar check-in, e está tudo bem.
 ---
 Ninguém segura uma rotina em linha reta. Não precisa voltar pro começo: cumpre a missão de hoje e marca no app, na aba Hoje.
 
@@ -342,17 +350,17 @@ export const ROT_SEMANA: MensagemCadencia = {
   chave: "semana",
   partes: 2,
   variantes: [
-    `{nome}fim da Semana {semana}.
+    `{nome}, fim da Semana {semana}.
 ---
 Você passou sete dias ajustando {foco}. Repara no que mudou: inchaço ao acordar, disposição, roupa no fim do dia.
 
 {proximo}`,
-    `{nome}fechamos a Semana {semana} 💙
+    `{nome}, fechamos a Semana {semana} 💙
 ---
 Foram sete dias mexendo em {foco}. Olha pra trás e compara: como está o inchaço de manhã, a energia, a roupa no fim do dia.
 
 {proximo}`,
-    `{nome}Semana {semana} concluída.
+    `{nome}, Semana {semana} concluída.
 ---
 Sete dias ajustando {foco}. Vale reparar nos sinais: inchaço ao acordar, disposição durante o dia, como a roupa fica à noite.
 
@@ -365,21 +373,21 @@ export const ROT_CONCLUSAO: MensagemCadencia = {
   chave: "conclusao",
   partes: 2,
   variantes: [
-    `{nome}você chegou ao fim dos 28 dias da Rotina Zero Lipedema.
+    `{nome}, você chegou ao fim dos 28 dias da Rotina Zero Lipedema.
 ---
 Suas quatro refeições principais estão ajustadas, sem dieta e sem contar caloria. Só isso já muda muita coisa no inchaço e na dor.
 
 Se você quiser ir além, existe o passo seguinte: o Método Derma, meu acompanhamento de 90 dias com anamnese completa, leitura dos seus exames e prescrição personalizada, por R$297.
 
 Se fizer sentido pra você, responde QUERO SABER aqui que eu te explico direitinho.`,
-    `{nome}fim dos 28 dias da Rotina Zero Lipedema 💙
+    `{nome}, fim dos 28 dias da Rotina Zero Lipedema 💙
 ---
 As suas quatro refeições principais já estão ajustadas, sem dieta e sem contagem de caloria. Isso sozinho costuma mudar bastante o inchaço e a dor.
 
 Se quiser seguir, o passo seguinte é o Método Derma: 90 dias de acompanhamento comigo, com anamnese completa, leitura dos exames e prescrição personalizada, por R$297.
 
 Se te interessa, responde QUERO SABER que eu explico como funciona.`,
-    `{nome}os 28 dias da Rotina Zero Lipedema terminaram.
+    `{nome}, os 28 dias da Rotina Zero Lipedema terminaram.
 ---
 Você ajustou as quatro refeições principais sem dieta e sem contar caloria. Esse é o tipo de mudança que segura o inchaço no longo prazo.
 
