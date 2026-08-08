@@ -265,7 +265,9 @@ function PlanoPage() {
   const restantes = PREMIUM_FEATURES.slice(3);
 
   return (
-    <main className="relative min-h-[100dvh]" style={{ background: C.cream, color: C.navy }}>
+    <main className="relative min-h-[100dvh]" style={{ color: C.navy }}>
+      {/* Base creme fica ABAIXO do canvas 3D, senão o fundo some atrás dela. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-20" style={{ background: C.cream }} />
       <PlanoBackground3D />
 
       {/* 1. Hero */}
