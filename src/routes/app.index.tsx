@@ -26,15 +26,21 @@ export const Route = createFileRoute("/app/")({
   }),
 });
 
-const NAVY = "#16324F";
-const GOLD = "#AF7F35";
-const GOLD_SOFT = "#D9A94B";
+import {
+  NAVY,
+  GOLD,
+  GOLD_LIGHT as GOLD_SOFT,
+  GOLD_LABEL,
+  INK,
+  INK_SOFT,
+  CARD_STYLE,
+  GRADIENT_GOLD,
+  SHADOW,
+  truncarPalavra,
+} from "@/lib/tokens";
 
-const CARD = {
-  background: "rgba(255,253,247,0.9)",
-  border: "1px solid rgba(216,198,160,0.55)",
-  boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
-};
+const CARD = CARD_STYLE;
+
 
 /** Saudação pelo horário de São Paulo, não pelo fuso do aparelho. */
 function saudacao(d: Date): string {
