@@ -39,7 +39,6 @@ export const Route = createFileRoute("/app/progresso")({
 });
 
 import { NAVY, GOLD, GOLD_LIGHT as GOLD_SOFT, GOLD_LABEL, INK_SOFT } from "@/lib/tokens";
-import { textoSequencia } from "@/lib/streak";
 
 const CARD = {
   background: "rgba(255,253,247,0.9)",
