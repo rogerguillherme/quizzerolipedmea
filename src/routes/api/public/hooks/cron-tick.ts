@@ -8,7 +8,7 @@ import {
   ESCALONAMENTO_DIAS_SEM_RESPOSTA,
 } from "@/lib/protocolo7";
 import { dicaParaDia } from "@/lib/dicas-rotina";
-import { horaLocal } from "@/lib/data-local";
+import { horaLocal, hojeISO, isoLocal, diasEntre } from "@/lib/data-local";
 
 const MS_HORA = 60 * 60 * 1000;
 const MS_DIA = 24 * MS_HORA;
