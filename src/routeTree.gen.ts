@@ -46,6 +46,7 @@ import { Route as AdminDermaRouteImport } from './routes/admin.derma'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as AppGuiasIndexRouteImport } from './routes/app.guias.index'
+import { Route as AppGuiasSlugRouteImport } from './routes/app.guias.$slug'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicWebhooksKiwifyRouteImport } from './routes/api/public/webhooks/kiwify'
 import { Route as ApiPublicWebhooksEvolutionRouteImport } from './routes/api/public/webhooks/evolution'
@@ -238,6 +239,11 @@ const AppGuiasIndexRoute = AppGuiasIndexRouteImport.update({
   path: '/guias/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppGuiasSlugRoute = AppGuiasSlugRouteImport.update({
+  id: '/guias/$slug',
+  path: '/guias/$slug',
+  getParentRoute: () => AppRoute,
+} as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
@@ -309,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/app/guias/$slug': typeof AppGuiasSlugRoute
   '/app/guias/': typeof AppGuiasIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
@@ -352,6 +359,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/app/guias/$slug': typeof AppGuiasSlugRoute
   '/app/guias': typeof AppGuiasIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
@@ -398,6 +406,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
+  '/app/guias/$slug': typeof AppGuiasSlugRoute
   '/app/guias/': typeof AppGuiasIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
@@ -445,6 +454,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/api/public/track'
+    | '/app/guias/$slug'
     | '/app/guias/'
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
@@ -488,6 +498,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/api/public/track'
+    | '/app/guias/$slug'
     | '/app/guias'
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
@@ -533,6 +544,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/api/public/track'
+    | '/app/guias/$slug'
     | '/app/guias/'
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
@@ -824,6 +836,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGuiasIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/guias/$slug': {
+      id: '/app/guias/$slug'
+      path: '/guias/$slug'
+      fullPath: '/app/guias/$slug'
+      preLoaderRoute: typeof AppGuiasSlugRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/public/track': {
       id: '/api/public/track'
       path: '/api/public/track'
@@ -910,6 +929,7 @@ interface AppRouteChildren {
   AppRotinaRoute: typeof AppRotinaRoute
   AppWhatsappRoute: typeof AppWhatsappRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppGuiasSlugRoute: typeof AppGuiasSlugRoute
   AppGuiasIndexRoute: typeof AppGuiasIndexRoute
 }
 
@@ -928,6 +948,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppRotinaRoute: AppRotinaRoute,
   AppWhatsappRoute: AppWhatsappRoute,
   AppIndexRoute: AppIndexRoute,
+  AppGuiasSlugRoute: AppGuiasSlugRoute,
   AppGuiasIndexRoute: AppGuiasIndexRoute,
 }
 
