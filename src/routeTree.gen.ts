@@ -24,6 +24,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProtocoloPagamentoRouteImport } from './routes/protocolo.pagamento'
 import { Route as AppWhatsappRouteImport } from './routes/app.whatsapp'
+import { Route as AppRotinaRouteImport } from './routes/app.rotina'
 import { Route as AppReembolsoRouteImport } from './routes/app.reembolso'
 import { Route as AppProtocoloRouteImport } from './routes/app.protocolo'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
@@ -122,6 +123,11 @@ const ProtocoloPagamentoRoute = ProtocoloPagamentoRouteImport.update({
 const AppWhatsappRoute = AppWhatsappRouteImport.update({
   id: '/whatsapp',
   path: '/whatsapp',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRotinaRoute = AppRotinaRouteImport.update({
+  id: '/rotina',
+  path: '/rotina',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReembolsoRoute = AppReembolsoRouteImport.update({
@@ -277,6 +283,7 @@ export interface FileRoutesByFullPath {
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
   '/app/reembolso': typeof AppReembolsoRoute
+  '/app/rotina': typeof AppRotinaRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin/': typeof AdminIndexRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
   '/app/reembolso': typeof AppReembolsoRoute
+  '/app/rotina': typeof AppRotinaRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin': typeof AdminIndexRoute
@@ -358,6 +366,7 @@ export interface FileRoutesById {
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
   '/app/reembolso': typeof AppReembolsoRoute
+  '/app/rotina': typeof AppRotinaRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin/': typeof AdminIndexRoute
@@ -401,6 +410,7 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/protocolo'
     | '/app/reembolso'
+    | '/app/rotina'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
     | '/admin/'
@@ -440,6 +450,7 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/protocolo'
     | '/app/reembolso'
+    | '/app/rotina'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
     | '/admin'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/protocolo'
     | '/app/reembolso'
+    | '/app/rotina'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
     | '/admin/'
@@ -620,6 +632,13 @@ declare module '@tanstack/react-router' {
       path: '/whatsapp'
       fullPath: '/app/whatsapp'
       preLoaderRoute: typeof AppWhatsappRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/rotina': {
+      id: '/app/rotina'
+      path: '/rotina'
+      fullPath: '/app/rotina'
+      preLoaderRoute: typeof AppRotinaRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/reembolso': {
@@ -829,6 +848,7 @@ interface AppRouteChildren {
   AppPerfilRoute: typeof AppPerfilRoute
   AppProtocoloRoute: typeof AppProtocoloRoute
   AppReembolsoRoute: typeof AppReembolsoRoute
+  AppRotinaRoute: typeof AppRotinaRoute
   AppWhatsappRoute: typeof AppWhatsappRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -843,6 +863,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPerfilRoute: AppPerfilRoute,
   AppProtocoloRoute: AppProtocoloRoute,
   AppReembolsoRoute: AppReembolsoRoute,
+  AppRotinaRoute: AppRotinaRoute,
   AppWhatsappRoute: AppWhatsappRoute,
   AppIndexRoute: AppIndexRoute,
 }
@@ -873,13 +894,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
