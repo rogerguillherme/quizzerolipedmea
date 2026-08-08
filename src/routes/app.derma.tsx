@@ -2,14 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Camera,
   Lightbulb,
-  ClipboardList,
   Sparkles,
   ChevronRight,
-  CheckCircle2,
-  Circle,
   Loader2,
   ArrowRight,
-  Upload,
+  Sunrise,
 } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
@@ -45,11 +42,11 @@ function PremiumPlano() {
     );
   }
 
-  // Anamnese completa + envio de exames/prescrição fazem parte do Plano Premium (R$67),
-  // liberados assim que `isPremium` for true.
-  const PREMIUM_ONBOARDING_ENABLED = true;
-  if (PREMIUM_ONBOARDING_ENABLED && st?.isPremium) {
-    return <PremiumOnboarding st={st!} />;
+  // Pós-compra do Plano Premium (R$67): a entrega é a Rotina Zero Lipedema.
+  // Anamnese, leitura de exames e prescrição personalizada NÃO fazem parte
+  // deste plano (são exclusivos do plano de R$297) e não aparecem aqui.
+  if (st?.isPremium) {
+    return <RotinaPreview />;
   }
 
   return (
@@ -205,37 +202,25 @@ function PremiumPlano() {
   );
 }
 
-type OnboardingStatus = {
-  anamneseCompleta: boolean;
-  exameEnviado: boolean;
-  exameCount: number;
-};
+const SEMANAS = [
+  {
+    n: 2,
+    refeicao: "Almoço",
+    desc: "A refeição de maior impacto no seu dia.",
+  },
+  {
+    n: 3,
+    refeicao: "Lanche",
+    desc: "Onde mais aparecem os gatilhos e os escapes.",
+  },
+  {
+    n: 4,
+    refeicao: "Jantar",
+    desc: "Fecha o ciclo e influencia o inchaço ao acordar.",
+  },
+] as const;
 
-function PremiumOnboarding({ st }: { st: OnboardingStatus }) {
-  const steps = [
-    {
-      key: "anamnese",
-      titulo: "Anamnese completa",
-      desc: "Cerca de 8 minutos. Salva automaticamente — você pode voltar depois.",
-      to: "/app/anamnese" as const,
-      done: st.anamneseCompleta,
-      cta: st.anamneseCompleta ? "Revisar respostas" : "Começar anamnese",
-    },
-    {
-      key: "exames",
-      titulo: "Enviar exames",
-      desc: st.exameCount
-        ? `${st.exameCount} exame(s) enviado(s). Você pode enviar mais quando quiser.`
-        : "Envie foto ou PDF dos seus exames — a IA faz uma leitura prévia e a Gabriela revisa antes de te responder.",
-      to: "/app/exames" as const,
-      done: st.exameEnviado,
-      cta: st.exameEnviado ? "Enviar mais exames" : "Enviar exames",
-      locked: !st.anamneseCompleta,
-    },
-  ];
-
-  const tudoPronto = st.anamneseCompleta && st.exameEnviado;
-
+function RotinaPreview() {
   return (
     <div className="px-5 pt-5 pb-8">
       <section
@@ -246,6 +231,11 @@ function PremiumOnboarding({ st }: { st: OnboardingStatus }) {
           boxShadow: "0 20px 40px -20px rgba(22,50,79,0.55)",
         }}
       >
+        <div
+          aria-hidden
+          className="absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-20"
+          style={{ background: `radial-gradient(circle, ${GOLD} 0%, transparent 70%)` }}
+        />
         <p
           className="text-[10px] font-bold uppercase"
           style={{ letterSpacing: "0.26em", color: GOLD }}
@@ -256,112 +246,140 @@ function PremiumOnboarding({ st }: { st: OnboardingStatus }) {
           className="mt-2 text-2xl leading-tight"
           style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500 }}
         >
-          {tudoPronto ? "Tudo pronto — a Gabriela já pode montar seu protocolo" : "Vamos preparar seu protocolo"}
+          Sua Rotina Zero Lipedema
         </h1>
         <p className="mt-2 text-sm opacity-85">
-          {tudoPronto
-            ? "Sua anamnese e exames já estão com a equipe. Fica de olho no WhatsApp — a Gabriela responde em até 24h úteis."
-            : "Antes de personalizar o seu plano de 30 dias, preciso de duas coisas rápidas."}
+          A gente ajusta uma refeição por semana, sem contar caloria e sem cortar
+          quantidade.
         </p>
       </section>
 
-      <section className="mt-5 space-y-3">
-        {steps.map((s, i) => (
+      <section className="mt-5">
+        <article
+          className="rounded-2xl border p-4"
+          style={{
+            background: "rgba(255,253,247,0.95)",
+            borderColor: "rgba(175,127,53,0.55)",
+            boxShadow: "0 14px 30px -22px rgba(22,50,79,0.5)",
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <span
+              className="grid size-10 shrink-0 place-items-center rounded-full"
+              style={{
+                background: `linear-gradient(180deg, #E7BE5C, ${GOLD})`,
+                color: NAVY,
+              }}
+              aria-hidden
+            >
+              <Sunrise className="size-4" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <p
+                  className="text-[10px] font-bold uppercase tracking-[0.16em]"
+                  style={{ color: GOLD }}
+                >
+                  Semana 1
+                </p>
+                <span
+                  className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em]"
+                  style={{ background: "rgba(175,127,53,0.18)", color: GOLD }}
+                >
+                  Comece por aqui
+                </span>
+              </div>
+              <h2
+                className="text-xl leading-snug"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontWeight: 500,
+                  color: NAVY,
+                }}
+              >
+                Café da manhã
+              </h2>
+              <p className="mt-1 text-[13px] leading-relaxed text-[#4A4635]">
+                Sua missão desta semana é trocar os alimentos do café da manhã para o
+                padrão anti-inflamatório: sem glúten, sem lactose, com uma fruta e um
+                tipo de proteína. Sem limitar quantidade. É a refeição mais fácil de
+                controlar e a sua primeira vitória rápida.
+              </p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section className="mt-5 space-y-2">
+        <p
+          className="px-1 text-[10px] font-semibold uppercase"
+          style={{ letterSpacing: "0.22em", color: GOLD }}
+        >
+          O que vem depois
+        </p>
+        {SEMANAS.map((s) => (
           <article
-            key={s.key}
-            className={[
-              "rounded-2xl border p-4 transition-opacity",
-              s.locked ? "opacity-60" : "",
-            ].join(" ")}
+            key={s.n}
+            className="flex items-start gap-3 rounded-2xl border p-3.5"
             style={{
-              background: s.done ? "rgba(221,235,216,0.35)" : "rgba(255,253,247,0.9)",
-              borderColor: s.done ? "rgba(46,125,50,0.4)" : "rgba(216,198,160,0.55)",
+              background: "rgba(255,253,247,0.7)",
+              borderColor: "rgba(216,198,160,0.45)",
             }}
           >
-            <div className="flex items-start gap-3">
-              <span
-                className="grid size-9 shrink-0 place-items-center rounded-full"
-                style={{
-                  background: s.done ? "#2E7D32" : NAVY,
-                  color: "#F5EFE1",
-                }}
-                aria-hidden
-              >
-                {s.done ? <CheckCircle2 className="size-4" /> : <Circle className="size-4" />}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: GOLD }}>
-                  Passo {i + 1}
-                </p>
-                <h3
-                  className="text-lg leading-snug"
-                  style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: NAVY }}
-                >
-                  {s.titulo}
-                </h3>
-                <p className="mt-1 text-[13px] leading-relaxed text-[#4A4635]">{s.desc}</p>
-                <Link
-                  to={s.to}
-                  aria-disabled={s.locked || undefined}
-                  onClick={(e) => {
-                    if (s.locked) e.preventDefault();
-                  }}
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em]"
-                  style={{
-                    background: s.done
-                      ? "rgba(46,125,50,0.14)"
-                      : `linear-gradient(180deg,#E7BE5C,${GOLD})`,
-                    color: s.done ? "#2E7D32" : NAVY,
-                    pointerEvents: s.locked ? "none" : "auto",
-                  }}
-                >
-                  {s.key === "exames" ? <Upload className="size-3.5" /> : <ClipboardList className="size-3.5" />}
-                  {s.cta}
-                  <ArrowRight className="size-3.5" />
-                </Link>
-                {s.locked && (
-                  <p className="mt-2 text-[11px] italic text-[#8A7C5C]">
-                    Conclua a anamnese para liberar.
-                  </p>
-                )}
-              </div>
+            <span
+              className="grid size-8 shrink-0 place-items-center rounded-full text-[12px] font-bold"
+              style={{
+                background: "rgba(22,50,79,0.06)",
+                color: NAVY,
+                border: "1px solid rgba(216,198,160,0.6)",
+              }}
+              aria-hidden
+            >
+              {s.n}
+            </span>
+            <div className="min-w-0">
+              <p className="text-[14px] font-semibold" style={{ color: NAVY }}>
+                Semana {s.n} · {s.refeicao}
+              </p>
+              <p className="mt-0.5 text-[12.5px] leading-relaxed text-[#5C5749]">
+                {s.desc}
+              </p>
             </div>
           </article>
         ))}
+        <p className="px-1 pt-1 text-[12px] leading-relaxed text-[#5C5749]">
+          Ao fim das 4 semanas, suas refeições principais estão ajustadas, sem nenhuma
+          fase de restrição.
+        </p>
       </section>
 
-      {tudoPronto && (
-        <section
-          className="mt-6 rounded-2xl border p-4 text-sm text-[#3E4F65]"
-          style={{ borderColor: "rgba(216,198,160,0.6)", background: "rgba(255,253,247,0.9)" }}
+      <section
+        className="mt-6 rounded-2xl border p-4"
+        style={{ borderColor: "rgba(216,198,160,0.6)", background: "rgba(255,253,247,0.9)" }}
+      >
+        <p
+          className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em]"
+          style={{ color: GOLD }}
         >
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: GOLD }}>
-            Enquanto isso, você já pode:
-          </p>
-          <ul className="space-y-2">
-            <li className="flex items-center gap-2">
-              <Camera className="size-4" style={{ color: NAVY }} />
-              <Link to="/app/avaliacao" className="underline underline-offset-2">
-                Registrar suas refeições com foto
-              </Link>
-            </li>
-            <li className="flex items-center gap-2">
-              <Lightbulb className="size-4" style={{ color: NAVY }} />
-              <Link to="/app/missoes" className="underline underline-offset-2">
-                Ler as dicas diárias
-              </Link>
-            </li>
-          </ul>
-        </section>
-      )}
-
-      <p className="mt-4 px-2 text-center text-[10px] italic text-[#8A7C5C]">
-        Precisou falar comigo? Chama no WhatsApp — respondo em até 24h úteis.
-      </p>
-      {/* silêncio para o linter — ícones importados mas usados condicionalmente */}
-      {false && <><Sparkles /><ChevronRight /></>}
-
+          Enquanto isso, você já pode:
+        </p>
+        <ul className="space-y-2 text-sm text-[#3E4F65]">
+          <li className="flex items-center gap-2">
+            <Camera className="size-4" style={{ color: NAVY }} />
+            <Link to="/app/avaliacao" className="underline underline-offset-2">
+              Registrar suas refeições com foto
+            </Link>
+            <ArrowRight className="size-3.5 opacity-60" />
+          </li>
+          <li className="flex items-center gap-2">
+            <Lightbulb className="size-4" style={{ color: NAVY }} />
+            <Link to="/app/missoes" className="underline underline-offset-2">
+              Ler as dicas diárias
+            </Link>
+            <ArrowRight className="size-3.5 opacity-60" />
+          </li>
+        </ul>
+      </section>
     </div>
   );
 }
-
