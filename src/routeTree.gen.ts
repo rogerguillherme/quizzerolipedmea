@@ -50,6 +50,7 @@ import { Route as AppGuiasSlugRouteImport } from './routes/app.guias.$slug'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicWebhooksKiwifyRouteImport } from './routes/api/public/webhooks/kiwify'
 import { Route as ApiPublicWebhooksEvolutionRouteImport } from './routes/api/public/webhooks/evolution'
+import { Route as ApiPublicTrackEventRouteImport } from './routes/api/public/track/event'
 import { Route as ApiPublicHooksLiberarPremiumRouteImport } from './routes/api/public/hooks/liberar-premium'
 import { Route as ApiPublicHooksEnviarMsgRouteImport } from './routes/api/public/hooks/enviar-msg'
 import { Route as ApiPublicHooksCronTickRouteImport } from './routes/api/public/hooks/cron-tick'
@@ -260,6 +261,11 @@ const ApiPublicWebhooksEvolutionRoute =
     path: '/api/public/webhooks/evolution',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicTrackEventRoute = ApiPublicTrackEventRouteImport.update({
+  id: '/event',
+  path: '/event',
+  getParentRoute: () => ApiPublicTrackRoute,
+} as any)
 const ApiPublicHooksLiberarPremiumRoute =
   ApiPublicHooksLiberarPremiumRouteImport.update({
     id: '/api/public/hooks/liberar-premium',
@@ -314,12 +320,13 @@ export interface FileRoutesByFullPath {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
-  '/api/public/track': typeof ApiPublicTrackRoute
+  '/api/public/track': typeof ApiPublicTrackRouteWithChildren
   '/app/guias/$slug': typeof AppGuiasSlugRoute
   '/app/guias/': typeof AppGuiasIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
+  '/api/public/track/event': typeof ApiPublicTrackEventRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
@@ -358,12 +365,13 @@ export interface FileRoutesByTo {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
-  '/api/public/track': typeof ApiPublicTrackRoute
+  '/api/public/track': typeof ApiPublicTrackRouteWithChildren
   '/app/guias/$slug': typeof AppGuiasSlugRoute
   '/app/guias': typeof AppGuiasIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
+  '/api/public/track/event': typeof ApiPublicTrackEventRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
@@ -405,12 +413,13 @@ export interface FileRoutesById {
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
-  '/api/public/track': typeof ApiPublicTrackRoute
+  '/api/public/track': typeof ApiPublicTrackRouteWithChildren
   '/app/guias/$slug': typeof AppGuiasSlugRoute
   '/app/guias/': typeof AppGuiasIndexRoute
   '/api/public/hooks/cron-tick': typeof ApiPublicHooksCronTickRoute
   '/api/public/hooks/enviar-msg': typeof ApiPublicHooksEnviarMsgRoute
   '/api/public/hooks/liberar-premium': typeof ApiPublicHooksLiberarPremiumRoute
+  '/api/public/track/event': typeof ApiPublicTrackEventRoute
   '/api/public/webhooks/evolution': typeof ApiPublicWebhooksEvolutionRoute
   '/api/public/webhooks/kiwify': typeof ApiPublicWebhooksKiwifyRoute
 }
@@ -459,6 +468,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
+    | '/api/public/track/event'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
   fileRoutesByTo: FileRoutesByTo
@@ -503,6 +513,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
+    | '/api/public/track/event'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
   id:
@@ -549,6 +560,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/cron-tick'
     | '/api/public/hooks/enviar-msg'
     | '/api/public/hooks/liberar-premium'
+    | '/api/public/track/event'
     | '/api/public/webhooks/evolution'
     | '/api/public/webhooks/kiwify'
   fileRoutesById: FileRoutesById
@@ -567,7 +579,7 @@ export interface RootRouteChildren {
   UpsellRoute: typeof UpsellRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ProtocoloPagamentoRoute: typeof ProtocoloPagamentoRoute
-  ApiPublicTrackRoute: typeof ApiPublicTrackRoute
+  ApiPublicTrackRoute: typeof ApiPublicTrackRouteWithChildren
   ApiPublicHooksCronTickRoute: typeof ApiPublicHooksCronTickRoute
   ApiPublicHooksEnviarMsgRoute: typeof ApiPublicHooksEnviarMsgRoute
   ApiPublicHooksLiberarPremiumRoute: typeof ApiPublicHooksLiberarPremiumRoute
@@ -864,6 +876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksEvolutionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/track/event': {
+      id: '/api/public/track/event'
+      path: '/event'
+      fullPath: '/api/public/track/event'
+      preLoaderRoute: typeof ApiPublicTrackEventRouteImport
+      parentRoute: typeof ApiPublicTrackRoute
+    }
     '/api/public/hooks/liberar-premium': {
       id: '/api/public/hooks/liberar-premium'
       path: '/api/public/hooks/liberar-premium'
@@ -954,6 +973,18 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface ApiPublicTrackRouteChildren {
+  ApiPublicTrackEventRoute: typeof ApiPublicTrackEventRoute
+}
+
+const ApiPublicTrackRouteChildren: ApiPublicTrackRouteChildren = {
+  ApiPublicTrackEventRoute: ApiPublicTrackEventRoute,
+}
+
+const ApiPublicTrackRouteWithChildren = ApiPublicTrackRoute._addFileChildren(
+  ApiPublicTrackRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
@@ -968,7 +999,7 @@ const rootRouteChildren: RootRouteChildren = {
   UpsellRoute: UpsellRoute,
   AdminLoginRoute: AdminLoginRoute,
   ProtocoloPagamentoRoute: ProtocoloPagamentoRoute,
-  ApiPublicTrackRoute: ApiPublicTrackRoute,
+  ApiPublicTrackRoute: ApiPublicTrackRouteWithChildren,
   ApiPublicHooksCronTickRoute: ApiPublicHooksCronTickRoute,
   ApiPublicHooksEnviarMsgRoute: ApiPublicHooksEnviarMsgRoute,
   ApiPublicHooksLiberarPremiumRoute: ApiPublicHooksLiberarPremiumRoute,
@@ -978,13 +1009,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
