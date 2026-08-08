@@ -262,7 +262,7 @@ function Hoje() {
         )}
       </section>
 
-      {/* 3. Registrar refeição */}
+      {/* 3. Registrar refeição — ação secundária: o check-in é a primária do dia. */}
       <section className="mt-4">
         <Link
           to="/app/registrar"
@@ -270,15 +270,14 @@ function Hoje() {
           className="flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13px] font-semibold uppercase"
           style={{
             background: "rgba(255,253,247,0.95)",
-            border: "1px solid rgba(216,198,160,0.7)",
+            border: `1px solid ${GOLD}`,
             color: NAVY,
             letterSpacing: "0.14em",
-            boxShadow: "0 10px 24px -20px rgba(22,50,79,0.35)",
           }}
         >
           <Camera className="size-4" style={{ color: GOLD }} /> Registrar refeição
         </Link>
-        <p className="mt-2 text-center text-[11.5px]" style={{ color: "#5C5749" }}>
+        <p className="mt-2 text-center text-[12.5px]" style={{ color: INK_SOFT }}>
           {refeicoesHoje === 0
             ? "Nenhuma refeição registrada hoje."
             : refeicoesHoje === 1
@@ -290,22 +289,30 @@ function Hoje() {
       {/* 4. Progresso da semana */}
       <section className="mt-6">
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+          <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
             Progresso da semana
           </p>
-          <p className="text-[11.5px] font-semibold" style={{ color: NAVY }}>
+          <p className="text-[12.5px] font-semibold" style={{ color: NAVY }}>
             {Math.min(diasNaSemana, META_DIAS_SEMANA)} de {META_DIAS_SEMANA} dias
           </p>
         </div>
-        <div className="mt-2.5 flex items-center gap-1.5">
+        <div
+          className="mt-2.5 flex items-center gap-1.5"
+          role="progressbar"
+          aria-label="Dias de check-in nesta semana"
+          aria-valuenow={Math.min(diasNaSemana, META_DIAS_SEMANA)}
+          aria-valuemin={0}
+          aria-valuemax={META_DIAS_SEMANA}
+        >
           {Array.from({ length: META_DIAS_SEMANA }, (_, i) => {
             const feito = i < diasNaSemana;
             return (
               <span
                 key={i}
-                className="h-2 flex-1 rounded-full"
+                aria-hidden
+                className="h-2 flex-1 rounded-full transition-colors duration-300"
                 style={{
-                  background: feito ? "linear-gradient(90deg, #D9A94B, #AF7F35)" : "rgba(22,50,79,0.1)",
+                  background: feito ? GRADIENT_GOLD : "rgba(22,50,79,0.1)",
                 }}
               />
             );
@@ -315,18 +322,17 @@ function Hoje() {
 
       {/* 5. Dica do dia */}
       <section className="mt-6 rounded-[24px] p-5" style={CARD}>
-        <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+        <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
           Dica do dia
         </p>
         <p
-          className="mt-2 text-[15px]"
+          className="mt-2 text-[16px]"
           style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: NAVY }}
         >
           {dica.titulo}
         </p>
-        <p className="mt-1.5 text-[12.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
-          {dica.detalhe.slice(0, 180)}
-          {dica.detalhe.length > 180 ? "…" : ""}
+        <p className="mt-1.5 text-[12.5px]" style={{ color: INK, lineHeight: 1.55 }}>
+          {truncarPalavra(dica.detalhe, 180)}
         </p>
         <Link
           to="/app/missoes"
@@ -338,11 +344,12 @@ function Hoje() {
         <Link
           to="/app/guias"
           className="mt-3 ml-4 inline-flex items-center gap-1.5 text-[12.5px]"
-          style={{ color: "#5C5749" }}
+          style={{ color: INK_SOFT }}
         >
           guias <ArrowRight className="size-3.5" style={{ color: GOLD }} />
         </Link>
       </section>
+
 
       {/* 6. Card do plano — só para quem ainda não comprou */}
       {!pago && (
