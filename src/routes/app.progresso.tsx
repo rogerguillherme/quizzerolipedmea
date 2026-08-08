@@ -2,27 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  Activity,
-  ArrowRight,
-  ChevronDown,
-  Clock,
-  Flame,
-  HeartPulse,
-  Loader2,
-  Moon,
-  Stethoscope,
-  Target,
-  Utensils,
-  X,
-} from "lucide-react";
+import { ArrowRight, Loader2, Utensils, X } from "lucide-react";
 import { getRotina } from "@/lib/rotina.functions";
 import { getSemana } from "@/lib/rotina-content";
-import { getMyProfile } from "@/lib/mapa-access.functions";
+import { getMyProfile, registrarMapaPopup } from "@/lib/mapa-access.functions";
 import { getMealTestStatus } from "@/lib/meal-test.functions";
 import { listarRefeicoesRemotas, loadLocalMeals, type MealEntry } from "@/lib/refeicoes";
 import type { Diagnostico } from "@/lib/mapa.functions";
 import { isoLocal } from "@/lib/data-local";
+import { MapaSheet } from "@/components/MapaSheet";
 
 export const Route = createFileRoute("/app/progresso")({
   component: Progresso,
@@ -46,24 +34,6 @@ const CARD = {
   boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
 };
 
-/** Rótulos das 12 perguntas do Mapa do Lipedema. */
-const LABELS_Q: Record<string, { icon: React.ReactNode; label: string }> = {
-  tempo: { icon: <Clock className="size-3.5" />, label: "Tempo com sintomas" },
-  diagnostico: { icon: <Stethoscope className="size-3.5" />, label: "Diagnóstico" },
-  sintomaMaior: { icon: <HeartPulse className="size-3.5" />, label: "Sintoma principal" },
-  dorNivel: { icon: <Flame className="size-3.5" />, label: "Nível de dor" },
-  pesoPernas: { icon: <Activity className="size-3.5" />, label: "Peso nas pernas" },
-  dietaExercicio: { icon: <Activity className="size-3.5" />, label: "Dieta & exercício" },
-  atividade: { icon: <Activity className="size-3.5" />, label: "Nível de atividade" },
-  sono: { icon: <Moon className="size-3.5" />, label: "Qualidade do sono" },
-  intestino: { icon: <Activity className="size-3.5" />, label: "Funcionamento do intestino" },
-  sinaisNutricionais: { icon: <Utensils className="size-3.5" />, label: "Sinais nutricionais" },
-  exames: { icon: <Stethoscope className="size-3.5" />, label: "Exames recentes" },
-  objetivo: { icon: <Target className="size-3.5" />, label: "Objetivo agora" },
-};
-
-
-
 function Progresso() {
   const fetchRotina = useServerFn(getRotina);
   const fetchProfile = useServerFn(getMyProfile);
@@ -72,6 +42,7 @@ function Progresso() {
   const { data: rotina, isLoading } = useQuery({ queryKey: ["rotina"], queryFn: () => fetchRotina() });
   const { data: profile } = useQuery({ queryKey: ["my-profile"], queryFn: () => fetchProfile() });
   const { data: status } = useQuery({ queryKey: ["meal-test-status"], queryFn: () => fetchStatus() });
+  const marcarPopup = useServerFn(registrarMapaPopup);
 
   const pago = Boolean(status?.pago);
   const [meals, setMeals] = useState<MealEntry[]>([]);
@@ -118,12 +89,10 @@ function Progresso() {
     dias.push({ iso, feito: datas.has(iso) });
   }
 
-  const diagnostico = ((profile as { diagnostico?: Diagnostico | null } | undefined)?.diagnostico) ?? null;
-  const respostas = ((profile as { respostas?: Record<string, string> } | undefined)?.respostas) ?? {};
-  const respostasOrdenadas = Object.entries(LABELS_Q)
-    .map(([k, meta]) => ({ k, meta, valor: respostas[k] }))
-    .filter((r) => r.valor);
-  const prioridades = diagnostico?.prioridades?.slice(0, 3) ?? [];
+  const perfil = profile as
+    | { respostas?: Record<string, unknown> | null; diagnostico?: Diagnostico | null }
+    | undefined;
+  const diagnostico = perfil?.diagnostico ?? null;
 
   return (
     <div className="px-5 pt-6 pb-8">
@@ -136,6 +105,29 @@ function Progresso() {
       >
         Progresso
       </h1>
+
+      {/* Reabrir a leitura do Mapa a qualquer momento */}
+      {profile !== undefined && (profile as { diagnostico?: unknown } | null)?.diagnostico ? (
+        <button
+          type="button"
+          onClick={() => setMapaAberto(true)}
+          className="mt-4 flex w-full items-center justify-between gap-3 rounded-[20px] px-4 py-3.5 text-left"
+          style={CARD}
+        >
+          <span>
+            <span
+              className="block text-[10.5px] font-semibold uppercase"
+              style={{ letterSpacing: "0.22em", color: GOLD_LABEL }}
+            >
+              Sua leitura
+            </span>
+            <span className="mt-0.5 block text-[14px] font-semibold" style={{ color: NAVY }}>
+              Ver meu Mapa
+            </span>
+          </span>
+          <ArrowRight className="size-4 shrink-0" style={{ color: GOLD }} />
+        </button>
+      ) : null}
 
       {/* Sequência */}
       <section
@@ -278,88 +270,6 @@ function Progresso() {
         )}
       </section>
 
-      {/* Mapa do Lipedema (acordeão) */}
-      <section className="mt-6 overflow-hidden rounded-[24px]" style={CARD}>
-        <button
-          type="button"
-          onClick={() => setMapaAberto((v) => !v)}
-          className="flex w-full items-center gap-3 px-5 py-4 text-left"
-          aria-expanded={mapaAberto}
-        >
-          <div className="flex-1">
-            <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
-              Histórico
-            </p>
-            <p className="mt-0.5 text-[14px] font-semibold" style={{ color: NAVY }}>
-              Seu Mapa do Lipedema
-            </p>
-          </div>
-          <ChevronDown
-            className="size-4 shrink-0 transition-transform"
-            style={{ color: NAVY, transform: mapaAberto ? "rotate(180deg)" : "rotate(0deg)" }}
-          />
-        </button>
-
-        {mapaAberto && (
-          <div className="px-5 pb-5">
-            <p className="text-[12px]" style={{ color: INK_SOFT }}>
-              Estágio percebido:{" "}
-              <strong style={{ color: NAVY }}>{diagnostico?.estagio ?? "Indeterminado"}</strong>
-            </p>
-            {diagnostico?.descricaoEstagio && (
-              <p className="mt-2 text-[12.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
-                {diagnostico.descricaoEstagio}
-              </p>
-            )}
-
-            {respostasOrdenadas.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {respostasOrdenadas.map(({ k, meta, valor }) => (
-                  <div
-                    key={k}
-                    className="flex items-start gap-2.5 rounded-xl px-3 py-2.5"
-                    style={{ background: "rgba(22,50,79,0.04)", border: "1px solid rgba(216,198,160,0.35)" }}
-                  >
-                    <span
-                      className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full"
-                      style={{ background: "rgba(175,127,53,0.12)", color: GOLD }}
-                    >
-                      {meta.icon}
-                    </span>
-                    <div className="flex-1">
-                      <p
-                        className="text-[10.5px] font-semibold uppercase"
-                        style={{ letterSpacing: "0.16em", color: GOLD_LABEL }}
-                      >
-                        {meta.label}
-                      </p>
-                      <p className="text-[13px]" style={{ color: NAVY, lineHeight: 1.4 }}>
-                        {valor}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {prioridades.length > 0 && (
-              <div className="mt-4">
-                <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
-                  Suas 3 prioridades
-                </p>
-                <ul className="mt-2 space-y-1.5">
-                  {prioridades.map((p, i) => (
-                    <li key={i} className="flex items-start gap-2 text-[12.5px]" style={{ color: "#2F3128", lineHeight: 1.5 }}>
-                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full" style={{ background: GOLD_SOFT }} />
-                      <span>{p}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-      </section>
 
       {/* Próximo passo — só para quem já comprou */}
       {pago && (
@@ -394,6 +304,18 @@ function Progresso() {
             Quero o acompanhamento <ArrowRight className="size-4" />
           </Link>
         </section>
+      )}
+
+      {mapaAberto && diagnostico && (
+        <MapaSheet
+          diagnostico={diagnostico}
+          respostas={perfil?.respostas ?? null}
+          pago={pago}
+          onClose={() => setMapaAberto(false)}
+          onConcluir={() => {
+            void Promise.resolve(marcarPopup({ data: { evento: "visto" } })).catch(() => {});
+          }}
+        />
       )}
 
       {/* Detalhe da refeição */}
