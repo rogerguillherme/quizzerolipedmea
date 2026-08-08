@@ -287,8 +287,9 @@ function RotinaPage() {
                   type="button"
                   onClick={() => avancarMut.mutate()}
                   disabled={avancarMut.isPending}
-                  className="text-[12px] underline underline-offset-2 opacity-70"
-                  style={{ color: NAVY }}
+                  className="text-[12.5px] underline underline-offset-2"
+                  style={{ color: INK_SOFT }}
+
                 >
                   Já estou pronta para a próxima
                 </button>
