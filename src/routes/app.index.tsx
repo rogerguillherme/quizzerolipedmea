@@ -6,10 +6,13 @@ import { ArrowRight, Camera, Check, Loader2, Lock } from "lucide-react";
 import { getRotina, registrarCheckin } from "@/lib/rotina.functions";
 import { FRASES_REFORCO, META_DIAS_SEMANA, getSemana } from "@/lib/rotina-content";
 import { getDicaDoDia } from "@/lib/dicas";
-import { getMyProfile } from "@/lib/mapa-access.functions";
+import { getMyProfile, registrarMapaPopup } from "@/lib/mapa-access.functions";
 import { getMealTestStatus } from "@/lib/meal-test.functions";
 import { contarHoje, listarRefeicoesRemotas, loadLocalMeals } from "@/lib/refeicoes";
 import { dataExtenso as dataExtensoSP, hojeISO as hojeISOLocal, horaLocal } from "@/lib/data-local";
+import { MapaSheet } from "@/components/MapaSheet";
+import type { Diagnostico } from "@/lib/mapa.functions";
+
 
 
 export const Route = createFileRoute("/app/")({
