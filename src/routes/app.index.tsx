@@ -94,12 +94,48 @@ function Hoje() {
     };
   }, [status, pago]);
 
+
+  // ---- Popup do Mapa do Lipedema ----
+  // Só abre depois que o perfil terminou de carregar, no máximo 3 vezes, e
+  // enquanto ela não tiver chegado ao último passo.
+  const marcarPopup = useServerFn(registrarMapaPopup);
+  const perfil = profile as
+    | {
+        nome?: string;
+        respostas?: Record<string, unknown> | null;
+        diagnostico?: Diagnostico | null;
+        mapa_popup_visto_em?: string | null;
+        mapa_popup_aberturas?: number | null;
+      }
+    | undefined;
+  const diagnostico = perfil?.diagnostico ?? null;
+  const [mapaAberto, setMapaAberto] = useState(false);
+  const [autoAvaliado, setAutoAvaliado] = useState(false);
+
+  useEffect(() => {
+    if (autoAvaliado) return;
+    if (profile === undefined || status === undefined) return;
+    setAutoAvaliado(true);
+    if (!diagnostico) return;
+    if (perfil?.mapa_popup_visto_em) return;
+    if ((perfil?.mapa_popup_aberturas ?? 0) >= 3) return;
+    setMapaAberto(true);
+    void Promise.resolve(marcarPopup({ data: { evento: "abertura" } })).catch(() => {});
+  }, [profile, status, autoAvaliado, diagnostico, perfil, marcarPopup]);
+
+  const concluirMapa = () => {
+    void Promise.resolve(marcarPopup({ data: { evento: "visto" } }))
+      .then(() => qc.invalidateQueries({ queryKey: ["my-profile"] }))
+      .catch(() => {});
+  };
+
   const mut = useMutation({
     mutationFn: () => checkin({ data: {} }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["rotina"] });
     },
   });
+
 
   if (isLoading) {
     return (
