@@ -366,10 +366,16 @@ async function processarCadenciaRotina(
     .select("id, nome, telefone, respostas, user_id, updated_at, created_at")
     .eq("status", "plano_ativo")
     .neq("telefone", "pendente")
+    // Ignora números já marcados como inexistentes no WhatsApp.
+    .or(
+      "respostas->atencao->>motivo.is.null,respostas->atencao->>motivo.neq.numero_invalido",
+    )
     .limit(500);
 
   for (const lead of leads ?? []) {
     const respostas = (lead.respostas ?? {}) as LeadResp;
+    if (leadInvalido(respostas)) continue;
+
     const msgs =
       (respostas.rotina_msgs as
         | {
