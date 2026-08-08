@@ -12,7 +12,6 @@ import {
   GOLD_LABEL,
   GOLD_LIGHT,
   GRADIENT_GOLD,
-  GRADIENT_NAVY,
   INK,
   INK_SOFT,
   NAVY,
@@ -404,6 +403,3 @@ export function MapaSheet({
     </div>
   );
 }
-
-/** Gradiente navy exportado só para manter a paleta do sheet alinhada ao app. */
-export const MAPA_SHEET_BG = GRADIENT_NAVY;
