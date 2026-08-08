@@ -170,19 +170,28 @@ function RootComponent() {
     // Primeiro toque precisa ser capturado antes de qualquer navegação interna.
     capturarAtribuicao();
     const sid = getSessionId();
-    const unsub = router.subscribe("onResolved", () => {
+    let ultimoPath = "";
+    const enviarPageview = () => {
+      const path = normalizePath();
+      // onResolved dispara também em mudanças de search/hash: evita duplicar.
+      if (path === ultimoPath) return;
+      ultimoPath = path;
       trackMeta("PageView");
       const atribuicao = getAtribuicao();
       enviarBeacon("/api/public/track", {
         // Só o pathname: query e hash vão em campos próprios.
-        path: normalizePath(),
+        path,
         referrer: typeof document !== "undefined" ? document.referrer || null : null,
         session_id: sid,
         utm_source: atribuicao.utm_source ?? null,
         utm_medium: atribuicao.utm_medium ?? null,
         utm_campaign: atribuicao.utm_campaign ?? null,
       });
-    });
+    };
+    // A primeira carga não passa por onResolved: dispara na montagem.
+    enviarPageview();
+    const unsub = router.subscribe("onResolved", enviarPageview);
+
     return () => unsub();
   }, [router]);
 
