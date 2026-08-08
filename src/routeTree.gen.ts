@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpsellRouteImport } from './routes/upsell'
 import { Route as QuizzRouteImport } from './routes/quizz'
+import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OfertaRouteImport } from './routes/oferta'
 import { Route as MapaRouteImport } from './routes/mapa'
@@ -63,6 +64,11 @@ const UpsellRoute = UpsellRouteImport.update({
 const QuizzRoute = QuizzRouteImport.update({
   id: '/quizz',
   path: '/quizz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanoRoute = PlanoRouteImport.update({
+  id: '/plano',
+  path: '/plano',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -293,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/plano': typeof PlanoRoute
   '/quizz': typeof QuizzRoute
   '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -338,6 +345,7 @@ export interface FileRoutesByTo {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/plano': typeof PlanoRoute
   '/quizz': typeof QuizzRoute
   '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -386,6 +394,7 @@ export interface FileRoutesById {
   '/mapa': typeof MapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
+  '/plano': typeof PlanoRoute
   '/quizz': typeof QuizzRoute
   '/upsell': typeof UpsellRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -435,6 +444,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/plano'
     | '/quizz'
     | '/upsell'
     | '/admin/configuracoes'
@@ -480,6 +490,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/plano'
     | '/quizz'
     | '/upsell'
     | '/admin/configuracoes'
@@ -527,6 +538,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/oferta'
     | '/onboarding'
+    | '/plano'
     | '/quizz'
     | '/upsell'
     | '/admin/configuracoes'
@@ -575,6 +587,7 @@ export interface RootRouteChildren {
   MapaRoute: typeof MapaRoute
   OfertaRoute: typeof OfertaRoute
   OnboardingRoute: typeof OnboardingRoute
+  PlanoRoute: typeof PlanoRoute
   QuizzRoute: typeof QuizzRoute
   UpsellRoute: typeof UpsellRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -601,6 +614,13 @@ declare module '@tanstack/react-router' {
       path: '/quizz'
       fullPath: '/quizz'
       preLoaderRoute: typeof QuizzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plano': {
+      id: '/plano'
+      path: '/plano'
+      fullPath: '/plano'
+      preLoaderRoute: typeof PlanoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -995,6 +1015,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapaRoute: MapaRoute,
   OfertaRoute: OfertaRoute,
   OnboardingRoute: OnboardingRoute,
+  PlanoRoute: PlanoRoute,
   QuizzRoute: QuizzRoute,
   UpsellRoute: UpsellRoute,
   AdminLoginRoute: AdminLoginRoute,
@@ -1009,13 +1030,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
