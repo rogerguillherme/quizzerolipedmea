@@ -62,7 +62,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     id: "natural",
     icone: Leaf,
     titulo: "Guia Natural Zero Lipedema",
-    descricao: "Chás, shots, suplementos e manipulados, com posologia clara.",
+    descricao:
+      "Chás e shots caseiros, com preparo, horário e quem não deve tomar.",
   },
   {
     id: "desinchando",

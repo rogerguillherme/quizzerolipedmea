@@ -333,6 +333,13 @@ function Hoje() {
         >
           ver todas as dicas <ArrowRight className="size-3.5" style={{ color: GOLD }} />
         </Link>
+        <Link
+          to="/app/guias"
+          className="mt-3 ml-4 inline-flex items-center gap-1.5 text-[12.5px]"
+          style={{ color: "#5C5749" }}
+        >
+          guias <ArrowRight className="size-3.5" style={{ color: GOLD }} />
+        </Link>
       </section>
 
       {/* 6. Card do plano — só para quem ainda não comprou */}

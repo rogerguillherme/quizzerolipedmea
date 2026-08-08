@@ -30,6 +30,7 @@ import {
   desfazerCheckin,
   avancarSemana,
 } from "@/lib/rotina.functions";
+import { GuiasCards } from "@/components/GuiasCards";
 import { track } from "../lib/analytics";
 import { trackMeta } from "../lib/meta-track";
 
