@@ -56,17 +56,28 @@ export const Route = createFileRoute("/app/rotina")({
   }),
 });
 
-const NAVY = "#16324F";
-const GOLD = "#AF7F35";
-const GOLD_LIGHT = "#D9A94B";
-const CREAM_SOFT = "#FBF6E9";
+import {
+  NAVY,
+  GOLD,
+  GOLD_LIGHT,
+  GOLD_LABEL,
+  CREAM_SOFT,
+  INK_SOFT,
+  BORDER,
+  BORDER_GOLD,
+  GRADIENT_GOLD,
+  CREAM_CARD,
+} from "@/lib/tokens";
+import { textoSequencia } from "@/lib/streak";
 
-const CARD_BASE = "rounded-3xl border";
+/** Card principal: 24px. Card interno: 16px (rounded-2xl). */
+const CARD_BASE = "rounded-[24px] border";
 const CARD_STYLE: React.CSSProperties = {
-  background: "rgba(255,253,247,0.95)",
-  borderColor: "rgba(216,198,160,0.55)",
+  background: CREAM_CARD,
+  borderColor: BORDER,
   boxShadow: "0 14px 30px -22px rgba(22,50,79,0.5)",
 };
+
 
 const ICONES = [Coffee, UtensilsCrossed, Apple, Moon] as const;
 
