@@ -64,7 +64,12 @@ type LeadResp = Record<string, unknown> & {
   atencao?: { motivo?: string; criado_em?: string } | unknown;
   reengaje?: Record<string, string>;
   envio_falhas?: Record<string, number>;
+  /** Momento da última resposta da lead que pausou a régua. */
+  cadencia_pausada_em?: string;
+  /** Momento em que a lead pulou direto pra oferta por intenção de compra. */
+  fast_track_em?: string;
 };
+
 
 /** Estado compartilhado do lote em uma execução do cron. */
 type Lote = {
