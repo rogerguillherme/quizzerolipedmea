@@ -1,319 +1,356 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Clock, Stethoscope, Activity, Target, HeartPulse, ArrowRight } from "lucide-react";
+import { ArrowRight, Camera, Check, Loader2, Lock } from "lucide-react";
+import { getRotina, registrarCheckin } from "@/lib/rotina.functions";
+import { FRASES_REFORCO, META_DIAS_SEMANA, getSemana } from "@/lib/rotina-content";
+import { getDicaDoDia } from "@/lib/dicas";
 import { getMyProfile } from "@/lib/mapa-access.functions";
-import type { Diagnostico } from "@/lib/mapa.functions";
-
+import { getMealTestStatus } from "@/lib/meal-test.functions";
+import { contarHoje, listarRefeicoesRemotas, loadLocalMeals } from "@/lib/refeicoes";
 
 export const Route = createFileRoute("/app/")({
-  component: GuiaMapa,
+  component: Hoje,
   head: () => ({
     meta: [
-      { title: "Meu Mapa · Zero Lipedema" },
+      { title: "Hoje · Zero Lipedema" },
+      {
+        name: "description",
+        content: "Sua ação de hoje na Rotina Zero Lipedema: check-in do dia, registro de refeição e dica prática.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
 });
 
-const LABELS_Q: Record<string, { icon: React.ReactNode; label: string }> = {
-  tempo: { icon: <Clock className="size-3.5" />, label: "Tempo com sintomas" },
-  diagnostico: { icon: <Stethoscope className="size-3.5" />, label: "Diagnóstico" },
-  sintomaMaior: { icon: <HeartPulse className="size-3.5" />, label: "Sintoma principal" },
-  pesoPernas: { icon: <Activity className="size-3.5" />, label: "Peso × pernas" },
-  dietaExercicio: { icon: <Activity className="size-3.5" />, label: "Dieta & exercício" },
-  atividade: { icon: <Activity className="size-3.5" />, label: "Nível de atividade" },
-  exames: { icon: <Stethoscope className="size-3.5" />, label: "Exames recentes" },
-  objetivo: { icon: <Target className="size-3.5" />, label: "Objetivo agora" },
+const NAVY = "#16324F";
+const GOLD = "#AF7F35";
+const GOLD_SOFT = "#D9A94B";
+
+const CARD = {
+  background: "rgba(255,253,247,0.9)",
+  border: "1px solid rgba(216,198,160,0.55)",
+  boxShadow: "0 10px 24px -20px rgba(22,50,79,0.3)",
 };
 
-function GuiaMapa() {
+function saudacao(d: Date): string {
+  const h = d.getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
+/** YYYY-MM-DD local, mesma base usada pela Rotina. */
+function hojeISOLocal(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+function Hoje() {
+  const qc = useQueryClient();
+  const fetchRotina = useServerFn(getRotina);
   const fetchProfile = useServerFn(getMyProfile);
-  const { data: profile, isLoading, error } = useQuery({
+  const fetchStatus = useServerFn(getMealTestStatus);
+  const checkin = useServerFn(registrarCheckin);
+
+  const { data: rotina, isLoading } = useQuery({
+    queryKey: ["rotina"],
+    queryFn: () => fetchRotina(),
+  });
+  const { data: profile } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => fetchProfile(),
   });
+  const { data: status } = useQuery({
+    queryKey: ["meal-test-status"],
+    queryFn: () => fetchStatus(),
+  });
 
+  const pago = Boolean(status?.pago);
+  const [refeicoesHoje, setRefeicoesHoje] = useState(0);
 
+  useEffect(() => {
+    let vivo = true;
+    if (status === undefined) return;
+    if (pago) {
+      void listarRefeicoesRemotas(60).then((m) => {
+        if (vivo) setRefeicoesHoje(contarHoje(m));
+      });
+    } else {
+      setRefeicoesHoje(contarHoje(loadLocalMeals()));
+    }
+    return () => {
+      vivo = false;
+    };
+  }, [status, pago]);
+
+  const mut = useMutation({
+    mutationFn: () => checkin({ data: {} }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["rotina"] });
+    },
+  });
 
   if (isLoading) {
     return (
       <div className="grid min-h-[70vh] place-items-center">
-        <Loader2 className="size-6 animate-spin" style={{ color: "#16324F" }} />
+        <Loader2 className="size-6 animate-spin" style={{ color: NAVY }} />
       </div>
     );
   }
 
-  const nome = String((profile as any)?.nome ?? "").split(" ")[0] || "linda";
-  const diagnostico = ((profile as any)?.diagnostico as Diagnostico | null) ?? null;
-  const respostas = ((profile as any)?.respostas as Record<string, string> | null) ?? {};
-  const estagio = diagnostico?.estagio ?? "Indeterminado";
-  const prioridades = diagnostico?.prioridades?.slice(0, 3) ?? [];
-  const abertura = diagnostico?.aberturaValidadora ?? "";
-  const descricao = diagnostico?.descricaoEstagio ?? "";
+  const agora = new Date();
+  const hojeISO = hojeISOLocal();
+  const nome = String((profile as { nome?: string } | undefined)?.nome ?? "").split(" ")[0] || "linda";
+  const isPremium = Boolean(rotina?.isPremium);
+  const semanaNum = rotina?.semanaAtual ?? 1;
+  const semana = getSemana(isPremium ? semanaNum : 1);
+  const diasNaSemana = rotina?.diasNaSemana ?? 0;
+  const checkinFeito = Boolean(rotina?.checkinHoje);
+  const sequencia = rotina?.sequencia ?? 0;
+  const dica = getDicaDoDia(hojeISO);
 
-  const respostasOrdenadas = Object.entries(LABELS_Q)
-    .map(([k, meta]) => ({ k, meta, valor: respostas[k] }))
-    .filter((r) => r.valor);
+  // Frase determinística pelo dia, para não trocar a cada render.
+  const frase =
+    FRASES_REFORCO[
+      Number(hojeISO.replaceAll("-", "")) % FRASES_REFORCO.length
+    ] ?? FRASES_REFORCO[0]!;
+
+  const dataExtenso = agora.toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 
   return (
-    <div className="px-5 pt-6">
-      {error && (
-        <p className="mb-4 text-center text-[13px]" style={{ color: "#2F3128" }}>
-          Não consegui carregar seu perfil por completo — abaixo está sua avaliação essencial.
-        </p>
-      )}
-
-      {/* Hero editorial */}
-      <section
-        className="relative overflow-hidden rounded-[28px] px-6 py-8 text-[color:var(--cream)]"
-        style={{
-          background:
-            "linear-gradient(160deg, #2C5578 0%, #16324F 55%, #0D2138 100%)",
-          boxShadow: "0 24px 40px -28px rgba(22,50,79,0.55)",
-        }}
-      >
-        <div
-          className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full"
-          style={{
-            background:
-              "radial-gradient(closest-side, rgba(217,169,75,0.35), transparent 70%)",
-          }}
-        />
-        <p
-          className="text-[10px] font-semibold uppercase"
-          style={{ letterSpacing: "0.28em", color: "#D9A94B" }}
-        >
-          Bem-vinda de volta
-        </p>
+    <div className="px-5 pt-6 pb-8">
+      {/* 1. Saudação */}
+      <header>
         <h1
-          className="mt-3"
           style={{
             fontFamily: "'Playfair Display', serif",
             fontWeight: 500,
-            fontSize: "1.85rem",
+            fontSize: "1.6rem",
             lineHeight: 1.15,
-            letterSpacing: "-0.005em",
-            color: "#F5EFE1",
+            color: NAVY,
           }}
         >
-          <em className="italic" style={{ color: "#D9A94B" }}>{nome}</em>, este é o seu mapa.
+          {saudacao(agora)},{" "}
+          <em className="italic" style={{ color: GOLD }}>
+            {nome}
+          </em>
         </h1>
-        <p
-          className="mt-3 max-w-[36ch] text-[14.5px]"
-          style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}
-        >
-          Sua leitura foi feita a partir das suas próprias respostas. É um retrato do seu caso hoje.
+        <p className="mt-1 text-[12px] capitalize" style={{ color: "#5C5749" }}>
+          {dataExtenso}
+        </p>
+      </header>
+
+      {/* 2. Missão de hoje */}
+      <section
+        className="relative mt-5 overflow-hidden rounded-[24px] px-5 py-6"
+        style={{
+          background: "linear-gradient(160deg, #2C5578 0%, #16324F 55%, #0D2138 100%)",
+          boxShadow: "0 24px 40px -28px rgba(22,50,79,0.55)",
+          color: "#F5EFE1",
+        }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full"
+          style={{ background: "radial-gradient(closest-side, rgba(217,169,75,0.32), transparent 70%)" }}
+        />
+        <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_SOFT }}>
+          {isPremium
+            ? `Semana ${semanaNum} de 4 · ${semana.refeicao}`
+            : `Semana 1 · ${semana.refeicao}`}
         </p>
 
-        <div
-          className="mt-6 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5"
-          style={{
-            background: "rgba(245,239,225,0.14)",
-            border: "1px solid rgba(217,169,75,0.35)",
-          }}
+        <h2
+          className="mt-2.5 text-[1.15rem]"
+          style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, lineHeight: 1.3 }}
         >
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#D9A94B" }} />
-          <span className="text-[12px] font-semibold" style={{ color: "#F5EFE1" }}>
-            Estágio percebido: <span style={{ color: "#D9A94B" }}>{estagio}</span>
-          </span>
-        </div>
-      </section>
+          {semana.objetivo}
+        </h2>
 
-
-
-
-
-      {/* Avaliação do caso */}
-      <section className="mt-8">
-        <Eyebrow>Sua avaliação</Eyebrow>
-        <div
-          className="mt-3 rounded-2xl p-5"
-          style={{
-            background: "rgba(255,253,247,0.9)",
-            border: "1px solid rgba(216,198,160,0.55)",
-            boxShadow: "0 10px 24px -18px rgba(22,50,79,0.35)",
-          }}
-        >
-          {abertura && (
-            <p
-              className="text-[14.5px]"
+        {isPremium ? (
+          checkinFeito ? (
+            <div className="mt-5">
+              <div
+                className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold"
+                style={{ background: "rgba(217,169,75,0.18)", border: "1px solid rgba(217,169,75,0.45)", color: GOLD_SOFT }}
+              >
+                <Check className="size-3.5" /> Missão de hoje cumprida
+              </div>
+              <p className="mt-3 text-[13px]" style={{ color: "rgba(245,239,225,0.86)", lineHeight: 1.55 }}>
+                {frase}
+              </p>
+              <p className="mt-1.5 text-[12px]" style={{ color: "rgba(245,239,225,0.65)" }}>
+                {sequencia === 1 ? "1 dia seguido" : `${sequencia} dias seguidos`}
+              </p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              disabled={mut.isPending}
+              onClick={() => mut.mutate()}
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13.5px] font-semibold uppercase transition-opacity disabled:opacity-60"
               style={{
-                color: "#16324F",
-                fontFamily: "'Playfair Display', serif",
-                fontStyle: "italic",
-                fontWeight: 500,
-                lineHeight: 1.4,
+                background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
+                color: NAVY,
+                letterSpacing: "0.14em",
+                boxShadow: "0 12px 24px -14px rgba(175,127,53,0.65)",
               }}
             >
-              “{abertura}”
-            </p>
-          )}
-          {descricao && (
-            <p
-              className="mt-3 text-[13.5px]"
-              style={{ color: "#2F3128", lineHeight: 1.55 }}
-            >
-              {descricao}
-            </p>
-          )}
-
-          {respostasOrdenadas.length > 0 && (
-            <div className="mt-4 space-y-2">
-              {respostasOrdenadas.map(({ k, meta, valor }) => (
-                <div
-                  key={k}
-                  className="flex items-start gap-2.5 rounded-xl px-3 py-2.5"
-                  style={{
-                    background: "rgba(22,50,79,0.04)",
-                    border: "1px solid rgba(216,198,160,0.35)",
-                  }}
-                >
-                  <span
-                    className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full"
-                    style={{
-                      background: "rgba(175,127,53,0.12)",
-                      color: "#AF7F35",
-                    }}
-                  >
-                    {meta.icon}
-                  </span>
-                  <div className="flex-1">
-                    <p
-                      className="text-[10.5px] font-semibold uppercase"
-                      style={{ letterSpacing: "0.16em", color: "#AF7F35" }}
-                    >
-                      {meta.label}
-                    </p>
-                    <p className="text-[13px]" style={{ color: "#16324F", lineHeight: 1.4 }}>
-                      {valor}
-                    </p>
-                  </div>
-                </div>
-              ))}
+              {mut.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
+              Cumpri a missão de hoje
+            </button>
+          )
+        ) : (
+          <>
+            <div className="relative mt-4">
+              <div className="select-none" style={{ filter: "blur(4px)", opacity: 0.75 }} aria-hidden>
+                <p className="text-[13px]" style={{ lineHeight: 1.6 }}>
+                  {semana.entra.slice(0, 3).join(" · ")}
+                </p>
+                <p className="mt-1.5 text-[13px]" style={{ lineHeight: 1.6 }}>
+                  {semana.sai.slice(0, 3).join(" · ")}
+                </p>
+              </div>
+              <span
+                className="absolute right-0 top-0 grid size-8 place-items-center rounded-full"
+                style={{ background: "rgba(245,239,225,0.14)", color: GOLD_SOFT }}
+              >
+                <Lock className="size-3.5" />
+              </span>
             </div>
-          )}
+            <Link
+              to="/app/derma"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13.5px] font-semibold uppercase"
+              style={{
+                background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
+                color: NAVY,
+                letterSpacing: "0.14em",
+                boxShadow: "0 12px 24px -14px rgba(175,127,53,0.65)",
+              }}
+            >
+              Liberar a Rotina
+            </Link>
+          </>
+        )}
+
+        {mut.isError && (
+          <p className="mt-3 text-[12px]" style={{ color: "#F3C6C6" }}>
+            Não consegui registrar agora. Tenta de novo em instantes?
+          </p>
+        )}
+
+        {isPremium && (
+          <Link
+            to="/app/rotina"
+            className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-semibold"
+            style={{ color: GOLD_SOFT }}
+          >
+            ver a missão completa <ArrowRight className="size-3.5" />
+          </Link>
+        )}
+      </section>
+
+      {/* 3. Registrar refeição */}
+      <section className="mt-4">
+        <Link
+          to="/app/registrar"
+          search={{ camera: true }}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13px] font-semibold uppercase"
+          style={{
+            background: "rgba(255,253,247,0.95)",
+            border: "1px solid rgba(216,198,160,0.7)",
+            color: NAVY,
+            letterSpacing: "0.14em",
+            boxShadow: "0 10px 24px -20px rgba(22,50,79,0.35)",
+          }}
+        >
+          <Camera className="size-4" style={{ color: GOLD }} /> Registrar refeição
+        </Link>
+        <p className="mt-2 text-center text-[11.5px]" style={{ color: "#5C5749" }}>
+          {refeicoesHoje === 0
+            ? "Nenhuma refeição registrada hoje."
+            : refeicoesHoje === 1
+            ? "1 refeição registrada hoje."
+            : `${refeicoesHoje} refeições registradas hoje.`}
+        </p>
+      </section>
+
+      {/* 4. Progresso da semana */}
+      <section className="mt-6">
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+            Progresso da semana
+          </p>
+          <p className="text-[11.5px] font-semibold" style={{ color: NAVY }}>
+            {Math.min(diasNaSemana, META_DIAS_SEMANA)} de {META_DIAS_SEMANA} dias
+          </p>
+        </div>
+        <div className="mt-2.5 flex items-center gap-1.5">
+          {Array.from({ length: META_DIAS_SEMANA }, (_, i) => {
+            const feito = i < diasNaSemana;
+            return (
+              <span
+                key={i}
+                className="h-2 flex-1 rounded-full"
+                style={{
+                  background: feito ? "linear-gradient(90deg, #D9A94B, #AF7F35)" : "rgba(22,50,79,0.1)",
+                }}
+              />
+            );
+          })}
         </div>
       </section>
 
-      {/* Prioridades */}
-      {prioridades.length > 0 && (
-        <section className="mt-8">
-          <Eyebrow>Suas 3 prioridades da semana</Eyebrow>
-          <div className="mt-3 space-y-2.5">
-            {prioridades.map((p, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 rounded-2xl px-4 py-3.5"
-                style={{
-                  background: "rgba(255,253,247,0.9)",
-                  border: "1px solid rgba(216,198,160,0.55)",
-                  boxShadow:
-                    "0 10px 24px -18px rgba(22,50,79,0.35), 0 1px 0 rgba(255,255,255,0.6) inset",
-                }}
-              >
-                <span
-                  className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full"
-                  style={{
-                    background: "rgba(175,127,53,0.1)",
-                    border: "1px solid rgba(175,127,53,0.4)",
-                    color: "#AF7F35",
-                    fontFamily: "'Playfair Display', serif",
-                    fontStyle: "italic",
-                    fontSize: "13px",
-                    fontWeight: 500,
-                  }}
-                >
-                  {i + 1}
-                </span>
-                <p
-                  className="pt-0.5 text-[14.5px]"
-                  style={{ color: "#16324F", lineHeight: 1.5 }}
-                >
-                  {p}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* CTA Premium */}
-      <section className="mt-8">
-        <Link
-          to="/app/derma"
-          className="relative block overflow-hidden rounded-[28px] px-6 py-7 text-[color:var(--cream)]"
-          style={{
-            background:
-              "linear-gradient(160deg, #2C5578 0%, #16324F 55%, #0D2138 100%)",
-            boxShadow: "0 24px 40px -28px rgba(22,50,79,0.55)",
-          }}
+      {/* 5. Dica do dia */}
+      <section className="mt-6 rounded-[24px] p-5" style={CARD}>
+        <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+          Dica do dia
+        </p>
+        <p
+          className="mt-2 text-[15px]"
+          style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: NAVY }}
         >
-          <div
-            className="pointer-events-none absolute -right-16 -bottom-16 h-52 w-52 rounded-full"
-            style={{
-              background:
-                "radial-gradient(closest-side, rgba(217,169,75,0.35), transparent 70%)",
-            }}
-          />
-          <p
-            className="text-[10px] font-semibold uppercase"
-            style={{ letterSpacing: "0.28em", color: "#D9A94B" }}
-          >
-            Próximo passo
-          </p>
-          <h2
-            className="mt-2"
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontWeight: 500,
-              fontSize: "1.5rem",
-              lineHeight: 1.2,
-              color: "#F5EFE1",
-            }}
-          >
-            Conheça o <em className="italic" style={{ color: "#D9A94B" }}>Plano Premium</em>
-          </h2>
-          <p
-            className="mt-3 max-w-[40ch] text-[13.5px]"
-            style={{ color: "rgba(245,239,225,0.85)", lineHeight: 1.55 }}
-          >
-            A Rotina Zero Lipedema, uma refeição nova por semana, com registro de refeições por foto, plano alimentar anti-inflamatório e os guias práticos, por R$67.
-          </p>
-          <span
-            className="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold"
-            style={{
-              background: "#D9A94B",
-              color: "#16324F",
-              boxShadow: "0 10px 20px -12px rgba(217,169,75,0.6)",
-            }}
-          >
-            Ver o Plano Premium
-            <ArrowRight className="size-4" />
-          </span>
+          {dica.titulo}
+        </p>
+        <p className="mt-1.5 text-[12.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
+          {dica.detalhe.slice(0, 180)}
+          {dica.detalhe.length > 180 ? "…" : ""}
+        </p>
+        <Link
+          to="/app/missoes"
+          className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-semibold"
+          style={{ color: NAVY }}
+        >
+          ver todas as dicas <ArrowRight className="size-3.5" style={{ color: GOLD }} />
         </Link>
       </section>
-    </div>
-  );
-}
 
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span
-        className="text-[10px] font-semibold uppercase"
-        style={{ letterSpacing: "0.24em", color: "#AF7F35" }}
-      >
-        {children}
-      </span>
-      <span
-        className="h-px flex-1"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(216,198,160,0.7), transparent)",
-        }}
-      />
+      {/* 6. Card do plano — só para quem ainda não comprou */}
+      {!pago && (
+        <section className="mt-6">
+          <Link to="/app/derma" className="block rounded-[24px] px-5 py-5" style={CARD}>
+            <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+              Plano Zero Lipedema
+            </p>
+            <p className="mt-1.5 text-[13.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
+              A Rotina completa das 4 semanas, registro de refeições por foto sem limite e os guias práticos, por R$67.
+            </p>
+            <p className="mt-2.5 text-[13px] font-semibold" style={{ color: NAVY }}>
+              Ver o plano <span style={{ color: GOLD }}>→</span>
+            </p>
+          </Link>
+        </section>
+      )}
     </div>
   );
 }
