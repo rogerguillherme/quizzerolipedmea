@@ -133,6 +133,7 @@ async function processarCadenciaProtocolo(
 
   for (const lead of leads ?? []) {
     const respostas = (lead.respostas ?? {}) as LeadResp;
+    if (leadInvalido(respostas)) continue;
     const j = respostas.jornada_7dias;
     if (!j?.ativa || !j.iniciado_em) continue;
 
@@ -159,15 +160,17 @@ async function processarCadenciaProtocolo(
         receitaBloco +
         (d < 7 ? feedbackAnterior : "\n\nHoje é o último dia — dá uma olhada no seu progresso no app 💙");
 
-      const wa = await sendWhatsApp(lead.telefone, msg);
-      await supabaseAdmin.from("whatsapp_logs").insert({
-        telefone: lead.telefone,
-        mensagem: msg,
-        status: wa.ok ? "enviado" : "falhou",
-        erro: wa.error ?? null,
-      });
+      const r = await enviarComControle(
+        supabaseAdmin,
+        sendWhatsApp,
+        lead as { id: string; telefone: string },
+        respostas,
+        `protocolo_dia_${d}`,
+        msg,
+      );
 
-      if (wa.ok) {
+      if (r.ok || r.desistir) {
+        // Em caso de desistência, marcamos o dia como enviado para não repetir.
         enviados.add(d);
         j.dias_enviados = Array.from(enviados).sort((a, b) => a - b);
         respostas.jornada_7dias = j;
@@ -175,12 +178,18 @@ async function processarCadenciaProtocolo(
           .from("leads")
           .update({ respostas: respostas as never })
           .eq("id", lead.id);
-        resultados.push({ lead: lead.id, dia: d, status: "enviado" });
+        resultados.push({
+          lead: lead.id,
+          dia: d,
+          status: r.ok ? "enviado" : r.invalido ? "numero_invalido" : "desistiu",
+        });
+        if (!r.ok) break;
       } else {
         resultados.push({ lead: lead.id, dia: d, status: "falhou" });
         break; // pra não empilhar mensagens no mesmo lead se a API tá fora
       }
     }
+
 
     // Fila de atenção: 3+ dias sem responder feedback.
     const refFeedback = j.ultimo_feedback_em ?? j.iniciado_em;
