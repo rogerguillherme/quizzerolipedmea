@@ -25,6 +25,12 @@ import {
   offsetMinutosDoLead,
   type MensagemCadencia,
 } from "@/lib/cadencia-copy";
+import {
+  JANELA_PAUSA_MS,
+  chaveTelefone,
+  temIntencaoCompra,
+} from "@/lib/cadencia-estado";
+
 
 const MS_HORA = 60 * 60 * 1000;
 const MS_DIA = 24 * MS_HORA;
@@ -58,7 +64,12 @@ type LeadResp = Record<string, unknown> & {
   atencao?: { motivo?: string; criado_em?: string } | unknown;
   reengaje?: Record<string, string>;
   envio_falhas?: Record<string, number>;
+  /** Momento da última resposta da lead que pausou a régua. */
+  cadencia_pausada_em?: string;
+  /** Momento em que a lead pulou direto pra oferta por intenção de compra. */
+  fast_track_em?: string;
 };
+
 
 /** Estado compartilhado do lote em uma execução do cron. */
 type Lote = {
@@ -217,6 +228,76 @@ function diasDesde(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / MS_DIA);
 }
 
+type Entrada = { em: string; texto: string };
+
+/**
+ * Respostas recebidas nas últimas 48h, indexadas pelos 8 últimos dígitos do
+ * telefone. Vínculo `leads.telefone` ↔ `crm_conversations.telefone`: o webhook
+ * da Evolution grava o número normalizado (55DDD9XXXXXXXX) e o lead pode ter
+ * sido cadastrado com máscara ou sem o nono dígito, então casamos pelo sufixo.
+ */
+async function carregarEntradasRecentes(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+): Promise<Map<string, Entrada>> {
+  const mapa = new Map<string, Entrada>();
+  const corte = new Date(Date.now() - JANELA_PAUSA_MS).toISOString();
+
+  const { data: convs } = await supabaseAdmin
+    .from("crm_conversations")
+    .select("id, telefone, ultima_mensagem_em")
+    .gt("ultima_mensagem_em", corte)
+    .limit(1000);
+
+  const porId = new Map<string, string>();
+  for (const c of convs ?? []) porId.set(c.id as string, c.telefone as string);
+  if (porId.size === 0) return mapa;
+
+  const { data: msgs } = await supabaseAdmin
+    .from("crm_messages")
+    .select("conversation_id, conteudo, created_at")
+    .in("conversation_id", Array.from(porId.keys()))
+    .eq("direcao", "in")
+    .gt("created_at", corte)
+    .order("created_at", { ascending: false })
+    .limit(2000);
+
+  for (const m of msgs ?? []) {
+    const tel = porId.get(m.conversation_id as string);
+    if (!tel) continue;
+    const k = chaveTelefone(tel);
+    if (!k) continue;
+    const anterior = mapa.get(k);
+    const registro: Entrada = {
+      em: m.created_at as string,
+      texto: String(m.conteudo ?? ""),
+    };
+    // Guardamos a mais recente, mas qualquer mensagem com intenção prevalece.
+    if (!anterior) mapa.set(k, registro);
+    else if (temIntencaoCompra(registro.texto) && !temIntencaoCompra(anterior.texto))
+      mapa.set(k, registro);
+  }
+
+  return mapa;
+}
+
+/** Marca a pausa da régua no lead (visível no admin). */
+async function marcarPausa(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+  leadId: string,
+  respostas: LeadResp,
+  em: string,
+) {
+  if (respostas.cadencia_pausada_em === em) return;
+  respostas.cadencia_pausada_em = em;
+  await supabaseAdmin
+    .from("leads")
+    .update({ respostas: respostas as never })
+    .eq("id", leadId);
+}
+
+
 /**
  * Régua pré-venda. Quatro toques, cada lead no horário próprio dele:
  *   +20h  · convite pro teste grátis de foto (primeira mensagem: se apresenta)
@@ -230,10 +311,12 @@ async function processarReengajamento(
   supabaseAdmin: any,
   sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
   lote: Lote,
+  entradas: Map<string, Entrada>,
 ) {
   const enviados: string[] = [];
   const agoraMin = minutoDoDiaLocal();
-  if (agoraMin < JANELA_INICIO_MIN || agoraMin >= JANELA_FIM_MIN) return enviados;
+  // Fast-track pode sair até as 21h; a régua fria só na janela da manhã.
+  if (agoraMin < JANELA_INICIO_MIN || agoraMin >= 21 * 60) return enviados;
 
   const CHECKOUT_URL = "https://pay.kiwify.com.br/j0hsxv3";
 
@@ -263,8 +346,8 @@ async function processarReengajamento(
     if (lote.abortado || lote.enviadas >= LOTE_MAX) break;
 
     const respostas = (lead.respostas ?? {}) as LeadResp;
+    // 1. Número inválido sai de tudo.
     if (leadInvalido(respostas)) continue;
-    if (!leadNaJanela(lead.id, agoraMin)) continue;
 
     const reengaje = respostas.reengaje ?? {};
     const digits = String(lead.telefone ?? "").replace(/\D/g, "");
@@ -284,7 +367,24 @@ async function processarReengajamento(
     let msg = "";
     const vars = { oi, nome: vocativo, link: CHECKOUT_URL };
 
-    if (idade >= 6 * MS_DIA && !reengaje.pos6d_at) {
+    // Comportamento da lead: respondeu nas últimas 48h?
+    const entrada = entradas.get(chaveTelefone(lead.telefone));
+    const intencao = entrada ? temIntencaoCompra(entrada.texto) : false;
+    let fastTrack = false;
+
+    if (intencao && !reengaje.pos48h_at) {
+      // 3. Intenção de compra: pula direto pra oferta, sem esperar cronograma.
+      fastTrack = true;
+      chave = PRE_POS68H.chave;
+      msg = copy(PRE_POS68H, lead.id, vars);
+    } else if (entrada) {
+      // 4. Respondeu: a conversa é da Gabriela e do agente. Nada programado.
+      await marcarPausa(supabaseAdmin, lead.id, respostas, entrada.em);
+      continue;
+    } else if (!leadNaJanela(lead.id, agoraMin) || agoraMin >= JANELA_FIM_MIN) {
+      // 5. Silêncio: régua normal, no horário próprio do lead.
+      continue;
+    } else if (idade >= 6 * MS_DIA && !reengaje.pos6d_at) {
       chave = PRE_POS6D.chave;
       msg = copy(PRE_POS6D, lead.id, vars);
     } else if (idade >= 68 * MS_HORA && !reengaje.pos48h_at) {
@@ -300,6 +400,7 @@ async function processarReengajamento(
 
     if (!chave) continue;
 
+
     const r = await enviarComControle(
       supabaseAdmin,
       sendWhatsApp,
@@ -314,7 +415,14 @@ async function processarReengajamento(
 
     // Sucesso ou teto de falhas atingido: grava a flag e não tenta mais esse passo.
     if (r.ok || r.desistir) {
-      reengaje[chave] = new Date().toISOString();
+      const agora = new Date().toISOString();
+      reengaje[chave] = agora;
+      if (fastTrack) {
+        // Os passos intermediários não podem sair depois, fora de contexto.
+        reengaje.pos1h_at = reengaje.pos1h_at ?? agora;
+        reengaje.pos2h_foto_at = reengaje.pos2h_foto_at ?? agora;
+        respostas.fast_track_em = agora;
+      }
       respostas.reengaje = reengaje;
       await supabaseAdmin
         .from("leads")
@@ -322,6 +430,7 @@ async function processarReengajamento(
         .eq("id", lead.id);
       if (r.ok) enviados.push(lead.id);
     }
+
   }
 
   return enviados;
@@ -343,6 +452,7 @@ async function processarCadenciaRotina(
   supabaseAdmin: any,
   sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
   lote: Lote,
+  entradas: Map<string, Entrada>,
 ) {
   const resultados: Array<{ lead: string; tipo: string; status: string }> = [];
 
@@ -368,6 +478,15 @@ async function processarCadenciaRotina(
 
     const respostas = (lead.respostas ?? {}) as LeadResp;
     if (leadInvalido(respostas)) continue;
+
+    // Respondeu nas últimas 48h: a conversa é da Gabriela, nada programado sai.
+    const entrada = entradas.get(chaveTelefone(lead.telefone));
+    if (entrada) {
+      await marcarPausa(supabaseAdmin, lead.id, respostas, entrada.em);
+      continue;
+    }
+
+
 
     const msgs =
       (respostas.rotina_msgs as
@@ -546,16 +665,22 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
         // Lote compartilhado: teto e parada por rate limit valem para as duas cadências.
         const lote: Lote = { enviadas: 0, abortado: false };
 
+        // Comportamento: quem respondeu nas últimas 48h fica fora da régua.
+        const entradas = await carregarEntradasRecentes(supabaseAdmin);
+
         const reengajados = await processarReengajamento(
           supabaseAdmin,
           sendWhatsApp,
           lote,
+          entradas,
         );
         const rotina = await processarCadenciaRotina(
           supabaseAdmin,
           sendWhatsApp,
           lote,
+          entradas,
         );
+
 
         return Response.json({
           ok: true,

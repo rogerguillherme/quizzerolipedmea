@@ -27,11 +27,15 @@ type LeadAtencao = {
   status: string;
   motivo: string;
   criadoEm: string;
+  regua?: { rotulo: string; pausada: boolean; fastTrack: boolean; invalido: boolean };
 };
 
 const MOTIVO_LABEL: Record<string, string> = {
   envio_dia1_falhou: "WhatsApp não enviou (dia 1)",
   sem_feedback_3d: "3+ dias sem responder",
+  numero_invalido: "Número não existe no WhatsApp",
+  respondeu_48h: "Respondeu — régua pausada",
+  fast_track: "Intenção de compra — fast-track",
 };
 
 function DashboardPage() {
@@ -147,6 +151,7 @@ function DashboardPage() {
                   <th className="px-4 py-2.5 text-left">Lead</th>
                   <th className="px-4 py-2.5 text-left">WhatsApp</th>
                   <th className="px-4 py-2.5 text-left">Motivo</th>
+                  <th className="px-4 py-2.5 text-left">Régua</th>
                   <th className="px-4 py-2.5 text-left">Quando</th>
                 </tr>
               </thead>
@@ -157,6 +162,9 @@ function DashboardPage() {
                     <td className="px-4 py-2.5 tabular-nums text-[#3E4F65]">{l.telefone}</td>
                     <td className="px-4 py-2.5 text-[#B23A48]">
                       {MOTIVO_LABEL[l.motivo] ?? l.motivo}
+                    </td>
+                    <td className="px-4 py-2.5 text-[#3E4F65]">
+                      {l.regua?.rotulo ?? "—"}
                     </td>
                     <td className="px-4 py-2.5 text-[#3E4F65]">
                       {new Date(l.criadoEm).toLocaleString("pt-BR", {

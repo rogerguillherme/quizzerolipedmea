@@ -1,3 +1,4 @@
+import { descreverRegua } from "@/lib/cadencia-estado";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
@@ -195,7 +196,10 @@ export const listarLeadsAtencao = createServerFn({ method: "GET" })
     const { data } = await supabaseAdmin
       .from("leads")
       .select("id, nome, telefone, status, respostas, updated_at")
-      .not("respostas->atencao", "is", null)
+      // Entram na fila: marcadas com atenção, pausadas por resposta ou em fast-track.
+      .or(
+        "respostas->atencao.not.is.null,respostas->>cadencia_pausada_em.not.is.null,respostas->>fast_track_em.not.is.null",
+      )
       .order("updated_at", { ascending: false })
       .limit(50);
 
@@ -203,13 +207,27 @@ export const listarLeadsAtencao = createServerFn({ method: "GET" })
       const at = (l.respostas as Record<string, unknown>)?.atencao as
         | { motivo?: string; criado_em?: string; erro?: string }
         | undefined;
+      const regua = descreverRegua(
+        l.respostas as Record<string, unknown>,
+        l.status,
+      );
       return {
         id: l.id,
         nome: l.nome,
         telefone: l.telefone,
         status: l.status,
-        motivo: at?.motivo ?? "desconhecido",
-        criadoEm: at?.criado_em ?? l.updated_at,
+        motivo:
+          at?.motivo ??
+          (regua.pausada
+            ? "respondeu_48h"
+            : regua.fastTrack
+              ? "fast_track"
+              : "desconhecido"),
+        criadoEm:
+          at?.criado_em ?? regua.pausadaEm ?? regua.fastTrackEm ?? l.updated_at,
+
+        // Estado da régua: em que passo está, se pausou por resposta, etc.
+        regua,
       };
     });
   });
