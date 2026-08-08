@@ -11,33 +11,76 @@ import { MIN_DIAS_AVANCAR } from "@/lib/rotina-content";
 import { hojeISO, diasEntre } from "@/lib/data-local";
 
 
-/** Sequência de dias consecutivos terminando hoje ou ontem. */
+/**
+ * Sequência com perdão (padrão de apps de hábito).
+ *
+ * Um dia perdido não apaga semanas de esforço: a sequência só quebra depois
+ * de 2 dias seguidos sem check-in. Além disso, cada 7 dias cobertos pela
+ * sequência concede 1 "dia de graça" extra, então faltar 1 dia por semana
+ * mantém a contagem viva.
+ *
+ * A contagem devolvida é de dias com check-in de verdade (dias de graça não
+ * entram no número).
+ */
 function calcularSequencia(datas: readonly string[], hoje: string): number {
   const unicas = Array.from(new Set(datas)).sort().reverse();
   if (unicas.length === 0) return 0;
-  const primeiroGap = diasEntre(hoje, unicas[0]!);
-  if (primeiroGap > 1) return 0;
+
+  // Ainda dentro da janela de tolerância? (hoje, ontem ou anteontem)
+  const gapInicial = diasEntre(hoje, unicas[0]!);
+  if (gapInicial > 2) return 0;
+
   let seq = 1;
+  let gracasUsadas = gapInicial === 2 ? 1 : 0;
+  let diasCobertos = gapInicial;
+
+  const gracasDisponiveis = () => 1 + Math.floor(diasCobertos / 7);
+
+  if (gracasUsadas > gracasDisponiveis()) return 0;
+
   for (let i = 1; i < unicas.length; i++) {
-    if (diasEntre(unicas[i - 1]!, unicas[i]!) === 1) seq++;
-    else break;
+    const gap = diasEntre(unicas[i - 1]!, unicas[i]!);
+    if (gap <= 0) continue;
+    // 3+ dias de distância = 2 dias seguidos sem check-in: quebra de vez.
+    if (gap > 2) break;
+    diasCobertos += gap;
+    if (gap === 2) {
+      if (gracasUsadas + 1 > gracasDisponiveis()) break;
+      gracasUsadas += 1;
+    }
+    seq++;
   }
   return seq;
 }
 
-/** Maior sequência de dias consecutivos já registrada (recorde). */
+/**
+ * Recorde: maior sequência já alcançada, com a mesma regra de perdão.
+ * O recorde nunca cai, mesmo depois de a sequência atual quebrar.
+ */
 function calcularRecorde(datas: readonly string[]): number {
   const unicas = Array.from(new Set(datas)).sort();
   if (unicas.length === 0) return 0;
   let melhor = 1;
   let atual = 1;
+  let gracasUsadas = 0;
+  let diasCobertos = 0;
   for (let i = 1; i < unicas.length; i++) {
-    if (diasEntre(unicas[i]!, unicas[i - 1]!) === 1) atual++;
-    else atual = 1;
+    const gap = diasEntre(unicas[i]!, unicas[i - 1]!);
+    const gracas = 1 + Math.floor(diasCobertos / 7);
+    if (gap === 1 || (gap === 2 && gracasUsadas + 1 <= gracas)) {
+      if (gap === 2) gracasUsadas += 1;
+      diasCobertos += gap;
+      atual++;
+    } else {
+      atual = 1;
+      gracasUsadas = 0;
+      diasCobertos = 0;
+    }
     if (atual > melhor) melhor = atual;
   }
   return melhor;
 }
+
 
 
 async function ehPremium(userId: string): Promise<boolean> {
