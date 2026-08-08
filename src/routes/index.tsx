@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Sparkles, HeartPulse, ShieldCheck } from "lucide-react";
 import draGabrielaAsset from "@/assets/gabi-portrait.png.asset.json";
 import { MapaQuizDialog } from "@/components/MapaQuizDialog";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -30,6 +31,10 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    track("landing_view");
+  }, []);
 
   return (
     <>

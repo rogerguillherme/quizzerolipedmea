@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { trackMeta } from "@/lib/meta-track";
+import { track } from "@/lib/analytics";
 import { ArrowRight, Check, HelpCircle } from "lucide-react";
 import draGabrielaAsset from "@/assets/gabi-portrait.png.asset.json";
 import gabiChaAsset from "@/assets/gabi-cha.jpg.asset.json";
@@ -180,6 +181,7 @@ function OfertaPage() {
 
   // Visualização da página de venda: base de otimização/retargeting da Meta.
   useEffect(() => {
+    track("landing_view", { pagina: "oferta" });
     trackMeta("ViewContent", {
       content_name: "Oferta Zero Lipedema",
       content_type: "product",

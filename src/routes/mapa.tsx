@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import { submitMapa, type Diagnostico } from "../lib/mapa.functions";
 import { criarAcessoMapa } from "../lib/mapa-access.functions";
-import { track } from "../lib/analytics";
+import { setTrackLeadId, track } from "../lib/analytics";
+import { getAtribuicao } from "../lib/atribuicao";
 import { fbqTrack } from "@/lib/meta-pixel";
 import { OfertaPremiumInline } from "@/components/OfertaPremiumInline";
 import estagiosAsset from "@/assets/estagios-lipedema.png.asset.json";
@@ -206,6 +207,9 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
   useEffect(() => {
     if (step === "boas-vindas") track("landing_view");
     if (step === "nome") track("quiz_started");
+    const i = QUESTION_STEPS.indexOf(step);
+    // quiz_step: é assim que sabemos em qual pergunta ela desiste.
+    if (i >= 0) track("quiz_step", { pergunta: i + 1, chave: step, total: QUESTION_STEPS.length });
   }, [step]);
 
   const questionIndex = QUESTION_STEPS.indexOf(step);
@@ -237,6 +241,7 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
         data: {
           nome: answers.nome.trim(),
           telefone: answers.telefone.trim(),
+          atribuicao: getAtribuicao() as Record<string, unknown>,
           respostas: {
             tempo: answers.tempo,
             diagnostico: answers.diagnostico,
@@ -255,6 +260,7 @@ export function MapaPage({ onClose }: { onClose?: () => void } = {}) {
       });
       setDiagnostico(result.diagnostico);
       setLeadId(result.leadId ?? null);
+      setTrackLeadId(result.leadId ?? null);
       track("quiz_completed");
       // Pixel do navegador com o MESMO eventID enviado pelo servidor (dedupe Meta).
       if (result.metaEventId) {

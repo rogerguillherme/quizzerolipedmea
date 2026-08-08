@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { BarChart3, Loader2, RefreshCw, AlertTriangle } from "lucide-react";
 import { getMetricasUnificadas } from "@/lib/meta-ads.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { FunilPanel } from "@/components/FunilPanel";
 
 export const Route = createFileRoute("/admin/metricas")({
   // A sessão do admin vive no localStorage; sem SSR não há bearer token
@@ -126,6 +127,10 @@ function MetricasPage() {
           </span>
         </div>
       )}
+
+      <div className="mb-6">
+        <FunilPanel />
+      </div>
 
       {loading && !dados ? (
         <div className="grid place-items-center py-20">

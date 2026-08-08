@@ -38,6 +38,9 @@ export const submitMapa = createServerFn({ method: "POST" })
           exames: z.string().min(1),
           objetivo: z.string().min(1),
         }),
+        // Atribuição de primeiro toque vinda do cliente: é o que permite
+        // responder "essa venda veio de qual campanha".
+        atribuicao: z.record(z.string(), z.unknown()).optional(),
       })
       .parse(input),
   )
@@ -100,7 +103,9 @@ Devolva o JSON conforme instruções.`;
       .insert({
         nome: data.nome,
         telefone: data.telefone && data.telefone.length >= 8 ? data.telefone : "pendente",
-        respostas: data.respostas,
+        respostas: (data.atribuicao
+          ? { ...data.respostas, atribuicao: data.atribuicao }
+          : data.respostas) as never,
         origem: "mapa",
         status: "mapa_gerado",
         diagnostico,

@@ -180,6 +180,32 @@ export const Route = createFileRoute("/api/public/webhooks/kiwify")({
             console.log("[kiwify] lead criada a partir da compra", leadId, orderId);
           }
 
+          // Venda atribuída: reaproveita a atribuição de primeiro toque já
+          // gravada em leads.respostas.atribuicao (o update de status não a apaga).
+          try {
+            const { data: leadAtual } = await supabaseAdmin
+              .from("leads")
+              .select("respostas")
+              .eq("id", leadId)
+              .maybeSingle();
+            const atrib = ((leadAtual?.respostas as Record<string, unknown> | null)
+              ?.atribuicao ?? {}) as Record<string, string | null>;
+            await supabaseAdmin.from("eventos").insert({
+              nome: "purchase_completed",
+              lead_id: leadId,
+              path: "/webhook/kiwify",
+              meta: { order_id: orderId, valor: value ?? null, origem: "kiwify" } as never,
+              utm_source: atrib.utm_source ?? null,
+              utm_medium: atrib.utm_medium ?? null,
+              utm_campaign: atrib.utm_campaign ?? null,
+              utm_content: atrib.utm_content ?? null,
+              utm_term: atrib.utm_term ?? null,
+              fbclid: atrib.fbclid ?? null,
+            });
+          } catch (e) {
+            console.error("[kiwify] falha ao registrar evento de compra", e);
+          }
+
           const { enviarPremiumParaLead } = await import(
             "@/lib/premium-access.functions"
           );

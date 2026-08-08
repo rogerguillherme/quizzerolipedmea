@@ -1,6 +1,12 @@
-// Lightweight funnel analytics + demo lead store, backed by localStorage.
-// Ready to be swapped for a real backend endpoint — the shape of track()
-// mirrors what the backend event would carry (name, ts, phone, meta).
+// Funnel analytics: grava no localStorage (usado por telas do admin) E envia
+// para o banco, que é a única fonte capaz de atribuir lead/venda a anúncio.
+
+import {
+  enviarBeacon,
+  getAtribuicao,
+  getSessionId,
+  normalizePath,
+} from "./atribuicao";
 
 const EVENTS_KEY = "zl:events";
 const LEADS_KEY = "zl:leads";
@@ -9,6 +15,30 @@ const NOTIF_KEY = "zl:notif";
 const REFUND_KEY = "zl:refunds";
 
 const isBrowser = typeof window !== "undefined";
+
+// leadId corrente da sessão, para amarrar os eventos do funil ao lead.
+let leadIdAtual: string | null = null;
+
+export function setTrackLeadId(leadId: string | null) {
+  leadIdAtual = leadId;
+  if (!isBrowser || !leadId) return;
+  try {
+    localStorage.setItem("zl:lead_id", leadId);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getTrackLeadId(): string | null {
+  if (leadIdAtual) return leadIdAtual;
+  if (!isBrowser) return null;
+  try {
+    return localStorage.getItem("zl:lead_id");
+  } catch {
+    return null;
+  }
+}
+
 
 export type FunnelEvent =
   | "landing_view"
@@ -59,7 +89,29 @@ export function track(name: FunnelEvent, meta?: Record<string, unknown>) {
   } catch {
     /* ignore */
   }
+
+  // Envio para o banco: nunca bloqueia a navegação, nunca estoura na tela.
+  try {
+    const atribuicao = getAtribuicao();
+    enviarBeacon("/api/public/track/event", {
+      nome: name,
+      path: normalizePath(),
+      session_id: getSessionId(),
+      lead_id: getTrackLeadId(),
+      meta: meta ?? {},
+      utm_source: atribuicao.utm_source ?? null,
+      utm_medium: atribuicao.utm_medium ?? null,
+      utm_campaign: atribuicao.utm_campaign ?? null,
+      utm_content: atribuicao.utm_content ?? null,
+      utm_term: atribuicao.utm_term ?? null,
+      fbclid: atribuicao.fbclid ?? null,
+      atribuicao,
+    });
+  } catch {
+    /* ignore */
+  }
 }
+
 
 export function getEvents(): TrackedEvent[] {
   if (!isBrowser) return [];

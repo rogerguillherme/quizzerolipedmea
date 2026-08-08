@@ -240,6 +240,65 @@ export type Database = {
         }
         Relationships: []
       }
+      eventos: {
+        Row: {
+          created_at: string
+          fbclid: string | null
+          id: string
+          lead_id: string | null
+          meta: Json
+          nome: string
+          path: string | null
+          session_id: string | null
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          created_at?: string
+          fbclid?: string | null
+          id?: string
+          lead_id?: string | null
+          meta?: Json
+          nome: string
+          path?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          created_at?: string
+          fbclid?: string | null
+          id?: string
+          lead_id?: string | null
+          meta?: Json
+          nome?: string
+          path?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eventos_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evolution_config: {
         Row: {
           base_url: string | null
