@@ -75,8 +75,6 @@ export function PremiumFeaturesCarousel() {
         className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {PREMIUM_FEATURES.map((f, i) => {
-          const Ilustra = PREMIUM_ILLUSTRATIONS[f.id];
-          const Icone = f.icone;
           return (
             <article
               key={f.id}
@@ -88,17 +86,35 @@ export function PremiumFeaturesCarousel() {
               }}
             >
               <div
-                className="relative grid h-40 place-items-center px-4"
-                style={{ background: "linear-gradient(160deg, #F7EEDC 0%, #EFE3CC 100%)" }}
+                className="relative h-40 w-full overflow-hidden rounded-t-3xl"
+                style={{ background: "#F7EEDC", aspectRatio: "1000 / 477" }}
               >
+                <img
+                  src={f.foto}
+                  alt={f.fotoAlt}
+                  width={1000}
+                  height={477}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full"
+                  style={{ objectFit: "cover" }}
+                />
                 <span
-                  className="absolute left-4 top-4 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.14em]"
-                  style={{ background: "rgba(22,50,79,0.08)", color: NAVY }}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to top, rgba(22,50,79,0.55), transparent 55%)",
+                  }}
+                />
+                <span
+                  className="absolute bottom-3 left-4 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-[0.14em]"
+                  style={{ background: "rgba(22,50,79,0.45)", color: "#FBF6E9" }}
                 >
                   {String(i + 1).padStart(2, "0")} / {String(PREMIUM_FEATURES.length).padStart(2, "0")}
                 </span>
-                {Ilustra ? <Ilustra className="h-full w-full" /> : <Icone className="size-10" style={{ color: NAVY }} />}
               </div>
+
               <div className="px-5 pb-5 pt-4">
                 <h3
                   className="text-[19px] leading-snug"
