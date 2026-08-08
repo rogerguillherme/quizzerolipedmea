@@ -40,6 +40,21 @@ function calcularSequencia(datas: readonly string[], hoje: string): number {
   return seq;
 }
 
+/** Maior sequência de dias consecutivos já registrada (recorde). */
+function calcularRecorde(datas: readonly string[]): number {
+  const unicas = Array.from(new Set(datas)).sort();
+  if (unicas.length === 0) return 0;
+  let melhor = 1;
+  let atual = 1;
+  for (let i = 1; i < unicas.length; i++) {
+    if (diasEntre(unicas[i]!, unicas[i - 1]!) === 1) atual++;
+    else atual = 1;
+    if (atual > melhor) melhor = atual;
+  }
+  return melhor;
+}
+
+
 async function ehPremium(userId: string): Promise<boolean> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin
@@ -94,6 +109,12 @@ async function carregarEstado(context: Ctx) {
   const todos = (checkins ?? []) as Array<{ semana: number; data: string }>;
   const daSemana = todos.filter((c) => c.semana === semanaAtual);
 
+  // Semanas consideradas concluídas: as anteriores à atual, mais a atual
+  // quando a rotina inteira já foi encerrada.
+  const semanasConcluidas = Array.from({ length: 4 }, (_, i) => i + 1).filter(
+    (n) => n < semanaAtual || (progresso?.concluida_em && n <= semanaAtual),
+  );
+
   return {
     isPremium: await ehPremium(userId),
     semanaAtual,
@@ -104,9 +125,14 @@ async function carregarEstado(context: Ctx) {
     diasNaSemana: daSemana.length,
     totalCheckins: todos.length,
     sequencia: calcularSequencia(todos.map((c) => c.data), hoje),
+    recorde: calcularRecorde(todos.map((c) => c.data)),
     podeAvancar: daSemana.length >= MIN_DIAS_AVANCAR && semanaAtual < 4,
     datasSemana: daSemana.map((c) => c.data),
+    /** Todas as datas de check-in (YYYY-MM-DD), mais recentes primeiro. */
+    todasDatas: todos.map((c) => c.data),
+    semanasConcluidas,
   };
+
 }
 
 export const getRotina = createServerFn({ method: "GET" })
