@@ -85,7 +85,7 @@ function PremiumPlano() {
 
       </section>
 
-      <section className="mt-6 space-y-3">
+      <section className="mt-6">
         <p
           className="px-1 text-[10px] font-semibold uppercase"
           style={{ letterSpacing: "0.22em", color: GOLD }}
@@ -93,46 +93,11 @@ function PremiumPlano() {
           O que está incluso
         </p>
 
-        {FEATURES.map((f) => {
-          const Icon = f.icone;
-          return (
-            <article
-              key={f.titulo}
-              className="flex gap-3 rounded-2xl border p-4"
-              style={{
-                background: "rgba(255,253,247,0.9)",
-                borderColor: "rgba(216,198,160,0.55)",
-              }}
-            >
-              <span
-                className="grid size-10 shrink-0 place-items-center rounded-full"
-                style={{
-                  background: `linear-gradient(180deg, #EFE3CC, #F5EFE1)`,
-                  color: NAVY,
-                  border: "1px solid rgba(175,127,53,0.35)",
-                }}
-              >
-                <Icon className="size-4" />
-              </span>
-              <div className="min-w-0">
-                <h3
-                  className="text-[15px] leading-snug"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontWeight: 500,
-                    color: NAVY,
-                  }}
-                >
-                  {f.titulo}
-                </h3>
-                <p className="mt-1 text-[13px] leading-relaxed" style={{ color: "#4A4635" }}>
-                  {f.descricao}
-                </p>
-              </div>
-            </article>
-          );
-        })}
+        <div className="mt-3">
+          <PremiumFeaturesCarousel />
+        </div>
       </section>
+
 
       <section
         className="mt-6 overflow-hidden rounded-3xl px-5 py-6"
