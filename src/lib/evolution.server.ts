@@ -198,8 +198,10 @@ export async function setEvolutionWebhookRemote(
   }
 
   try {
-    // v2: corpo aninhado
-    const v2 = await attempt({ webhook: base });
+    // v2: corpo aninhado (aceita byEvents/base64 nas versões novas)
+    const v2 = await attempt({
+      webhook: { ...base, byEvents: false, base64: true },
+    });
     if (v2.okHttp) {
       return { ok: true, formato: "v2", httpStatus: v2.status, raw: v2.raw };
     }
