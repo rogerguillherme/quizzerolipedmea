@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PREMIUM_FEATURES } from "@/lib/premium-features";
-import { PREMIUM_ILLUSTRATIONS } from "@/lib/premium-illustrations";
+
 
 const NAVY = "#16324F";
 const GOLD = "#AF7F35";
