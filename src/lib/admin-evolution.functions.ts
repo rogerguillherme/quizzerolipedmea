@@ -97,3 +97,71 @@ export const getWhatsAppLogs = createServerFn({ method: "GET" })
     if (error) throw error;
     return data ?? [];
   });
+
+/** Lê a config de webhook direto na Evolution + contagem real de entradas. */
+export const getEvolutionWebhook = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+
+    const { findEvolutionWebhook } = await import("./evolution.server");
+    const remoto = await findEvolutionWebhook();
+
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+    const agora = Date.now();
+    const h24 = new Date(agora - 24 * 60 * 60 * 1000).toISOString();
+    const d7 = new Date(agora - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    const [r24, r7, total] = await Promise.all([
+      supabaseAdmin
+        .from("crm_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("direcao", "in")
+        .gte("created_at", h24),
+      supabaseAdmin
+        .from("crm_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("direcao", "in")
+        .gte("created_at", d7),
+      supabaseAdmin
+        .from("crm_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("direcao", "in"),
+    ]);
+
+    const { data: hit } = await supabaseAdmin
+      .from("app_settings")
+      .select("value")
+      .eq("app_key", "mapa")
+      .eq("setting_key", "evolution_webhook_ultimo_hit")
+      .maybeSingle();
+
+    return {
+      remoto,
+      entradas: {
+        h24: r24.count ?? 0,
+        d7: r7.count ?? 0,
+        total: total.count ?? 0,
+      },
+      ultimoHit:
+        (hit?.value as { em?: string; event?: string } | null) ?? null,
+    };
+  });
+
+/** Configura o webhook na instância. Tenta v2 (aninhado) e cai para v1. */
+export const setEvolutionWebhook = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ url: z.string().trim().url().max(300) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { setEvolutionWebhookRemote, findEvolutionWebhook } = await import(
+      "./evolution.server"
+    );
+    const result = await setEvolutionWebhookRemote(data.url);
+    const depois = await findEvolutionWebhook();
+    return { result, depois };
+  });

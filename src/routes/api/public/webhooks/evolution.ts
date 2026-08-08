@@ -22,6 +22,25 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = (body?.data ?? {}) as any;
         const event = String(body?.event ?? "");
+
+        // Diagnóstico: registra TODA chamada recebida, mesmo as ignoradas.
+        const { supabaseAdmin } = await import(
+          "@/integrations/supabase/client.server"
+        );
+        try {
+          await supabaseAdmin.from("app_settings").upsert(
+            {
+              app_key: "mapa",
+              setting_key: "evolution_webhook_ultimo_hit",
+              value: { em: new Date().toISOString(), event } as never,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "app_key,setting_key" },
+          );
+        } catch {
+          /* diagnóstico não pode derrubar o webhook */
+        }
+
         if (!event.includes("messages")) {
           return Response.json({ ok: true, ignored: true });
         }
@@ -35,6 +54,7 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
         const telefone = normalizePhone(remoteJid.split("@")[0] ?? "");
         if (!telefone) return Response.json({ ok: true, empty: true });
 
+        const msg = (data?.message ?? null) as Record<string, unknown> | null;
         const conteudoTexto =
           (data?.message?.conversation as string | undefined) ??
           (data?.message?.extendedTextMessage?.text as string | undefined) ??
@@ -43,14 +63,29 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
           | { caption?: string; mimetype?: string }
           | undefined;
         const isImage = Boolean(imageMessage);
-        const conteudo = conteudoTexto || (isImage ? "[imagem]" : "");
-        if (!conteudo) return Response.json({ ok: true, noText: true });
+
+        // Rótulo legível para mensagens sem texto (áudio, vídeo, doc...).
+        function rotuloMidia(m: Record<string, unknown>): string {
+          if (m.imageMessage) return "[imagem]";
+          if (m.audioMessage || m.pttMessage) return "[áudio]";
+          if (m.videoMessage) return "[vídeo]";
+          if (m.documentMessage || m.documentWithCaptionMessage)
+            return "[documento]";
+          if (m.stickerMessage) return "[figurinha]";
+          if (m.locationMessage || m.liveLocationMessage)
+            return "[localização]";
+          if (m.contactMessage || m.contactsArrayMessage) return "[contato]";
+          return "[mensagem]";
+        }
+
+        // Só descarta quando não há mensagem nenhuma no payload.
+        if (!conteudoTexto && !msg) {
+          return Response.json({ ok: true, noMessage: true });
+        }
+        const conteudo = conteudoTexto || rotuloMidia(msg ?? {});
 
         const pushName = (data?.pushName as string | undefined) ?? null;
 
-        const { supabaseAdmin } = await import(
-          "@/integrations/supabase/client.server"
-        );
 
         // Upsert conversa por telefone
         const { data: existing } = await supabaseAdmin
