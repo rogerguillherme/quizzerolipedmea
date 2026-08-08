@@ -25,6 +25,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProtocoloPagamentoRouteImport } from './routes/protocolo.pagamento'
 import { Route as AppWhatsappRouteImport } from './routes/app.whatsapp'
 import { Route as AppRotinaRouteImport } from './routes/app.rotina'
+import { Route as AppRegistrarRouteImport } from './routes/app.registrar'
 import { Route as AppReembolsoRouteImport } from './routes/app.reembolso'
 import { Route as AppProtocoloRouteImport } from './routes/app.protocolo'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
@@ -128,6 +129,11 @@ const AppWhatsappRoute = AppWhatsappRouteImport.update({
 const AppRotinaRoute = AppRotinaRouteImport.update({
   id: '/rotina',
   path: '/rotina',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRegistrarRoute = AppRegistrarRouteImport.update({
+  id: '/registrar',
+  path: '/registrar',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReembolsoRoute = AppReembolsoRouteImport.update({
@@ -283,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
   '/app/reembolso': typeof AppReembolsoRoute
+  '/app/registrar': typeof AppRegistrarRoute
   '/app/rotina': typeof AppRotinaRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
   '/app/reembolso': typeof AppReembolsoRoute
+  '/app/registrar': typeof AppRegistrarRoute
   '/app/rotina': typeof AppRotinaRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
@@ -366,6 +374,7 @@ export interface FileRoutesById {
   '/app/perfil': typeof AppPerfilRoute
   '/app/protocolo': typeof AppProtocoloRoute
   '/app/reembolso': typeof AppReembolsoRoute
+  '/app/registrar': typeof AppRegistrarRoute
   '/app/rotina': typeof AppRotinaRoute
   '/app/whatsapp': typeof AppWhatsappRoute
   '/protocolo/pagamento': typeof ProtocoloPagamentoRoute
@@ -410,6 +419,7 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/protocolo'
     | '/app/reembolso'
+    | '/app/registrar'
     | '/app/rotina'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
@@ -450,6 +460,7 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/protocolo'
     | '/app/reembolso'
+    | '/app/registrar'
     | '/app/rotina'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
@@ -492,6 +503,7 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/protocolo'
     | '/app/reembolso'
+    | '/app/registrar'
     | '/app/rotina'
     | '/app/whatsapp'
     | '/protocolo/pagamento'
@@ -639,6 +651,13 @@ declare module '@tanstack/react-router' {
       path: '/rotina'
       fullPath: '/app/rotina'
       preLoaderRoute: typeof AppRotinaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/registrar': {
+      id: '/app/registrar'
+      path: '/registrar'
+      fullPath: '/app/registrar'
+      preLoaderRoute: typeof AppRegistrarRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/reembolso': {
@@ -848,6 +867,7 @@ interface AppRouteChildren {
   AppPerfilRoute: typeof AppPerfilRoute
   AppProtocoloRoute: typeof AppProtocoloRoute
   AppReembolsoRoute: typeof AppReembolsoRoute
+  AppRegistrarRoute: typeof AppRegistrarRoute
   AppRotinaRoute: typeof AppRotinaRoute
   AppWhatsappRoute: typeof AppWhatsappRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -863,6 +883,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPerfilRoute: AppPerfilRoute,
   AppProtocoloRoute: AppProtocoloRoute,
   AppReembolsoRoute: AppReembolsoRoute,
+  AppRegistrarRoute: AppRegistrarRoute,
   AppRotinaRoute: AppRotinaRoute,
   AppWhatsappRoute: AppWhatsappRoute,
   AppIndexRoute: AppIndexRoute,
