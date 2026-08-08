@@ -503,26 +503,33 @@ async function processarCadenciaRotina(
 
     if (!tipo || !msg) continue;
 
-    const wa = await sendWhatsApp(lead.telefone, msg);
-    await supabaseAdmin.from("whatsapp_logs").insert({
-      telefone: lead.telefone,
-      mensagem: msg,
-      status: wa.ok ? "enviado" : "falhou",
-      erro: wa.error ?? null,
-    });
+    const r = await enviarComControle(
+      supabaseAdmin,
+      sendWhatsApp,
+      lead as { id: string; telefone: string },
+      respostas,
+      `rotina_${tipo}`,
+      msg,
+    );
 
-    if (wa.ok) {
+    if (r.ok || r.desistir) {
+      // Teto de falhas: grava as flags do passo assim mesmo e segue em frente.
       proximo.ultimo_envio = hoje;
       respostas.rotina_msgs = proximo;
       await supabaseAdmin
         .from("leads")
         .update({ respostas: respostas as never })
         .eq("id", lead.id);
-      resultados.push({ lead: lead.id, tipo, status: "enviado" });
+      resultados.push({
+        lead: lead.id,
+        tipo,
+        status: r.ok ? "enviado" : r.invalido ? "numero_invalido" : "desistiu",
+      });
     } else {
       resultados.push({ lead: lead.id, tipo, status: "falhou" });
     }
   }
+
 
   return resultados;
 }
