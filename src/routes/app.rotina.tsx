@@ -147,7 +147,7 @@ function RotinaPage() {
     <div className="mx-auto w-full max-w-md px-5 pt-5 pb-10">
       {/* Cabeçalho */}
       <section
-        className="relative overflow-hidden rounded-3xl px-5 py-6"
+        className="relative overflow-hidden rounded-[24px] px-5 py-6"
         style={{
           background: `linear-gradient(160deg, ${NAVY} 0%, #0E2439 100%)`,
           color: CREAM_SOFT,
@@ -216,7 +216,7 @@ function RotinaPage() {
               className={`${CARD_BASE} px-5 py-5 text-center`}
               style={{
                 ...CARD_STYLE,
-                borderColor: "rgba(175,127,53,0.6)",
+                borderColor: BORDER_GOLD,
               }}
             >
               <p
@@ -248,7 +248,7 @@ function RotinaPage() {
               disabled={checkinMut.isPending}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-bold transition-transform active:scale-[0.98] disabled:opacity-70"
               style={{
-                background: `linear-gradient(180deg, #E7BE5C, ${GOLD})`,
+                background: GRADIENT_GOLD,
                 color: NAVY,
                 boxShadow: "0 12px 26px -12px rgba(175,127,53,0.8)",
               }}
@@ -302,7 +302,7 @@ function RotinaPage() {
               onClick={() => avancarMut.mutate()}
               className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold"
               style={{
-                background: `linear-gradient(180deg, #E7BE5C, ${GOLD})`,
+                background: GRADIENT_GOLD,
                 color: NAVY,
               }}
             >
@@ -316,7 +316,7 @@ function RotinaPage() {
       {!isPremium && (
         <section
           className={`${CARD_BASE} mt-5 px-5 py-5 text-center`}
-          style={{ ...CARD_STYLE, borderColor: "rgba(175,127,53,0.6)" }}
+          style={{ ...CARD_STYLE, borderColor: BORDER_GOLD }}
         >
           <p className="text-[14px] leading-relaxed" style={{ color: NAVY }}>
             A Rotina completa faz parte do Plano Zero Lipedema. São 4 semanas, uma
@@ -327,7 +327,7 @@ function RotinaPage() {
             onClick={() => track("rotina_bloqueada_cta")}
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold"
             style={{
-              background: `linear-gradient(180deg, #E7BE5C, ${GOLD})`,
+              background: GRADIENT_GOLD,
               color: NAVY,
             }}
           >
@@ -340,8 +340,8 @@ function RotinaPage() {
       {/* Mapa das 4 semanas */}
       <section className="mt-7 space-y-2">
         <p
-          className="px-1 text-[10px] font-semibold uppercase"
-          style={{ letterSpacing: "0.22em", color: GOLD }}
+          className="px-1 text-[11px] font-semibold uppercase"
+          style={{ letterSpacing: "0.22em", color: GOLD_LABEL }}
         >
           Suas 4 semanas
         </p>
@@ -362,7 +362,7 @@ function RotinaPage() {
                     ? "rgba(175,127,53,0.10)"
                     : "rgba(22,50,79,0.04)",
                 borderColor: atual
-                  ? "rgba(175,127,53,0.6)"
+                  ? BORDER_GOLD
                   : "rgba(216,198,160,0.45)",
               }}
             >
@@ -378,7 +378,7 @@ function RotinaPage() {
                   className="grid size-9 shrink-0 place-items-center rounded-full"
                   style={{
                     background: concluidaSemana
-                      ? `linear-gradient(180deg, #E7BE5C, ${GOLD})`
+                      ? GRADIENT_GOLD
                       : atual
                         ? "rgba(175,127,53,0.18)"
                         : "rgba(22,50,79,0.06)",
@@ -421,8 +421,8 @@ function RotinaPage() {
       {/* Materiais de apoio: os 3 guias que acompanham a Rotina. */}
       <section className="mt-7">
         <p
-          className="text-[10px] font-bold uppercase tracking-[0.24em]"
-          style={{ color: GOLD }}
+          className="text-[11px] font-bold uppercase tracking-[0.24em]"
+          style={{ color: GOLD_LABEL }}
         >
           Materiais de apoio
         </p>
@@ -446,11 +446,11 @@ function MissaoCard({
   return (
     <article
       className={`${CARD_BASE} relative overflow-hidden px-5 py-5`}
-      style={{ ...CARD_STYLE, borderColor: "rgba(175,127,53,0.6)" }}
+      style={{ ...CARD_STYLE, borderColor: BORDER_GOLD }}
     >
       <p
-        className="text-[10px] font-bold uppercase tracking-[0.18em]"
-        style={{ color: GOLD }}
+        className="text-[11px] font-bold uppercase tracking-[0.18em]"
+        style={{ color: GOLD_LABEL }}
       >
         Missão da semana
       </p>
@@ -536,8 +536,8 @@ function ListasSemana({ semana }: { semana: SemanaRotina }) {
         }}
       >
         <p
-          className="text-[10px] font-bold uppercase tracking-[0.16em]"
-          style={{ color: GOLD }}
+          className="text-[11px] font-bold uppercase tracking-[0.16em]"
+          style={{ color: GOLD_LABEL }}
         >
           Regra de ouro
         </p>
@@ -556,7 +556,7 @@ function Celebracao() {
   return (
     <div className="mx-auto w-full max-w-md px-5 pt-8 pb-10">
       <section
-        className="relative overflow-hidden rounded-3xl px-5 py-8 text-center"
+        className="relative overflow-hidden rounded-[24px] px-5 py-8 text-center"
         style={{
           background: `linear-gradient(160deg, ${NAVY} 0%, #0E2439 100%)`,
           color: CREAM_SOFT,
@@ -578,7 +578,7 @@ function Celebracao() {
 
       <section
         className={`${CARD_BASE} mt-5 px-5 py-5`}
-        style={{ ...CARD_STYLE, borderColor: "rgba(175,127,53,0.6)" }}
+        style={{ ...CARD_STYLE, borderColor: BORDER_GOLD }}
       >
         <p
           className="text-[10px] font-bold uppercase tracking-[0.18em]"
@@ -602,7 +602,7 @@ function Celebracao() {
           onClick={() => track("rotina_concluida_upsell")}
           className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold"
           style={{
-            background: `linear-gradient(180deg, #E7BE5C, ${GOLD})`,
+            background: GRADIENT_GOLD,
             color: NAVY,
           }}
         >
