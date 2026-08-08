@@ -362,15 +362,16 @@ function Hoje() {
       {!pago && (
         <section className="mt-6">
           <Link to="/app/derma" className="block rounded-[24px] px-5 py-5" style={CARD}>
-            <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD }}>
+            <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_LABEL }}>
               Plano Zero Lipedema
             </p>
-            <p className="mt-1.5 text-[13.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
+            <p className="mt-1.5 text-[14px]" style={{ color: INK, lineHeight: 1.55 }}>
               A Rotina completa das 4 semanas, registro de refeições por foto sem limite e os guias práticos, por R$67.
             </p>
-            <p className="mt-2.5 text-[13px] font-semibold" style={{ color: NAVY }}>
+            <p className="mt-2.5 text-[14px] font-semibold" style={{ color: NAVY }}>
               Ver o plano <span style={{ color: GOLD }}>→</span>
             </p>
+
           </Link>
         </section>
       )}
