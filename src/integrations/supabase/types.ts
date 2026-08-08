@@ -500,6 +500,36 @@ export type Database = {
         }
         Relationships: []
       }
+      refeicoes_registros: {
+        Row: {
+          created_at: string
+          feedback: Json | null
+          id: string
+          macros: Json | null
+          semana: number | null
+          storage_path: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feedback?: Json | null
+          id?: string
+          macros?: Json | null
+          semana?: number | null
+          storage_path?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feedback?: Json | null
+          id?: string
+          macros?: Json | null
+          semana?: number | null
+          storage_path?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       rotina_checkins: {
         Row: {
           created_at: string
