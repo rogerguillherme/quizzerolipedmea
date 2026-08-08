@@ -452,6 +452,7 @@ async function processarCadenciaRotina(
   supabaseAdmin: any,
   sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
   lote: Lote,
+  entradas: Map<string, Entrada>,
 ) {
   const resultados: Array<{ lead: string; tipo: string; status: string }> = [];
 
@@ -477,6 +478,15 @@ async function processarCadenciaRotina(
 
     const respostas = (lead.respostas ?? {}) as LeadResp;
     if (leadInvalido(respostas)) continue;
+
+    // Respondeu nas últimas 48h: a conversa é da Gabriela, nada programado sai.
+    const entrada = entradas.get(chaveTelefone(lead.telefone));
+    if (entrada) {
+      await marcarPausa(supabaseAdmin, lead.id, respostas, entrada.em);
+      continue;
+    }
+
+
 
     const msgs =
       (respostas.rotina_msgs as
