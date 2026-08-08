@@ -113,7 +113,9 @@ function Hoje() {
   const diasNaSemana = rotina?.diasNaSemana ?? 0;
   const checkinFeito = Boolean(rotina?.checkinHoje);
   const sequencia = rotina?.sequencia ?? 0;
+  const totalCheckins = rotina?.totalCheckins ?? 0;
   const dica = getDicaDoDia(hojeISO);
+
 
   // Frase determinística pelo dia, para não trocar a cada render.
   const frase =
