@@ -345,6 +345,7 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
           supabaseAdmin,
           sendWhatsApp,
         );
+        const rotina = await processarCadenciaRotina(supabaseAdmin, sendWhatsApp);
 
         // suppress unused import warning
         void horasDesde;
@@ -354,6 +355,7 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
           ok: true,
           cadencia,
           reengajados,
+          rotina,
           ts: new Date().toISOString(),
         });
       },
