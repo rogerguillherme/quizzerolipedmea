@@ -217,6 +217,76 @@ function diasDesde(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / MS_DIA);
 }
 
+type Entrada = { em: string; texto: string };
+
+/**
+ * Respostas recebidas nas últimas 48h, indexadas pelos 8 últimos dígitos do
+ * telefone. Vínculo `leads.telefone` ↔ `crm_conversations.telefone`: o webhook
+ * da Evolution grava o número normalizado (55DDD9XXXXXXXX) e o lead pode ter
+ * sido cadastrado com máscara ou sem o nono dígito, então casamos pelo sufixo.
+ */
+async function carregarEntradasRecentes(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+): Promise<Map<string, Entrada>> {
+  const mapa = new Map<string, Entrada>();
+  const corte = new Date(Date.now() - JANELA_PAUSA_MS).toISOString();
+
+  const { data: convs } = await supabaseAdmin
+    .from("crm_conversations")
+    .select("id, telefone, ultima_mensagem_em")
+    .gt("ultima_mensagem_em", corte)
+    .limit(1000);
+
+  const porId = new Map<string, string>();
+  for (const c of convs ?? []) porId.set(c.id as string, c.telefone as string);
+  if (porId.size === 0) return mapa;
+
+  const { data: msgs } = await supabaseAdmin
+    .from("crm_messages")
+    .select("conversation_id, conteudo, created_at")
+    .in("conversation_id", Array.from(porId.keys()))
+    .eq("direcao", "in")
+    .gt("created_at", corte)
+    .order("created_at", { ascending: false })
+    .limit(2000);
+
+  for (const m of msgs ?? []) {
+    const tel = porId.get(m.conversation_id as string);
+    if (!tel) continue;
+    const k = chaveTelefone(tel);
+    if (!k) continue;
+    const anterior = mapa.get(k);
+    const registro: Entrada = {
+      em: m.created_at as string,
+      texto: String(m.conteudo ?? ""),
+    };
+    // Guardamos a mais recente, mas qualquer mensagem com intenção prevalece.
+    if (!anterior) mapa.set(k, registro);
+    else if (temIntencaoCompra(registro.texto) && !temIntencaoCompra(anterior.texto))
+      mapa.set(k, registro);
+  }
+
+  return mapa;
+}
+
+/** Marca a pausa da régua no lead (visível no admin). */
+async function marcarPausa(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+  leadId: string,
+  respostas: LeadResp,
+  em: string,
+) {
+  if (respostas.cadencia_pausada_em === em) return;
+  respostas.cadencia_pausada_em = em;
+  await supabaseAdmin
+    .from("leads")
+    .update({ respostas: respostas as never })
+    .eq("id", leadId);
+}
+
+
 /**
  * Régua pré-venda. Quatro toques, cada lead no horário próprio dele:
  *   +20h  · convite pro teste grátis de foto (primeira mensagem: se apresenta)
