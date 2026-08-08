@@ -55,3 +55,16 @@ export function diasEntre(aISO: string, bISO: string): number {
   if (!Number.isFinite(a) || !Number.isFinite(b)) return 0;
   return Math.round((a - b) / 86_400_000);
 }
+
+/** Minutos desde a meia-noite (0-1439) em São Paulo. */
+export function minutoDoDiaLocal(d: Date = new Date()): number {
+  const s = new Intl.DateTimeFormat("en-GB", {
+    timeZone: TZ,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(d);
+  const [h, m] = s.split(":").map(Number);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return 0;
+  return (h as number) * 60 + (m as number);
+}
