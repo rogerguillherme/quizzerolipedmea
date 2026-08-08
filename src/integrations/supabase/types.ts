@@ -469,6 +469,8 @@ export type Database = {
           created_at: string
           diagnostico: Json | null
           id: string
+          mapa_popup_aberturas: number
+          mapa_popup_visto_em: string | null
           nome: string
           perfil: string | null
           respostas: Json
@@ -480,6 +482,8 @@ export type Database = {
           created_at?: string
           diagnostico?: Json | null
           id: string
+          mapa_popup_aberturas?: number
+          mapa_popup_visto_em?: string | null
           nome: string
           perfil?: string | null
           respostas?: Json
@@ -491,6 +495,8 @@ export type Database = {
           created_at?: string
           diagnostico?: Json | null
           id?: string
+          mapa_popup_aberturas?: number
+          mapa_popup_visto_em?: string | null
           nome?: string
           perfil?: string | null
           respostas?: Json
