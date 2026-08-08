@@ -27,6 +27,7 @@ type LeadAtencao = {
   status: string;
   motivo: string;
   criadoEm: string;
+  regua?: { rotulo: string; pausada: boolean; fastTrack: boolean; invalido: boolean };
 };
 
 const MOTIVO_LABEL: Record<string, string> = {
@@ -147,6 +148,7 @@ function DashboardPage() {
                   <th className="px-4 py-2.5 text-left">Lead</th>
                   <th className="px-4 py-2.5 text-left">WhatsApp</th>
                   <th className="px-4 py-2.5 text-left">Motivo</th>
+                  <th className="px-4 py-2.5 text-left">Régua</th>
                   <th className="px-4 py-2.5 text-left">Quando</th>
                 </tr>
               </thead>
@@ -157,6 +159,9 @@ function DashboardPage() {
                     <td className="px-4 py-2.5 tabular-nums text-[#3E4F65]">{l.telefone}</td>
                     <td className="px-4 py-2.5 text-[#B23A48]">
                       {MOTIVO_LABEL[l.motivo] ?? l.motivo}
+                    </td>
+                    <td className="px-4 py-2.5 text-[#3E4F65]">
+                      {l.regua?.rotulo ?? "—"}
                     </td>
                     <td className="px-4 py-2.5 text-[#3E4F65]">
                       {new Date(l.criadoEm).toLocaleString("pt-BR", {
