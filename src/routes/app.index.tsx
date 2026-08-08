@@ -215,7 +215,11 @@ function Hoje() {
         ) : (
           <>
             <div className="relative mt-4">
-              <div className="select-none" style={{ filter: "blur(4px)", opacity: 0.75 }} aria-hidden>
+              <div
+                className="pointer-events-none select-none"
+                style={{ filter: "blur(4px)", opacity: 0.75 }}
+                aria-hidden="true"
+              >
                 <p className="text-[13px]" style={{ lineHeight: 1.6 }}>
                   {semana.entra.slice(0, 3).join(" · ")}
                 </p>
@@ -226,20 +230,22 @@ function Hoje() {
               <span
                 className="absolute right-0 top-0 grid size-8 place-items-center rounded-full"
                 style={{ background: "rgba(245,239,225,0.14)", color: GOLD_SOFT }}
+                aria-hidden="true"
               >
                 <Lock className="size-3.5" />
               </span>
             </div>
             <Link
               to="/app/derma"
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13.5px] font-semibold uppercase"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[14px] font-semibold uppercase"
               style={{
-                background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
+                background: GRADIENT_GOLD,
                 color: NAVY,
                 letterSpacing: "0.14em",
-                boxShadow: "0 12px 24px -14px rgba(175,127,53,0.65)",
+                boxShadow: SHADOW.gold,
               }}
             >
+
               Liberar a Rotina
             </Link>
           </>
