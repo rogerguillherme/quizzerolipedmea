@@ -292,9 +292,9 @@ function Hoje() {
         </Link>
         <p className="mt-2 text-center text-[12.5px]" style={{ color: INK_SOFT }}>
           {refeicoesHoje === 0
-            ? "Nenhuma refeição registrada hoje."
+            ? "Nenhuma refeição registrada hoje ainda. Quando comer, tira uma foto do prato."
             : refeicoesHoje === 1
-            ? "1 refeição registrada hoje."
+            ? "1 refeição registrada hoje. Já é um começo."
             : `${refeicoesHoje} refeições registradas hoje.`}
         </p>
       </section>
