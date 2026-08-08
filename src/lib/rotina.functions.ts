@@ -83,7 +83,10 @@ async function carregarEstado(context: Ctx) {
     }
   }
 
-  const semanaAtual = Number(progresso?.semana_atual ?? 1);
+  // Usuária nova (ou linha recém-criada): sempre cai na Semana 1, nunca NaN.
+  const bruta = Number(progresso?.semana_atual);
+  const semanaAtual = Number.isFinite(bruta) ? Math.min(4, Math.max(1, bruta)) : 1;
+
 
   const { data: checkins } = await supabase
     .from("rotina_checkins")
