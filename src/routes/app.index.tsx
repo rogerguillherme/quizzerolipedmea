@@ -200,13 +200,14 @@ function Hoje() {
               type="button"
               disabled={mut.isPending}
               onClick={() => mut.mutate()}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[13.5px] font-semibold uppercase transition-opacity disabled:opacity-60"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[14px] font-semibold uppercase transition-opacity disabled:opacity-60"
               style={{
-                background: "linear-gradient(180deg, #D9A94B, #AF7F35)",
+                background: GRADIENT_GOLD,
                 color: NAVY,
                 letterSpacing: "0.14em",
-                boxShadow: "0 12px 24px -14px rgba(175,127,53,0.65)",
+                boxShadow: SHADOW.gold,
               }}
+
             >
               {mut.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
               Cumpri a missão de hoje
