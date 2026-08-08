@@ -665,16 +665,22 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
         // Lote compartilhado: teto e parada por rate limit valem para as duas cadências.
         const lote: Lote = { enviadas: 0, abortado: false };
 
+        // Comportamento: quem respondeu nas últimas 48h fica fora da régua.
+        const entradas = await carregarEntradasRecentes(supabaseAdmin);
+
         const reengajados = await processarReengajamento(
           supabaseAdmin,
           sendWhatsApp,
           lote,
+          entradas,
         );
         const rotina = await processarCadenciaRotina(
           supabaseAdmin,
           sendWhatsApp,
           lote,
+          entradas,
         );
+
 
         return Response.json({
           ok: true,
