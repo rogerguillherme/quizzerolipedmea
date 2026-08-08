@@ -164,9 +164,9 @@ export async function analisarExameArquivo(input: {
 
 /** Monta o texto padrão para revisão da Gabriela a partir da leitura da IA. */
 export function montarTextoRevisao(leitura: ExameLeitura, nome: string | null): string {
-  const primeiro = (nome ?? "").split(" ")[0] || "linda";
+  const primeiro = (nome ?? "").split(" ")[0] || "";
   const linhas: string[] = [];
-  linhas.push(`Oi ${primeiro} 💙 Aqui é da Dra. Gabriela Rosado — dei uma olhada nos seus exames.`);
+  linhas.push(`${primeiro ? `Oi ${primeiro}` : "Oi"} 💙 Aqui é da Dra. Gabriela Rosado — dei uma olhada nos seus exames.`);
   linhas.push("");
   if (leitura.resumoParaPaciente) {
     linhas.push(leitura.resumoParaPaciente);

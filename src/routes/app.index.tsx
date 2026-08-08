@@ -108,7 +108,7 @@ function Hoje() {
 
   const agora = new Date();
   const hojeISO = hojeISOLocal();
-  const nome = String((profile as { nome?: string } | undefined)?.nome ?? "").split(" ")[0] || "linda";
+  const nome = String((profile as { nome?: string } | undefined)?.nome ?? "").split(" ")[0] || "";
   const isPremium = Boolean(rotina?.isPremium);
   const semanaNum = rotina?.semanaAtual ?? 1;
   const semana = getSemana(isPremium ? semanaNum : 1);

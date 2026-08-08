@@ -131,13 +131,13 @@ Devolva o JSON conforme instruções.`;
     // Não cria conta no Auth: o objetivo aqui é só entregar o resultado e abrir o canal.
     const digits = (data.telefone ?? "").replace(/\D/g, "");
     if (digits.length >= 10) {
-      const primeiroNome = data.nome.trim().split(/\s+/)[0] || "amiga";
+      const primeiroNome = data.nome.trim().split(/\s+/)[0] || "";
       const prioridades = (diagnostico.prioridades ?? [])
         .slice(0, 3)
         .map((p, i) => `${i + 1}. ${p}`)
         .join("\n");
       const msg =
-        `Oi ${primeiroNome}! 💙 Aqui é a Gabriela.\n\n` +
+        `${primeiroNome ? `Oi ${primeiroNome}!` : "Oi!"} 💙 Aqui é a Gabriela.\n\n` +
         `${diagnostico.aberturaValidadora}\n\n` +
         `*Seu Mapa do Lipedema*\n` +
         `Estágio: ${diagnostico.estagio}\n` +
