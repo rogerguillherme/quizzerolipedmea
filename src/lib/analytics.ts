@@ -89,7 +89,29 @@ export function track(name: FunnelEvent, meta?: Record<string, unknown>) {
   } catch {
     /* ignore */
   }
+
+  // Envio para o banco: nunca bloqueia a navegação, nunca estoura na tela.
+  try {
+    const atribuicao = getAtribuicao();
+    enviarBeacon("/api/public/track/event", {
+      nome: name,
+      path: normalizePath(),
+      session_id: getSessionId(),
+      lead_id: getTrackLeadId(),
+      meta: meta ?? {},
+      utm_source: atribuicao.utm_source ?? null,
+      utm_medium: atribuicao.utm_medium ?? null,
+      utm_campaign: atribuicao.utm_campaign ?? null,
+      utm_content: atribuicao.utm_content ?? null,
+      utm_term: atribuicao.utm_term ?? null,
+      fbclid: atribuicao.fbclid ?? null,
+      atribuicao,
+    });
+  } catch {
+    /* ignore */
+  }
 }
+
 
 export function getEvents(): TrackedEvent[] {
   if (!isBrowser) return [];
