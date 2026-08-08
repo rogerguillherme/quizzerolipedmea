@@ -16,7 +16,15 @@ export interface PremiumFeature {
   icone: LucideIcon;
   titulo: string;
   descricao: string;
+  /** Foto real (Storage público) exibida no carrossel de benefícios. */
+  foto: string;
+  /** Texto alternativo descritivo da foto. */
+  fotoAlt: string;
 }
+
+const FOTOS_BASE =
+  "https://gwvlsnpfwvziejranzyl.supabase.co/storage/v1/object/public/marketing/premium/";
+
 
 /**
  * Fonte única dos entregáveis do Plano Premium Zero Lipedema (R$67 · 30 dias).
