@@ -145,7 +145,8 @@ export const getEvolutionWebhook = createServerFn({ method: "GET" })
         d7: r7.count ?? 0,
         total: total.count ?? 0,
       },
-      ultimoHit: (hit?.value as Record<string, unknown> | null) ?? null,
+      ultimoHit:
+        (hit?.value as { em?: string; event?: string } | null) ?? null,
     };
   });
 
