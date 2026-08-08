@@ -68,10 +68,11 @@ export type EstadoRegua = {
 };
 
 const ROTULO_PRE: Record<string, string> = {
-  pos1h_at: "convite da foto (+20h)",
+  pos1h_at: "pergunta dor/inchaço (+20h)",
   pos2h_foto_at: "quebra de objeção (+44h)",
-  pos48h_at: "oferta R$67 (+68h)",
-  pos6d_at: "última chamada (+6d)",
+  pos48h_at: "prova + convite (+68h)",
+  pos92h_at: "oferta R$67 (+92h)",
+  pos6d_at: "fechamento (+6d)",
 };
 
 /** Resumo legível da régua de um lead, para a fila de atenção do admin. */

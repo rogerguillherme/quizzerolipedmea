@@ -28,7 +28,7 @@ ${itens}
 
 🔗 Seu app: ${loginUrl}
 
-Qualquer coisa, me chama por aqui ✨`;
+Me conta uma coisa: seu café da manhã hoje costuma ser o quê?`;
 }
 
 

@@ -12,7 +12,8 @@
  * Convenções:
  * - `---` em uma linha separa a mensagem em partes; o helper de envio manda
  *   cada bloco como uma mensagem, com 30-60s entre elas.
- * - Tokens `{nome}`, `{oi}`, `{link}`, etc. são trocados por `renderCadencia`.
+ * - Tokens `{nome}`, `{sintoma}`, `{objetivo}`, `{link}` são trocados por
+ *   `renderCadencia` (valores vêm de `varsDoLead`).
  * - 💙 aparece no máximo em uma mensagem a cada três, e no meio do texto.
  */
 
@@ -23,6 +24,10 @@ export interface MensagemCadencia {
   variantes: readonly string[];
   /** Quantidade de mensagens em que o texto sai quebrado (derivado de `---`). */
   partes?: number;
+  /** Tokens obrigatórios: se algum vier vazio, usa `fallback`. */
+  requer?: readonly string[];
+  /** Versões sem os tokens de `requer`, para quando o dado não existe. */
+  fallback?: readonly string[];
 }
 
 /** Hash estável (FNV-1a) de um uuid/string qualquer. Sempre positivo. */
@@ -55,115 +60,208 @@ export function renderCadencia(
   );
 }
 
-/** Escolhe a variante do lead e já renderiza os tokens. */
+/**
+ * Escolhe a variante do lead e já renderiza os tokens.
+ * Se algum token de `requer` estiver vazio, cai na variante de fallback —
+ * nunca sai frase com `{sintoma}` cru nem com buraco no meio.
+ */
 export function mensagemPara(
   msg: MensagemCadencia,
   leadId: string,
   vars: Record<string, string | number> = {},
 ): string {
-  const i = varianteDoLead(leadId, msg.variantes.length);
-  return renderCadencia(msg.variantes[i] ?? msg.variantes[0]!, vars).trim();
+  const faltando = (msg.requer ?? []).some(
+    (k) => !String(vars[k] ?? "").trim(),
+  );
+  const lista =
+    faltando && msg.fallback?.length ? msg.fallback : msg.variantes;
+  const i = varianteDoLead(leadId, lista.length);
+  const bruto = renderCadencia(lista[i] ?? lista[0]!, vars);
+  // Nome vazio deixaria ", deixa eu te perguntar" — limpa a pontuação órfã.
+  return bruto
+    .replace(/(^|\n)[ \t]*,[ \t]*/g, "$1")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
+
+/* ------------------------------------------------------------------ */
+/* Personalização a partir das respostas do Mapa                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * História real de paciente usada na MSG 4 (+68h).
+ *
+ * SÓ A GABRIELA PREENCHE. Enquanto estiver vazia, o envio pula a parte da
+ * história e manda apenas a pergunta. Não invente paciente, não deixe
+ * exemplo aqui: qualquer texto nesta constante vai ao ar no WhatsApp.
+ */
+export const HISTORIA_PACIENTE = "";
+
+/** Primeiro nome, já limpo. */
+export function primeiroNome(nome?: string | null): string {
+  return (nome ?? "").trim().split(/\s+/)[0] ?? "";
+}
+
+/**
+ * Encaixa o sintoma no meio da frase: "você marcou dor ao toque nas pernas".
+ * Só baixa a primeira letra se a palavra não for sigla/nome próprio óbvio.
+ */
+function minuscularInicial(texto: string): string {
+  const t = texto.trim();
+  if (!t) return "";
+  if (t.slice(0, 2).toUpperCase() === t.slice(0, 2)) return t; // "TPM", "SOP"
+  return t.charAt(0).toLowerCase() + t.slice(1);
+}
+
+/**
+ * Monta os tokens de personalização a partir das respostas do Mapa.
+ * Campo vazio vira string vazia — e a mensagem que depende dele cai na
+ * variante de fallback, nunca sai com `{sintoma}` cru nem com buraco.
+ */
+export function varsDoLead(lead: {
+  nome?: string | null;
+  respostas?: Record<string, unknown> | null;
+  link?: string;
+}): Record<string, string> {
+  const r = (lead.respostas ?? {}) as Record<string, unknown>;
+  const sintoma = typeof r["sintomaMaior"] === "string" ? r["sintomaMaior"] : "";
+  const objetivo = typeof r["objetivo"] === "string" ? r["objetivo"] : "";
+  return {
+    nome: primeiroNome(lead.nome),
+    sintoma: minuscularInicial(sintoma),
+    objetivo: minuscularInicial(objetivo),
+    link: lead.link ?? "",
+  };
 }
 
 /* ------------------------------------------------------------------ */
 /* Cadência pré-compra                                                 */
 /* ------------------------------------------------------------------ */
 
-/** +20h — convite pro teste grátis de foto. Primeira mensagem da régua. */
+/**
+ * MSG 1 — imediata, no fim da entrega do Mapa.
+ * Cita uma resposta específica dela e termina em pergunta fácil.
+ */
+export const PRE_IMEDIATA: MensagemCadencia = {
+  chave: "imediata",
+  requer: ["sintoma"],
+  fallback: [
+    `Uma coisa que eu queria te perguntar: o que te incomoda mais hoje, de manhã ou no fim do dia?`,
+  ],
+  variantes: [
+    `Uma coisa que eu queria te perguntar: você marcou {sintoma}. Isso te incomoda mais de manhã ou no fim do dia?`,
+    `Deixa eu te perguntar uma coisa antes: você marcou {sintoma}. Isso já acorda com você ou vai piorando ao longo do dia?`,
+    `Me tira uma dúvida sobre o que você respondeu: {sintoma} — é pior quando você levanta ou no fim da tarde?`,
+  ],
+};
+
+/** MSG 2 — +20h, só para quem não respondeu. */
 export const PRE_POS20H: MensagemCadencia = {
   chave: "pos1h_at",
-  partes: 2,
   variantes: [
-    `{oi}! Aqui é a Gabriela.
----
-Tem uma coisa bem legal que você ainda não testou: me manda aqui mesmo, respondendo esta mensagem, uma foto de qualquer refeição sua que eu te dou um feedback na hora, se aquele prato ajuda ou atrapalha o seu quadro.
+    `{nome}, deixa eu te perguntar de um jeito mais fácil.
 
-É grátis, são 3 fotos de teste, sem compromisso. É só mandar a foto por aqui.`,
-    `{oi}, é a Gabriela falando 💙
----
-Queria te mostrar uma coisa que quase ninguém usa: você pode tirar foto de qualquer refeição sua e mandar aqui nesta conversa.
+O que mais te atrapalha hoje: 1) a dor ou 2) o inchaço?
 
-Eu leio o prato e te digo se ele está a favor ou contra o seu lipedema. São 3 fotos por conta da casa, sem compromisso nenhum.`,
-    `{oi}, Gabriela por aqui.
----
-Uma dica rápida: da próxima vez que você sentar pra comer, fotografa o prato e manda nesta conversa.
+Só o número já me ajuda a te orientar melhor.`,
+    `{nome}, uma pergunta rápida.
 
-Eu respondo dizendo o que naquele prato ajuda e o que atrapalha o inchaço. As 3 primeiras são gratuitas, é só mandar.`,
+Se desse pra resolver uma coisa primeiro, seria 1) a dor ou 2) o inchaço?
+
+Responde só o número.`,
+    `{nome}, me ajuda com uma coisa.
+
+Hoje o que pesa mais: 1) dor ou 2) inchaço?
+
+É só o número — prometo fazer bom uso.`,
   ],
 };
 
-/** +44h — quebra de objeção ("já tentei de tudo"). */
+/**
+ * MSG 3 — +44h. A mensagem que constrói a relação.
+ * Sem oferta e sem link, quebrada em 3 partes.
+ */
 export const PRE_POS44H: MensagemCadencia = {
   chave: "pos2h_foto_at",
-  partes: 2,
-  variantes: [
-    `{nome}A frase que eu mais escuto é: "eu já tentei de tudo e nada funciona". Faz sentido, porque quase tudo que te ofereceram foi dieta restritiva, e lipedema não responde a restrição, responde a inflamação.
----
-Por isso a Rotina Zero Lipedema muda uma refeição por semana, não a sua vida inteira de uma vez. Semana 1 é só o café da manhã. Leva alguns minutos por dia e você não precisa contar caloria nem passar fome.
-
-Se ficou alguma dúvida, me pergunta aqui que eu respondo.`,
-    `{nome}Quase toda mulher que chega até mim diz a mesma coisa: já tentou tudo e nada resolveu. E é verdade, porque o que ofereceram foi corte de comida, e lipedema não é problema de excesso, é de inflamação.
----
-A Rotina Zero Lipedema vai por outro caminho: ajusta uma refeição por semana. A primeira semana é só o café da manhã, nada além disso. Sem caloria contada e sem fome.
-
-Qualquer dúvida é só perguntar aqui.`,
-    `{nome}Se você já tentou dieta, treino, drenagem e nada segurou o inchaço, o problema não foi você. Restrição não trata lipedema, trata peso — e inflamação é outra história.
----
-O que funciona é mudança pequena e contínua. Na Rotina a gente mexe em uma refeição por semana, começando pelo café. Sem passar fome e sem planilha de caloria.
-
-Me pergunta o que quiser por aqui.`,
-  ],
-};
-
-/** +68h — pitch do Plano Premium (R$67). */
-export const PRE_POS68H: MensagemCadencia = {
-  chave: "pos48h_at",
   partes: 3,
   variantes: [
-    `{nome}Voltando pra te fazer um convite direto: hoje eu libero seu acesso ao Plano Premium Zero Lipedema por um valor de inauguração, de R$119 por apenas R$67, sem assinatura obrigatória.
+    `Quantas vezes já te disseram que era só emagrecer?
 ---
-O centro do plano é a Rotina Zero Lipedema: a gente ajusta uma refeição por semana, começando pelo café da manhã, sem contar caloria e sem passar fome. E você pode fotografar seu prato pra receber a leitura na hora, o que ajuda, o que atrapalha e o que ajustar na próxima refeição.
+Eu escuto isso todo dia no consultório. E a parte cruel é que, quando você emagrece, o resto do corpo diminui e a perna fica quase igual. Aí parece que o problema é você.
 ---
-Tem 7 dias de garantia: se não fizer sentido pra você, é só me chamar que devolvo, sem burocracia. E como bônus, libero todos os meus guias e receitas práticas.
-
-Pra ativar: {link}`,
-    `{nome}Vim te fazer um convite bem direto. O acesso ao Plano Premium Zero Lipedema, que é R$119, está saindo por R$67 nesta inauguração. Pagamento único, sem assinatura.
+Não é. Lipedema não responde a dieta como gordura comum. Você não falhou — te deram a ferramenta errada.`,
+    `{nome}, te falaram quantas vezes que bastava perder peso?
 ---
-Dentro dele está a Rotina Zero Lipedema, que muda uma refeição por semana começando pelo café da manhã 💙 Nada de contar caloria nem de passar fome. E tem a leitura das suas fotos de refeição, com o que ajuda, o que atrapalha e o que trocar depois.
+Perdi a conta de quantas mulheres chegam aqui depois de ouvir isso de três, quatro médicos diferentes. E de tentarem. E de dar certo no corpo todo, menos nas pernas.
 ---
-São 7 dias de garantia: não gostou, me chama que eu devolvo sem enrolação. Os guias e as receitas práticas vão junto como bônus.
-
-Link pra ativar: {link}`,
-    `{nome}Deixa eu ser objetiva: o Plano Premium Zero Lipedema está por R$67 em vez de R$119, pagamento único, sem mensalidade.
+Isso não é falta de disciplina sua. Lipedema não responde a restrição como gordura comum — é outro mecanismo, e é por isso que a dieta falhou.`,
+    `Posso te falar uma coisa que eu queria ter dito antes pra muita paciente?
 ---
-O coração dele é a Rotina: uma refeição ajustada por semana, a primeira sendo o café da manhã. Você também manda foto do prato e recebe a leitura na hora, dizendo o que ajuda, o que atrapalha e o que mudar na próxima.
+Quando te dizem que é só emagrecer, e você emagrece, e a perna continua igual, a única conclusão que sobra é que você fez algo errado.
 ---
-Se em 7 dias você achar que não é pra você, eu devolvo o valor, é só me avisar. Todos os guias e receitas entram como bônus.
-
-Aqui está o link: {link}`,
+Você não fez. Lipedema tem componente inflamatório e não cede a dieta restritiva. O problema nunca foi o seu esforço.`,
   ],
 };
 
-/** +6 dias — última chamada. */
+/**
+ * MSG 4 — +68h. Prova antes de preço, ainda sem link.
+ * A história da paciente entra antes desta pergunta só se
+ * `HISTORIA_PACIENTE` estiver preenchida.
+ */
+export const PRE_POS68H: MensagemCadencia = {
+  chave: "pos48h_at",
+  variantes: [
+    `Quer que eu te mostre como funciona a primeira semana?`,
+    `Posso te mostrar como começa a primeira semana?`,
+    `Se quiser, eu te mostro o que a gente faz na primeira semana. Quer ver?`,
+  ],
+};
+
+/** MSG 4b — +92h. Primeira vez que aparece link, só pra quem não respondeu nada. */
+export const PRE_POS92H: MensagemCadencia = {
+  chave: "pos92h_at",
+  variantes: [
+    `{nome}, como você não me respondeu, vou deixar do jeito mais simples.
+
+O Plano Zero Lipedema é R$67, pagamento único, sem assinatura. A gente ajusta uma refeição por semana, começando pelo café da manhã — sem contar caloria e sem passar fome. Você fotografa o prato e recebe a leitura na hora.
+
+São 7 dias de garantia: se não fizer sentido, me chama que devolvo.
+
+{link}`,
+    `{nome}, vou ser direta porque não quero te encher.
+
+R$67, uma vez só, sem assinatura. Uma refeição ajustada por semana, começando pelo café. Nada de contar caloria, nada de passar fome. Foto do prato, leitura na hora.
+
+7 dias de garantia, sem burocracia.
+
+{link}`,
+    `{nome}, resumindo o que eu faço com as minhas pacientes:
+
+uma refeição por semana, quatro semanas, sem restrição e sem contagem. O app te acompanha e eu te mando a orientação do dia. R$67, pagamento único, com 7 dias de garantia.
+
+{link}`,
+  ],
+};
+
+/** MSG 5 — +6 dias. Fechamento. */
 export const PRE_POS6D: MensagemCadencia = {
   chave: "pos6d_at",
-  partes: 2,
   variantes: [
-    `{nome}Essa é a minha última mensagem sobre isso, prometo. O acesso ao Plano Premium Zero Lipedema segue por R$67, sem assinatura, com 7 dias de garantia.
----
-Se agora não é a hora, tudo bem. Seu Mapa continua valendo e eu sigo por aqui quando você quiser retomar.
+    `{nome}, não vou mais te escrever sobre isso.
 
-{link}`,
-    `{nome}Prometo que é a última vez que eu toco no assunto. O Plano Premium Zero Lipedema continua por R$67, pagamento único, com 7 dias de garantia.
----
-Se não for o momento, sem problema nenhum 💙 Seu Mapa não expira e eu fico por aqui pra quando você quiser voltar.
+Seu Mapa continua valendo e eu continuo aqui se um dia você quiser retomar. Se for agora, é por aqui: {link}
 
-{link}`,
-    `{nome}Última mensagem sobre isso, combinado? O Plano Premium Zero Lipedema segue disponível por R$67, sem assinatura e com garantia de 7 dias.
----
-Se hoje não dá, tudo certo. O seu Mapa continua guardado e eu sigo aqui quando fizer sentido pra você.
+E se não for, tá tudo bem de verdade. Você já sabe o nome do que você tem — isso ninguém tira de você.`,
+    `{nome}, essa é a última.
 
-{link}`,
+Se fizer sentido em algum momento, o caminho é esse: {link}
+
+E se não fizer, sem problema nenhum. O que você descobriu sobre o seu corpo no Mapa continua sendo seu.`,
+    `{nome}, prometo parar por aqui.
+
+Quando quiser começar, é só me chamar ou entrar por {link}
+
+Seu Mapa fica guardado. E se for só pra tirar dúvida um dia, também pode me chamar.`,
   ],
 };
 
@@ -198,17 +296,17 @@ Comece por aí, sem pressa. Uma refeição de cada vez já muda bastante coisa.`
 export const ROT_DICA: MensagemCadencia = {
   chave: "dica",
   variantes: [
-    `{nome}dia {dia} da sua Rotina.
+    `Dia {dia} da sua Rotina.
 
 {dica}
 
 Quando cumprir a missão de hoje, marca lá no app na aba Hoje.`,
-    `{nome}chegamos no dia {dia}.
+    `Dia {dia}.
 
 {dica}
 
 Depois de cumprir a missão, é só marcar no app, na aba Hoje 💙`,
-    `{nome}dia {dia} por aqui.
+    `Dia {dia} por aqui.
 
 {dica}
 
