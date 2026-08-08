@@ -25,6 +25,12 @@ import {
   offsetMinutosDoLead,
   type MensagemCadencia,
 } from "@/lib/cadencia-copy";
+import {
+  JANELA_PAUSA_MS,
+  chaveTelefone,
+  temIntencaoCompra,
+} from "@/lib/cadencia-estado";
+
 
 const MS_HORA = 60 * 60 * 1000;
 const MS_DIA = 24 * MS_HORA;
