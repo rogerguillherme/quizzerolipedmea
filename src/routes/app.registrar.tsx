@@ -302,10 +302,10 @@ function RegistrarPage() {
             className="mt-3"
             style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, fontSize: "1.25rem", color: "#16324F" }}
           >
-            Seu teste grátis acabou
+            Suas 3 fotos de teste acabaram
           </h2>
           <p className="mt-2 text-[13.5px]" style={{ color: "#2F3128", lineHeight: 1.55 }}>
-            Você já usou as 3 fotos do teste. Para continuar com feedback ilimitado e histórico salvo, conheça o plano.
+            Você usou as 3 leituras gratuitas. No Plano Premium a leitura das refeições é ilimitada e o histórico fica salvo pra você acompanhar.
           </p>
           <Link
             to="/app/derma"
