@@ -420,6 +420,31 @@ function Hoje() {
           </Link>
         </section>
       )}
+
+      {/* 7. Link discreto para reabrir o Mapa */}
+      {diagnostico && (
+        <p className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={() => setMapaAberto(true)}
+            className="text-[12.5px] underline underline-offset-4"
+            style={{ color: INK_SOFT }}
+          >
+            ver meu Mapa
+          </button>
+        </p>
+      )}
+
+      {mapaAberto && diagnostico && (
+        <MapaSheet
+          diagnostico={diagnostico}
+          respostas={perfil?.respostas ?? null}
+          pago={pago}
+          onClose={() => setMapaAberto(false)}
+          onConcluir={concluirMapa}
+        />
+      )}
     </div>
+
   );
 }
