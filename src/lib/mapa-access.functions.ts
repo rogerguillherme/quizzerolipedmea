@@ -1,3 +1,4 @@
+import { descreverRegua } from "@/lib/cadencia-estado";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
@@ -210,6 +211,11 @@ export const listarLeadsAtencao = createServerFn({ method: "GET" })
         status: l.status,
         motivo: at?.motivo ?? "desconhecido",
         criadoEm: at?.criado_em ?? l.updated_at,
+        // Estado da régua: em que passo está, se pausou por resposta, etc.
+        regua: descreverRegua(
+          l.respostas as Record<string, unknown>,
+          l.status,
+        ),
       };
     });
   });
