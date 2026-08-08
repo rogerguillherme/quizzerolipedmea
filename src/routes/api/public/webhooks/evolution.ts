@@ -121,12 +121,12 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
                 ultima_em?: string;
               }) ?? { usadas: 0 };
             const usadas = Number(teste.usadas ?? 0);
-            const primeiroNome = String(lead.nome ?? "").split(" ")[0] || "linda";
+            const primeiroNome = String(lead.nome ?? "").split(" ")[0] || "";
 
             const { sendWhatsApp } = await import("@/lib/evolution.server");
 
             if (usadas >= 3) {
-              const msg = `Oi ${primeiroNome} 💛 Seu *teste grátis de 3 fotos* já foi usado.\n\nPra continuar recebendo feedback ilimitado das suas refeições + o *plano completo* (sugestão alimentar, chás/shots e lista de compras) por *R$67* — sem assinatura — é só me responder aqui que eu te passo os próximos passos.`;
+              const msg = `${primeiroNome ? `Oi ${primeiroNome}` : "Oi"} 💛 Seu *teste grátis de 3 fotos* já foi usado.\n\nPra continuar recebendo feedback ilimitado das suas refeições + o *plano completo* (sugestão alimentar, chás/shots e lista de compras) por *R$67* — sem assinatura — é só me responder aqui que eu te passo os próximos passos.`;
               const wa = await sendWhatsApp(telefone, msg);
               await supabaseAdmin.from("whatsapp_logs").insert({
                 telefone,

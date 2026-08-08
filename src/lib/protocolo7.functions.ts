@@ -59,9 +59,9 @@ export const iniciarProtocolo7 = createServerFn({ method: "POST" })
       .update({ respostas: respostas as never, status: "protocolo_7d_ativo" })
       .eq("id", lead.id);
 
-    const primeiroNome = (lead.nome || "").split(" ")[0] || "amiga";
+    const primeiroNome = (lead.nome || "").split(" ")[0] || "";
     const msg =
-      `Oi ${primeiroNome}! 💙 Seu Protocolo de 7 Dias começou.\n\n` +
+      `${primeiroNome ? `Oi ${primeiroNome}!` : "Oi!"} 💙 Seu Protocolo de 7 Dias começou.\n\n` +
       `Nos próximos 7 dias vou te enviar dicas curtinhas por aqui, ` +
       `com 2 receitas práticas em dois dias da semana.\n\n` +
       `📝 *Sua lista de compras:*\n` +

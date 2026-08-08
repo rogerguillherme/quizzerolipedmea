@@ -13,9 +13,9 @@ import { PREMIUM_FEATURES } from "@/lib/premium-features";
  * deste plano (pertencem ao plano de R$297) e não devem ser prometidos aqui.
  */
 export function buildPremiumWelcomeMessage(nome: string, loginUrl: string) {
-  const primeiro = String(nome ?? "").split(" ")[0] || "linda";
+  const primeiro = String(nome ?? "").split(" ")[0] || "";
   const itens = PREMIUM_FEATURES.map((f) => `✅ ${f.titulo}`).join("\n");
-  return `Oi ${primeiro}! Aqui é a Gabriela 💙
+  return `${primeiro ? `Oi ${primeiro}!` : "Oi!"} Aqui é a Gabriela 💙
 
 Seu *Plano Premium Zero Lipedema · 30 dias* foi liberado! 🎉
 

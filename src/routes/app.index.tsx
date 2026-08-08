@@ -108,7 +108,7 @@ function Hoje() {
 
   const agora = new Date();
   const hojeISO = hojeISOLocal();
-  const nome = String((profile as { nome?: string } | undefined)?.nome ?? "").split(" ")[0] || "linda";
+  const nome = String((profile as { nome?: string } | undefined)?.nome ?? "").split(" ")[0] || "";
   const isPremium = Boolean(rotina?.isPremium);
   const semanaNum = rotina?.semanaAtual ?? 1;
   const semana = getSemana(isPremium ? semanaNum : 1);
@@ -141,10 +141,16 @@ function Hoje() {
             color: NAVY,
           }}
         >
-          {saudacao(agora)},{" "}
-          <em className="italic" style={{ color: GOLD }}>
-            {nome}
-          </em>
+          {nome ? (
+            <>
+              {saudacao(agora)},{" "}
+              <em className="italic" style={{ color: GOLD }}>
+                {nome}
+              </em>
+            </>
+          ) : (
+            saudacao(agora)
+          )}
         </h1>
         <p className="mt-1 text-[12px] capitalize" style={{ color: "#5C5749" }}>
           {dataExtenso}

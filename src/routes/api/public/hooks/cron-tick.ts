@@ -7,9 +7,14 @@ import {
   RECEITAS_PRATICAS,
   ESCALONAMENTO_DIAS_SEM_RESPOSTA,
 } from "@/lib/protocolo7";
+import { dicaParaDia } from "@/lib/dicas-rotina";
+import { horaLocal } from "@/lib/data-local";
 
 const MS_HORA = 60 * 60 * 1000;
 const MS_DIA = 24 * MS_HORA;
+/** Janela de envio (hora local de São Paulo): 08h até 10h. */
+const JANELA_INICIO = 8;
+const JANELA_FIM = 10;
 
 type Jornada = {
   ativa?: boolean;
@@ -113,6 +118,15 @@ async function processarCadenciaProtocolo(
   return resultados;
 }
 
+/**
+ * Régua pré-venda. Quatro toques, todos na janela da manhã (08h-10h de São
+ * Paulo) para não mandar mensagem de madrugada:
+ *   +20h  · dúvida sobre o Mapa
+ *   +44h  · convite pro teste grátis de foto
+ *   +68h  · oferta do Plano Premium (R$67)
+ *   +6d   · última chamada
+ * Cada toque é idempotente via `respostas.reengaje`.
+ */
 async function processarReengajamento(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseAdmin: any,
@@ -120,85 +134,9 @@ async function processarReengajamento(
 ) {
   const enviados: string[] = [];
 
-  // 0) Mapa iniciado há 1h+ com telefone válido, ainda sem acesso criado (user_id nulo).
-  //    Lembrete rápido pra quem viu o relatório mas não pediu o acesso pelo WhatsApp.
-  const { data: pos1h } = await supabaseAdmin
-    .from("leads")
-    .select("id, nome, telefone, respostas, created_at, user_id")
-    .eq("status", "mapa_gerado")
-    .is("user_id", null)
-    .neq("telefone", "pendente")
-    .lt("created_at", new Date(Date.now() - 1 * MS_HORA).toISOString())
-    .gt("created_at", new Date(Date.now() - 24 * MS_HORA).toISOString())
-    .limit(200);
-
-  for (const lead of pos1h ?? []) {
-    const respostas = (lead.respostas ?? {}) as LeadResp;
-    const reengaje = respostas.reengaje ?? {};
-    if (reengaje.pos1h_at) continue;
-    // Só envia se o telefone parece válido (>=10 dígitos).
-    const digits = String(lead.telefone ?? "").replace(/\D/g, "");
-    if (digits.length < 10) continue;
-    const nome = (lead.nome || "").split(" ")[0] || "amiga";
-    const msg =
-      `Oi ${nome} 💙 Aqui é a Gabriela.\n\n` +
-      `Vi que você fez o seu *Mapa do Lipedema* hoje e recebeu o resultado com as suas 3 prioridades. ` +
-      `Passei aqui só pra saber: ficou alguma dúvida sobre o que apareceu no seu Mapa?\n\n` +
-      `Pode me perguntar por aqui, eu leio com calma e te respondo. ✨`;
-    const wa = await sendWhatsApp(lead.telefone, msg);
-    await supabaseAdmin.from("whatsapp_logs").insert({
-      telefone: lead.telefone,
-      mensagem: msg,
-      status: wa.ok ? "enviado" : "falhou",
-      erro: wa.error ?? null,
-    });
-    if (wa.ok) {
-      reengaje.pos1h_at = new Date().toISOString();
-      respostas.reengaje = reengaje;
-      await supabaseAdmin
-        .from("leads")
-        .update({ respostas: respostas as never })
-        .eq("id", lead.id);
-      enviados.push(lead.id);
-    }
-  }
-
-  // 1) Mapa gerado há 24h+ com telefone válido, ainda sem acesso criado.
-  const { data: pos24 } = await supabaseAdmin
-    .from("leads")
-    .select("id, nome, telefone, respostas, created_at")
-    .eq("status", "mapa_gerado")
-    .neq("telefone", "pendente")
-    .lt("created_at", new Date(Date.now() - 24 * MS_HORA).toISOString())
-    .limit(200);
-
-  for (const lead of pos24 ?? []) {
-    const respostas = (lead.respostas ?? {}) as LeadResp;
-    const reengaje = respostas.reengaje ?? {};
-    if (reengaje.pos24h_at) continue;
-    const nome = (lead.nome || "").split(" ")[0] || "amiga";
-    const msg =
-      `Oi ${nome}! 💙 Aqui é a Gabriela.\n\n` +
-      `Ontem você fez o seu Mapa do Lipedema e viu o resultado, mas a gente não seguiu conversando. ` +
-      `Sem cobrança nenhuma, tá? Só quero te deixar um próximo passo prático: me manda por aqui uma foto de uma refeição sua que eu te digo se aquele prato ajuda ou atrapalha o seu quadro. É de graça.\n\n` +
-      `E se preferir, me conta o que mais te incomoda hoje que eu te oriento por aqui mesmo. ✨`;
-    const wa = await sendWhatsApp(lead.telefone, msg);
-    await supabaseAdmin.from("whatsapp_logs").insert({
-      telefone: lead.telefone,
-      mensagem: msg,
-      status: wa.ok ? "enviado" : "falhou",
-      erro: wa.error ?? null,
-    });
-    if (wa.ok) {
-      reengaje.pos24h_at = new Date().toISOString();
-      respostas.reengaje = reengaje;
-      await supabaseAdmin
-        .from("leads")
-        .update({ respostas: respostas as never })
-        .eq("id", lead.id);
-      enviados.push(lead.id);
-    }
-  }
+  // Fora da janela da manhã não enviamos nada da régua pré-venda.
+  const hora = horaLocal();
+  if (hora < JANELA_INICIO || hora >= JANELA_FIM) return enviados;
 
   const CHECKOUT_URL = "https://pay.kiwify.com.br/j0hsxv3";
 
@@ -212,67 +150,63 @@ async function processarReengajamento(
         0,
     ).getTime();
 
-  // 2.5) Entre 2h e 48h após o Mapa/acesso e ainda não testou nenhuma foto por IA.
-  const { data: pos2hFoto } = await supabaseAdmin
+  const { data: leads } = await supabaseAdmin
     .from("leads")
     .select("id, nome, telefone, respostas, status, created_at, updated_at")
     .in("status", ["mapa_gerado", "acesso_criado"])
     .neq("telefone", "pendente")
-    .gt("created_at", new Date(Date.now() - 60 * MS_HORA).toISOString())
+    .gt("created_at", new Date(Date.now() - 14 * MS_DIA).toISOString())
     .limit(500);
 
-  for (const lead of pos2hFoto ?? []) {
-    const ref = refTempo(lead);
-    if (ref > Date.now() - 2 * MS_HORA || ref < Date.now() - 48 * MS_HORA) continue;
+  for (const lead of leads ?? []) {
     const respostas = (lead.respostas ?? {}) as LeadResp;
     const reengaje = respostas.reengaje ?? {};
-    if (reengaje.pos2h_foto_at) continue;
+    const digits = String(lead.telefone ?? "").replace(/\D/g, "");
+    if (digits.length < 10) continue;
+
+    const idade = Date.now() - refTempo(lead);
+    const nome = (lead.nome || "").split(" ")[0] || "";
+    const oi = nome ? `Oi ${nome}` : "Oi";
     const teste = (respostas.teste_fotos as { usadas?: number } | undefined) ?? {};
-    if (Number(teste.usadas ?? 0) > 0) continue;
-    const nome = (lead.nome || "").split(" ")[0] || "amiga";
-    const msg =
-      `Oi ${nome}! 💙 Aqui é a Gabriela.\n\n` +
-      `Tem uma coisa bem legal que você ainda não testou: me manda aqui mesmo, respondendo esta mensagem, uma foto de qualquer refeição sua que eu te dou um feedback na hora, se aquele prato ajuda ou atrapalha o seu quadro.\n\n` +
-      `É grátis, são 3 fotos de teste, sem compromisso. É só mandar a foto por aqui. ✨`;
-    const wa = await sendWhatsApp(lead.telefone, msg);
-    await supabaseAdmin.from("whatsapp_logs").insert({
-      telefone: lead.telefone,
-      mensagem: msg,
-      status: wa.ok ? "enviado" : "falhou",
-      erro: wa.error ?? null,
-    });
-    if (wa.ok) {
-      reengaje.pos2h_foto_at = new Date().toISOString();
-      respostas.reengaje = reengaje;
-      await supabaseAdmin
-        .from("leads")
-        .update({ respostas: respostas as never })
-        .eq("id", lead.id);
-      enviados.push(lead.id);
+    const jaTestouFoto = Number(teste.usadas ?? 0) > 0;
+
+    // Um toque por lead por execução: escolhemos o mais recente devido.
+    let chave: string | null = null;
+    let msg = "";
+
+    if (idade >= 6 * MS_DIA && !reengaje.pos6d_at) {
+      chave = "pos6d_at";
+      msg =
+        `${oi}, aqui é a Gabriela 💙\n\n` +
+        `Essa é a minha última mensagem sobre isso, prometo. O acesso ao *Plano Premium Zero Lipedema* segue por R$67, sem assinatura, com 7 dias de garantia.\n\n` +
+        `Se agora não é a hora, tudo bem. Seu Mapa continua valendo e eu sigo por aqui quando você quiser retomar.\n\n` +
+        `🔗 ${CHECKOUT_URL}`;
+    } else if (idade >= 68 * MS_HORA && !reengaje.pos48h_at) {
+      chave = "pos48h_at";
+      msg =
+        `${oi}, aqui é a Gabriela 💙\n\n` +
+        `Voltando pra te fazer um convite direto: hoje eu libero seu acesso ao Plano Premium Zero Lipedema por um valor de inauguração, de R$119 por apenas R$67, sem assinatura obrigatória.\n\n` +
+        `O centro do plano é a Rotina Zero Lipedema: a gente ajusta uma refeição por semana, começando pelo café da manhã, sem contar caloria e sem passar fome. E você pode fotografar seu prato pra receber a leitura na hora, o que ajuda, o que atrapalha e o que ajustar na próxima refeição.\n\n` +
+        `Tem 7 dias de garantia: se não fizer sentido pra você, é só me chamar que devolvo, sem burocracia. E como bônus, libero todos os meus guias e receitas práticas.\n\n` +
+        `🔗 Pra ativar: ${CHECKOUT_URL}\n\n` +
+        `Qualquer dúvida, me chama por aqui. ✨`;
+    } else if (idade >= 44 * MS_HORA && !reengaje.pos2h_foto_at && !jaTestouFoto) {
+      chave = "pos2h_foto_at";
+      msg =
+        `${oi}! 💙 Aqui é a Gabriela.\n\n` +
+        `Tem uma coisa bem legal que você ainda não testou: me manda aqui mesmo, respondendo esta mensagem, uma foto de qualquer refeição sua que eu te dou um feedback na hora, se aquele prato ajuda ou atrapalha o seu quadro.\n\n` +
+        `É grátis, são 3 fotos de teste, sem compromisso. É só mandar a foto por aqui. ✨`;
+    } else if (idade >= 20 * MS_HORA && !reengaje.pos1h_at) {
+      chave = "pos1h_at";
+      msg =
+        `${oi} 💙 Aqui é a Gabriela.\n\n` +
+        `Vi que você fez o seu *Mapa do Lipedema* e recebeu o resultado com as suas 3 prioridades. ` +
+        `Passei aqui só pra saber: ficou alguma dúvida sobre o que apareceu no seu Mapa?\n\n` +
+        `Pode me perguntar por aqui, eu leio com calma e te respondo. ✨`;
     }
-  }
 
-  // 2) 48h+ após o Mapa/acesso: pitch do Plano Premium (R$67), direto pro checkout.
-  const { data: pos48 } = await supabaseAdmin
-    .from("leads")
-    .select("id, nome, telefone, respostas, status, created_at, updated_at")
-    .in("status", ["mapa_gerado", "acesso_criado"])
-    .neq("telefone", "pendente")
-    .limit(500);
+    if (!chave) continue;
 
-  for (const lead of pos48 ?? []) {
-    if (refTempo(lead) > Date.now() - 48 * MS_HORA) continue;
-    const respostas = (lead.respostas ?? {}) as LeadResp;
-    const reengaje = respostas.reengaje ?? {};
-    if (reengaje.pos48h_at) continue;
-    const nome = (lead.nome || "").split(" ")[0] || "amiga";
-    const msg =
-      `${nome}, aqui é a Gabriela 💙\n\n` +
-      `Voltando pra te fazer um convite direto: hoje eu libero seu acesso ao Plano Premium Zero Lipedema por um valor de inauguração, de R$119 por apenas R$67, sem assinatura obrigatória.\n\n` +
-      `O centro do plano é a Rotina Zero Lipedema: a gente ajusta uma refeição por semana, começando pelo café da manhã, sem contar caloria e sem passar fome. E você pode fotografar seu prato pra receber a leitura na hora, o que ajuda, o que atrapalha e o que ajustar na próxima refeição.\n\n` +
-      `Tem 7 dias de garantia: se não fizer sentido pra você, é só me chamar que devolvo, sem burocracia. E como bônus, libero todos os meus guias e receitas práticas.\n\n` +
-      `🔗 Pra ativar: ${CHECKOUT_URL}\n\n` +
-      `Qualquer dúvida, me chama por aqui. ✨`;
     const wa = await sendWhatsApp(lead.telefone, msg);
     await supabaseAdmin.from("whatsapp_logs").insert({
       telefone: lead.telefone,
@@ -281,7 +215,7 @@ async function processarReengajamento(
       erro: wa.error ?? null,
     });
     if (wa.ok) {
-      reengaje.pos48h_at = new Date().toISOString();
+      reengaje[chave] = new Date().toISOString();
       respostas.reengaje = reengaje;
       await supabaseAdmin
         .from("leads")
@@ -293,6 +227,94 @@ async function processarReengajamento(
 
   return enviados;
 }
+
+/**
+ * Cadência pós-compra: uma dica por dia, por 28 dias, para quem está com
+ * `plano_ativo`. A dica respeita a semana que a paciente realmente está
+ * vivendo na Rotina (não o calendário), e roda na mesma janela da manhã.
+ * Idempotência por `respostas.rotina_dicas.dias_enviados`.
+ */
+async function processarCadenciaRotina(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+  sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
+) {
+  const resultados: Array<{ lead: string; dia: number; status: string }> = [];
+
+  const hora = horaLocal();
+  if (hora < JANELA_INICIO || hora >= JANELA_FIM) return resultados;
+
+  const { data: leads } = await supabaseAdmin
+    .from("leads")
+    .select("id, nome, telefone, respostas, user_id, updated_at, created_at")
+    .eq("status", "plano_ativo")
+    .neq("telefone", "pendente")
+    .limit(500);
+
+  for (const lead of leads ?? []) {
+    const respostas = (lead.respostas ?? {}) as LeadResp;
+    const controle =
+      (respostas.rotina_dicas as
+        | { inicio?: string; dias_enviados?: number[] }
+        | undefined) ?? {};
+
+    const inicio =
+      controle.inicio ?? lead.updated_at ?? lead.created_at ?? new Date().toISOString();
+    const dia = diasDesde(inicio) + 1;
+    if (dia < 1 || dia > 28) continue;
+
+    const enviados = new Set(controle.dias_enviados ?? []);
+    if (enviados.has(dia)) continue;
+
+    // Semana vivida de verdade: se ela não avançou, não recebe conteúdo adiantado.
+    let semanaAtual = Math.min(4, Math.ceil(dia / 7));
+    if (lead.user_id) {
+      const { data: prog } = await supabaseAdmin
+        .from("rotina_progresso")
+        .select("semana_atual")
+        .eq("user_id", lead.user_id)
+        .maybeSingle();
+      if (prog?.semana_atual) {
+        semanaAtual = Math.min(4, Math.max(1, Number(prog.semana_atual)));
+      }
+    }
+
+    const dica = dicaParaDia(dia, semanaAtual);
+    if (!dica) continue;
+
+    const nome = (lead.nome || "").split(" ")[0] || "";
+    const msg =
+      `${nome ? `${nome}, ` : ""}dia ${dia} da sua Rotina 💙\n\n` +
+      `${dica.texto}\n\n` +
+      `Quando cumprir a missão de hoje, marca lá no app na aba *Hoje*.`;
+
+    const wa = await sendWhatsApp(lead.telefone, msg);
+    await supabaseAdmin.from("whatsapp_logs").insert({
+      telefone: lead.telefone,
+      mensagem: msg,
+      status: wa.ok ? "enviado" : "falhou",
+      erro: wa.error ?? null,
+    });
+
+    if (wa.ok) {
+      enviados.add(dia);
+      respostas.rotina_dicas = {
+        inicio,
+        dias_enviados: Array.from(enviados).sort((a, b) => a - b),
+      };
+      await supabaseAdmin
+        .from("leads")
+        .update({ respostas: respostas as never })
+        .eq("id", lead.id);
+      resultados.push({ lead: lead.id, dia, status: "enviado" });
+    } else {
+      resultados.push({ lead: lead.id, dia, status: "falhou" });
+    }
+  }
+
+  return resultados;
+}
+
 
 export const Route = createFileRoute("/api/public/hooks/cron-tick")({
   server: {
@@ -323,6 +345,7 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
           supabaseAdmin,
           sendWhatsApp,
         );
+        const rotina = await processarCadenciaRotina(supabaseAdmin, sendWhatsApp);
 
         // suppress unused import warning
         void horasDesde;
@@ -332,6 +355,7 @@ export const Route = createFileRoute("/api/public/hooks/cron-tick")({
           ok: true,
           cadencia,
           reengajados,
+          rotina,
           ts: new Date().toISOString(),
         });
       },
