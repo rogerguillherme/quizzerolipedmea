@@ -149,13 +149,25 @@ function Progresso() {
           <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.22em", color: GOLD_SOFT }}>
             Sequência
           </p>
-          <p className="mt-1" style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", lineHeight: 1 }}>
-            {sequencia}
-          </p>
-          <p className="mt-1 text-[12.5px]" style={{ color: "rgba(245,239,225,0.7)" }}>
-            {sequencia === 1 ? "dia seguido" : "dias seguidos"}
+          {sequencia > 0 ? (
+            <>
+              <p className="mt-1" style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", lineHeight: 1 }}>
+                {sequencia}
+              </p>
+              <p className="mt-1 text-[12.5px]" style={{ color: "rgba(245,239,225,0.7)" }}>
+                {sequencia === 1 ? "dia seguido" : "dias seguidos"}
+              </p>
+            </>
+          ) : (
+            <p className="mt-2 text-[14px]" style={{ color: "rgba(245,239,225,0.9)", lineHeight: 1.4 }}>
+              Vamos começar hoje
+            </p>
+          )}
+          <p className="mt-2 text-[12.5px]" style={{ color: GOLD_SOFT }}>
+            {totalCheckins} {totalCheckins === 1 ? "dia" : "dias"} no seu histórico
           </p>
         </div>
+
         <div style={{ borderLeft: "1px solid rgba(245,239,225,0.16)", paddingLeft: "1rem" }}>
           <p className="text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.22em", color: GOLD_SOFT }}>
             Recorde
