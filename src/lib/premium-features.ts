@@ -44,6 +44,9 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     titulo: "Rotina Zero Lipedema",
     descricao:
       "Uma refeição nova por semana. Em 4 semanas suas 4 refeições principais estão ajustadas, sem contar caloria e sem passar fome.",
+    foto: `${FOTOS_BASE}rotina.jpg`,
+    fotoAlt:
+      "Prato de ovos mexidos com abacate e frutas vermelhas na luz da manhã",
   },
   {
     id: "foto",
@@ -51,6 +54,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     titulo: "Registro de Refeições com Fotos",
     descricao:
       "Fotografe o prato e receba na hora a leitura: o que ajuda, o que atrapalha e o que ajustar na próxima refeição.",
+    foto: `${FOTOS_BASE}foto.jpg`,
+    fotoAlt: "Mãos fotografando o prato de comida com o celular",
   },
   {
     id: "dicas",
@@ -58,6 +63,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     titulo: "Dicas diárias no WhatsApp",
     descricao:
       "Orientação prática todo dia, acompanhando a missão da sua semana na Rotina.",
+    foto: `${FOTOS_BASE}dicas.jpg`,
+    fotoAlt: "Celular com uma conversa aberta ao lado de uma xícara de chá",
   },
   {
     id: "plano",
@@ -65,6 +72,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     titulo: "Plano alimentar anti-inflamatório",
     descricao:
       "Café, almoço, lanche e jantar dentro do padrão sem glúten e sem lactose.",
+    foto: `${FOTOS_BASE}plano.jpg`,
+    fotoAlt: "Prato de frango grelhado com legumes assados e frutas",
   },
   {
     id: "natural",
@@ -72,6 +81,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     titulo: "Guia Natural Zero Lipedema",
     descricao:
       "Chás e shots caseiros, com preparo, horário e quem não deve tomar.",
+    foto: `${FOTOS_BASE}natural.jpg`,
+    fotoAlt: "Chá quente de gengibre com hortelã e mel, com fumaça subindo",
   },
   {
     id: "desinchando",
@@ -79,6 +90,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     titulo: "Guia Desinchando na Prática",
     descricao:
       "Hábitos simples do dia a dia que ajudam a reduzir o inchaço nas pernas.",
+    foto: `${FOTOS_BASE}desinchando.jpg`,
+    fotoAlt: "Pernas descansando elevadas sobre uma almofada",
   },
   {
     id: "evolucao",
@@ -86,5 +99,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     titulo: "Quadro de Evolução",
     descricao:
       "Seu progresso registrado semana a semana, com os feedbacks da sua rotina.",
+    foto: `${FOTOS_BASE}evolucao.jpg`,
+    fotoAlt: "Mão segurando o celular com um gráfico de progresso dourado",
   },
 ] as const;
+
