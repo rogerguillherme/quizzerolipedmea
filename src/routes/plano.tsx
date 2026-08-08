@@ -292,7 +292,7 @@ function PlanoPage() {
         <Reveal delay={2}>
           <p className="mt-6 max-w-xl text-[17px] leading-relaxed sm:text-[19px]" style={{ color: C.navySoft }}>
             Lipedema não é gordura comum e não responde a dieta comum. Quanto mais restrição, mais
-            inflamação — por isso a balança desce e a perna fica igual. O caminho é outro.
+            inflamação, e é por isso que a balança desce e a perna fica igual. O caminho é outro.
           </p>
         </Reveal>
         <Reveal delay={3}>
@@ -360,7 +360,7 @@ function PlanoPage() {
             },
             {
               t: "Restrição derruba a energia",
-              d: "Sem energia não tem rotina que se sustente — e aí começa de novo o ciclo do recomeço.",
+              d: "Sem energia não tem rotina que se sustente, e aí começa de novo o ciclo do recomeço.",
             },
           ].map((item, i) => (
             <Reveal key={item.t} delay={(i as 0 | 1 | 2)}>

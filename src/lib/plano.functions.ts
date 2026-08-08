@@ -86,7 +86,7 @@ export const enviarAcessoMapa = createServerFn({ method: "POST" })
         (prioridades ? `*Suas 3 prioridades agora:*\n${prioridades}\n\n` : "") +
         `🔗 Seu Mapa completo está aqui: ${loginUrl}\n\n` +
         `O link já abre no seu nome, você só escolhe uma senha. ` +
-        `Esse acesso é gratuito e não tem cobrança nenhuma nessa etapa — ` +
+        `Esse acesso é gratuito e não tem cobrança nenhuma nessa etapa, ` +
         `o Plano de 30 dias é um passo separado, só se você quiser depois.\n\n` +
         `Me conta uma coisa: o inchaço piora mais de manhã ou no fim do dia?`;
 
@@ -105,7 +105,7 @@ export const enviarAcessoMapa = createServerFn({ method: "POST" })
           ok: false as const,
           motivo: "envio_falhou" as const,
           mensagem:
-            "Não consegui abrir a conversa no WhatsApp agora. Seu acesso já está criado — quer tentar o envio de novo?",
+            "Não consegui abrir a conversa no WhatsApp agora. Seu acesso já está criado. Quer tentar o envio de novo?",
           loginUrl,
         };
       }
