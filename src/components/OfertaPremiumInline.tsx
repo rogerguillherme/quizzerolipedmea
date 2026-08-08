@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { trackMeta } from "@/lib/meta-track";
-import { PREMIUM_FEATURES } from "@/lib/premium-features";
+import { PremiumFeaturesCarousel } from "@/components/PremiumFeaturesCarousel";
 
 const NAVY = "#16324F";
 const GOLD = "#AF7F35";
@@ -15,8 +15,7 @@ const CREAM_SOFT = "#FBF6E9";
 
 export const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/j0hsxv3";
 
-/** Mesmos benefícios exibidos em /app/derma — fonte única em premium-features.ts. */
-const FEATURES = PREMIUM_FEATURES;
+
 
 
 export interface OfertaPremiumInlineProps {
