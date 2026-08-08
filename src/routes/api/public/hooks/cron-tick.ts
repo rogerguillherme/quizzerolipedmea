@@ -15,7 +15,10 @@ import {
   PRE_POS20H,
   PRE_POS44H,
   PRE_POS68H,
+  PRE_POS92H,
   PRE_POS6D,
+  HISTORIA_PACIENTE,
+  varsDoLead,
   ROT_ACESSO_4H,
   ROT_DICA,
   ROT_RETOMADA,
@@ -300,10 +303,11 @@ async function marcarPausa(
 
 /**
  * Régua pré-venda. Quatro toques, cada lead no horário próprio dele:
- *   +20h  · convite pro teste grátis de foto (primeira mensagem: se apresenta)
+ *   +20h  · pergunta fácil ("dor ou inchaço?")
  *   +44h  · quebra de objeção ("já tentei de tudo")
- *   +68h  · oferta do Plano Premium (R$67)
- *   +6d   · última chamada
+ *   +68h  · prova + pergunta ("quer ver a primeira semana?"), ainda sem link
+ *   +92h  · oferta do Plano Premium (R$67) — primeira vez que aparece link
+ *   +6d   · fechamento
  * Cada toque é idempotente via `respostas.reengaje`.
  */
 async function processarReengajamento(
@@ -354,29 +358,26 @@ async function processarReengajamento(
     if (digits.length < 10) continue;
 
     const idade = Date.now() - refTempo(lead);
-    const nome = (lead.nome || "").split(" ")[0] || "";
-    // Abertura completa só na primeira mensagem que a lead recebe.
-    const primeira = Object.keys(reengaje).length === 0;
-    const oi = nome ? `Oi ${nome}` : "Oi";
-    const vocativo = primeira ? "" : nome ? `${nome}, ` : "";
-    const teste = (respostas.teste_fotos as { usadas?: number } | undefined) ?? {};
-    const jaTestouFoto = Number(teste.usadas ?? 0) > 0;
-
     // Um toque por lead por execução: escolhemos o mais recente devido.
     let chave: string | null = null;
     let msg = "";
-    const vars = { oi, nome: vocativo, link: CHECKOUT_URL };
+    // Tokens do Mapa: {nome}, {sintoma}, {objetivo}, {link}.
+    const vars = varsDoLead({
+      nome: lead.nome,
+      respostas: respostas as Record<string, unknown>,
+      link: CHECKOUT_URL,
+    });
 
     // Comportamento da lead: respondeu nas últimas 48h?
     const entrada = entradas.get(chaveTelefone(lead.telefone));
     const intencao = entrada ? temIntencaoCompra(entrada.texto) : false;
     let fastTrack = false;
 
-    if (intencao && !reengaje.pos48h_at) {
-      // 3. Intenção de compra: pula direto pra oferta, sem esperar cronograma.
+    if (intencao && !reengaje.pos92h_at) {
+      // 3. Intenção de compra: pula direto pra oferta com link, sem cronograma.
       fastTrack = true;
-      chave = PRE_POS68H.chave;
-      msg = copy(PRE_POS68H, lead.id, vars);
+      chave = PRE_POS92H.chave;
+      msg = copy(PRE_POS92H, lead.id, vars);
     } else if (entrada) {
       // 4. Respondeu: a conversa é da Gabriela e do agente. Nada programado.
       await marcarPausa(supabaseAdmin, lead.id, respostas, entrada.em);
@@ -387,13 +388,21 @@ async function processarReengajamento(
     } else if (idade >= 6 * MS_DIA && !reengaje.pos6d_at) {
       chave = PRE_POS6D.chave;
       msg = copy(PRE_POS6D, lead.id, vars);
+    } else if (idade >= 92 * MS_HORA && !reengaje.pos92h_at) {
+      chave = PRE_POS92H.chave;
+      msg = copy(PRE_POS92H, lead.id, vars);
     } else if (idade >= 68 * MS_HORA && !reengaje.pos48h_at) {
       chave = PRE_POS68H.chave;
-      msg = copy(PRE_POS68H, lead.id, vars);
+      // A história da paciente só entra se a Gabriela tiver preenchido.
+      // Vazia, sai apenas a pergunta — nunca uma história inventada.
+      const pergunta = copy(PRE_POS68H, lead.id, vars);
+      msg = HISTORIA_PACIENTE.trim()
+        ? `${HISTORIA_PACIENTE.trim()}\n---\n${pergunta}`
+        : pergunta;
     } else if (idade >= 44 * MS_HORA && !reengaje.pos2h_foto_at) {
       chave = PRE_POS44H.chave;
       msg = copy(PRE_POS44H, lead.id, vars);
-    } else if (idade >= 20 * MS_HORA && !reengaje.pos1h_at && !jaTestouFoto) {
+    } else if (idade >= 20 * MS_HORA && !reengaje.pos1h_at) {
       chave = PRE_POS20H.chave;
       msg = copy(PRE_POS20H, lead.id, vars);
     }
@@ -421,6 +430,7 @@ async function processarReengajamento(
         // Os passos intermediários não podem sair depois, fora de contexto.
         reengaje.pos1h_at = reengaje.pos1h_at ?? agora;
         reengaje.pos2h_foto_at = reengaje.pos2h_foto_at ?? agora;
+        reengaje.pos48h_at = reengaje.pos48h_at ?? agora;
         respostas.fast_track_em = agora;
       }
       respostas.reengaje = reengaje;
