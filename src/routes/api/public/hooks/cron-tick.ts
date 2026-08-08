@@ -24,7 +24,91 @@ type Jornada = {
   ultimo_feedback_em?: string;
 };
 
-type LeadResp = Record<string, unknown> & { jornada_7dias?: Jornada; atencao?: unknown; reengaje?: Record<string, string> };
+type LeadResp = Record<string, unknown> & {
+  jornada_7dias?: Jornada;
+  atencao?: { motivo?: string; criado_em?: string } | unknown;
+  reengaje?: Record<string, string>;
+  envio_falhas?: Record<string, number>;
+};
+
+/** Máximo de tentativas por passo antes de desistir daquele passo. */
+const MAX_FALHAS_POR_PASSO = 3;
+
+/** Detecta resposta da Evolution indicando que o número não existe no WhatsApp. */
+function numeroInexistente(erro?: string): boolean {
+  if (!erro) return false;
+  const e = erro.toLowerCase().replace(/\s+/g, "");
+  return (
+    e.includes('"exists":false') ||
+    e.includes("exists:false") ||
+    e.includes("numbernotexists") ||
+    e.includes("notexistsonwhatsapp")
+  );
+}
+
+/** Lead marcado como número inválido — deve ser ignorado em toda a cadência. */
+function leadInvalido(respostas: LeadResp): boolean {
+  const a = respostas.atencao as { motivo?: string } | undefined;
+  return a?.motivo === "numero_invalido";
+}
+
+type ResultadoEnvio = {
+  ok: boolean;
+  /** true quando atingiu o teto de falhas: gravar a flag mesmo assim e parar. */
+  desistir: boolean;
+  /** true quando o número não existe: pular o lead inteiro. */
+  invalido: boolean;
+};
+
+/**
+ * Envio único com controle de falhas. Sempre registra em `whatsapp_logs`.
+ * Mutação de `respostas` (contador/atenção) é persistida aqui mesmo.
+ */
+async function enviarComControle(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+  sendWhatsApp: (t: string, m: string) => Promise<{ ok: boolean; error?: string }>,
+  lead: { id: string; telefone: string },
+  respostas: LeadResp,
+  chave: string,
+  mensagem: string,
+): Promise<ResultadoEnvio> {
+  const wa = await sendWhatsApp(lead.telefone, mensagem);
+
+  await supabaseAdmin.from("whatsapp_logs").insert({
+    telefone: lead.telefone,
+    mensagem,
+    status: wa.ok ? "enviado" : "falhou",
+    erro: wa.error ?? null,
+  });
+
+  if (wa.ok) return { ok: true, desistir: false, invalido: false };
+
+  if (numeroInexistente(wa.error)) {
+    respostas.atencao = {
+      motivo: "numero_invalido",
+      criado_em: new Date().toISOString(),
+      detalhe: (wa.error ?? "").slice(0, 200),
+    };
+    await supabaseAdmin
+      .from("leads")
+      .update({ respostas: respostas as never })
+      .eq("id", lead.id);
+    return { ok: false, desistir: true, invalido: true };
+  }
+
+  const falhas = { ...(respostas.envio_falhas ?? {}) };
+  falhas[chave] = (falhas[chave] ?? 0) + 1;
+  respostas.envio_falhas = falhas;
+  const desistir = falhas[chave] >= MAX_FALHAS_POR_PASSO;
+
+  await supabaseAdmin
+    .from("leads")
+    .update({ respostas: respostas as never })
+    .eq("id", lead.id);
+
+  return { ok: false, desistir, invalido: false };
+}
 
 function diasDesde(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / MS_DIA);
@@ -33,6 +117,7 @@ function diasDesde(iso: string): number {
 function horasDesde(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / MS_HORA);
 }
+
 
 async function processarCadenciaProtocolo(
   supabaseAdmin: Awaited<ReturnType<typeof import("@/integrations/supabase/client.server").supabaseAdmin.from>> extends never ? never : import("@supabase/supabase-js").SupabaseClient,
@@ -48,6 +133,7 @@ async function processarCadenciaProtocolo(
 
   for (const lead of leads ?? []) {
     const respostas = (lead.respostas ?? {}) as LeadResp;
+    if (leadInvalido(respostas)) continue;
     const j = respostas.jornada_7dias;
     if (!j?.ativa || !j.iniciado_em) continue;
 
@@ -74,15 +160,17 @@ async function processarCadenciaProtocolo(
         receitaBloco +
         (d < 7 ? feedbackAnterior : "\n\nHoje é o último dia — dá uma olhada no seu progresso no app 💙");
 
-      const wa = await sendWhatsApp(lead.telefone, msg);
-      await supabaseAdmin.from("whatsapp_logs").insert({
-        telefone: lead.telefone,
-        mensagem: msg,
-        status: wa.ok ? "enviado" : "falhou",
-        erro: wa.error ?? null,
-      });
+      const r = await enviarComControle(
+        supabaseAdmin,
+        sendWhatsApp,
+        lead as { id: string; telefone: string },
+        respostas,
+        `protocolo_dia_${d}`,
+        msg,
+      );
 
-      if (wa.ok) {
+      if (r.ok || r.desistir) {
+        // Em caso de desistência, marcamos o dia como enviado para não repetir.
         enviados.add(d);
         j.dias_enviados = Array.from(enviados).sort((a, b) => a - b);
         respostas.jornada_7dias = j;
@@ -90,12 +178,18 @@ async function processarCadenciaProtocolo(
           .from("leads")
           .update({ respostas: respostas as never })
           .eq("id", lead.id);
-        resultados.push({ lead: lead.id, dia: d, status: "enviado" });
+        resultados.push({
+          lead: lead.id,
+          dia: d,
+          status: r.ok ? "enviado" : r.invalido ? "numero_invalido" : "desistiu",
+        });
+        if (!r.ok) break;
       } else {
         resultados.push({ lead: lead.id, dia: d, status: "falhou" });
         break; // pra não empilhar mensagens no mesmo lead se a API tá fora
       }
     }
+
 
     // Fila de atenção: 3+ dias sem responder feedback.
     const refFeedback = j.ultimo_feedback_em ?? j.iniciado_em;
@@ -155,11 +249,16 @@ async function processarReengajamento(
     .select("id, nome, telefone, respostas, status, created_at, updated_at")
     .in("status", ["mapa_gerado", "acesso_criado"])
     .neq("telefone", "pendente")
+    // Nunca gastamos chamada de API com número que já sabemos ser inexistente.
+    .or(
+      "respostas->atencao->>motivo.is.null,respostas->atencao->>motivo.neq.numero_invalido",
+    )
     .gt("created_at", new Date(Date.now() - 14 * MS_DIA).toISOString())
     .limit(500);
 
   for (const lead of leads ?? []) {
     const respostas = (lead.respostas ?? {}) as LeadResp;
+    if (leadInvalido(respostas)) continue;
     const reengaje = respostas.reengaje ?? {};
     const digits = String(lead.telefone ?? "").replace(/\D/g, "");
     if (digits.length < 10) continue;
@@ -212,23 +311,27 @@ async function processarReengajamento(
 
     if (!chave) continue;
 
-    const wa = await sendWhatsApp(lead.telefone, msg);
-    await supabaseAdmin.from("whatsapp_logs").insert({
-      telefone: lead.telefone,
-      mensagem: msg,
-      status: wa.ok ? "enviado" : "falhou",
-      erro: wa.error ?? null,
-    });
-    if (wa.ok) {
+    const r = await enviarComControle(
+      supabaseAdmin,
+      sendWhatsApp,
+      lead as { id: string; telefone: string },
+      respostas,
+      chave,
+      msg,
+    );
+
+    // Sucesso ou teto de falhas atingido: grava a flag e não tenta mais esse passo.
+    if (r.ok || r.desistir) {
       reengaje[chave] = new Date().toISOString();
       respostas.reengaje = reengaje;
       await supabaseAdmin
         .from("leads")
         .update({ respostas: respostas as never })
         .eq("id", lead.id);
-      enviados.push(lead.id);
+      if (r.ok) enviados.push(lead.id);
     }
   }
+
 
   return enviados;
 }
@@ -263,10 +366,16 @@ async function processarCadenciaRotina(
     .select("id, nome, telefone, respostas, user_id, updated_at, created_at")
     .eq("status", "plano_ativo")
     .neq("telefone", "pendente")
+    // Ignora números já marcados como inexistentes no WhatsApp.
+    .or(
+      "respostas->atencao->>motivo.is.null,respostas->atencao->>motivo.neq.numero_invalido",
+    )
     .limit(500);
 
   for (const lead of leads ?? []) {
     const respostas = (lead.respostas ?? {}) as LeadResp;
+    if (leadInvalido(respostas)) continue;
+
     const msgs =
       (respostas.rotina_msgs as
         | {
@@ -400,26 +509,33 @@ async function processarCadenciaRotina(
 
     if (!tipo || !msg) continue;
 
-    const wa = await sendWhatsApp(lead.telefone, msg);
-    await supabaseAdmin.from("whatsapp_logs").insert({
-      telefone: lead.telefone,
-      mensagem: msg,
-      status: wa.ok ? "enviado" : "falhou",
-      erro: wa.error ?? null,
-    });
+    const r = await enviarComControle(
+      supabaseAdmin,
+      sendWhatsApp,
+      lead as { id: string; telefone: string },
+      respostas,
+      `rotina_${tipo}`,
+      msg,
+    );
 
-    if (wa.ok) {
+    if (r.ok || r.desistir) {
+      // Teto de falhas: grava as flags do passo assim mesmo e segue em frente.
       proximo.ultimo_envio = hoje;
       respostas.rotina_msgs = proximo;
       await supabaseAdmin
         .from("leads")
         .update({ respostas: respostas as never })
         .eq("id", lead.id);
-      resultados.push({ lead: lead.id, tipo, status: "enviado" });
+      resultados.push({
+        lead: lead.id,
+        tipo,
+        status: r.ok ? "enviado" : r.invalido ? "numero_invalido" : "desistiu",
+      });
     } else {
       resultados.push({ lead: lead.id, tipo, status: "falhou" });
     }
   }
+
 
   return resultados;
 }
