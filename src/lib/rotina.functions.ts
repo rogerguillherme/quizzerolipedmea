@@ -40,6 +40,21 @@ function calcularSequencia(datas: readonly string[], hoje: string): number {
   return seq;
 }
 
+/** Maior sequência de dias consecutivos já registrada (recorde). */
+function calcularRecorde(datas: readonly string[]): number {
+  const unicas = Array.from(new Set(datas)).sort();
+  if (unicas.length === 0) return 0;
+  let melhor = 1;
+  let atual = 1;
+  for (let i = 1; i < unicas.length; i++) {
+    if (diasEntre(unicas[i]!, unicas[i - 1]!) === 1) atual++;
+    else atual = 1;
+    if (atual > melhor) melhor = atual;
+  }
+  return melhor;
+}
+
+
 async function ehPremium(userId: string): Promise<boolean> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin
