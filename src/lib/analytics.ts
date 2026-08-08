@@ -28,6 +28,10 @@ export type FunnelEvent =
   | "premium_meal_demo_opened"
   | "protocol7_started"
   | "protocol7_completed"
+  | "rotina_checkin"
+  | "rotina_avancou_semana"
+  | "rotina_bloqueada_cta"
+  | "rotina_concluida_upsell"
   | "refund_requested";
 
 export type TrackedEvent = {
