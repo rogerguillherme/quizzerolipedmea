@@ -19,9 +19,9 @@ import {
 
 export const Route = createFileRoute("/app/registrar")({
   component: RegistrarPage,
-  validateSearch: (s: Record<string, unknown>) => ({
-    camera: s.camera === "1" || s.camera === true ? true : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): { camera?: true } =>
+    s.camera === "1" || s.camera === true ? { camera: true } : {},
+
   head: () => ({
     meta: [
       { title: "Registrar refeição · Zero Lipedema" },
