@@ -10,6 +10,8 @@
 // - 3 variantes de texto por mensagem, escolhidas pelo hash do lead
 import { createFileRoute } from "@tanstack/react-router";
 import { dicaParaDia } from "@/lib/dicas-rotina";
+import { mensagemFaseWhatsApp } from "@/lib/rotina-content";
+
 import { hojeISO, isoLocal, diasEntre, minutoDoDiaLocal } from "@/lib/data-local";
 import {
   PRE_POS20H,
