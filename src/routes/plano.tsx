@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ShieldCheck, Check, ChevronDown, Flame, Activity, Clock, Droplets, CircleSlash, RotateCw } from "lucide-react";
 import { PlanoBackground3D } from "@/components/PlanoBackground3D";
 import { MapaPopup } from "@/components/MapaPopup";
+import { DepoimentosWhatsapp } from "@/components/DepoimentosWhatsapp";
 import { KIWIFY_CHECKOUT_URL } from "@/components/OfertaPremiumInline";
 import { PREMIUM_FEATURES } from "@/lib/premium-features";
 import { lerMapaSessao, mapaJaEnviado, type MapaSessao } from "@/lib/mapa-sessao";
@@ -748,7 +749,11 @@ function PlanoPage() {
         </div>
       </section>
 
+      {/* 5b. Prova social — desligada até haver print real (ver REAIS). */}
+      <DepoimentosWhatsapp navy={C.navy} navySoft={C.navySoft} goldLabel={C.goldLabel} />
+
       {/* 6. Gabriela */}
+
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <div className="pl-card flex flex-col items-center gap-7 rounded-3xl p-7">
