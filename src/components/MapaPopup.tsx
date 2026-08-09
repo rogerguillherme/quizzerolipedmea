@@ -177,7 +177,20 @@ export function MapaPopup({
                 </p>
                 <button
                   type="button"
-                  onClick={onClose}
+                  onClick={() => {
+                    // Clique de maior intenção do popup: leva a lead pra oferta.
+                    track("mapa_popup_acessar", {
+                      lead_id: sessao.leadId,
+                      funil: sessao.funil ?? "plano-direto",
+                      estagio: d.estagio,
+                    });
+                    trackMeta("ViewContent", {
+                      content_name: "Mapa do Lipedema - Acessar",
+                      content_category: "popup_mapa",
+                    });
+                    if (onVerFases) onVerFases();
+                    else onClose();
+                  }}
                   className="mt-5 w-full rounded-full px-6 py-4 text-[16px] font-semibold"
                   style={{ background: C.gold, color: "#fff" }}
                 >
