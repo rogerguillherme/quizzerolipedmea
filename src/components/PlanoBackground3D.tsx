@@ -106,22 +106,42 @@ export function PlanoBackground3D() {
             return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
           }
 
+          varying vec3 vNormal;
+          varying vec3 vView;
+
           void main() {
             float n = snoise(normal * 0.9 + vec3(uTime * 0.06));
             vec3 displaced = position + normal * n * uAmp;
             vMix = clamp(0.5 + n * 0.5, 0.0, 1.0);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+            vNormal = normalize(normalMatrix * normal);
+            vec4 mv = modelViewMatrix * vec4(displaced, 1.0);
+            vView = normalize(-mv.xyz);
+            gl_Position = projectionMatrix * mv;
           }
         `;
 
+        // Aditivo: a forma SOMA luz na página. Por isso há realce especular
+        // e fresnel puxando para o dourado claro — sem isso o volume some.
         const fragmentShader = /* glsl */ `
           uniform vec3 uNavy;
           uniform vec3 uGold;
+          uniform vec3 uGlow;
           uniform float uOpacity;
           uniform float uFade;
           varying float vMix;
+          varying vec3 vNormal;
+          varying vec3 vView;
+
           void main() {
+            vec3 n = normalize(vNormal);
             vec3 color = mix(uNavy, uGold, smoothstep(0.15, 0.9, vMix));
+
+            float spec = pow(max(dot(n, normalize(vec3(-0.45, 0.75, 0.55))), 0.0), 9.0);
+            color += uGlow * spec * 0.9;
+
+            float fresnel = pow(1.0 - max(dot(n, normalize(vView)), 0.0), 2.2);
+            color = mix(color, uGlow, fresnel * 0.35);
+
             gl_FragColor = vec4(color, uOpacity * uFade);
           }
         `;
@@ -133,13 +153,15 @@ export function PlanoBackground3D() {
           const material = new THREE.ShaderMaterial({
             transparent: true,
             depthWrite: false,
+            blending: THREE.AdditiveBlending,
             uniforms: {
               uTime: { value: 0 },
               uAmp: { value: amp },
               uOpacity: { value: opacidade },
               uFade: { value: 0 },
-              uNavy: { value: new THREE.Color("#16324F") },
-              uGold: { value: new THREE.Color("#C79246") },
+              uNavy: { value: new THREE.Color("#1B4470") },
+              uGold: { value: new THREE.Color("#E0A544") },
+              uGlow: { value: new THREE.Color("#FFE9B8") },
             },
             vertexShader,
             fragmentShader,
@@ -149,9 +171,9 @@ export function PlanoBackground3D() {
           return { mesh, geometry, material };
         }
 
-        const formaA = criarForma(9.5, 0.3, 1.7);
+        const formaA = criarForma(9.5, isMobile ? 0.07 : 0.10, 1.7);
         formaA.mesh.position.set(-7, 3, 0);
-        const formaB = criarForma(7.5, 0.2, 1.3);
+        const formaB = criarForma(7.5, isMobile ? 0.05 : 0.07, 1.3);
         formaB.mesh.position.set(8, -5, -6);
 
         // --- Interação: scroll suave + mouse amortecido ---

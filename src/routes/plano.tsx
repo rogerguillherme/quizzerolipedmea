@@ -32,15 +32,123 @@ export const Route = createFileRoute("/plano")({
   }),
 });
 
+/**
+ * Paleta exclusiva da /plano, com amplitude tonal maior que a do app:
+ * creme mais claro em cima, navy mais fundo embaixo, dourado mais saturado.
+ * Não reaproveitar em outras rotas — aqui o alvo é brilho, não sobriedade.
+ */
 const C = {
-  navy: "#16324F",
-  navySoft: "#23496E",
-  cream: "#FBF7EE",
-  creamDeep: "#F5EFE1",
-  gold: "#8A6224",
-  goldLight: "#C79246",
-  line: "#E4D9BE",
+  navy: "#123050",
+  navyDeep: "#05131F",
+  navySoft: "#2E5F8C",
+  cream: "#FBF6EC",
+  creamDeep: "#FFFBF3",
+  gold: "#C0872A",
+  goldLight: "#EFC96B",
+  goldGlow: "#FAE4A8",
+  /** Rótulo pequeno sobre creme: dourado profundo mantém AA. */
+  goldLabel: "#8A6224",
+  line: "#E8DCC0",
+  ink: "#2A2C24",
 } as const;
+
+/** Degradê metálico compartilhado (botões, itálicos, preço). */
+const SHINE =
+  "linear-gradient(135deg,#F7DC96 0%,#E0AF48 26%,#C0872A 52%,#EFC96B 78%,#D9A94B 100%)";
+
+/**
+ * CSS local da rota. Vive aqui, e não em styles.css, justamente para não
+ * vazar para o app: tudo está prefixado por `.pl`.
+ */
+const PLANO_CSS = `
+.pl-luz{
+  position:fixed; inset:0; z-index:-19; pointer-events:none;
+  background:
+    radial-gradient(120% 65% at 50% -8%, rgba(250,228,168,.55), transparent 62%),
+    radial-gradient(90% 55% at 88% 22%, rgba(46,95,140,.13), transparent 60%);
+  background-attachment: fixed;
+}
+.pl-card{
+  background: linear-gradient(180deg,#FFFFFF 0%,#FFFBF3 100%);
+  border:1px solid ${C.line};
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.9) inset,
+    0 10px 26px -20px rgba(18,48,80,.45);
+}
+.pl-em{
+  font-style:italic;
+  background:${SHINE};
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.pl-price{
+  background:linear-gradient(135deg,#FFF3CE 0%,#F7DC96 22%,#EFC96B 48%,#E0AF48 74%,#F7DC96 100%);
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.pl-btn-gold{
+  position:relative; overflow:hidden;
+  color:#2A1A05;
+  background:${SHINE};
+  background-size:180% 180%;
+  background-position:0% 50%;
+  transition:background-position .6s ease, transform .2s ease;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.75) inset,
+    0 -2px 6px rgba(90,58,8,.35) inset,
+    0 14px 30px -16px rgba(192,135,42,.75);
+}
+.pl-btn-gold:hover{ background-position:100% 50%; }
+.pl-btn-gold::after{
+  content:""; position:absolute; top:-60%; bottom:-60%; width:38%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.62),transparent);
+  transform:skewX(-18deg);
+  animation:pl-sweep 4.5s ease-in-out infinite;
+}
+@keyframes pl-sweep{
+  0%,72%{ left:-45%; }
+  100%{ left:125%; }
+}
+.pl-btn-navy{
+  color:#fff;
+  background:linear-gradient(168deg,#1A4066 0%,#123050 55%,#08203A 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.14) inset,
+    0 14px 30px -18px rgba(5,19,31,.85);
+}
+.pl-espelho{
+  background:
+    radial-gradient(85% 60% at 22% 0%, rgba(239,201,107,.14), transparent 60%),
+    linear-gradient(168deg,#1A4066 0%,#123050 46%,#08203A 100%);
+}
+.pl-preco{
+  background:
+    radial-gradient(80% 55% at 50% 0%, rgba(239,201,107,.18), transparent 62%),
+    linear-gradient(168deg,#22557F 0%,#123050 48%,#05131F 100%);
+  border:1px solid rgba(239,201,107,.42);
+  box-shadow:0 0 60px -18px rgba(239,201,107,.35);
+}
+.pl-semana-num{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:30px; height:30px; padding:0 9px; border-radius:9999px;
+  font-size:13px; font-weight:800; color:#4A3208;
+  background:linear-gradient(160deg,#FAE4A8 0%,#EFC96B 45%,#C0872A 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 6px 14px -10px rgba(192,135,42,.9);
+}
+.pl-foto img{ filter:saturate(1.12) contrast(1.06) brightness(1.03); }
+.pl-foto-grande{ position:relative; }
+.pl-foto-grande::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  border-radius:inherit;
+  background:linear-gradient(150deg,rgba(255,255,255,.28),transparent 38%);
+  box-shadow:0 0 40px -22px rgba(239,201,107,.75) inset;
+}
+@media (prefers-reduced-motion: reduce){
+  .pl-btn-gold::after{ animation:none; opacity:0; }
+  .pl-btn-gold{ transition:none; }
+}
+`;
+
 
 // ---------------- Revelação no scroll ----------------
 // Entrada de 26px com fade, escalonada em 5 níveis de atraso.
@@ -122,9 +230,10 @@ function FotoZoom({ src, alt }: { src: string; alt: string }) {
   return (
     <div
       ref={ref}
-      className="overflow-hidden rounded-3xl"
+      className="pl-foto pl-foto-grande overflow-hidden rounded-3xl"
       style={{ aspectRatio: "16 / 10", background: C.creamDeep }}
     >
+
       <img
         src={src}
         alt={alt}
@@ -266,8 +375,11 @@ function PlanoPage() {
 
   return (
     <main className="relative min-h-[100dvh]" style={{ color: C.navy }}>
+      <style dangerouslySetInnerHTML={{ __html: PLANO_CSS }} />
       {/* Base creme fica ABAIXO do canvas 3D, senão o fundo some atrás dela. */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-20" style={{ background: C.cream }} />
+      {/* Luz quente no topo + sombra fria à direita: dá volume ao creme. */}
+      <div aria-hidden className="pl-luz" />
       <PlanoBackground3D />
 
       {/* 1. Hero */}
@@ -275,7 +387,7 @@ function PlanoPage() {
         <Reveal>
           <span
             className="inline-block rounded-full border px-4 py-1.5 text-[12px] font-semibold uppercase tracking-wide"
-            style={{ borderColor: C.line, color: C.gold, background: "rgba(255,255,255,.7)" }}
+            style={{ borderColor: C.line, color: C.goldLabel, background: "rgba(255,255,255,.82)" }}
           >
             Dra. Gabriela Rosado · Nutricionista · CRN 10582
           </span>
@@ -285,8 +397,7 @@ function PlanoPage() {
             className="mt-6 text-[34px] leading-[1.1] sm:text-[52px]"
             style={{ fontFamily: "Georgia, serif", fontWeight: 600 }}
           >
-            Você não falhou. Te deram a{" "}
-            <em style={{ color: C.gold, fontStyle: "italic" }}>ferramenta errada</em>.
+            Você não falhou. Te deram a <em className="pl-em">ferramenta errada</em>.
           </h1>
         </Reveal>
         <Reveal delay={2}>
@@ -299,11 +410,11 @@ function PlanoPage() {
           <button
             type="button"
             onClick={() => irParaCheckout("hero")}
-            className="mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold sm:w-auto"
-            style={{ background: C.navy, color: "#fff" }}
+            className="pl-btn-gold mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold sm:w-auto"
           >
             Quero começar por R$67
           </button>
+
           <p className="mt-4 text-[13px]" style={{ color: C.navySoft }}>
             pagamento único · sem assinatura · 7 dias de garantia
           </p>
@@ -312,7 +423,8 @@ function PlanoPage() {
 
       {/* 2. Espelho */}
       <section className="relative px-4 py-6">
-        <div className="mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12" style={{ background: C.navy }}>
+        <div className="pl-espelho mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
+
           <Reveal>
             <h2
               className="text-[26px] leading-snug sm:text-[32px]"
@@ -365,8 +477,7 @@ function PlanoPage() {
           ].map((item, i) => (
             <Reveal key={item.t} delay={(i as 0 | 1 | 2)}>
               <div
-                className="h-full rounded-2xl border p-6"
-                style={{ borderColor: C.line, background: "rgba(255,255,255,.75)" }}
+                className="pl-card h-full rounded-2xl p-6"
               >
                 <h3 className="text-[17px] font-semibold">{item.t}</h3>
                 <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -389,12 +500,9 @@ function PlanoPage() {
           {SEMANAS.map((s, i) => (
             <Reveal key={s.n} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
               <div
-                className="h-full rounded-2xl border p-6"
-                style={{ borderColor: C.line, background: "rgba(255,255,255,.75)" }}
+                className="pl-card h-full rounded-2xl p-6"
               >
-                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.gold }}>
-                  Semana {s.n}
-                </span>
+                <span className="pl-semana-num">Semana {s.n}</span>
                 <h3 className="mt-2 text-[19px] font-semibold">{s.titulo}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
                   {s.texto}
@@ -441,8 +549,7 @@ function PlanoPage() {
           {restantes.map((f, i) => (
             <Reveal key={f.id} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
               <div
-                className="flex h-full gap-4 rounded-2xl border p-5"
-                style={{ borderColor: C.line, background: "rgba(255,255,255,.75)" }}
+                className="pl-card flex h-full gap-4 rounded-2xl p-5"
               >
                 <f.icone className="mt-1 h-5 w-5 shrink-0" style={{ color: C.gold }} aria-hidden />
                 <div>
@@ -461,14 +568,13 @@ function PlanoPage() {
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <div
-            className="flex flex-col items-center gap-6 rounded-3xl border p-7 sm:flex-row sm:items-start"
-            style={{ borderColor: C.line, background: "rgba(255,255,255,.8)" }}
+            className="pl-card flex flex-col items-center gap-6 rounded-3xl p-7 sm:flex-row sm:items-start"
           >
             <img
               src={gabiPortrait.url}
               alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
               loading="lazy"
-              className="h-28 w-28 shrink-0 rounded-full object-cover"
+              className="pl-foto h-28 w-28 shrink-0 rounded-full object-cover"
             />
             <div>
               <h2 className="text-[22px]" style={{ fontFamily: "Georgia, serif" }}>
@@ -486,12 +592,12 @@ function PlanoPage() {
 
       {/* 7. Preço */}
       <section className="relative px-4 pb-20">
-        <div className="mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12" style={{ background: C.navy }}>
+        <div className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
           <Reveal>
             <p className="text-[15px] line-through" style={{ color: "#8FA7BC" }}>
               De R$119,90
             </p>
-            <p className="mt-1 text-[52px] font-semibold leading-none" style={{ color: "#fff" }}>
+            <p className="pl-price mt-1 text-[52px] font-semibold leading-none">
               R$<PrecoAnimado />
             </p>
             <p className="mt-2 text-[14px]" style={{ color: "#CBD9E6" }}>
@@ -512,8 +618,7 @@ function PlanoPage() {
             <button
               type="button"
               onClick={() => irParaCheckout("oferta")}
-              className="mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold"
-              style={{ background: C.goldLight, color: "#22140A" }}
+              className="pl-btn-gold mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold"
             >
               Começar meu plano de 30 dias
             </button>
@@ -536,8 +641,7 @@ function PlanoPage() {
           {FAQ.map((item, i) => (
             <Reveal key={item.q} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
               <details
-                className="group rounded-2xl border p-5"
-                style={{ borderColor: C.line, background: "rgba(255,255,255,.75)" }}
+                className="pl-card group rounded-2xl p-5"
               >
                 <summary className="cursor-pointer list-none text-[16px] font-semibold">{item.q}</summary>
                 <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -562,7 +666,7 @@ function PlanoPage() {
         className="fixed inset-x-0 bottom-0 z-[90] border-t px-4 py-3 backdrop-blur"
         style={{
           borderColor: C.line,
-          background: "rgba(251,247,238,.94)",
+          background: "rgba(251,246,236,.94)",
           transform: barraVisivel ? "translateY(0)" : "translateY(120%)",
           transition: "transform .5s cubic-bezier(.16,1,.3,1)",
         }}
@@ -577,8 +681,7 @@ function PlanoPage() {
           <button
             type="button"
             onClick={() => irParaCheckout("barra")}
-            className="ml-auto w-full rounded-full px-6 py-4 text-[16px] font-semibold sm:w-auto"
-            style={{ background: C.navy, color: "#fff" }}
+            className="pl-btn-gold ml-auto w-full rounded-full px-6 py-4 text-[16px] font-semibold sm:w-auto"
           >
             Quero meu plano por R$67
           </button>
