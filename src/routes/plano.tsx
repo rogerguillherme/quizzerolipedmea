@@ -143,6 +143,33 @@ const PLANO_CSS = `
   background:linear-gradient(150deg,rgba(255,255,255,.28),transparent 38%);
   box-shadow:0 0 40px -22px rgba(239,201,107,.75) inset;
 }
+/* Retrato do hero: anel dourado por baixo, halo por fora, sombra baixa. */
+.pl-avatar{
+  position:relative;
+  width:clamp(112px,28vw,148px);
+  aspect-ratio:1;
+  border-radius:9999px;
+  box-shadow:0 18px 40px -18px rgba(18,48,80,.6);
+}
+.pl-avatar::before{
+  content:""; position:absolute; inset:-7px; z-index:0;
+  border-radius:9999px; background:${SHINE};
+}
+.pl-avatar::after{
+  content:""; position:absolute; inset:-22px; z-index:-1; pointer-events:none;
+  border-radius:9999px;
+  background:radial-gradient(circle, rgba(250,228,168,.55), transparent 70%);
+}
+.pl-avatar img{
+  position:relative; z-index:1;
+  width:100%; height:100%; object-fit:cover; border-radius:9999px;
+}
+.pl-selo{
+  background:linear-gradient(180deg,#FFFFFF 0%,#FBF6EC 100%);
+  border:1px solid rgba(192,135,42,.45);
+  box-shadow:0 1px 0 rgba(255,255,255,.95) inset, 0 8px 18px -14px rgba(18,48,80,.5);
+}
+
 @media (prefers-reduced-motion: reduce){
   .pl-btn-gold::after{ animation:none; opacity:0; }
   .pl-btn-gold{ transition:none; }
