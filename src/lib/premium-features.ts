@@ -43,7 +43,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     icone: CalendarCheck,
     titulo: "Rotina Zero Lipedema",
     descricao:
-      "Um plano em 4 fases para moldar os hábitos que alimentam o lipedema. Nada é proibido e nenhuma refeição é pulada. O alvo é reduzir inflamação, dor e inchaço.",
+      "As 4 fases chegam no seu WhatsApp, uma por vez, para moldar os hábitos que alimentam o lipedema. Nada é proibido e nenhuma refeição é pulada. O alvo é reduzir inflamação, dor e inchaço.",
+
     foto: `${FOTOS_BASE}rotina.jpg`,
     fotoAlt:
       "Prato de ovos mexidos com abacate e frutas vermelhas na luz da manhã",
