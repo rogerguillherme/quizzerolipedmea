@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ShieldCheck, Check, ChevronDown, Flame, Activity, Clock, Droplets, CircleSlash, RotateCw } from "lucide-react";
 import { PlanoBackground3D } from "@/components/PlanoBackground3D";
 import { MapaPopup } from "@/components/MapaPopup";
+import { DepoimentosWhatsapp } from "@/components/DepoimentosWhatsapp";
 import { KIWIFY_CHECKOUT_URL } from "@/components/OfertaPremiumInline";
 import { PREMIUM_FEATURES } from "@/lib/premium-features";
 import { lerMapaSessao, mapaJaEnviado, type MapaSessao } from "@/lib/mapa-sessao";
