@@ -32,15 +32,123 @@ export const Route = createFileRoute("/plano")({
   }),
 });
 
+/**
+ * Paleta exclusiva da /plano, com amplitude tonal maior que a do app:
+ * creme mais claro em cima, navy mais fundo embaixo, dourado mais saturado.
+ * Não reaproveitar em outras rotas — aqui o alvo é brilho, não sobriedade.
+ */
 const C = {
-  navy: "#16324F",
-  navySoft: "#23496E",
-  cream: "#FBF7EE",
-  creamDeep: "#F5EFE1",
-  gold: "#8A6224",
-  goldLight: "#C79246",
-  line: "#E4D9BE",
+  navy: "#123050",
+  navyDeep: "#05131F",
+  navySoft: "#2E5F8C",
+  cream: "#FBF6EC",
+  creamDeep: "#FFFBF3",
+  gold: "#C0872A",
+  goldLight: "#EFC96B",
+  goldGlow: "#FAE4A8",
+  /** Rótulo pequeno sobre creme: dourado profundo mantém AA. */
+  goldLabel: "#8A6224",
+  line: "#E8DCC0",
+  ink: "#2A2C24",
 } as const;
+
+/** Degradê metálico compartilhado (botões, itálicos, preço). */
+const SHINE =
+  "linear-gradient(135deg,#F7DC96 0%,#E0AF48 26%,#C0872A 52%,#EFC96B 78%,#D9A94B 100%)";
+
+/**
+ * CSS local da rota. Vive aqui, e não em styles.css, justamente para não
+ * vazar para o app: tudo está prefixado por `.pl`.
+ */
+const PLANO_CSS = `
+.pl-luz{
+  position:fixed; inset:0; z-index:-19; pointer-events:none;
+  background:
+    radial-gradient(120% 65% at 50% -8%, rgba(250,228,168,.55), transparent 62%),
+    radial-gradient(90% 55% at 88% 22%, rgba(46,95,140,.13), transparent 60%);
+  background-attachment: fixed;
+}
+.pl-card{
+  background: linear-gradient(180deg,#FFFFFF 0%,#FFFBF3 100%);
+  border:1px solid ${C.line};
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.9) inset,
+    0 10px 26px -20px rgba(18,48,80,.45);
+}
+.pl-em{
+  font-style:italic;
+  background:${SHINE};
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.pl-price{
+  background:linear-gradient(135deg,#FFF3CE 0%,#F7DC96 22%,#EFC96B 48%,#E0AF48 74%,#F7DC96 100%);
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.pl-btn-gold{
+  position:relative; overflow:hidden;
+  color:#2A1A05;
+  background:${SHINE};
+  background-size:180% 180%;
+  background-position:0% 50%;
+  transition:background-position .6s ease, transform .2s ease;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.75) inset,
+    0 -2px 6px rgba(90,58,8,.35) inset,
+    0 14px 30px -16px rgba(192,135,42,.75);
+}
+.pl-btn-gold:hover{ background-position:100% 50%; }
+.pl-btn-gold::after{
+  content:""; position:absolute; top:-60%; bottom:-60%; width:38%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.62),transparent);
+  transform:skewX(-18deg);
+  animation:pl-sweep 4.5s ease-in-out infinite;
+}
+@keyframes pl-sweep{
+  0%,72%{ left:-45%; }
+  100%{ left:125%; }
+}
+.pl-btn-navy{
+  color:#fff;
+  background:linear-gradient(168deg,#1A4066 0%,#123050 55%,#08203A 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.14) inset,
+    0 14px 30px -18px rgba(5,19,31,.85);
+}
+.pl-espelho{
+  background:
+    radial-gradient(85% 60% at 22% 0%, rgba(239,201,107,.14), transparent 60%),
+    linear-gradient(168deg,#1A4066 0%,#123050 46%,#08203A 100%);
+}
+.pl-preco{
+  background:
+    radial-gradient(80% 55% at 50% 0%, rgba(239,201,107,.18), transparent 62%),
+    linear-gradient(168deg,#22557F 0%,#123050 48%,#05131F 100%);
+  border:1px solid rgba(239,201,107,.42);
+  box-shadow:0 0 60px -18px rgba(239,201,107,.35);
+}
+.pl-semana-num{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:30px; height:30px; padding:0 9px; border-radius:9999px;
+  font-size:13px; font-weight:800; color:#4A3208;
+  background:linear-gradient(160deg,#FAE4A8 0%,#EFC96B 45%,#C0872A 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 6px 14px -10px rgba(192,135,42,.9);
+}
+.pl-foto img{ filter:saturate(1.12) contrast(1.06) brightness(1.03); }
+.pl-foto-grande{ position:relative; }
+.pl-foto-grande::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  border-radius:inherit;
+  background:linear-gradient(150deg,rgba(255,255,255,.28),transparent 38%);
+  box-shadow:0 0 40px -22px rgba(239,201,107,.75) inset;
+}
+@media (prefers-reduced-motion: reduce){
+  .pl-btn-gold::after{ animation:none; opacity:0; }
+  .pl-btn-gold{ transition:none; }
+}
+`;
+
 
 // ---------------- Revelação no scroll ----------------
 // Entrada de 26px com fade, escalonada em 5 níveis de atraso.
