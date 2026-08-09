@@ -25,7 +25,7 @@ export const ROTINA_SEMANAS: readonly SemanaRotina[] = [
     numero: 1,
     refeicao: "Café da manhã",
     objetivo:
-      "A refeição mais fácil de controlar. É aqui que vem a primeira vitória rápida.",
+      "Como você abre o dia define a inflamação das horas seguintes. É a troca mais fácil de sustentar — e onde vem o primeiro alívio.",
     entra: [
       "Uma proteína: ovos, frango desfiado, atum ou iogurte de coco",
       "Uma fruta",
@@ -45,7 +45,7 @@ export const ROTINA_SEMANAS: readonly SemanaRotina[] = [
     numero: 2,
     refeicao: "Almoço",
     objetivo:
-      "A refeição de maior impacto no dia. Aqui o desinchaço começa a aparecer.",
+      "É a refeição que mais carrega inflamação no dia. Muda o que vai no prato, não o quanto — e a perna começa a pesar menos à tarde.",
     entra: [
       "Metade do prato de vegetais coloridos",
       "Uma proteína à vontade: carne, frango, peixe ou ovo",
@@ -67,7 +67,7 @@ export const ROTINA_SEMANAS: readonly SemanaRotina[] = [
     numero: 3,
     refeicao: "Lanche",
     objetivo:
-      "É onde aparecem os gatilhos e os escapes. Esta semana se ganha na preparação, não na força de vontade.",
+      "Onde a rotina quebra. Essa fase não se ganha na força de vontade, se ganha com duas opções prontas antes da fome chegar.",
     entra: [
       "Fruta com uma gordura: banana com pasta de amendoim, maçã com castanha",
       "Ovo cozido",
@@ -89,7 +89,7 @@ export const ROTINA_SEMANAS: readonly SemanaRotina[] = [
     numero: 4,
     refeicao: "Jantar",
     objetivo:
-      "Fecha o ciclo. É a refeição que mais muda como você acorda: inchaço, peso nas pernas e disposição.",
+      "É o que decide o inchaço e o peso nas pernas da manhã seguinte. Fechando essa fase, o novo padrão já virou rotina.",
     entra: [
       "Proteína com vegetais cozidos ou refogados",
       "Sopas e caldos sem creme",

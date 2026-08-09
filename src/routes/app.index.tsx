@@ -212,8 +212,8 @@ function Hoje() {
         />
         <p className="text-[10px] font-semibold uppercase" style={{ letterSpacing: "0.24em", color: GOLD_SOFT }}>
           {isPremium
-            ? `Semana ${semanaNum} de 4 · ${semana.refeicao}`
-            : `Semana 1 · ${semana.refeicao}`}
+            ? `Fase ${semanaNum} de 4 · ${semana.refeicao}`
+            : `Fase 1 · ${semana.refeicao}`}
         </p>
 
         <h2
@@ -411,7 +411,7 @@ function Hoje() {
               Plano Zero Lipedema
             </p>
             <p className="mt-1.5 text-[14px]" style={{ color: INK, lineHeight: 1.55 }}>
-              A Rotina completa das 4 semanas, registro de refeições por foto sem limite e os guias práticos, por R$67.
+              A Rotina completa em 4 fases, registro de refeições por foto sem limite e os guias práticos, por R$67.
             </p>
             <p className="mt-2.5 text-[14px] font-semibold" style={{ color: NAVY }}>
               Ver o plano <span style={{ color: GOLD }}>→</span>

@@ -305,7 +305,7 @@ async function marcarPausa(
  * Régua pré-venda. Quatro toques, cada lead no horário próprio dele:
  *   +20h  · pergunta fácil ("dor ou inchaço?")
  *   +44h  · quebra de objeção ("já tentei de tudo")
- *   +68h  · prova + pergunta ("quer ver a primeira semana?"), ainda sem link
+ *   +68h  · prova + pergunta ("quer ver a primeira fase?"), ainda sem link
  *   +92h  · oferta do Plano Premium (R$67) — primeira vez que aparece link
  *   +6d   · fechamento
  * Cada toque é idempotente via `respostas.reengaje`.

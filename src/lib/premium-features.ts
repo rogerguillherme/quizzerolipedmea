@@ -43,7 +43,7 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     icone: CalendarCheck,
     titulo: "Rotina Zero Lipedema",
     descricao:
-      "Uma refeição nova por semana. Em 4 semanas suas 4 refeições principais estão ajustadas, sem contar caloria e sem passar fome.",
+      "Um plano em 4 fases para moldar os hábitos que alimentam o lipedema. Nada é proibido e nenhuma refeição é pulada — o alvo é reduzir inflamação, dor e inchaço.",
     foto: `${FOTOS_BASE}rotina.jpg`,
     fotoAlt:
       "Prato de ovos mexidos com abacate e frutas vermelhas na luz da manhã",

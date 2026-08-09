@@ -22,7 +22,7 @@ Seu *Plano Premium Zero Lipedema · 30 dias* foi liberado! 🎉
 Nos próximos 30 dias você tem:
 ${itens}
 
-🌱 Seu próximo passo: abra o app, toque em *Rotina* na barra de baixo e comece a missão da *Semana 1*, o café da manhã. Quando cumprir, é só tocar em "Cumpri a missão de hoje" na aba *Hoje*. Uma refeição de cada vez, no seu ritmo.
+🌱 Seu próximo passo: abra o app, toque em *Rotina* na barra de baixo e comece a missão da *Fase 1*, o café da manhã. Quando cumprir, é só tocar em "Cumpri a missão de hoje" na aba *Hoje*. Um hábito de cada vez, no seu ritmo — nada é proibido e nenhuma refeição é pulada.
 
 📸 Na aba *Registrar* você fotografa suas refeições e recebe a leitura na hora. E na aba *Progresso* você acompanha sua sequência de dias.
 

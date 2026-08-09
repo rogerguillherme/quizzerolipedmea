@@ -376,20 +376,44 @@ const ESPELHO = [
 ];
 
 const SEMANAS = [
-  { n: 1, titulo: "Café da manhã", texto: "A primeira refeição do dia deixa de disparar inflamação e fome." },
-  { n: 2, titulo: "Almoço", texto: "Prato montado para saciar sem inchar, com o que você já come em casa." },
-  { n: 3, titulo: "Lanche", texto: "O horário que mais derruba plano vira o mais simples da sua rotina." },
-  { n: 4, titulo: "Jantar", texto: "Fecha o dia leve, dorme melhor e acorda com a perna menos pesada." },
+  {
+    n: 1,
+    rotulo: "Fase 1 · café da manhã",
+    titulo: "O hábito mais automático",
+    texto: "Como você abre o dia define a inflamação das horas seguintes. É a troca mais fácil de sustentar — e onde vem o primeiro alívio.",
+  },
+  {
+    n: 2,
+    rotulo: "Fase 2 · almoço",
+    titulo: "A maior carga do dia",
+    texto: "É a refeição que mais carrega inflamação. Muda o que vai no prato, não o quanto — e a perna começa a pesar menos à tarde.",
+  },
+  {
+    n: 3,
+    rotulo: "Fase 3 · lanche",
+    titulo: "Onde a rotina quebra",
+    texto: "Essa fase não se ganha na força de vontade, se ganha com duas opções prontas antes de a fome chegar.",
+  },
+  {
+    n: 4,
+    rotulo: "Fase 4 · jantar",
+    titulo: "Como você vai acordar",
+    texto: "É o que decide o inchaço e o peso nas pernas da manhã seguinte. Fechando essa fase, o novo padrão já virou rotina.",
+  },
 ];
 
 const FAQ = [
   {
-    q: "É mais uma dieta?",
-    a: "Não. Não tem contagem de caloria nem cardápio proibido. A gente ajusta uma refeição por semana até as quatro principais estarem no padrão anti-inflamatório.",
+    q: "Isso é mais uma dieta?",
+    a: "Não. Não tem contagem de caloria, não tem pesagem de comida, não tem lista de proibições e nenhuma refeição é pulada. É um plano de hábitos: o que muda é o que alimenta a inflamação, não o quanto você come.",
   },
   {
     q: "Vou conseguir manter?",
-    a: "A proposta é justamente essa: uma mudança por semana, com o passo do dia aparecendo pronto no app. Quem tenta mudar tudo de uma vez é quem para na segunda semana.",
+    a: "É por isso que são quatro fases e não uma virada de chave. Na primeira fase você mexe em um único hábito — o resto do seu dia continua igual. A maioria das mulheres não falha no método, falha na manutenção: por isso o plano foi desenhado para sustentar.",
+  },
+  {
+    q: "Em quanto tempo eu sinto diferença?",
+    a: "Varia de pessoa para pessoa. O que a maioria relata primeiro é a perna amanhecer menos pesada e a calça marcar menos no fim do dia — sinais de inchaço, não de peso. Não é resultado garantido e não substitui acompanhamento médico.",
   },
   {
     q: "Já tentei de tudo. Por que agora seria diferente?",
@@ -622,8 +646,8 @@ function PlanoPage() {
               voltar a se mexer.
             </p>
             <p className="mt-5 text-[17px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
-              Uma refeição por semana, sem contar caloria e sem passar fome. Começando pelo café da manhã,
-              que é o mais fácil de mudar.
+              <strong>Quatro fases, um hábito por vez.</strong> Você não vai cortar comida — vai trocar o
+              que alimenta a inflamação, começando pelo hábito mais fácil de mudar.
             </p>
           </div>
         </Reveal>
@@ -638,20 +662,25 @@ function PlanoPage() {
         </Reveal>
       </section>
 
-      {/* 4. As 4 semanas */}
+      {/* 4. As 4 fases */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "Georgia, serif" }}>
-            Uma refeição por semana. Quatro semanas.
+            Quatro fases. <em className="pl-em">Nenhuma restrição.</em>
           </h2>
+          <p className="mt-4 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
+            Não é dieta. É um planejamento em quatro fases para moldar, um de cada vez, os hábitos que
+            alimentam a inflamação. Você não corta comida — troca o que inflama pelo que desinflama.
+          </p>
+          <p className="mt-2 text-[14px] leading-relaxed" style={{ color: C.navySoft, opacity: 0.85 }}>
+            O objetivo nunca foi a balança. É menos dor, menos inchaço e menos peso nas pernas.
+          </p>
         </Reveal>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {SEMANAS.map((s, i) => (
             <Reveal key={s.n} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
-              <div
-                className="pl-card h-full rounded-2xl p-6"
-              >
-                <span className="pl-semana-num">Semana {s.n}</span>
+              <div className="pl-card h-full rounded-2xl p-6">
+                <span className="pl-semana-num">{s.rotulo}</span>
                 <h3 className="mt-2 text-[19px] font-semibold">{s.titulo}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
                   {s.texto}
@@ -660,6 +689,12 @@ function PlanoPage() {
             </Reveal>
           ))}
         </div>
+        <Reveal delay={2}>
+          <p className="mt-8 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
+            Ao fim das quatro fases, nada foi proibido e nenhuma refeição foi pulada. O que mudou foi o
+            que alimenta a inflamação.
+          </p>
+        </Reveal>
       </section>
 
       {/* 5. Entregáveis */}
@@ -748,6 +783,12 @@ function PlanoPage() {
       <section className="relative px-4 pb-20">
         <div className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
           <Reveal>
+            <h2
+              className="mb-6 text-[26px] leading-snug sm:text-[30px]"
+              style={{ fontFamily: "Georgia, serif", color: "#FFFDF6" }}
+            >
+              Comece hoje pela <em className="pl-em">primeira fase</em>
+            </h2>
             <p className="text-[15px] line-through" style={{ color: "#8FA7BC" }}>
               De R$119,90
             </p>

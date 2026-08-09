@@ -38,17 +38,17 @@ export const Route = createFileRoute("/app/rotina")({
   component: RotinaPage,
   head: () => ({
     meta: [
-      { title: "Rotina Zero Lipedema | Sua rotina semana a semana" },
+      { title: "Rotina Zero Lipedema | Seu plano em 4 fases" },
       {
         name: "description",
         content:
-          "Ajuste uma refeição por semana com a Rotina Zero Lipedema: café da manhã, almoço, lanche e jantar, sem contar caloria.",
+          "Um plano em 4 fases para moldar os hábitos que alimentam o lipedema: menos inflamação, dor e inchaço, sem proibições.",
       },
       { property: "og:title", content: "Rotina Zero Lipedema" },
       {
         property: "og:description",
         content:
-          "Uma refeição nova por semana. Em 4 semanas suas refeições principais estão ajustadas.",
+          "Quatro fases, um hábito por vez. Nada é proibido e nenhuma refeição é pulada.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -169,7 +169,7 @@ function RotinaPage() {
           className="mt-2 text-2xl leading-tight"
           style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500 }}
         >
-          Semana {semanaAtual} de 4 · {semana.refeicao}
+          Fase {semanaAtual} de 4 · {semana.refeicao}
         </h1>
 
         <div className="mt-4">
@@ -202,7 +202,7 @@ function RotinaPage() {
         </div>
       </section>
 
-      {/* Missão da semana */}
+      {/* Missão da fase */}
       <section className="mt-5">
         <MissaoCard semana={semana} bloqueado={!isPremium} />
       </section>
@@ -279,7 +279,7 @@ function RotinaPage() {
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold"
                   style={{ borderColor: GOLD, color: NAVY, background: "rgba(255,253,247,0.9)" }}
                 >
-                  Avançar para a Semana {semanaAtual + 1}
+                  Avançar para a Fase {semanaAtual + 1}
                   <ChevronRight className="size-4" />
                 </button>
               ) : (
@@ -320,8 +320,8 @@ function RotinaPage() {
           style={{ ...CARD_STYLE, borderColor: BORDER_GOLD }}
         >
           <p className="text-[14px] leading-relaxed" style={{ color: NAVY }}>
-            A Rotina completa faz parte do Plano Zero Lipedema. São 4 semanas, uma
-            refeição por vez, sem contar caloria.
+            A Rotina completa faz parte do Plano Zero Lipedema. São 4 fases, um hábito
+            por vez, sem proibições e sem pular refeição.
           </p>
           <Link
             to="/app/derma"
@@ -344,7 +344,7 @@ function RotinaPage() {
           className="px-1 text-[11px] font-semibold uppercase"
           style={{ letterSpacing: "0.22em", color: GOLD_LABEL }}
         >
-          Suas 4 semanas
+          Suas 4 fases
         </p>
         {ROTINA_SEMANAS.map((s, i) => {
           const Icone = ICONES[i]!;
@@ -400,7 +400,7 @@ function RotinaPage() {
                     className="block text-[14px] font-semibold"
                     style={{ color: futura ? "#8A8672" : NAVY }}
                   >
-                    Semana {s.numero} · {s.refeicao}
+                    Fase {s.numero} · {s.refeicao}
                   </span>
                   {!futura && (
                     <span className="mt-0.5 block text-[12px] leading-relaxed text-[#5C5749]">
@@ -428,7 +428,7 @@ function RotinaPage() {
           Materiais de apoio
         </p>
         <p className="mt-1.5 mb-3 text-[12.5px] leading-relaxed text-[#5C5749]">
-          Para consultar sempre que precisar, em qualquer semana.
+          Para consultar sempre que precisar, em qualquer fase.
         </p>
         <GuiasCards />
       </section>
@@ -453,7 +453,7 @@ function MissaoCard({
         className="text-[11px] font-bold uppercase tracking-[0.18em]"
         style={{ color: GOLD_LABEL }}
       >
-        Missão da semana
+        Missão da fase
       </p>
       <h2
         className="mt-1 text-xl leading-snug"
@@ -569,11 +569,11 @@ function Celebracao() {
           className="mt-3 text-2xl leading-tight"
           style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500 }}
         >
-          Suas 4 refeições principais estão ajustadas
+          Você concluiu as quatro fases
         </h1>
         <p className="mt-3 text-sm opacity-85">
-          Você passou pelo café da manhã, almoço, lanche e jantar sem contar caloria e
-          sem passar fome. Esse é o alicerce da rotina.
+          Você moldou os hábitos das quatro refeições principais sem proibir nada e sem
+          pular refeição. Esse é o alicerce da rotina que reduz inflamação, dor e inchaço.
         </p>
       </section>
 
