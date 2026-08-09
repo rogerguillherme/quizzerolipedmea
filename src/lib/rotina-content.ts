@@ -67,7 +67,7 @@ export const ROTINA_SEMANAS: readonly SemanaRotina[] = [
     numero: 3,
     refeicao: "Lanche",
     objetivo:
-      "É onde aparecem os gatilhos e os escapes. Esta semana se ganha na preparação, não na força de vontade.",
+      "Onde a rotina quebra. Essa fase não se ganha na força de vontade, se ganha com duas opções prontas antes da fome chegar.",
     entra: [
       "Fruta com uma gordura: banana com pasta de amendoim, maçã com castanha",
       "Ovo cozido",
