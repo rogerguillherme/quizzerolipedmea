@@ -106,6 +106,59 @@ export const getFunilReal = createServerFn({ method: "POST" })
         .slice(0, 15);
     }
 
+    // Quebra por funil de origem: é o que decide qual rota recebe verba.
+    const FUNIS = ["quizz", "meu-mapa"] as const;
+    const rotuloFunil = (v: unknown): string => {
+      const t = String(v ?? "").trim();
+      return (FUNIS as readonly string[]).includes(t) ? t : "(sem funil)";
+    };
+    const porFunilMap = new Map<
+      string,
+      { visitas: Set<string>; concluidos: Set<string>; leads: number; compras: number }
+    >();
+    const bucketFunil = (chave: string) => {
+      if (!porFunilMap.has(chave))
+        porFunilMap.set(chave, { visitas: new Set(), concluidos: new Set(), leads: 0, compras: 0 });
+      return porFunilMap.get(chave)!;
+    };
+    for (const c of FUNIS) bucketFunil(c);
+
+    // Visitas: derivadas do caminho da página de cada funil.
+    for (const v of rowsViews) {
+      const path = String(v.path ?? "");
+      const chave = path.startsWith("/meu-mapa")
+        ? "meu-mapa"
+        : path.startsWith("/quizz")
+          ? "quizz"
+          : null;
+      if (!chave) continue;
+      bucketFunil(chave).visitas.add(String(v.session_id ?? Math.random()));
+    }
+    for (const e of rowsEventos) {
+      if (e.nome !== "quiz_completed") continue;
+      const m = (e.meta ?? {}) as Record<string, unknown>;
+      bucketFunil(rotuloFunil(m.funil)).concluidos.add(
+        String(e.session_id ?? e.lead_id ?? Math.random()),
+      );
+    }
+    for (const l of rowsLeads) {
+      const resp = (l.respostas ?? {}) as Record<string, unknown>;
+      const b = bucketFunil(rotuloFunil(resp.funil));
+      const telOk =
+        !!l.telefone && l.telefone !== "pendente" && l.telefone.replace(/\D/g, "").length >= 10;
+      if (telOk) b.leads += 1;
+      if (l.status === "plano_ativo") b.compras += 1;
+    }
+    const porFunil = [...porFunilMap.entries()]
+      .map(([chave, v]) => ({
+        chave,
+        visitas: v.visitas.size,
+        concluidos: v.concluidos.size,
+        leads: v.leads,
+        compras: v.compras,
+      }))
+      .sort((a, b) => b.leads - a.leads || b.visitas - a.visitas);
+
     // Série diária.
     const dias: Record<string, { visitas: number; leads: number }> = {};
     for (let i = data.dias - 1; i >= 0; i--) {
@@ -131,6 +184,7 @@ export const getFunilReal = createServerFn({ method: "POST" })
       porCampanha: quebra("utm_campaign"),
       porConteudo: quebra("utm_content"),
       porFonte: quebra("utm_source"),
+      porFunil,
       serie: Object.entries(dias).map(([data_, v]) => ({ data: data_, ...v })),
       descartesBot: Number((descartes?.value as { total?: number } | null)?.total ?? 0),
     };
