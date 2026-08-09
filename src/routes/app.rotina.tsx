@@ -202,7 +202,7 @@ function RotinaPage() {
         </div>
       </section>
 
-      {/* Missão da semana */}
+      {/* Missão da fase */}
       <section className="mt-5">
         <MissaoCard semana={semana} bloqueado={!isPremium} />
       </section>
@@ -320,8 +320,8 @@ function RotinaPage() {
           style={{ ...CARD_STYLE, borderColor: BORDER_GOLD }}
         >
           <p className="text-[14px] leading-relaxed" style={{ color: NAVY }}>
-            A Rotina completa faz parte do Plano Zero Lipedema. São 4 semanas, uma
-            refeição por vez, sem contar caloria.
+            A Rotina completa faz parte do Plano Zero Lipedema. São 4 fases, um hábito
+            por vez, sem proibições e sem pular refeição.
           </p>
           <Link
             to="/app/derma"
@@ -344,7 +344,7 @@ function RotinaPage() {
           className="px-1 text-[11px] font-semibold uppercase"
           style={{ letterSpacing: "0.22em", color: GOLD_LABEL }}
         >
-          Suas 4 semanas
+          Suas 4 fases
         </p>
         {ROTINA_SEMANAS.map((s, i) => {
           const Icone = ICONES[i]!;
@@ -428,7 +428,7 @@ function RotinaPage() {
           Materiais de apoio
         </p>
         <p className="mt-1.5 mb-3 text-[12.5px] leading-relaxed text-[#5C5749]">
-          Para consultar sempre que precisar, em qualquer semana.
+          Para consultar sempre que precisar, em qualquer fase.
         </p>
         <GuiasCards />
       </section>
@@ -453,7 +453,7 @@ function MissaoCard({
         className="text-[11px] font-bold uppercase tracking-[0.18em]"
         style={{ color: GOLD_LABEL }}
       >
-        Missão da semana
+        Missão da fase
       </p>
       <h2
         className="mt-1 text-xl leading-snug"
