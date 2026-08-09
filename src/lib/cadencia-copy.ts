@@ -219,9 +219,9 @@ Você não fez. Lipedema tem componente inflamatório e não cede a dieta restri
 export const PRE_POS68H: MensagemCadencia = {
   chave: "pos48h_at",
   variantes: [
-    `Quer que eu te mostre como funciona a primeira semana?`,
-    `Posso te mostrar como começa a primeira semana?`,
-    `Se quiser, eu te mostro o que a gente faz na primeira semana. Quer ver?`,
+    `Quer que eu te mostre como funciona a primeira fase?`,
+    `Posso te mostrar como começa a primeira fase?`,
+    `Se quiser, eu te mostro o que a gente faz na primeira fase. Quer ver?`,
   ],
 };
 
