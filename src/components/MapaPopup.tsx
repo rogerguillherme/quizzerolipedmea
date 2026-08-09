@@ -45,6 +45,15 @@ export function MapaPopup({
 
   useEffect(() => {
     if (!open) return;
+    track("mapa_popup_aberto", {
+      lead_id: sessao.leadId,
+      funil: sessao.funil ?? "plano-direto",
+      estagio: sessao.diagnostico?.estagio,
+    });
+  }, [open, sessao.leadId, sessao.funil, sessao.diagnostico?.estagio]);
+
+  useEffect(() => {
+    if (!open) return;
     document.body.style.overflow = "hidden";
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
