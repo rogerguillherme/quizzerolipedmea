@@ -965,6 +965,18 @@ function PlanoPage() {
             <p className="mt-2 text-[14px]" style={{ color: "#CBD9E6" }}>
               pagamento único · sem assinatura
             </p>
+            <p
+              className="mx-auto mt-5 max-w-md rounded-2xl px-4 py-3 text-[15px] font-semibold leading-relaxed"
+              style={{
+                background: "rgba(199,146,70,.14)",
+                border: "1px solid rgba(239,201,107,.35)",
+                color: "#F3E4C3",
+              }}
+            >
+              Tudo chega no seu WhatsApp. Você não precisa baixar nada nem aprender a usar um
+              aplicativo.
+            </p>
+
           </Reveal>
           <ul className="mt-8 space-y-3">
             {PREMIUM_FEATURES.map((f, i) => (
