@@ -734,7 +734,7 @@ function PlanoPage() {
       <section className="relative mx-auto max-w-5xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-            O que você recebe hoje
+            O que entra no seu celular hoje
           </h2>
         </Reveal>
 
