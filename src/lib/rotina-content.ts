@@ -89,7 +89,7 @@ export const ROTINA_SEMANAS: readonly SemanaRotina[] = [
     numero: 4,
     refeicao: "Jantar",
     objetivo:
-      "Fecha o ciclo. É a refeição que mais muda como você acorda: inchaço, peso nas pernas e disposição.",
+      "É o que decide o inchaço e o peso nas pernas da manhã seguinte. Fechando essa fase, o novo padrão já virou rotina.",
     entra: [
       "Proteína com vegetais cozidos ou refogados",
       "Sopas e caldos sem creme",
