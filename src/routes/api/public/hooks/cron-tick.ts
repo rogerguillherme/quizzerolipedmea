@@ -660,7 +660,6 @@ async function processarCadenciaRotina(
       }
     }
 
-    }
 
     if (!tipo || !msg) continue;
 
