@@ -16,6 +16,8 @@ export type MapaSessao = {
   /** Telefone já normalizado (55DDDNNNNNNNN) quando o quiz conseguiu validar. */
   telefone: string;
   diagnostico: Diagnostico;
+  /** Rótulo do funil de origem, para separar as métricas das duas rotas. */
+  funil?: "quizz" | "meu-mapa";
   criadoEm: number;
 };
 

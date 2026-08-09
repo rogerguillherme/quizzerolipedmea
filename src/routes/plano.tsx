@@ -488,9 +488,14 @@ function PlanoPage() {
   const [barraVisivel, setBarraVisivel] = useState(false);
   const [precoEmDestaque, setPrecoEmDestaque] = useState(false);
   const precoRef = useRef<HTMLElement>(null);
+  const [funil, setFunil] = useState("plano-direto");
 
   useEffect(() => {
-    track("landing_view", { pagina: "/plano" });
+    // Funil de origem: a landing pode receber a lead vinda do quiz /meu-mapa
+    // ou tráfego direto de anúncio. Sem esse rótulo os dois viram um borrão só.
+    const funilOrigem = lerMapaSessao()?.funil ?? "plano-direto";
+    setFunil(funilOrigem);
+    track("landing_view", { pagina: "/plano", funil: funilOrigem });
     trackMeta("ViewContent", {
       content_name: "Plano Zero Lipedema",
       content_type: "product",
@@ -507,7 +512,7 @@ function PlanoPage() {
     if (mapaJaEnviado()) return;
     const t = setTimeout(() => {
       setPopupAberto(true);
-      track("mapa_popup_aberto", { lead_id: s.leadId });
+      track("mapa_popup_aberto", { lead_id: s.leadId, funil: s.funil ?? "plano-direto" });
       trackMeta("MapaPopup", { lead_id: s.leadId ?? null });
     }, 900);
     return () => clearTimeout(t);
@@ -522,7 +527,7 @@ function PlanoPage() {
   }, []);
 
   function irParaCheckout(origem: "hero" | "ciclo" | "oferta" | "barra" | "popup") {
-    track("checkout_view", { origem, valor: 67 });
+    track("checkout_view", { origem, valor: 67, funil });
     trackMeta("InitiateCheckout", {
       content_name: "Plano Zero Lipedema 30d",
       content_type: "product",
@@ -535,7 +540,7 @@ function PlanoPage() {
 
   /** Popup → preço: fecha, rola até o bloco e pisca o destaque por 2s. */
   function verFasesDoPopup() {
-    track("checkout_view", { origem: "popup", valor: 67 });
+    track("checkout_view", { origem: "popup", valor: 67, funil });
     trackMeta("InitiateCheckout", {
       content_name: "Plano Zero Lipedema",
       content_type: "product",

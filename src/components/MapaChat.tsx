@@ -408,6 +408,7 @@ export function MapaChat({
           nome,
           telefone,
           diagnostico: result.diagnostico,
+          ...(funil ? { funil } : {}),
         });
         trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
         setTyping(false);
