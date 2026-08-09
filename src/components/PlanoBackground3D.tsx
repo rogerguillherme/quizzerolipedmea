@@ -171,9 +171,9 @@ export function PlanoBackground3D() {
           return { mesh, geometry, material };
         }
 
-        const formaA = criarForma(9.5, isMobile ? 0.13 : 0.17, 1.7);
+        const formaA = criarForma(9.5, isMobile ? 0.05 : 0.07, 1.7);
         formaA.mesh.position.set(-7, 3, 0);
-        const formaB = criarForma(7.5, isMobile ? 0.09 : 0.12, 1.3);
+        const formaB = criarForma(7.5, isMobile ? 0.035 : 0.05, 1.3);
         formaB.mesh.position.set(8, -5, -6);
 
         // --- Interação: scroll suave + mouse amortecido ---
