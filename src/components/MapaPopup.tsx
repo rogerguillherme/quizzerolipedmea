@@ -5,6 +5,7 @@ import { enviarAcessoMapa } from "@/lib/plano.functions";
 import { formatPhoneBR, onlyDigits } from "@/lib/phone";
 import { marcarMapaEnviado, type MapaSessao } from "@/lib/mapa-sessao";
 import { track } from "@/lib/analytics";
+import { trackMeta } from "@/lib/meta-track";
 
 const C = {
   navy: "#16324F",
@@ -77,6 +78,13 @@ export function MapaPopup({
       if (r.ok) {
         marcarMapaEnviado(r.telefone);
         track("whatsapp_capturado", { lead_id: sessao.leadId });
+        // Evento que a Meta usa para otimizar a campanha. Advanced matching
+        // vai por dentro do trackMeta (telefone/nome hasheados no servidor).
+        trackMeta(
+          "Lead",
+          { content_name: "Mapa do Lipedema", lead_id: sessao.leadId },
+          { phone: r.telefone, firstName: sessao.nome, externalId: sessao.leadId },
+        );
         setSucesso(true);
       } else {
         setErro(r.mensagem);
