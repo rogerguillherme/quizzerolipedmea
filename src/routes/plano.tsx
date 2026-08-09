@@ -543,7 +543,7 @@ function PlanoPage() {
           <Reveal delay={1}>
             <h1
               className="pl-hero-texto mt-5 text-[34px] leading-[1.08] sm:text-[52px]"
-              style={{ fontFamily: "Georgia, serif", fontWeight: 600, color: "#FFFDF6" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, color: "#FFFDF6" }}
             >
               Não é peso. É <em className="pl-em">inflamação</em> — e ela se retroalimenta.
             </h1>
@@ -586,7 +586,7 @@ function PlanoPage() {
           <Reveal>
             <h2
               className="text-[26px] leading-snug sm:text-[32px]"
-              style={{ fontFamily: "Georgia, serif", color: "#fff" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#fff" }}
             >
               Se você chegou até aqui, provavelmente:
             </h2>
@@ -614,7 +614,7 @@ function PlanoPage() {
       {/* 3. O ciclo da inflamação — mecanismo antes da oferta. */}
       <section className="relative mx-auto max-w-5xl px-6 py-20">
         <Reveal>
-          <h2 className="text-[26px] leading-snug sm:text-[34px]" style={{ fontFamily: "Georgia, serif" }}>
+          <h2 className="text-[26px] leading-snug sm:text-[34px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             Por que quanto mais você tenta, <em className="pl-em">pior fica</em>
           </h2>
         </Reveal>
@@ -636,7 +636,7 @@ function PlanoPage() {
                   <span className="text-[12px] font-semibold tracking-[.18em]" style={{ color: C.goldLabel }}>
                     {etapa.n}
                   </span>
-                  <h3 className="mt-1 text-[19px] leading-snug" style={{ fontFamily: "Georgia, serif" }}>
+                  <h3 className="mt-1 text-[19px] leading-snug" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                     {etapa.t}
                   </h3>
                   <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -668,7 +668,7 @@ function PlanoPage() {
 
         <Reveal>
           <div className="pl-espelho mt-6 rounded-3xl px-7 py-10 sm:px-10">
-            <h3 className="text-[24px] leading-snug sm:text-[28px]" style={{ fontFamily: "Georgia, serif", color: "#fff" }}>
+            <h3 className="text-[24px] leading-snug sm:text-[28px]" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#fff" }}>
               Não na força de vontade. Na <em className="pl-em">inflamação</em>.
             </h3>
             <p className="mt-5 text-[16px] leading-relaxed" style={{ color: "#DCE6EF" }}>
@@ -686,7 +686,7 @@ function PlanoPage() {
         <Reveal delay={1}>
           <p
             className="mx-auto mt-12 max-w-md text-center text-[18px] leading-relaxed"
-            style={{ fontFamily: "Georgia, serif", color: C.navy }}
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
           >
             Repare que em nenhum ponto desse ciclo você fez algo errado.
           </p>
@@ -696,7 +696,7 @@ function PlanoPage() {
       {/* 4. As 4 fases */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
-          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "Georgia, serif" }}>
+          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             Quatro fases. <em className="pl-em">Nenhuma restrição.</em>
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -731,7 +731,7 @@ function PlanoPage() {
       {/* 5. Entregáveis */}
       <section className="relative mx-auto max-w-5xl px-6 pb-20">
         <Reveal>
-          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "Georgia, serif" }}>
+          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             O que você recebe hoje
           </h2>
         </Reveal>
@@ -748,7 +748,7 @@ function PlanoPage() {
               <Reveal delay={1} className="md:[direction:ltr]">
                 <div>
                   <f.icone className="h-7 w-7" style={{ color: C.gold }} aria-hidden />
-                  <h3 className="mt-4 text-[24px] leading-snug" style={{ fontFamily: "Georgia, serif" }}>
+                  <h3 className="mt-4 text-[24px] leading-snug" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                     {f.titulo}
                   </h3>
                   <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -801,7 +801,7 @@ function PlanoPage() {
               />
             </div>
             <div>
-              <h2 className="text-[22px]" style={{ fontFamily: "Georgia, serif" }}>
+              <h2 className="text-[22px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                 Quem te acompanha
               </h2>
               <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -820,7 +820,7 @@ function PlanoPage() {
           <Reveal>
             <h2
               className="mb-6 text-[26px] leading-snug sm:text-[30px]"
-              style={{ fontFamily: "Georgia, serif", color: "#FFFDF6" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#FFFDF6" }}
             >
               Comece hoje pela <em className="pl-em">primeira fase</em>
             </h2>
@@ -863,7 +863,7 @@ function PlanoPage() {
       {/* 8. FAQ */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
-          <h2 className="text-[26px] sm:text-[32px]" style={{ fontFamily: "Georgia, serif" }}>
+          <h2 className="text-[26px] sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             Perguntas que sempre chegam
           </h2>
         </Reveal>
