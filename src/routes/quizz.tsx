@@ -32,7 +32,7 @@ function QuizzPage() {
 
   return (
     <main className="min-h-[100dvh] overflow-y-auto" style={{ background: "#F5EFE1" }}>
-      <MapaChat destino="plano" />
+      <MapaChat funil="quizz" />
     </main>
   );
 }

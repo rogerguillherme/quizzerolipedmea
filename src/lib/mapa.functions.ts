@@ -41,6 +41,8 @@ export const submitMapa = createServerFn({ method: "POST" })
         // Atribuição de primeiro toque vinda do cliente: é o que permite
         // responder "essa venda veio de qual campanha".
         atribuicao: z.record(z.string(), z.unknown()).optional(),
+        // Qual funil originou a lead ("quizz" ou "meu-mapa").
+        funil: z.enum(["quizz", "meu-mapa"]).optional(),
       })
       .parse(input),
   )
@@ -103,9 +105,11 @@ Devolva o JSON conforme instruções.`;
       .insert({
         nome: data.nome,
         telefone: data.telefone && data.telefone.length >= 8 ? data.telefone : "pendente",
-        respostas: (data.atribuicao
-          ? { ...data.respostas, atribuicao: data.atribuicao }
-          : data.respostas) as never,
+        respostas: {
+          ...data.respostas,
+          ...(data.atribuicao ? { atribuicao: data.atribuicao } : {}),
+          ...(data.funil ? { funil: data.funil } : {}),
+        } as never,
         origem: "mapa",
         status: "mapa_gerado",
         diagnostico,

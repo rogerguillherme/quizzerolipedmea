@@ -201,8 +201,11 @@ type Stage =
 export function MapaChat({
   onClose,
   destino = "app",
+  funil,
 }: {
   onClose?: () => void;
+  /** Rótulo do funil de origem, para separar as métricas das duas rotas. */
+  funil?: "quizz" | "meu-mapa";
   /**
    * "app": fluxo antigo (cria acesso e leva pra /definir-senha).
    * "plano": funil novo — o quiz só gera o Mapa e joga a lead na landing
@@ -229,9 +232,9 @@ export function MapaChat({
 
   // Track quiz start
   useEffect(() => {
-    track("quiz_started");
+    track("quiz_started", funil ? { funil } : undefined);
     trackMeta("QuizIniciado", { content_name: "Mapa do Lipedema" });
-  }, []);
+  }, [funil]);
 
   // Auto-scroll
   useEffect(() => {
@@ -353,7 +356,7 @@ export function MapaChat({
     if (reacao) await gabiSay(reacao, 550);
 
     // quiz_step mostra em qual pergunta a mulher desiste.
-    track("quiz_step", { pergunta: qIndex + 1, chave: q.key, total: QS.length });
+    track("quiz_step", { pergunta: qIndex + 1, chave: q.key, total: QS.length, ...(funil ? { funil } : {}) });
 
     const next = qIndex + 1;
     if (next < QS.length) {
@@ -375,6 +378,7 @@ export function MapaChat({
           // Telefone já foi coletado e validado ANTES do quiz.
           telefone,
           atribuicao: getAtribuicao() as Record<string, unknown>,
+          funil,
 
           respostas: {
             tempo: finalAnswers.tempo || "",
@@ -395,7 +399,7 @@ export function MapaChat({
       setDiagnostico(result.diagnostico);
       setLeadId(result.leadId ?? null);
       setTrackLeadId(result.leadId ?? null);
-      track("quiz_completed");
+      track("quiz_completed", funil ? { funil } : undefined);
       if (destino === "plano") {
         // Guarda o Mapa na sessão e leva pra landing: o popup de lá mostra o
         // resultado e pede o WhatsApp.
