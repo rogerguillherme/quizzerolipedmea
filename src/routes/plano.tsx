@@ -147,27 +147,52 @@ const PLANO_CSS = `
   background:linear-gradient(150deg,rgba(255,255,255,.28),transparent 38%);
   box-shadow:0 0 40px -22px rgba(239,201,107,.75) inset;
 }
-/* Hero em tela cheia: a foto é o fundo, o texto mora na parte de baixo/esquerda. */
+/* Hero.
+   No celular a foto é retrato vertical e não sobra faixa lateral: qualquer
+   sobreposição cai em cima do rosto. Por isso o mobile é COLUNA (foto em cima,
+   texto embaixo sobre #05131F) e só a partir de 900px a foto vira fundo com
+   véu horizontal. */
 .pl-hero{
   position:relative;
-  min-height:min(94vh,860px);
-  background:#0B2440; /* fallback enquanto a foto não chega */
+  background:#05131F; /* legível enquanto a foto não chega */
   overflow:hidden;
+}
+.pl-hero-foto{
+  position:relative;
+  width:100%;
+  height:clamp(300px,48vh,440px);
 }
 .pl-hero-img{
   position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; object-position:72% 18%;
+  object-fit:cover; object-position:50% 18%;
   filter:saturate(1.08) contrast(1.04);
 }
-@media (min-width:768px){ .pl-hero-img{ object-position:78% 16%; } }
-/* Véu em três camadas: sobe escuro, adensa embaixo à esquerda, dourado no alto à direita. */
-.pl-hero-veu{
-  position:absolute; inset:0; pointer-events:none;
-  background:
-    radial-gradient(120% 90% at 88% 8%, rgba(250,228,168,.30), transparent 55%),
-    radial-gradient(95% 80% at 8% 96%, rgba(3,14,24,.92), transparent 62%),
-    linear-gradient(to top, #05131F 6%, rgba(5,19,31,.82) 34%, rgba(5,19,31,.34) 62%, rgba(5,19,31,.10) 100%);
+/* Degradê só na base da foto: funde com o fundo escuro sem tocar o rosto. */
+.pl-hero-fade{
+  position:absolute; left:0; right:0; bottom:0; height:55%;
+  pointer-events:none;
+  background:linear-gradient(to top,#05131F 0%,rgba(5,19,31,.86) 34%,transparent 100%);
 }
+.pl-hero-veu{ display:none; }
+.pl-hero-texto{ max-width:34ch; }
+
+@media (min-width:900px){
+  .pl-hero{ min-height:min(94vh,860px); display:flex; align-items:flex-end; }
+  .pl-hero-foto{ position:absolute; inset:0; height:100%; }
+  .pl-hero-img{ object-position:78% 14%; }
+  .pl-hero-fade{ display:none; }
+  /* Véu horizontal: escurece a esquerda (onde mora o texto) e libera o rosto. */
+  .pl-hero-veu{
+    display:block;
+    position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(90% 70% at 92% 6%, rgba(250,228,168,.28), transparent 58%),
+      linear-gradient(to top, rgba(5,19,31,.85) 0%, rgba(5,19,31,.28) 26%, transparent 52%),
+      linear-gradient(to right, #05131F 0%, rgba(5,19,31,.94) 34%, rgba(9,32,54,.55) 52%, transparent 72%);
+  }
+  .pl-hero-texto{ max-width:24ch; }
+}
+
 .pl-selo-escuro{
   background:rgba(9,26,43,.55);
   border:1px solid rgba(239,201,107,.55);
