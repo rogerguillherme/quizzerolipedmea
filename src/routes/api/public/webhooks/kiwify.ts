@@ -98,7 +98,8 @@ export const Route = createFileRoute("/api/public/webhooks/kiwify")({
 
         const result = await sendCapiEvent({
           eventName: "Purchase",
-          eventId: orderId, // dedupe com o Pixel do navegador
+          // eventId estável: reentrega do webhook não duplica o Purchase.
+          eventId: orderId ? `purchase-${orderId}` : undefined,
           actionSource: "website",
           user: {
             email: customer.email,

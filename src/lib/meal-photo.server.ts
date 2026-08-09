@@ -83,11 +83,16 @@ export async function analisarFotoRefeicao(
   }
 }
 
-/** Formata o feedback como texto de WhatsApp. `nfoto` = qual foto do teste (1..3). */
+/**
+ * Formata o feedback como texto de WhatsApp.
+ * `nfoto` = qual foto do teste (1..3). Quando `ilimitado` é true (cliente do
+ * plano de R$67), não existe contador nem chamada de venda no rodapé.
+ */
 export function formatarFeedbackWhatsApp(
   f: MealFeedback,
   nfoto: number,
   primeiroNome: string,
+  ilimitado = false,
 ): string {
   if (!f.isRefeicao) {
     return `Hmm, não consegui ver bem a refeição nessa foto, ${primeiroNome} 🙈 Me manda uma foto do prato de cima, com boa luz, que eu te dou o feedback ✨`;
@@ -95,11 +100,17 @@ export function formatarFeedbackWhatsApp(
   const pontos = f.pontos.length
     ? f.pontos.map((p) => `• ${p}`).join("\n")
     : "• Refeição registrada com sucesso.";
+
+  if (ilimitado) {
+    return `📸 *Feedback da sua refeição*\n\n${pontos}\n\n👉 ${f.sugestao}\n\nMe conta: como você se sentiu depois dessa refeição?`;
+  }
+
   const restantes = 3 - nfoto;
   const rodape =
     restantes > 0
       ? `\n\n_Você ainda tem ${restantes} foto${restantes > 1 ? "s" : ""} no seu teste grátis._`
-      : `\n\n💛 Essa foi sua *3ª e última foto do teste grátis*.\nQuer continuar com feedback ilimitado + plano completo (sugestão alimentar, chás/shots e lista de compras) por *R$57*, sem assinatura? Me responde aqui que eu te passo os próximos passos.`;
+      : `\n\n💛 Essa foi sua *3ª e última foto do teste grátis*.\nQuer continuar com feedback ilimitado + o plano completo por *R$67*, sem assinatura? Me responde aqui que eu te passo os próximos passos.`;
 
   return `📸 *Feedback da sua refeição (${nfoto}/3)*\n\n${pontos}\n\n👉 ${f.sugestao}${rodape}`;
 }
+

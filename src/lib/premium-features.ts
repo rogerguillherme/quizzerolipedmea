@@ -43,7 +43,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     icone: CalendarCheck,
     titulo: "Rotina Zero Lipedema",
     descricao:
-      "Um plano em 4 fases para moldar os hábitos que alimentam o lipedema. Nada é proibido e nenhuma refeição é pulada. O alvo é reduzir inflamação, dor e inchaço.",
+      "As 4 fases chegam no seu WhatsApp, uma por vez, para moldar os hábitos que alimentam o lipedema. Nada é proibido e nenhuma refeição é pulada. O alvo é reduzir inflamação, dor e inchaço.",
+
     foto: `${FOTOS_BASE}rotina.jpg`,
     fotoAlt:
       "Prato de ovos mexidos com abacate e frutas vermelhas na luz da manhã",
@@ -53,7 +54,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     icone: Camera,
     titulo: "Registro de Refeições com Fotos",
     descricao:
-      "Fotografe o prato e receba na hora a leitura: o que ajuda, o que atrapalha e o que ajustar na próxima refeição.",
+      "Registro de refeições por foto no WhatsApp. Fotografa o prato, manda pra mim e recebe a leitura na hora: o que ajuda, o que atrapalha e o que ajustar na próxima.",
+
     foto: `${FOTOS_BASE}foto.jpg`,
     fotoAlt: "Mãos fotografando o prato de comida com o celular",
   },
@@ -96,9 +98,10 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
   {
     id: "evolucao",
     icone: ClipboardList,
-    titulo: "Quadro de Evolução",
+    titulo: "Resumo semanal de progresso",
     descricao:
-      "Seu progresso registrado semana a semana, com os feedbacks da sua rotina.",
+      "Resumo semanal de progresso no WhatsApp, com os seus dias cumpridos, sua sequência e o que mudou de uma fase para a outra.",
+
     foto: `${FOTOS_BASE}evolucao.jpg`,
     fotoAlt: "Mão segurando o celular com um gráfico de progresso dourado",
   },

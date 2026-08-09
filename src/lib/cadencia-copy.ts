@@ -277,26 +277,29 @@ Seu Mapa fica guardado. E se for só pra tirar dúvida um dia, também pode me c
 /* Cadência pós-compra (Rotina)                                        */
 /* ------------------------------------------------------------------ */
 
-/** D0 + 4h — lembrete de acesso. */
-export const ROT_ACESSO_4H: MensagemCadencia = {
-  chave: "acesso_4h",
+/**
+ * Resumo semanal de progresso. Sem app, é esta mensagem que devolve para a
+ * cliente o que ela fez na semana.
+ */
+export const ROT_PROGRESSO: MensagemCadencia = {
+  chave: "progresso",
   partes: 2,
   variantes: [
-    `{nome}, aqui é a Gabriela.
+    `{nome}, fecho semanal da sua Rotina.
 ---
-Passei só pra lembrar que seu acesso já está liberado. Abre o app, toca em Rotina na barra de baixo e começa a missão da Fase 1: o café da manhã.
+Você respondeu em {dias} dos últimos 7 dias, sua sequência está em {sequencia} e você me mandou {fotos} foto(s) de refeição.
 
-Não precisa mudar tudo hoje. Um hábito de cada vez já é o suficiente pra começar.`,
-    `{nome}, é a Gabriela 💙
+O que mais te chamou atenção no corpo essa semana?`,
+    `{nome}, o resumo da sua semana 💙
 ---
-Seu acesso já está no ar. Entra no app, toca em Rotina lá embaixo e começa pela missão da Fase 1, que é o café da manhã.
+Foram {dias} dias com resposta sua, sequência de {sequencia} e {fotos} foto(s) de prato por aqui.
 
-Não tenta virar sua alimentação inteira hoje. Um hábito por vez resolve.`,
-    `{nome}, passando rapidinho, é a Gabriela.
+Me conta: o que mudou no inchaço ou na dor de uma semana pra outra?`,
+    `{nome}, olha como foi sua semana.
 ---
-Só confirmando que está tudo liberado pra você. No app, a aba Rotina abre a missão da Fase 1: café da manhã.
+{dias} dias em que você apareceu por aqui, sequência de {sequencia} e {fotos} foto(s) de refeição analisadas.
 
-Comece por aí, sem pressa. Um hábito de cada vez já muda bastante coisa.`,
+Qual foi a parte mais difícil de sustentar?`,
   ],
 };
 
@@ -308,41 +311,42 @@ export const ROT_DICA: MensagemCadencia = {
 
 {dica}
 
-Quando cumprir a missão de hoje, marca lá no app na aba Hoje.`,
+Me conta como foi hoje.`,
     `Dia {dia}.
 
 {dica}
 
-Depois de cumprir a missão, é só marcar no app, na aba Hoje 💙`,
+Manda a foto do seu prato hoje que eu te digo o que ajustar 💙`,
     `Dia {dia} por aqui.
 
 {dica}
 
-Cumpriu a missão de hoje? Marca no app, aba Hoje.`,
+Como foi o seu dia? Pode me responder aqui mesmo.`,
   ],
 };
 
-/** Retomada — 2+ dias sem check-in. */
+/** Retomada — 2+ dias sem resposta. */
 export const ROT_RETOMADA: MensagemCadencia = {
   chave: "retomada",
   partes: 2,
   variantes: [
-    `{nome}, faz {dias} dias sem check-in e eu passei aqui sem cobrança nenhuma.
+    `{nome}, faz {dias} dias que você não aparece por aqui e eu vim sem cobrança nenhuma.
 ---
-Rotina que funciona é a que aceita falha. Não precisa recomeçar do zero: é só cumprir a missão de hoje e marcar no app, na aba Hoje.
+Rotina que funciona é a que aceita falha. Não precisa recomeçar do zero: retoma a fase de hoje e me manda a foto do próximo prato.
 
 Se algo travou, me conta aqui que a gente ajusta juntas.`,
-    `{nome}, vi que faz {dias} dias sem check-in. Não vim cobrar, vim lembrar 💙
+    `{nome}, vi que faz {dias} dias sem notícias suas. Não vim cobrar, vim lembrar 💙
 ---
-Falhar faz parte, e você não perdeu nada. É só fazer a missão de hoje e marcar na aba Hoje do app.
+Falhar faz parte, e você não perdeu nada. Retoma de onde parou e me responde qualquer coisa hoje.
 
 Se alguma coisa atrapalhou, me conta que a gente resolve juntas.`,
-    `{nome}, são {dias} dias sem marcar check-in, e está tudo bem.
+    `{nome}, são {dias} dias sem resposta sua, e está tudo bem.
 ---
-Ninguém segura uma rotina em linha reta. Não precisa voltar pro começo: cumpre a missão de hoje e marca no app, na aba Hoje.
+Ninguém segura uma rotina em linha reta. Não precisa voltar pro começo: segue a fase de hoje e me escreve como foi.
 
-Se travou em alguma parte, me escreve aqui.`,
+Se travou em alguma parte, me diz aqui.`,
   ],
+
 };
 
 /** Fechamento de semana. */

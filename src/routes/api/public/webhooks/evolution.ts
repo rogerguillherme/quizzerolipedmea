@@ -134,20 +134,52 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
           status: "recebido",
         });
 
-        // -------- Teste grátis de 3 fotos de refeição (pré-plano R$67) --------
-        // Se for imagem recebida do lead, tenta rodar o feedback multimodal.
-        if (!fromMe && isImage) {
+        // -------- Entrega pelo WhatsApp --------
+        // Cliente paga (plano_ativo): análise de refeição ILIMITADA e cada
+        // resposta dela conta como dia cumprido da Rotina.
+        // Lead que não comprou: mantém o teste de 3 fotos e a chamada do plano.
+        if (!fromMe) {
           const { data: lead } = await supabaseAdmin
             .from("leads")
-            .select("id, nome, telefone, status, respostas")
+            .select("id, nome, telefone, status, respostas, user_id")
             .eq("telefone", telefone)
             .order("created_at", { ascending: false })
             .limit(1)
             .maybeSingle();
 
-          // Só roda para leads já cadastradas e que ainda não pagaram o plano.
           const statusPago = new Set(["plano_ativo", "premium", "cliente"]);
-          if (lead && !statusPago.has(String(lead.status))) {
+          const pago = Boolean(lead && statusPago.has(String(lead.status)));
+
+          // Check-in por resposta: sem app, o progresso vem da conversa.
+          if (pago && lead?.user_id) {
+            try {
+              const { hojeISO } = await import("@/lib/data-local");
+              const hoje = hojeISO();
+              const { data: jaTem } = await supabaseAdmin
+                .from("rotina_checkins")
+                .select("id")
+                .eq("user_id", lead.user_id)
+                .eq("data", hoje)
+                .maybeSingle();
+              if (!jaTem) {
+                const { data: prog } = await supabaseAdmin
+                  .from("rotina_progresso")
+                  .select("semana_atual")
+                  .eq("user_id", lead.user_id)
+                  .maybeSingle();
+                await supabaseAdmin.from("rotina_checkins").insert({
+                  user_id: lead.user_id,
+                  semana: Math.min(4, Math.max(1, Number(prog?.semana_atual ?? 1))),
+                  data: hoje,
+                  observacao: "resposta no WhatsApp",
+                });
+              }
+            } catch {
+              /* check-in nunca pode derrubar o webhook */
+            }
+          }
+
+          if (isImage && lead) {
             const respostas =
               (lead.respostas as Record<string, unknown>) ?? {};
             const teste =
@@ -160,8 +192,8 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
 
             const { sendWhatsApp } = await import("@/lib/evolution.server");
 
-            if (usadas >= 3) {
-              const msg = `${primeiroNome ? `Oi ${primeiroNome}` : "Oi"} 💛 Seu *teste grátis de 3 fotos* já foi usado.\n\nPra continuar recebendo feedback ilimitado das suas refeições + o *plano completo* (sugestão alimentar, chás/shots e lista de compras) por *R$67* — sem assinatura — é só me responder aqui que eu te passo os próximos passos.`;
+            if (!pago && usadas >= 3) {
+              const msg = `${primeiroNome ? `Oi ${primeiroNome}` : "Oi"} 💛 Seu *teste grátis de 3 fotos* já foi usado.\n\nPra continuar recebendo a leitura de todas as suas refeições, junto com as 4 fases da Rotina e o resumo semanal, tudo aqui no WhatsApp, por *R$67* sem assinatura, é só me responder aqui que eu te passo os próximos passos.`;
               const wa = await sendWhatsApp(telefone, msg);
               await supabaseAdmin.from("whatsapp_logs").insert({
                 telefone,
@@ -208,6 +240,7 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
                     analise.feedback,
                     Math.max(1, proximoN),
                     primeiroNome,
+                    pago,
                   );
                   const wa = await sendWhatsApp(telefone, msg);
                   await supabaseAdmin.from("whatsapp_logs").insert({
@@ -217,9 +250,13 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
                     erro: wa.error ?? null,
                   });
                   if (contaComoUsada) {
+                    // Cliente paga não tem contador de teste, só o histórico.
                     respostas.teste_fotos = {
-                      usadas: proximoN,
+                      usadas: pago ? usadas : proximoN,
                       ultima_em: new Date().toISOString(),
+                      total: Number(
+                        (teste as { total?: number }).total ?? usadas,
+                      ) + 1,
                     };
                     await supabaseAdmin
                       .from("leads")
@@ -231,9 +268,10 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
             }
 
             // Encerra aqui — a imagem não deve cair no parser de feedback textual.
-            return Response.json({ ok: true, photoTest: true });
+            return Response.json({ ok: true, foto: true, pago });
           }
         }
+
 
 
         // Interpretação de feedback do Protocolo 7 Dias.

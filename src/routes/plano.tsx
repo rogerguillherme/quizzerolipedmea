@@ -491,7 +491,12 @@ function PlanoPage() {
 
   useEffect(() => {
     track("landing_view", { pagina: "/plano" });
-    trackMeta("ViewContent", { content_name: "Plano Zero Lipedema 30d", content_type: "product" });
+    trackMeta("ViewContent", {
+      content_name: "Plano Zero Lipedema",
+      content_type: "product",
+      value: 67,
+      currency: "BRL",
+    });
   }, []);
 
   // Popup só abre quando existe Mapa nesta sessão e ele ainda não foi enviado.
@@ -503,6 +508,7 @@ function PlanoPage() {
     const t = setTimeout(() => {
       setPopupAberto(true);
       track("mapa_popup_aberto", { lead_id: s.leadId });
+      trackMeta("MapaPopup", { lead_id: s.leadId ?? null });
     }, 900);
     return () => clearTimeout(t);
   }, []);
@@ -522,6 +528,7 @@ function PlanoPage() {
       content_type: "product",
       value: 67,
       currency: "BRL",
+      origem,
     });
     window.location.href = KIWIFY_CHECKOUT_URL;
   }
@@ -529,6 +536,13 @@ function PlanoPage() {
   /** Popup → preço: fecha, rola até o bloco e pisca o destaque por 2s. */
   function verFasesDoPopup() {
     track("checkout_view", { origem: "popup", valor: 67 });
+    trackMeta("InitiateCheckout", {
+      content_name: "Plano Zero Lipedema",
+      content_type: "product",
+      value: 67,
+      currency: "BRL",
+      origem: "popup",
+    });
     setPopupAberto(false);
     setPrecoEmDestaque(true);
     window.setTimeout(() => {
@@ -965,6 +979,18 @@ function PlanoPage() {
             <p className="mt-2 text-[14px]" style={{ color: "#CBD9E6" }}>
               pagamento único · sem assinatura
             </p>
+            <p
+              className="mx-auto mt-5 max-w-md rounded-2xl px-4 py-3 text-[15px] font-semibold leading-relaxed"
+              style={{
+                background: "rgba(199,146,70,.14)",
+                border: "1px solid rgba(239,201,107,.35)",
+                color: "#F3E4C3",
+              }}
+            >
+              Tudo chega no seu WhatsApp. Você não precisa baixar nada nem aprender a usar um
+              aplicativo.
+            </p>
+
           </Reveal>
           <ul className="mt-8 space-y-3">
             {PREMIUM_FEATURES.map((f, i) => (
