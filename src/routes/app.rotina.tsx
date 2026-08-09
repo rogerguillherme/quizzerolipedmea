@@ -38,17 +38,17 @@ export const Route = createFileRoute("/app/rotina")({
   component: RotinaPage,
   head: () => ({
     meta: [
-      { title: "Rotina Zero Lipedema | Sua rotina semana a semana" },
+      { title: "Rotina Zero Lipedema | Seu plano em 4 fases" },
       {
         name: "description",
         content:
-          "Ajuste uma refeição por semana com a Rotina Zero Lipedema: café da manhã, almoço, lanche e jantar, sem contar caloria.",
+          "Um plano em 4 fases para moldar os hábitos que alimentam o lipedema: menos inflamação, dor e inchaço, sem proibições.",
       },
       { property: "og:title", content: "Rotina Zero Lipedema" },
       {
         property: "og:description",
         content:
-          "Uma refeição nova por semana. Em 4 semanas suas refeições principais estão ajustadas.",
+          "Quatro fases, um hábito por vez. Nada é proibido e nenhuma refeição é pulada.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -169,7 +169,7 @@ function RotinaPage() {
           className="mt-2 text-2xl leading-tight"
           style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500 }}
         >
-          Semana {semanaAtual} de 4 · {semana.refeicao}
+          Fase {semanaAtual} de 4 · {semana.refeicao}
         </h1>
 
         <div className="mt-4">
@@ -279,7 +279,7 @@ function RotinaPage() {
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold"
                   style={{ borderColor: GOLD, color: NAVY, background: "rgba(255,253,247,0.9)" }}
                 >
-                  Avançar para a Semana {semanaAtual + 1}
+                  Avançar para a Fase {semanaAtual + 1}
                   <ChevronRight className="size-4" />
                 </button>
               ) : (
@@ -400,7 +400,7 @@ function RotinaPage() {
                     className="block text-[14px] font-semibold"
                     style={{ color: futura ? "#8A8672" : NAVY }}
                   >
-                    Semana {s.numero} · {s.refeicao}
+                    Fase {s.numero} · {s.refeicao}
                   </span>
                   {!futura && (
                     <span className="mt-0.5 block text-[12px] leading-relaxed text-[#5C5749]">
@@ -569,11 +569,11 @@ function Celebracao() {
           className="mt-3 text-2xl leading-tight"
           style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500 }}
         >
-          Suas 4 refeições principais estão ajustadas
+          Você concluiu as quatro fases
         </h1>
         <p className="mt-3 text-sm opacity-85">
-          Você passou pelo café da manhã, almoço, lanche e jantar sem contar caloria e
-          sem passar fome. Esse é o alicerce da rotina.
+          Você moldou os hábitos das quatro refeições principais sem proibir nada e sem
+          pular refeição. Esse é o alicerce da rotina que reduz inflamação, dor e inchaço.
         </p>
       </section>
 
