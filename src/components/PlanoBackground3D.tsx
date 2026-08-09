@@ -137,10 +137,10 @@ export function PlanoBackground3D() {
             vec3 color = mix(uNavy, uGold, smoothstep(0.15, 0.9, vMix));
 
             float spec = pow(max(dot(n, normalize(vec3(-0.45, 0.75, 0.55))), 0.0), 9.0);
-            color += uGlow * spec * 1.15;
+            color += uGlow * spec * 0.9;
 
             float fresnel = pow(1.0 - max(dot(n, normalize(vView)), 0.0), 2.2);
-            color = mix(color, uGlow, fresnel * 0.55);
+            color = mix(color, uGlow, fresnel * 0.35);
 
             gl_FragColor = vec4(color, uOpacity * uFade);
           }
@@ -171,9 +171,9 @@ export function PlanoBackground3D() {
           return { mesh, geometry, material };
         }
 
-        const formaA = criarForma(9.5, isMobile ? 0.36 : 0.46, 1.7);
+        const formaA = criarForma(9.5, isMobile ? 0.13 : 0.17, 1.7);
         formaA.mesh.position.set(-7, 3, 0);
-        const formaB = criarForma(7.5, isMobile ? 0.26 : 0.34, 1.3);
+        const formaB = criarForma(7.5, isMobile ? 0.09 : 0.12, 1.3);
         formaB.mesh.position.set(8, -5, -6);
 
         // --- Interação: scroll suave + mouse amortecido ---
