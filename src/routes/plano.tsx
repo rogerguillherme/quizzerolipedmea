@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ShieldCheck, Check, ChevronDown, Flame, Activity, Clock, Droplets, CircleSlash, RotateCw } from "lucide-react";
+import { ShieldCheck, Check, ChevronDown, Flame, Activity, Clock, Droplets, CircleSlash, RotateCw, Sunrise } from "lucide-react";
 import { PlanoBackground3D } from "@/components/PlanoBackground3D";
 import { MapaPopup } from "@/components/MapaPopup";
 import { DepoimentosWhatsapp } from "@/components/DepoimentosWhatsapp";
@@ -403,6 +403,25 @@ const ESPELHO = [
   "E toda segunda-feira você recomeça.",
 ];
 
+/** Sinais mais relatados perto do dia 30. Hedge obrigatório na seção. */
+const DIA30 = [
+  {
+    icone: Sunrise,
+    t: "A manhã",
+    d: "A perna amanhece mais leve, sem aquele peso de sempre ao pisar no chão.",
+  },
+  {
+    icone: Clock,
+    t: "O fim do dia",
+    d: "A calça marca menos e some a vontade de trocar de roupa às cinco da tarde.",
+  },
+  {
+    icone: Droplets,
+    t: "A tarde",
+    d: "A vontade de doce diminui sozinha, sem você precisar segurar a mão.",
+  },
+] as const;
+
 
 const SEMANAS = [
   {
@@ -467,6 +486,8 @@ function PlanoPage() {
   const [sessao, setSessao] = useState<MapaSessao | null>(null);
   const [popupAberto, setPopupAberto] = useState(false);
   const [barraVisivel, setBarraVisivel] = useState(false);
+  const [precoEmDestaque, setPrecoEmDestaque] = useState(false);
+  const precoRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     track("landing_view", { pagina: "/plano" });
@@ -494,7 +515,7 @@ function PlanoPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  function irParaCheckout(origem: "hero" | "oferta" | "barra") {
+  function irParaCheckout(origem: "hero" | "ciclo" | "oferta" | "barra" | "popup") {
     track("checkout_view", { origem, valor: 67 });
     trackMeta("InitiateCheckout", {
       content_name: "Plano Zero Lipedema 30d",
@@ -503,6 +524,17 @@ function PlanoPage() {
       currency: "BRL",
     });
     window.location.href = KIWIFY_CHECKOUT_URL;
+  }
+
+  /** Popup → preço: fecha, rola até o bloco e pisca o destaque por 2s. */
+  function verFasesDoPopup() {
+    track("checkout_view", { origem: "popup", valor: 67 });
+    setPopupAberto(false);
+    setPrecoEmDestaque(true);
+    window.setTimeout(() => {
+      precoRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 120);
+    window.setTimeout(() => setPrecoEmDestaque(false), 2600);
   }
 
   const destaques = PREMIUM_FEATURES.slice(0, 3);
@@ -568,7 +600,10 @@ function PlanoPage() {
               Quero quebrar esse ciclo
             </button>
             <p className="mt-4 text-[13px]" style={{ color: "rgba(255,253,246,.72)" }}>
-              R$67 · pagamento único · 7 dias de garantia
+              R$67 · pagamento único
+            </p>
+            <p className="mt-1 text-[13px]" style={{ color: "rgba(255,253,246,.72)" }}>
+              7 dias de garantia. Não serviu, você me chama e eu devolvo.
             </p>
             <p
               className="mt-8 flex items-center gap-2 text-[12px] uppercase tracking-[.18em]"
@@ -626,7 +661,7 @@ function PlanoPage() {
         <Reveal delay={1}>
           <p className="mt-5 max-w-2xl text-[17px] leading-relaxed" style={{ color: C.navySoft }}>
             O lipedema não é um problema parado. É uma roda girando, e cada volta deixa a próxima mais
-            difícil. Veja se você reconhece a sua.
+            difícil.
           </p>
         </Reveal>
 
@@ -684,6 +719,32 @@ function PlanoPage() {
             <p className="mt-5 text-[17px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
               <strong>Quatro fases, um hábito por vez.</strong> Você não vai cortar comida. Vai trocar o
               que alimenta a inflamação, começando pelo hábito mais fácil de mudar.
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={1}>
+          <div className="pl-card mt-6 rounded-3xl px-7 py-9 sm:px-10">
+            <h3
+              className="text-[22px] leading-snug sm:text-[26px]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              A roda não para sozinha.
+            </h3>
+            <p className="mt-4 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
+              Cada semana que passa é mais uma volta: mais líquido retido, mais dor, mais dificuldade
+              de voltar a se mexer. Não existe pressa artificial nenhuma aqui. Existe o fato de que
+              quanto mais cedo a inflamação cede, menos fundo o ciclo cava.
+            </p>
+            <button
+              type="button"
+              onClick={() => irParaCheckout("ciclo")}
+              className="pl-btn-gold mt-7 w-full rounded-full px-8 py-4 text-[16px] font-semibold sm:w-auto"
+            >
+              Quero começar pela fase 1
+            </button>
+            <p className="mt-3 text-[13px]" style={{ color: C.navySoft }}>
+              7 dias de garantia. Não serviu, você me chama e eu devolvo.
             </p>
           </div>
         </Reveal>
@@ -839,9 +900,48 @@ function PlanoPage() {
         </Reveal>
       </section>
 
+      {/* 6b. Como costuma ser o dia 30 */}
+      <section className="relative mx-auto max-w-4xl px-6 pb-20">
+        <Reveal>
+          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            Como costuma ser o <em className="pl-em">dia 30</em>
+          </h2>
+          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
+            A maioria das mulheres relata, nessa ordem: a perna amanhecendo mais leve, a calça
+            marcando menos no fim do dia, e a vontade de doce à tarde diminuindo sozinha.
+          </p>
+        </Reveal>
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {DIA30.map((c, i) => (
+            <Reveal key={c.t} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+              <div className="pl-card h-full rounded-2xl p-5">
+                <c.icone className="h-6 w-6" style={{ color: C.gold }} aria-hidden />
+                <h3 className="mt-3 text-[17px] font-semibold">{c.t}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                  {c.d}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal delay={2}>
+          <p className="mt-6 text-[14px] leading-relaxed" style={{ color: C.navySoft, opacity: 0.9 }}>
+            Não é promessa e não vale para todo mundo. É o que aparece com mais frequência quando a
+            inflamação começa a ceder.
+          </p>
+        </Reveal>
+      </section>
+
       {/* 7. Preço */}
-      <section className="relative px-4 pb-20">
-        <div className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
+      <section ref={precoRef} className="relative px-4 pb-20">
+        <div
+          className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12"
+          style={
+            precoEmDestaque
+              ? { boxShadow: "0 0 0 3px rgba(239,201,107,.85), 0 0 70px -10px rgba(239,201,107,.6)" }
+              : undefined
+          }
+        >
           <Reveal>
             <h2
               className="mb-6 text-[26px] leading-snug sm:text-[30px]"
@@ -850,8 +950,11 @@ function PlanoPage() {
               Comece hoje pela <em className="pl-em">primeira fase</em>
             </h2>
             <p className="mb-4 text-[15px] leading-relaxed" style={{ color: "#CBD9E6" }}>
-              Você provavelmente já gastou mais que isso em um mês de chá, drenagem ou numa consulta
-              que não olhou para o lipedema.
+              Uma sessão de drenagem sai entre R$100 e R$150. Uma consulta particular, entre R$300 e
+              R$400. Um mês de chá e suplemento sem orientação, mais que isso.
+            </p>
+            <p className="mb-4 text-[17px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
+              O plano completo, uma vez só: R$67.
             </p>
             <p className="text-[15px] line-through" style={{ color: "#8FA7BC" }}>
               De R$119,90
@@ -883,7 +986,7 @@ function PlanoPage() {
             </button>
             <p className="mt-5 flex items-center justify-center gap-2 text-[14px]" style={{ color: "#CBD9E6" }}>
               <ShieldCheck className="h-4 w-4" style={{ color: C.goldLight }} aria-hidden />
-              7 dias de garantia. Não serviu, devolvemos.
+              7 dias de garantia. Não serviu, você me chama e eu devolvo.
             </p>
           </Reveal>
         </div>
@@ -937,18 +1040,28 @@ function PlanoPage() {
             </p>
             <p className="text-[17px] font-semibold">R$67 à vista</p>
           </div>
-          <button
-            type="button"
-            onClick={() => irParaCheckout("barra")}
-            className="pl-btn-gold ml-auto w-full rounded-full px-6 py-4 text-[16px] font-semibold sm:w-auto"
-          >
-            Quero meu plano por R$67
-          </button>
+          <div className="ml-auto w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => irParaCheckout("barra")}
+              className="pl-btn-gold w-full rounded-full px-6 py-4 text-[16px] font-semibold sm:w-auto"
+            >
+              Quero meu plano por R$67
+            </button>
+            <p className="mt-1.5 text-center text-[11px]" style={{ color: C.navySoft }}>
+              7 dias de garantia. Não serviu, você me chama e eu devolvo.
+            </p>
+          </div>
         </div>
       </div>
 
       {sessao && (
-        <MapaPopup sessao={sessao} open={popupAberto} onClose={() => setPopupAberto(false)} />
+        <MapaPopup
+          sessao={sessao}
+          open={popupAberto}
+          onClose={() => setPopupAberto(false)}
+          onVerFases={verFasesDoPopup}
+        />
       )}
     </main>
   );

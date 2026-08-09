@@ -25,10 +25,13 @@ export function MapaPopup({
   sessao,
   open,
   onClose,
+  onVerFases,
 }: {
   sessao: MapaSessao;
   open: boolean;
   onClose: () => void;
+  /** Fecha o popup e leva a lead até o bloco de preço. Ponto de maior intenção. */
+  onVerFases?: () => void;
 }) {
   const enviar = useServerFn(enviarAcessoMapa);
   const [telefone, setTelefone] = useState(() =>
@@ -155,19 +158,30 @@ export function MapaPopup({
               <div className="mt-7 rounded-2xl border p-5 text-center" style={{ borderColor: C.line }}>
                 <CheckCircle2 className="mx-auto h-9 w-9" style={{ color: C.gold }} />
                 <p className="mt-3 text-[17px] font-semibold" style={{ color: C.navy }}>
-                  Enviado para o seu WhatsApp
+                  Pronto, enviei pro seu WhatsApp.
                 </p>
                 <p className="mt-2 text-[14px] leading-relaxed" style={{ color: C.navySoft }}>
-                  Abre a conversa com a Gabriela: o link leva direto ao seu Mapa completo na
-                  plataforma.
+                  Seu Mapa aponta {d.estagio}. O que muda esse quadro não é dieta: é reduzir a
+                  inflamação, uma fase por vez.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => (onVerFases ? onVerFases() : onClose())}
+                  className="mt-5 w-full rounded-full px-6 py-4 text-[16px] font-semibold"
+                  style={{ background: C.gold, color: "#fff" }}
+                >
+                  Ver as 4 fases do plano
+                </button>
+                <p className="mt-3 text-[12px]" style={{ color: C.navySoft }}>
+                  7 dias de garantia. Não serviu, você me chama e eu devolvo.
                 </p>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="mt-5 w-full rounded-full px-6 py-4 text-[16px] font-semibold"
-                  style={{ background: C.navy, color: "#fff" }}
+                  className="mt-3 text-[13px] underline"
+                  style={{ color: C.navySoft }}
                 >
-                  Continuar lendo
+                  Depois eu vejo
                 </button>
               </div>
             ) : (
