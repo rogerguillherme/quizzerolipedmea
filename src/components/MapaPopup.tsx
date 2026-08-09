@@ -172,28 +172,21 @@ export function MapaPopup({
                   Pronto, enviei pro seu WhatsApp.
                 </p>
                 <p className="mt-2 text-[14px] leading-relaxed" style={{ color: C.navySoft }}>
-                  Seu Mapa aponta {d.estagio}. O que muda esse quadro não é dieta: é reduzir a
-                  inflamação, uma fase por vez.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => (onVerFases ? onVerFases() : onClose())}
-                  className="mt-5 w-full rounded-full px-6 py-4 text-[16px] font-semibold"
-                  style={{ background: C.gold, color: "#fff" }}
-                >
-                  Ver as 4 fases do plano
-                </button>
-                <p className="mt-3 text-[12px]" style={{ color: C.navySoft }}>
-                  7 dias de garantia. Não serviu, você me chama e eu devolvo.
+                  Seu Mapa aponta {d.estagio}. Quer saber como começar a tratar a raiz do
+                  lipedema?
                 </p>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="mt-3 text-[13px] underline"
-                  style={{ color: C.navySoft }}
+                  className="mt-5 w-full rounded-full px-6 py-4 text-[16px] font-semibold"
+                  style={{ background: C.gold, color: "#fff" }}
                 >
-                  Depois eu vejo
+                  Acessar
                 </button>
+                <p className="mt-3 text-[12px]" style={{ color: C.navySoft }}>
+                  7 dias de garantia. Não serviu, você me chama e eu devolvo.
+                </p>
+
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="mt-7">
