@@ -494,7 +494,7 @@ function PlanoPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  function irParaCheckout(origem: "hero" | "oferta" | "barra") {
+  function irParaCheckout(origem: "hero" | "ciclo" | "oferta" | "barra" | "popup") {
     track("checkout_view", { origem, valor: 67 });
     trackMeta("InitiateCheckout", {
       content_name: "Plano Zero Lipedema 30d",
@@ -503,6 +503,17 @@ function PlanoPage() {
       currency: "BRL",
     });
     window.location.href = KIWIFY_CHECKOUT_URL;
+  }
+
+  /** Popup → preço: fecha, rola até o bloco e pisca o destaque por 2s. */
+  function verFasesDoPopup() {
+    track("checkout_view", { origem: "popup", valor: 67 });
+    setPopupAberto(false);
+    setPrecoEmDestaque(true);
+    window.setTimeout(() => {
+      precoRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 120);
+    window.setTimeout(() => setPrecoEmDestaque(false), 2600);
   }
 
   const destaques = PREMIUM_FEATURES.slice(0, 3);
