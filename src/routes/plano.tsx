@@ -375,8 +375,11 @@ function PlanoPage() {
 
   return (
     <main className="relative min-h-[100dvh]" style={{ color: C.navy }}>
+      <style dangerouslySetInnerHTML={{ __html: PLANO_CSS }} />
       {/* Base creme fica ABAIXO do canvas 3D, senão o fundo some atrás dela. */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-20" style={{ background: C.cream }} />
+      {/* Luz quente no topo + sombra fria à direita: dá volume ao creme. */}
+      <div aria-hidden className="pl-luz" />
       <PlanoBackground3D />
 
       {/* 1. Hero */}
@@ -384,7 +387,7 @@ function PlanoPage() {
         <Reveal>
           <span
             className="inline-block rounded-full border px-4 py-1.5 text-[12px] font-semibold uppercase tracking-wide"
-            style={{ borderColor: C.line, color: C.gold, background: "rgba(255,255,255,.7)" }}
+            style={{ borderColor: C.line, color: C.goldLabel, background: "rgba(255,255,255,.82)" }}
           >
             Dra. Gabriela Rosado · Nutricionista · CRN 10582
           </span>
@@ -394,8 +397,7 @@ function PlanoPage() {
             className="mt-6 text-[34px] leading-[1.1] sm:text-[52px]"
             style={{ fontFamily: "Georgia, serif", fontWeight: 600 }}
           >
-            Você não falhou. Te deram a{" "}
-            <em style={{ color: C.gold, fontStyle: "italic" }}>ferramenta errada</em>.
+            Você não falhou. Te deram a <em className="pl-em">ferramenta errada</em>.
           </h1>
         </Reveal>
         <Reveal delay={2}>
@@ -408,11 +410,11 @@ function PlanoPage() {
           <button
             type="button"
             onClick={() => irParaCheckout("hero")}
-            className="mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold sm:w-auto"
-            style={{ background: C.navy, color: "#fff" }}
+            className="pl-btn-gold mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold sm:w-auto"
           >
             Quero começar por R$67
           </button>
+
           <p className="mt-4 text-[13px]" style={{ color: C.navySoft }}>
             pagamento único · sem assinatura · 7 dias de garantia
           </p>
