@@ -1049,8 +1049,7 @@ function PlanoPage() {
       {/* 9. Rodapé */}
       <footer className="relative px-6 pb-36 pt-4">
         <p className="mx-auto max-w-3xl text-[12px] leading-relaxed" style={{ color: C.navySoft }}>
-          Gabriela Rosado · Nutricionista · CRN 10582. Conteúdo educativo de nutrição. Não substitui
-          consulta, diagnóstico ou tratamento médico individualizado.
+          Gabriela Rosado · CRN 10582
         </p>
       </footer>
 
