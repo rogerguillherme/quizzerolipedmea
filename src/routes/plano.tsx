@@ -8,7 +8,10 @@ import { PREMIUM_FEATURES } from "@/lib/premium-features";
 import { lerMapaSessao, mapaJaEnviado, type MapaSessao } from "@/lib/mapa-sessao";
 import { track } from "@/lib/analytics";
 import { trackMeta } from "@/lib/meta-track";
-import gabiPortrait from "@/assets/gabi-portrait.png.asset.json";
+
+/** Fotos da Gabriela hospedadas no bucket público `marketing`. */
+const FOTOS_BASE =
+  "https://gwvlsnpfwvziejranzyl.supabase.co/storage/v1/object/public/marketing/premium/";
 
 export const Route = createFileRoute("/plano")({
   component: PlanoPage,
@@ -610,15 +613,20 @@ function PlanoPage() {
       {/* 6. Gabriela */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
-          <div
-            className="pl-card flex flex-col items-center gap-6 rounded-3xl p-7 sm:flex-row sm:items-start"
-          >
-            <img
-              src={gabiPortrait.url}
-              alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
-              loading="lazy"
-              className="pl-foto h-28 w-28 shrink-0 rounded-full object-cover"
-            />
+          <div className="pl-card flex flex-col items-center gap-7 rounded-3xl p-7">
+            <div
+              className="pl-foto pl-foto-grande w-full max-w-[380px] overflow-hidden"
+              style={{ aspectRatio: "4 / 5", borderRadius: 22, background: C.creamDeep }}
+            >
+              <img
+                src={`${FOTOS_BASE}gabriela-retrato.jpg`}
+                alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
+                loading="lazy"
+                width={760}
+                height={950}
+                className="h-full w-full object-cover"
+              />
+            </div>
             <div>
               <h2 className="text-[22px]" style={{ fontFamily: "Georgia, serif" }}>
                 Quem te acompanha
