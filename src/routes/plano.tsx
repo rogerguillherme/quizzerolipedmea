@@ -883,7 +883,7 @@ function PlanoPage() {
             </button>
             <p className="mt-5 flex items-center justify-center gap-2 text-[14px]" style={{ color: "#CBD9E6" }}>
               <ShieldCheck className="h-4 w-4" style={{ color: C.goldLight }} aria-hidden />
-              7 dias de garantia. Não serviu, devolvemos.
+              7 dias de garantia. Não serviu, você me chama e eu devolvo.
             </p>
           </Reveal>
         </div>
