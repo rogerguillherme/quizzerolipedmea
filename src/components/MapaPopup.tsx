@@ -77,7 +77,10 @@ export function MapaPopup({
       const r = await enviar({ data: { leadId: sessao.leadId, telefone } });
       if (r.ok) {
         marcarMapaEnviado(r.telefone);
-        track("whatsapp_capturado", { lead_id: sessao.leadId });
+        track("whatsapp_capturado", {
+          lead_id: sessao.leadId,
+          funil: sessao.funil ?? "plano-direto",
+        });
         // Evento que a Meta usa para otimizar a campanha. Advanced matching
         // vai por dentro do trackMeta (telefone/nome hasheados no servidor).
         trackMeta(
