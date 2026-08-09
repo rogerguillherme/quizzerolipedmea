@@ -590,7 +590,7 @@ function PlanoPage() {
               className="pl-selo-escuro inline-block rounded-full px-4 py-1.5 text-[12px] font-semibold uppercase tracking-wide"
               style={{ color: C.goldGlow }}
             >
-              Dra. Gabriela Rosado · Nutricionista · CRN 10582
+              DRA. GABRIELA ROSADO · CRN 10582
             </span>
           </Reveal>
           <Reveal delay={1}>
