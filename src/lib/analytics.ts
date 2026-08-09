@@ -46,6 +46,7 @@ export type FunnelEvent =
   | "quiz_step"
   | "quiz_completed"
   | "mapa_popup_aberto"
+  | "mapa_popup_acessar"
   | "whatsapp_capturado"
   | "vsl_progress"
   | "checkout_view"
