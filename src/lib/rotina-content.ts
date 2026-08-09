@@ -128,3 +128,26 @@ export function getSemana(numero: number): SemanaRotina {
     ROTINA_SEMANAS.find((s) => s.numero === numero) ?? ROTINA_SEMANAS[0]!
   );
 }
+
+/**
+ * Fase completa formatada para o WhatsApp: o que entra, o que sai e a regra
+ * de ouro. Cada `---` vira uma mensagem separada no envio.
+ *
+ * É este texto que a cliente recebe quando a fase começa: sem app no meio,
+ * a mensagem é o produto.
+ */
+export function mensagemFaseWhatsApp(numero: number, nome = ""): string {
+  const s = getSemana(Math.min(4, Math.max(1, Number(numero) || 1)));
+  const abertura = nome ? `${nome}, ` : "";
+  const entra = s.entra.map((i) => `• ${i}`).join("\n");
+  const sai = s.sai.map((i) => `• ${i}`).join("\n");
+  return (
+    `${abertura}começa agora a *Fase ${s.numero} de 4: ${s.refeicao.toLowerCase()}*.\n\n${s.objetivo}\n` +
+    `---\n` +
+    `*O que entra no ${s.refeicao.toLowerCase()}*\n${entra}\n\n*O que sai por enquanto*\n${sai}\n` +
+    `---\n` +
+    `*Regra de ouro da fase:* ${s.regra}\n\n` +
+    `É só isso por essa semana. Nada de mudar o resto das refeições ainda.\n\n` +
+    `Me manda a foto do seu ${s.refeicao.toLowerCase()} de hoje que eu te digo o que ajustar.`
+  );
+}
