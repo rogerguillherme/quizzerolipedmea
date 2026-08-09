@@ -592,12 +592,12 @@ function PlanoPage() {
 
       {/* 7. Preço */}
       <section className="relative px-4 pb-20">
-        <div className="mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12" style={{ background: C.navy }}>
+        <div className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
           <Reveal>
             <p className="text-[15px] line-through" style={{ color: "#8FA7BC" }}>
               De R$119,90
             </p>
-            <p className="mt-1 text-[52px] font-semibold leading-none" style={{ color: "#fff" }}>
+            <p className="pl-price mt-1 text-[52px] font-semibold leading-none">
               R$<PrecoAnimado />
             </p>
             <p className="mt-2 text-[14px]" style={{ color: "#CBD9E6" }}>
@@ -618,8 +618,7 @@ function PlanoPage() {
             <button
               type="button"
               onClick={() => irParaCheckout("oferta")}
-              className="mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold"
-              style={{ background: C.goldLight, color: "#22140A" }}
+              className="pl-btn-gold mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold"
             >
               Começar meu plano de 30 dias
             </button>
@@ -667,7 +666,7 @@ function PlanoPage() {
         className="fixed inset-x-0 bottom-0 z-[90] border-t px-4 py-3 backdrop-blur"
         style={{
           borderColor: C.line,
-          background: "rgba(251,247,238,.94)",
+          background: "rgba(251,246,236,.94)",
           transform: barraVisivel ? "translateY(0)" : "translateY(120%)",
           transition: "transform .5s cubic-bezier(.16,1,.3,1)",
         }}
@@ -682,8 +681,7 @@ function PlanoPage() {
           <button
             type="button"
             onClick={() => irParaCheckout("barra")}
-            className="ml-auto w-full rounded-full px-6 py-4 text-[16px] font-semibold sm:w-auto"
-            style={{ background: C.navy, color: "#fff" }}
+            className="pl-btn-gold ml-auto w-full rounded-full px-6 py-4 text-[16px] font-semibold sm:w-auto"
           >
             Quero meu plano por R$67
           </button>
