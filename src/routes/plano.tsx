@@ -626,7 +626,7 @@ function PlanoPage() {
         <Reveal delay={1}>
           <p className="mt-5 max-w-2xl text-[17px] leading-relaxed" style={{ color: C.navySoft }}>
             O lipedema não é um problema parado. É uma roda girando, e cada volta deixa a próxima mais
-            difícil. Veja se você reconhece a sua.
+            difícil.
           </p>
         </Reveal>
 
