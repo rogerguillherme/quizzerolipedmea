@@ -9,7 +9,7 @@ const INTERVALO_MS = 4500;
 /**
  * Carrossel dos entregáveis do Plano Premium.
  * Avança sozinho e para de vez assim que a pessoa interage (arrastar, clicar
- * numa bolinha ou rolar na horizontal) — a partir daí ela controla o ritmo.
+ * numa bolinha ou rolar na horizontal). A partir daí ela controla o ritmo.
  * Respeita `prefers-reduced-motion`: sem autoplay e sem scroll suave.
  *
  * @param bleed  Quando true (padrão), o trilho sangra 20px para cada lado com
@@ -40,7 +40,7 @@ export function PremiumFeaturesCarousel({ bleed = true }: { bleed?: boolean }) {
     [reduzMovimento],
   );
 
-  // Autoplay — para de vez na primeira interação.
+  // Autoplay: para de vez na primeira interação.
   useEffect(() => {
     if (pausado || reduzMovimento) return;
     const id = window.setInterval(() => {

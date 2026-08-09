@@ -121,7 +121,7 @@ export function PlanoBackground3D() {
         `;
 
         // Aditivo: a forma SOMA luz na página. Por isso há realce especular
-        // e fresnel puxando para o dourado claro — sem isso o volume some.
+        // e fresnel puxando para o dourado claro. Sem isso o volume some.
         const fragmentShader = /* glsl */ `
           uniform vec3 uNavy;
           uniform vec3 uGold;
