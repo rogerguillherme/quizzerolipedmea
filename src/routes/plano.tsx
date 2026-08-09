@@ -423,7 +423,8 @@ function PlanoPage() {
 
       {/* 2. Espelho */}
       <section className="relative px-4 py-6">
-        <div className="mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12" style={{ background: C.navy }}>
+        <div className="pl-espelho mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
+
           <Reveal>
             <h2
               className="text-[26px] leading-snug sm:text-[32px]"
