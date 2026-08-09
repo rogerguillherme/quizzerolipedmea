@@ -45,7 +45,7 @@ export const ROTINA_SEMANAS: readonly SemanaRotina[] = [
     numero: 2,
     refeicao: "Almoço",
     objetivo:
-      "A refeição de maior impacto no dia. Aqui o desinchaço começa a aparecer.",
+      "É a refeição que mais carrega inflamação no dia. Muda o que vai no prato, não o quanto — e a perna começa a pesar menos à tarde.",
     entra: [
       "Metade do prato de vegetais coloridos",
       "Uma proteína à vontade: carne, frango, peixe ou ovo",
