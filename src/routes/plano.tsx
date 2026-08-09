@@ -686,13 +686,21 @@ function PlanoPage() {
         </Reveal>
 
         <Reveal delay={1}>
-          <p
-            className="mx-auto mt-12 max-w-md text-center text-[18px] leading-relaxed"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
-          >
-            Repare que em nenhum ponto desse ciclo você fez algo errado.
-          </p>
+          <div className="mx-auto mt-12 max-w-xl text-center">
+            <p
+              className="text-[20px] leading-relaxed"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
+            >
+              Eu preciso te dizer uma coisa que talvez ninguém tenha dito ainda:{" "}
+              <strong>você não fez nada errado.</strong>
+            </p>
+            <p className="mt-5 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
+              Cada passo desse ciclo é uma reação normal do seu corpo a um problema que te explicaram
+              errado.
+            </p>
+          </div>
         </Reveal>
+
       </section>
 
       {/* 4. As 4 fases */}
