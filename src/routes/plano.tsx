@@ -568,7 +568,10 @@ function PlanoPage() {
               Quero quebrar esse ciclo
             </button>
             <p className="mt-4 text-[13px]" style={{ color: "rgba(255,253,246,.72)" }}>
-              R$67 · pagamento único · 7 dias de garantia
+              R$67 · pagamento único
+            </p>
+            <p className="mt-1 text-[13px]" style={{ color: "rgba(255,253,246,.72)" }}>
+              7 dias de garantia. Não serviu, você me chama e eu devolvo.
             </p>
             <p
               className="mt-8 flex items-center gap-2 text-[12px] uppercase tracking-[.18em]"
