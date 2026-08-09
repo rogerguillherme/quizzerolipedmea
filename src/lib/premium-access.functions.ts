@@ -22,13 +22,14 @@ Seu *Plano Premium Zero Lipedema · 30 dias* foi liberado! 🎉
 Nos próximos 30 dias você tem:
 ${itens}
 
-🌱 Seu próximo passo: abra o app, toque em *Rotina* na barra de baixo e comece a missão da *Fase 1*, o café da manhã. Quando cumprir, é só tocar em "Cumpri a missão de hoje" na aba *Hoje*. Um hábito de cada vez, no seu ritmo — nada é proibido e nenhuma refeição é pulada.
+🌱 A partir de agora tudo chega aqui mesmo, neste WhatsApp, todo dia de manhã: a fase da semana, a dica do dia e o resumo do seu progresso. Você não precisa entrar em lugar nenhum.
 
-📸 Na aba *Registrar* você fotografa suas refeições e recebe a leitura na hora. E na aba *Progresso* você acompanha sua sequência de dias.
+📸 Sempre que quiser, fotografa o prato e manda aqui: eu te devolvo a leitura na hora. E pode me responder a qualquer momento, eu leio.
 
-🔗 Seu app: ${loginUrl}
+🔗 Se quiser ver o material de apoio, ele fica aqui: ${loginUrl}
 
 Me conta uma coisa: seu café da manhã hoje costuma ser o quê?`;
+
 }
 
 
