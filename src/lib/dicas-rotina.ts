@@ -106,7 +106,7 @@ export const DICAS_ROTINA: readonly DicaRotina[] = [
     dia: 15,
     semana: 3,
     texto:
-      "Semana do lanche, a que mais quebra rotina. Essa a gente ganha na preparação, não na força de vontade.",
+      "Fase do lanche, a que mais quebra rotina. Essa a gente ganha na preparação, não na força de vontade.",
   },
   {
     dia: 16,
@@ -177,7 +177,7 @@ export const DICAS_ROTINA: readonly DicaRotina[] = [
     dia: 28,
     semana: 4,
     texto:
-      "Quatro semanas. Suas quatro refeições principais estão ajustadas, sem dieta e sem contar caloria.",
+      "Quatro fases concluídas. Nada foi proibido e nenhuma refeição foi pulada — o que mudou foi o que alimentava a inflamação.",
   },
 ] as const;
 

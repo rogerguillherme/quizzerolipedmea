@@ -324,12 +324,12 @@ export function MapaSheet({
               </p>
               <p className="mt-3 text-[13.5px]" style={{ color: INK, lineHeight: 1.65 }}>
                 O que muda o seu quadro é reduzir a carga inflamatória e reconstruir a rotina
-                alimentar aos poucos. Uma refeição por semana. Sem contar caloria, sem pesar comida,
-                sem passar fome.
+                alimentar aos poucos. Um plano em 4 fases, um hábito por vez. Sem contar caloria,
+                sem pesar comida, sem passar fome.
               </p>
               <p className="mt-3 text-[13.5px]" style={{ color: INK, lineHeight: 1.65 }}>
-                Em 4 semanas suas 4 refeições principais estão ajustadas — e aí não é mais esforço,
-                é rotina.
+                Ao fim das quatro fases, nada foi proibido e nenhuma refeição foi pulada — e aí
+                não é mais esforço, é rotina.
               </p>
 
               <div className="mt-5 grid grid-cols-4 gap-2">
@@ -379,7 +379,7 @@ export function MapaSheet({
               className="flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-4 text-[14px] font-semibold uppercase"
               style={{ background: GRADIENT_GOLD, color: NAVY, letterSpacing: "0.14em", boxShadow: SHADOW.gold }}
             >
-              {pago ? "Começar a Semana 1" : "Ver como funciona"} <ArrowRight className="size-4" />
+              {pago ? "Começar a Fase 1" : "Ver como funciona"} <ArrowRight className="size-4" />
             </Link>
           )}
 
