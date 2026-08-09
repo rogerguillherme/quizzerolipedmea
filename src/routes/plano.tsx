@@ -395,12 +395,14 @@ function PrecoAnimado() {
 
 // ---------------- Conteúdo ----------------
 const ESPELHO = [
-  "Você emagreceu e as pernas continuaram do mesmo jeito.",
-  "Já ouviu que era só fechar a boca.",
-  "A perna dói ao toque, e ninguém leva a sério.",
-  "Já gastou com chá, drenagem, dieta e treino.",
-  "Cansou de recomeçar toda segunda.",
+  "De manhã a perna já acordou pesada, mesmo você tendo dormido.",
+  "No fim da tarde a calça marcou, e você trocou de roupa.",
+  "Alguém já te disse que era só fechar a boca e caminhar mais.",
+  "Você emagreceu de verdade em algum momento — e a perna continuou igual.",
+  "Já gastou com chá, drenagem, dieta e academia.",
+  "E toda segunda-feira você recomeça.",
 ];
+
 
 const SEMANAS = [
   {
