@@ -25,10 +25,13 @@ export function MapaPopup({
   sessao,
   open,
   onClose,
+  onVerFases,
 }: {
   sessao: MapaSessao;
   open: boolean;
   onClose: () => void;
+  /** Fecha o popup e leva a lead até o bloco de preço. Ponto de maior intenção. */
+  onVerFases?: () => void;
 }) {
   const enviar = useServerFn(enviarAcessoMapa);
   const [telefone, setTelefone] = useState(() =>
