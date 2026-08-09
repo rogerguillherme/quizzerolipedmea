@@ -509,6 +509,7 @@ async function processarCadenciaRotina(
             semanas_fechadas?: number[];
             retomada_em?: string;
             conclusao?: string;
+            progresso_em?: string;
           }
         | undefined) ?? {};
 
@@ -530,16 +531,18 @@ async function processarCadenciaRotina(
     // Horário próprio do lead para os toques da manhã.
     const janelaManha = leadNaJanela(lead.id, agoraMin);
 
-    // 1. Lembrete de acesso — 4h depois da compra.
+    // 1. Entrega da Fase 1 completa — 4h depois da compra.
     if (!msgs.acesso_4h && horasDesdeCompra >= 4) {
-      tipo = "acesso_4h";
-      msg = copy(ROT_ACESSO_4H, lead.id, { nome: ola });
+      tipo = "fase_1";
+      msg = mensagemFaseWhatsApp(1, nome);
       proximo.acesso_4h = new Date().toISOString();
     } else if (janelaManha) {
       // Estado real da Rotina: semana vivida e último check-in.
       let semanaAtual = Math.min(4, Math.max(1, Math.ceil(dia / 7)));
       let ultimoCheckin: string | null = null;
       let totalCheckins = 0;
+      let checkinsSemana = 0;
+      let sequencia = 0;
 
       if (lead.user_id) {
         const { data: prog } = await supabaseAdmin
@@ -559,6 +562,17 @@ async function processarCadenciaRotina(
           .limit(50);
         totalCheckins = checkins?.length ?? 0;
         ultimoCheckin = (checkins?.[0]?.data as string | undefined) ?? null;
+
+        const datas = (checkins ?? []).map((c: { data: string }) => c.data);
+        checkinsSemana = datas.filter((d: string) => diasEntre(hoje, d) < 7).length;
+        // Sequência: dias consecutivos até hoje (ou ontem).
+        const set = new Set(datas);
+        for (let i = 0; i < 60; i++) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          if (set.has(isoLocal(d))) sequencia++;
+          else if (i > 0) break;
+        }
       }
 
       const diasSemCheckin = ultimoCheckin ? diasEntre(hoje, ultimoCheckin) : dia - 1;
@@ -577,22 +591,24 @@ async function processarCadenciaRotina(
         semanaConcluida <= 4 &&
         !semanasFechadas.has(semanaConcluida)
       ) {
-        // 4. Fechamento de semana.
+        // 4. Fechamento de fase + entrega da fase seguinte inteira.
         const foco = ["o café da manhã", "o almoço", "o lanche", "o jantar"][
           semanaConcluida - 1
         ]!;
-        const proximaFoco = ["o almoço", "o lanche", "o jantar", ""][
-          semanaConcluida - 1
-        ]!;
+        const proximaFase = semanaConcluida + 1;
         tipo = `semana_${semanaConcluida}`;
         msg = copy(ROT_SEMANA, lead.id, {
           nome: ola,
           semana: semanaConcluida,
           foco,
-          proximo: proximaFoco
-            ? `A partir de agora a gente ajusta ${proximaFoco}, mantendo o que você já conquistou. Abre a aba Rotina pra ver a missão nova.`
-            : `Abre a aba Progresso pra ver sua sequência completa.`,
+          proximo:
+            proximaFase <= 4
+              ? "Agora começa a próxima fase, mantendo tudo o que você já conquistou. Te mando ela inteira aqui embaixo."
+              : "Você fechou as quatro fases. Me conta o que mudou desde o primeiro dia.",
         });
+        if (proximaFase <= 4) {
+          msg += `\n---\n${mensagemFaseWhatsApp(proximaFase, nome)}`;
+        }
         semanasFechadas.add(semanaConcluida);
         proximo.semanas_fechadas = Array.from(semanasFechadas).sort((a, b) => a - b);
       } else if (diasSemCheckin >= 2 && totalCheckins > 0) {
@@ -607,6 +623,31 @@ async function processarCadenciaRotina(
         }
       }
 
+      // 2b. Resumo semanal de progresso — a cada 7 dias, no lugar do quadro.
+      if (!tipo && dia >= 7 && dia <= 30) {
+        const ultimoResumo = proximo.progresso_em
+          ? diasEntre(hoje, isoLocal(new Date(proximo.progresso_em)))
+          : 99;
+        if (ultimoResumo >= 7) {
+          const fotos = Number(
+            (
+              (respostas.teste_fotos as { total?: number; usadas?: number }) ??
+              {}
+            ).total ??
+              (respostas.teste_fotos as { usadas?: number } | undefined)?.usadas ??
+              0,
+          );
+          tipo = "progresso";
+          msg = copy(ROT_PROGRESSO, lead.id, {
+            nome: ola,
+            dias: checkinsSemana,
+            sequencia: sequencia > 0 ? `${sequencia} dia(s)` : "recomeçando",
+            fotos,
+          });
+          proximo.progresso_em = new Date().toISOString();
+        }
+      }
+
       // 2. Dica do dia — só se nada mais importante foi disparado.
       if (!tipo && dia >= 1 && dia <= 28 && !diasEnviados.has(dia)) {
         const dica = dicaParaDia(dia, semanaAtual);
@@ -617,6 +658,8 @@ async function processarCadenciaRotina(
           proximo.dias_enviados = Array.from(diasEnviados).sort((a, b) => a - b);
         }
       }
+    }
+
     }
 
     if (!tipo || !msg) continue;
