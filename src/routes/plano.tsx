@@ -409,16 +409,32 @@ function PlanoPage() {
       <div aria-hidden className="pl-luz" />
       <PlanoBackground3D />
 
-      {/* 1. Hero */}
+      {/* 1. Hero — rosto primeiro, credencial depois, promessa por último. */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20 pt-16 sm:pt-24">
         <Reveal>
-          <span
-            className="inline-block rounded-full border px-4 py-1.5 text-[12px] font-semibold uppercase tracking-wide"
-            style={{ borderColor: C.line, color: C.goldLabel, background: "rgba(255,255,255,.82)" }}
-          >
-            Dra. Gabriela Rosado · Nutricionista · CRN 10582
-          </span>
+          <div className="flex justify-center">
+            <div className="pl-avatar">
+              <img
+                src={`${FOTOS_BASE}gabriela-quadrada.jpg`}
+                alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
+                width={640}
+                height={640}
+                fetchPriority="high"
+              />
+            </div>
+          </div>
         </Reveal>
+        <Reveal delay={1}>
+          <div className="mt-6 flex justify-center">
+            <span
+              className="pl-selo inline-block rounded-full px-4 py-1.5 text-center text-[12px] font-semibold uppercase tracking-wide"
+              style={{ color: C.goldLabel }}
+            >
+              Dra. Gabriela Rosado · Nutricionista · CRN 10582
+            </span>
+          </div>
+        </Reveal>
+
         <Reveal delay={1}>
           <h1
             className="mt-6 text-[34px] leading-[1.1] sm:text-[52px]"
