@@ -231,21 +231,21 @@ export const PRE_POS92H: MensagemCadencia = {
   variantes: [
     `{nome}, como você não me respondeu, vou deixar do jeito mais simples.
 
-O Plano Zero Lipedema é R$67, pagamento único, sem assinatura. A gente ajusta uma refeição por semana, começando pelo café da manhã — sem contar caloria e sem passar fome. Você fotografa o prato e recebe a leitura na hora.
+O Plano Zero Lipedema é R$67, pagamento único, sem assinatura. São 4 fases, um hábito por vez, começando pelo café da manhã — nada é proibido e nenhuma refeição é pulada. Você fotografa o prato e recebe a leitura na hora.
 
 São 7 dias de garantia: se não fizer sentido, me chama que devolvo.
 
 {link}`,
     `{nome}, vou ser direta porque não quero te encher.
 
-R$67, uma vez só, sem assinatura. Uma refeição ajustada por semana, começando pelo café. Nada de contar caloria, nada de passar fome. Foto do prato, leitura na hora.
+R$67, uma vez só, sem assinatura. Quatro fases, um hábito por vez, começando pelo café. Nada de contar caloria, nada de passar fome. Foto do prato, leitura na hora.
 
 7 dias de garantia, sem burocracia.
 
 {link}`,
     `{nome}, resumindo o que eu faço com as minhas pacientes:
 
-uma refeição por semana, quatro semanas, sem restrição e sem contagem. O app te acompanha e eu te mando a orientação do dia. R$67, pagamento único, com 7 dias de garantia.
+quatro fases, um hábito por vez, sem restrição e sem contagem. O app te acompanha e eu te mando a orientação do dia. R$67, pagamento único, com 7 dias de garantia.
 
 {link}`,
   ],
@@ -284,19 +284,19 @@ export const ROT_ACESSO_4H: MensagemCadencia = {
   variantes: [
     `{nome}, aqui é a Gabriela.
 ---
-Passei só pra lembrar que seu acesso já está liberado. Abre o app, toca em Rotina na barra de baixo e começa a missão da Semana 1: o café da manhã.
+Passei só pra lembrar que seu acesso já está liberado. Abre o app, toca em Rotina na barra de baixo e começa a missão da Fase 1: o café da manhã.
 
-Não precisa mudar tudo hoje. Uma refeição de cada vez já é o suficiente pra começar.`,
+Não precisa mudar tudo hoje. Um hábito de cada vez já é o suficiente pra começar.`,
     `{nome}, é a Gabriela 💙
 ---
-Seu acesso já está no ar. Entra no app, toca em Rotina lá embaixo e começa pela missão da Semana 1, que é o café da manhã.
+Seu acesso já está no ar. Entra no app, toca em Rotina lá embaixo e começa pela missão da Fase 1, que é o café da manhã.
 
-Não tenta virar sua alimentação inteira hoje. Uma refeição por vez resolve.`,
+Não tenta virar sua alimentação inteira hoje. Um hábito por vez resolve.`,
     `{nome}, passando rapidinho, é a Gabriela.
 ---
-Só confirmando que está tudo liberado pra você. No app, a aba Rotina abre a missão da Semana 1: café da manhã.
+Só confirmando que está tudo liberado pra você. No app, a aba Rotina abre a missão da Fase 1: café da manhã.
 
-Comece por aí, sem pressa. Uma refeição de cada vez já muda bastante coisa.`,
+Comece por aí, sem pressa. Um hábito de cada vez já muda bastante coisa.`,
   ],
 };
 
@@ -350,17 +350,17 @@ export const ROT_SEMANA: MensagemCadencia = {
   chave: "semana",
   partes: 2,
   variantes: [
-    `{nome}, fim da Semana {semana}.
+    `{nome}, fim da Fase {semana}.
 ---
 Você passou sete dias ajustando {foco}. Repara no que mudou: inchaço ao acordar, disposição, roupa no fim do dia.
 
 {proximo}`,
-    `{nome}, fechamos a Semana {semana} 💙
+    `{nome}, fechamos a Fase {semana} 💙
 ---
 Foram sete dias mexendo em {foco}. Olha pra trás e compara: como está o inchaço de manhã, a energia, a roupa no fim do dia.
 
 {proximo}`,
-    `{nome}, Semana {semana} concluída.
+    `{nome}, Fase {semana} concluída.
 ---
 Sete dias ajustando {foco}. Vale reparar nos sinais: inchaço ao acordar, disposição durante o dia, como a roupa fica à noite.
 
@@ -375,21 +375,21 @@ export const ROT_CONCLUSAO: MensagemCadencia = {
   variantes: [
     `{nome}, você chegou ao fim dos 28 dias da Rotina Zero Lipedema.
 ---
-Suas quatro refeições principais estão ajustadas, sem dieta e sem contar caloria. Só isso já muda muita coisa no inchaço e na dor.
+As quatro fases foram concluídas: nada proibido, nenhuma refeição pulada. Só isso já muda muita coisa no inchaço e na dor.
 
 Se você quiser ir além, existe o passo seguinte: o Método Derma, meu acompanhamento de 90 dias com anamnese completa, leitura dos seus exames e prescrição personalizada, por R$297.
 
 Se fizer sentido pra você, responde QUERO SABER aqui que eu te explico direitinho.`,
     `{nome}, fim dos 28 dias da Rotina Zero Lipedema 💙
 ---
-As suas quatro refeições principais já estão ajustadas, sem dieta e sem contagem de caloria. Isso sozinho costuma mudar bastante o inchaço e a dor.
+Você fechou as quatro fases sem dieta, sem contagem de caloria e sem pular refeição. Isso sozinho costuma mudar bastante o inchaço e a dor.
 
 Se quiser seguir, o passo seguinte é o Método Derma: 90 dias de acompanhamento comigo, com anamnese completa, leitura dos exames e prescrição personalizada, por R$297.
 
 Se te interessa, responde QUERO SABER que eu explico como funciona.`,
     `{nome}, os 28 dias da Rotina Zero Lipedema terminaram.
 ---
-Você ajustou as quatro refeições principais sem dieta e sem contar caloria. Esse é o tipo de mudança que segura o inchaço no longo prazo.
+Você moldou os hábitos das quatro fases sem dieta e sem proibição. Esse é o tipo de mudança que segura o inchaço no longo prazo.
 
 Existe um passo além, se você quiser: o Método Derma, 90 dias de acompanhamento com anamnese, leitura de exames e prescrição feita pra você, por R$297.
 
