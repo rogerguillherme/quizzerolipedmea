@@ -529,7 +529,7 @@ function PlanoPage() {
         </div>
         <div aria-hidden className="pl-hero-veu" />
 
-        <div className="relative mx-auto w-full max-w-3xl px-6 pb-14 pt-10 lg:pb-20 lg:pt-28">
+        <div className="relative mx-auto w-full max-w-3xl px-6 pb-14 pt-10 lg:max-w-6xl lg:pb-20 lg:pt-28">
 
           <Reveal>
             <span
