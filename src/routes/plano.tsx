@@ -467,6 +467,8 @@ function PlanoPage() {
   const [sessao, setSessao] = useState<MapaSessao | null>(null);
   const [popupAberto, setPopupAberto] = useState(false);
   const [barraVisivel, setBarraVisivel] = useState(false);
+  const [precoEmDestaque, setPrecoEmDestaque] = useState(false);
+  const precoRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     track("landing_view", { pagina: "/plano" });
