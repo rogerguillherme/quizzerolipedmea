@@ -138,11 +138,44 @@ export function FunilPanel() {
             )}
           </div>
 
+          <div>
+            <h3 className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#8A7C5C]">
+              Por funil de origem
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[520px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-[#E5DBC3] text-[11px] uppercase tracking-wider text-[#8A7C5C]">
+                    <th className="py-2 pr-3">Funil</th>
+                    <th className="py-2 pr-3">Visitas</th>
+                    <th className="py-2 pr-3">Quiz concluído</th>
+                    <th className="py-2 pr-3">Lead com WhatsApp</th>
+                    <th className="py-2">Compra</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dados.porFunil.map((f) => (
+                    <tr key={f.chave} className="border-b border-[#F0E8D6]">
+                      <td className="py-1.5 pr-3 text-[#0B2A4A]">
+                        {f.chave === "quizz" ? "/quizz" : f.chave === "meu-mapa" ? "/meu-mapa" : f.chave}
+                      </td>
+                      <td className="py-1.5 pr-3 text-[#3E4F65]">{f.visitas}</td>
+                      <td className="py-1.5 pr-3 text-[#3E4F65]">{f.concluidos}</td>
+                      <td className="py-1.5 pr-3 text-[#3E4F65]">{f.leads}</td>
+                      <td className="py-1.5 text-[#3E4F65]">{f.compras}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <div className="grid gap-4 lg:grid-cols-3">
             <Quebra titulo="Por campanha" linhas={dados.porCampanha} />
             <Quebra titulo="Por conteúdo (criativo)" linhas={dados.porConteudo} />
             <Quebra titulo="Por fonte" linhas={dados.porFonte} />
           </div>
+
 
           <div>
             <h3 className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#8A7C5C]">

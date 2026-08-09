@@ -14,6 +14,7 @@ import { Route as QuizzRouteImport } from './routes/quizz'
 import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OfertaRouteImport } from './routes/oferta'
+import { Route as MeuMapaRouteImport } from './routes/meu-mapa'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
@@ -79,6 +80,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const OfertaRoute = OfertaRouteImport.update({
   id: '/oferta',
   path: '/oferta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeuMapaRoute = MeuMapaRouteImport.update({
+  id: '/meu-mapa',
+  path: '/meu-mapa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapaRoute = MapaRouteImport.update({
@@ -297,6 +303,7 @@ export interface FileRoutesByFullPath {
   '/definir-senha': typeof DefinirSenhaRoute
   '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
+  '/meu-mapa': typeof MeuMapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
   '/plano': typeof PlanoRoute
@@ -343,6 +350,7 @@ export interface FileRoutesByTo {
   '/definir-senha': typeof DefinirSenhaRoute
   '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
+  '/meu-mapa': typeof MeuMapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
   '/plano': typeof PlanoRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/definir-senha': typeof DefinirSenhaRoute
   '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
+  '/meu-mapa': typeof MeuMapaRoute
   '/oferta': typeof OfertaRoute
   '/onboarding': typeof OnboardingRoute
   '/plano': typeof PlanoRoute
@@ -442,6 +451,7 @@ export interface FileRouteTypes {
     | '/definir-senha'
     | '/entrar'
     | '/mapa'
+    | '/meu-mapa'
     | '/oferta'
     | '/onboarding'
     | '/plano'
@@ -488,6 +498,7 @@ export interface FileRouteTypes {
     | '/definir-senha'
     | '/entrar'
     | '/mapa'
+    | '/meu-mapa'
     | '/oferta'
     | '/onboarding'
     | '/plano'
@@ -536,6 +547,7 @@ export interface FileRouteTypes {
     | '/definir-senha'
     | '/entrar'
     | '/mapa'
+    | '/meu-mapa'
     | '/oferta'
     | '/onboarding'
     | '/plano'
@@ -585,6 +597,7 @@ export interface RootRouteChildren {
   DefinirSenhaRoute: typeof DefinirSenhaRoute
   EntrarRoute: typeof EntrarRoute
   MapaRoute: typeof MapaRoute
+  MeuMapaRoute: typeof MeuMapaRoute
   OfertaRoute: typeof OfertaRoute
   OnboardingRoute: typeof OnboardingRoute
   PlanoRoute: typeof PlanoRoute
@@ -635,6 +648,13 @@ declare module '@tanstack/react-router' {
       path: '/oferta'
       fullPath: '/oferta'
       preLoaderRoute: typeof OfertaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meu-mapa': {
+      id: '/meu-mapa'
+      path: '/meu-mapa'
+      fullPath: '/meu-mapa'
+      preLoaderRoute: typeof MeuMapaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mapa': {
@@ -1013,6 +1033,7 @@ const rootRouteChildren: RootRouteChildren = {
   DefinirSenhaRoute: DefinirSenhaRoute,
   EntrarRoute: EntrarRoute,
   MapaRoute: MapaRoute,
+  MeuMapaRoute: MeuMapaRoute,
   OfertaRoute: OfertaRoute,
   OnboardingRoute: OnboardingRoute,
   PlanoRoute: PlanoRoute,
