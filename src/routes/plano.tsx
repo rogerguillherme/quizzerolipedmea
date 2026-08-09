@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ShieldCheck, Check } from "lucide-react";
+import { ShieldCheck, Check, ChevronDown, Flame, Activity, Clock, Droplets, CircleSlash, RotateCw } from "lucide-react";
 import { PlanoBackground3D } from "@/components/PlanoBackground3D";
 import { MapaPopup } from "@/components/MapaPopup";
 import { KIWIFY_CHECKOUT_URL } from "@/components/OfertaPremiumInline";
@@ -146,27 +146,44 @@ const PLANO_CSS = `
   background:linear-gradient(150deg,rgba(255,255,255,.28),transparent 38%);
   box-shadow:0 0 40px -22px rgba(239,201,107,.75) inset;
 }
-/* Retrato do hero: anel dourado por baixo, halo por fora, sombra baixa. */
-.pl-avatar{
+/* Hero em tela cheia: a foto é o fundo, o texto mora na parte de baixo/esquerda. */
+.pl-hero{
   position:relative;
-  width:clamp(112px,28vw,148px);
-  aspect-ratio:1;
-  border-radius:9999px;
-  box-shadow:0 18px 40px -18px rgba(18,48,80,.6);
+  min-height:min(94vh,860px);
+  background:#0B2440; /* fallback enquanto a foto não chega */
+  overflow:hidden;
 }
-.pl-avatar::before{
-  content:""; position:absolute; inset:-7px; z-index:0;
-  border-radius:9999px; background:${SHINE};
+.pl-hero-img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; object-position:72% 18%;
+  filter:saturate(1.08) contrast(1.04);
 }
-.pl-avatar::after{
-  content:""; position:absolute; inset:-22px; z-index:-1; pointer-events:none;
-  border-radius:9999px;
-  background:radial-gradient(circle, rgba(250,228,168,.55), transparent 70%);
+@media (min-width:768px){ .pl-hero-img{ object-position:78% 16%; } }
+/* Véu em três camadas: sobe escuro, adensa embaixo à esquerda, dourado no alto à direita. */
+.pl-hero-veu{
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(120% 90% at 88% 8%, rgba(250,228,168,.30), transparent 55%),
+    radial-gradient(95% 80% at 8% 96%, rgba(3,14,24,.92), transparent 62%),
+    linear-gradient(to top, #05131F 6%, rgba(5,19,31,.82) 34%, rgba(5,19,31,.34) 62%, rgba(5,19,31,.10) 100%);
 }
-.pl-avatar img{
-  position:relative; z-index:1;
-  width:100%; height:100%; object-fit:cover; border-radius:9999px;
+.pl-selo-escuro{
+  background:rgba(9,26,43,.55);
+  border:1px solid rgba(239,201,107,.55);
+  backdrop-filter:blur(6px);
+  box-shadow:0 10px 26px -18px rgba(0,0,0,.9);
 }
+/* Ciclo da inflamação */
+.pl-pastilha{
+  display:grid; place-items:center;
+  width:44px; height:44px; border-radius:14px;
+  background:linear-gradient(180deg,#FBEBC4 0%,#F2D68F 100%);
+  border:1px solid rgba(192,135,42,.45);
+  color:#8A6224;
+  box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 10px 20px -16px rgba(192,135,42,1);
+}
+.pl-gira{ animation:pl-spin 9s linear infinite; }
+@keyframes pl-spin{ to{ transform:rotate(360deg); } }
 .pl-selo{
   background:linear-gradient(180deg,#FFFFFF 0%,#FBF6EC 100%);
   border:1px solid rgba(192,135,42,.45);
@@ -174,11 +191,46 @@ const PLANO_CSS = `
 }
 
 @media (prefers-reduced-motion: reduce){
+  .pl-gira{ animation:none; }
   .pl-btn-gold::after{ animation:none; opacity:0; }
   .pl-btn-gold{ transition:none; }
 }
 `;
 
+
+/** Etapas do ciclo inflamatório: mecanismo que a leitora consegue visualizar. */
+const CICLO = [
+  {
+    n: "01",
+    icone: Flame,
+    t: "A gordura da perna inflama",
+    d: "Não é gordura comum. É um tecido inflamado que segura líquido — e por isso ele não responde como o resto do corpo.",
+  },
+  {
+    n: "02",
+    icone: Activity,
+    t: "A perna dói e pesa",
+    d: "Dói ao toque, incha ao longo do dia e no fim da tarde a calça marca. Roxo aparece sem você ter batido em nada.",
+  },
+  {
+    n: "03",
+    icone: Clock,
+    t: "Você se mexe menos",
+    d: "Quem sente dor anda menos, evita escada, desiste da academia. E é a panturrilha que empurra o líquido de volta para cima.",
+  },
+  {
+    n: "04",
+    icone: Droplets,
+    t: "O líquido acumula",
+    d: "Circulação e sistema linfático ficam mais lentos. Incha mais, dói mais, e a perna amanhece pesada mesmo depois de dormir.",
+  },
+  {
+    n: "05",
+    icone: CircleSlash,
+    t: "Você corta a comida",
+    d: "Passa fome, emagrece o rosto e o busto, e a perna quase não muda. Só que a restrição eleva o cortisol, traz compulsão e cansaço…",
+  },
+] as const;
 
 // ---------------- Revelação no scroll ----------------
 // Entrada de 26px com fade, escalonada em 5 níveis de atraso.
@@ -412,59 +464,64 @@ function PlanoPage() {
       <div aria-hidden className="pl-luz" />
       <PlanoBackground3D />
 
-      {/* 1. Hero — rosto primeiro, credencial depois, promessa por último. */}
-      <section className="relative mx-auto max-w-3xl px-6 pb-20 pt-16 sm:pt-24">
-        <Reveal>
-          <div className="flex justify-center">
-            <div className="pl-avatar">
-              <img
-                src={`${FOTOS_BASE}gabriela-quadrada.jpg`}
-                alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
-                width={640}
-                height={640}
-                fetchPriority="high"
-              />
-            </div>
-          </div>
-        </Reveal>
-        <Reveal delay={1}>
-          <div className="mt-6 flex justify-center">
+      {/* 1. Hero — a foto da Gabriela ocupa a tela; o texto senta embaixo, à esquerda. */}
+      <section className="pl-hero flex items-end">
+        <img
+          src={`${FOTOS_BASE}gabriela-retrato.jpg`}
+          alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
+          width={760}
+          height={950}
+          fetchPriority="high"
+          className="pl-hero-img"
+        />
+        <div aria-hidden className="pl-hero-veu" />
+
+        <div className="relative mx-auto w-full max-w-3xl px-6 pb-14 pt-28 sm:pb-20">
+          <Reveal>
             <span
-              className="pl-selo inline-block rounded-full px-4 py-1.5 text-center text-[12px] font-semibold uppercase tracking-wide"
-              style={{ color: C.goldLabel }}
+              className="pl-selo-escuro inline-block rounded-full px-4 py-1.5 text-[12px] font-semibold uppercase tracking-wide"
+              style={{ color: C.goldGlow }}
             >
               Dra. Gabriela Rosado · Nutricionista · CRN 10582
             </span>
-          </div>
-        </Reveal>
-
-        <Reveal delay={1}>
-          <h1
-            className="mt-6 text-[34px] leading-[1.1] sm:text-[52px]"
-            style={{ fontFamily: "Georgia, serif", fontWeight: 600 }}
-          >
-            Você não falhou. Te deram a <em className="pl-em">ferramenta errada</em>.
-          </h1>
-        </Reveal>
-        <Reveal delay={2}>
-          <p className="mt-6 max-w-xl text-[17px] leading-relaxed sm:text-[19px]" style={{ color: C.navySoft }}>
-            Lipedema não é gordura comum e não responde a dieta comum. Quanto mais restrição, mais
-            inflamação, e é por isso que a balança desce e a perna fica igual. O caminho é outro.
-          </p>
-        </Reveal>
-        <Reveal delay={3}>
-          <button
-            type="button"
-            onClick={() => irParaCheckout("hero")}
-            className="pl-btn-gold mt-9 w-full rounded-full px-8 py-5 text-[17px] font-semibold sm:w-auto"
-          >
-            Quero começar por R$67
-          </button>
-
-          <p className="mt-4 text-[13px]" style={{ color: C.navySoft }}>
-            pagamento único · sem assinatura · 7 dias de garantia
-          </p>
-        </Reveal>
+          </Reveal>
+          <Reveal delay={1}>
+            <h1
+              className="mt-5 max-w-[15ch] text-[34px] leading-[1.08] sm:text-[52px] md:max-w-[22ch]"
+              style={{ fontFamily: "Georgia, serif", fontWeight: 600, color: "#FFFDF6" }}
+            >
+              Não é peso. É <em className="pl-em">inflamação</em> — e ela se retroalimenta.
+            </h1>
+          </Reveal>
+          <Reveal delay={2}>
+            <p
+              className="mt-5 max-w-xl text-[17px] leading-relaxed sm:text-[19px]"
+              style={{ color: "rgba(255,253,246,.86)" }}
+            >
+              Por isso você emagrece e a perna continua doendo. Você não está fazendo nada de errado:
+              está presa num ciclo que dieta não quebra.
+            </p>
+          </Reveal>
+          <Reveal delay={3}>
+            <button
+              type="button"
+              onClick={() => irParaCheckout("hero")}
+              className="pl-btn-gold mt-8 w-full rounded-full px-8 py-5 text-[17px] font-semibold sm:w-auto"
+            >
+              Quero quebrar esse ciclo
+            </button>
+            <p className="mt-4 text-[13px]" style={{ color: "rgba(255,253,246,.72)" }}>
+              R$67 · pagamento único · 7 dias de garantia
+            </p>
+            <p
+              className="mt-8 flex items-center gap-2 text-[12px] uppercase tracking-[.18em]"
+              style={{ color: "rgba(255,253,246,.6)" }}
+            >
+              <ChevronDown size={16} aria-hidden />
+              entenda o ciclo
+            </p>
+          </Reveal>
+        </div>
       </section>
 
       {/* 2. Espelho */}
@@ -499,40 +556,86 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 3. Por que a dieta falhou */}
-      <section className="relative mx-auto max-w-3xl px-6 py-20">
+      {/* 3. O ciclo da inflamação — mecanismo antes da oferta. */}
+      <section className="relative mx-auto max-w-5xl px-6 py-20">
         <Reveal>
-          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "Georgia, serif" }}>
-            Por que a dieta falhou
+          <h2 className="text-[26px] leading-snug sm:text-[34px]" style={{ fontFamily: "Georgia, serif" }}>
+            Por que quanto mais você tenta, <em className="pl-em">pior fica</em>
           </h2>
         </Reveal>
-        <div className="mt-8 grid gap-5 sm:grid-cols-3">
-          {[
-            {
-              t: "Restrição aumenta a inflamação",
-              d: "O tecido do lipedema é inflamatório. Cortar comida demais joga o corpo em alerta e a perna incha mais.",
-            },
-            {
-              t: "Restrição vira compulsão",
-              d: "Depois de dias segurando, o corpo cobra. Não é falta de força de vontade, é fisiologia.",
-            },
-            {
-              t: "Restrição derruba a energia",
-              d: "Sem energia não tem rotina que se sustente, e aí começa de novo o ciclo do recomeço.",
-            },
-          ].map((item, i) => (
-            <Reveal key={item.t} delay={(i as 0 | 1 | 2)}>
-              <div
-                className="pl-card h-full rounded-2xl p-6"
-              >
-                <h3 className="text-[17px] font-semibold">{item.t}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
-                  {item.d}
-                </p>
+        <Reveal delay={1}>
+          <p className="mt-5 max-w-2xl text-[17px] leading-relaxed" style={{ color: C.navySoft }}>
+            O lipedema não é um problema parado. É uma roda girando — e cada volta deixa a próxima mais
+            difícil. Veja se você reconhece a sua.
+          </p>
+        </Reveal>
+
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          {CICLO.map((etapa, i) => (
+            <Reveal key={etapa.n} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+              <div className="pl-card flex h-full gap-4 rounded-2xl p-6">
+                <span className="pl-pastilha shrink-0" aria-hidden>
+                  <etapa.icone size={22} strokeWidth={1.6} />
+                </span>
+                <div>
+                  <span className="text-[12px] font-semibold tracking-[.18em]" style={{ color: C.goldLabel }}>
+                    {etapa.n}
+                  </span>
+                  <h3 className="mt-1 text-[19px] leading-snug" style={{ fontFamily: "Georgia, serif" }}>
+                    {etapa.t}
+                  </h3>
+                  <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                    {etapa.d}
+                  </p>
+                </div>
               </div>
             </Reveal>
           ))}
+
+          <Reveal className="md:col-span-2">
+            <div
+              className="flex items-center gap-5 rounded-2xl p-6"
+              style={{
+                background: "linear-gradient(135deg,#FBEBC4 0%,#F5DFA4 100%)",
+                border: "1px solid rgba(192,135,42,.45)",
+                boxShadow: "0 1px 0 rgba(255,255,255,.9) inset, 0 18px 34px -28px rgba(192,135,42,1)",
+              }}
+            >
+              <RotateCw size={30} strokeWidth={1.6} aria-hidden className="pl-gira shrink-0" style={{ color: C.gold }} />
+              <p className="text-[16px] leading-relaxed" style={{ color: "#5C4113" }}>
+                <strong style={{ color: "#4A340E" }}>…e isso inflama de novo.</strong> A roda dá mais uma
+                volta, um pouco pior que a anterior. É por isso que você sente que está sempre recomeçando
+                do zero.
+              </p>
+            </div>
+          </Reveal>
         </div>
+
+        <Reveal>
+          <div className="pl-espelho mt-6 rounded-3xl px-7 py-10 sm:px-10">
+            <h3 className="text-[24px] leading-snug sm:text-[28px]" style={{ fontFamily: "Georgia, serif", color: "#fff" }}>
+              Não na força de vontade. Na <em className="pl-em">inflamação</em>.
+            </h3>
+            <p className="mt-5 text-[16px] leading-relaxed" style={{ color: "#DCE6EF" }}>
+              Dieta restritiva ataca o passo 5 e alimenta o passo 1 — por isso falha. O que interrompe a
+              roda é reduzir a carga inflamatória da comida, mantendo você satisfeita e com energia para
+              voltar a se mexer.
+            </p>
+            <p className="mt-5 text-[17px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
+              Uma refeição por semana, sem contar caloria e sem passar fome. Começando pelo café da manhã,
+              que é o mais fácil de mudar.
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={1}>
+          <p
+            className="mx-auto mt-12 max-w-md text-center text-[18px] leading-relaxed"
+            style={{ fontFamily: "Georgia, serif", color: C.navy }}
+          >
+            Repare que em nenhum ponto desse ciclo você fez algo errado.
+          </p>
+        </Reveal>
       </section>
 
       {/* 4. As 4 semanas */}
