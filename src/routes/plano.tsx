@@ -826,6 +826,10 @@ function PlanoPage() {
             >
               Comece hoje pela <em className="pl-em">primeira fase</em>
             </h2>
+            <p className="mb-4 text-[15px] leading-relaxed" style={{ color: "#CBD9E6" }}>
+              Você provavelmente já gastou mais que isso em um mês de chá, drenagem ou numa consulta
+              que não olhou para o lipedema.
+            </p>
             <p className="text-[15px] line-through" style={{ color: "#8FA7BC" }}>
               De R$119,90
             </p>
