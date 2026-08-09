@@ -606,8 +606,9 @@ function PlanoPage() {
             ))}
           </ul>
           <Reveal delay={4}>
-            <p className="mt-9 text-[19px] font-semibold" style={{ color: C.goldLight }}>
-              Nada disso é falta de esforço seu.
+            <p className="mt-9 text-[18px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
+              Se eu acertei em três dessas, você não está com preguiça. Você está com lipedema — e ele
+              não responde ao que te mandaram fazer.
             </p>
           </Reveal>
         </div>
