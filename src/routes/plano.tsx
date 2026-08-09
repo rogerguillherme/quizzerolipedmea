@@ -689,6 +689,32 @@ function PlanoPage() {
         </Reveal>
 
         <Reveal delay={1}>
+          <div className="pl-card mt-6 rounded-3xl px-7 py-9 sm:px-10">
+            <h3
+              className="text-[22px] leading-snug sm:text-[26px]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              A roda não para sozinha.
+            </h3>
+            <p className="mt-4 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
+              Cada semana que passa é mais uma volta: mais líquido retido, mais dor, mais dificuldade
+              de voltar a se mexer. Não existe pressa artificial nenhuma aqui. Existe o fato de que
+              quanto mais cedo a inflamação cede, menos fundo o ciclo cava.
+            </p>
+            <button
+              type="button"
+              onClick={() => irParaCheckout("ciclo")}
+              className="pl-btn-gold mt-7 w-full rounded-full px-8 py-4 text-[16px] font-semibold sm:w-auto"
+            >
+              Quero começar pela fase 1
+            </button>
+            <p className="mt-3 text-[13px]" style={{ color: C.navySoft }}>
+              7 dias de garantia. Não serviu, você me chama e eu devolvo.
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={1}>
           <div className="mx-auto mt-12 max-w-xl text-center">
             <p
               className="text-[20px] leading-relaxed"
