@@ -555,8 +555,8 @@ function PlanoPage() {
               className="pl-hero-texto mt-5 text-[17px] leading-relaxed sm:text-[19px]"
               style={{ color: "rgba(255,253,246,.86)" }}
             >
-              Por isso você emagrece e a perna continua doendo. Você não está fazendo nada de errado:
-              está presa num ciclo que dieta não quebra.
+              É por isso que você emagrece e a perna continua doendo. Não é falta de disciplina: é um
+              ciclo que dieta não quebra — e que tem um ponto de saída.
             </p>
           </Reveal>
           <Reveal delay={3}>
