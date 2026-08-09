@@ -541,7 +541,7 @@ function PlanoPage() {
           </Reveal>
           <Reveal delay={1}>
             <h1
-              className="mt-5 max-w-[15ch] text-[34px] leading-[1.08] sm:text-[52px] md:max-w-[22ch]"
+              className="pl-hero-texto mt-5 text-[34px] leading-[1.08] sm:text-[52px]"
               style={{ fontFamily: "Georgia, serif", fontWeight: 600, color: "#FFFDF6" }}
             >
               Não é peso. É <em className="pl-em">inflamação</em> — e ela se retroalimenta.
@@ -549,7 +549,7 @@ function PlanoPage() {
           </Reveal>
           <Reveal delay={2}>
             <p
-              className="mt-5 max-w-xl text-[17px] leading-relaxed sm:text-[19px]"
+              className="pl-hero-texto mt-5 text-[17px] leading-relaxed sm:text-[19px]"
               style={{ color: "rgba(255,253,246,.86)" }}
             >
               Por isso você emagrece e a perna continua doendo. Você não está fazendo nada de errado:
