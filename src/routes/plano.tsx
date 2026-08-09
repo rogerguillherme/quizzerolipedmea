@@ -748,7 +748,11 @@ function PlanoPage() {
         </div>
       </section>
 
+      {/* 5b. Prova social — desligada até haver print real (ver REAIS). */}
+      <DepoimentosWhatsapp navy={C.navy} navySoft={C.navySoft} goldLabel={C.goldLabel} />
+
       {/* 6. Gabriela */}
+
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <div className="pl-card flex flex-col items-center gap-7 rounded-3xl p-7">
