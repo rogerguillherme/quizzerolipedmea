@@ -477,8 +477,7 @@ function PlanoPage() {
           ].map((item, i) => (
             <Reveal key={item.t} delay={(i as 0 | 1 | 2)}>
               <div
-                className="h-full rounded-2xl border p-6"
-                style={{ borderColor: C.line, background: "rgba(255,255,255,.75)" }}
+                className="pl-card h-full rounded-2xl p-6"
               >
                 <h3 className="text-[17px] font-semibold">{item.t}</h3>
                 <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -501,12 +500,9 @@ function PlanoPage() {
           {SEMANAS.map((s, i) => (
             <Reveal key={s.n} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
               <div
-                className="h-full rounded-2xl border p-6"
-                style={{ borderColor: C.line, background: "rgba(255,255,255,.75)" }}
+                className="pl-card h-full rounded-2xl p-6"
               >
-                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.gold }}>
-                  Semana {s.n}
-                </span>
+                <span className="pl-semana-num">Semana {s.n}</span>
                 <h3 className="mt-2 text-[19px] font-semibold">{s.titulo}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
                   {s.texto}
@@ -553,8 +549,7 @@ function PlanoPage() {
           {restantes.map((f, i) => (
             <Reveal key={f.id} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
               <div
-                className="flex h-full gap-4 rounded-2xl border p-5"
-                style={{ borderColor: C.line, background: "rgba(255,255,255,.75)" }}
+                className="pl-card flex h-full gap-4 rounded-2xl p-5"
               >
                 <f.icone className="mt-1 h-5 w-5 shrink-0" style={{ color: C.gold }} aria-hidden />
                 <div>
@@ -573,14 +568,13 @@ function PlanoPage() {
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <div
-            className="flex flex-col items-center gap-6 rounded-3xl border p-7 sm:flex-row sm:items-start"
-            style={{ borderColor: C.line, background: "rgba(255,255,255,.8)" }}
+            className="pl-card flex flex-col items-center gap-6 rounded-3xl p-7 sm:flex-row sm:items-start"
           >
             <img
               src={gabiPortrait.url}
               alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
               loading="lazy"
-              className="h-28 w-28 shrink-0 rounded-full object-cover"
+              className="pl-foto h-28 w-28 shrink-0 rounded-full object-cover"
             />
             <div>
               <h2 className="text-[22px]" style={{ fontFamily: "Georgia, serif" }}>
@@ -648,8 +642,7 @@ function PlanoPage() {
           {FAQ.map((item, i) => (
             <Reveal key={item.q} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
               <details
-                className="group rounded-2xl border p-5"
-                style={{ borderColor: C.line, background: "rgba(255,255,255,.75)" }}
+                className="pl-card group rounded-2xl p-5"
               >
                 <summary className="cursor-pointer list-none text-[16px] font-semibold">{item.q}</summary>
                 <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
