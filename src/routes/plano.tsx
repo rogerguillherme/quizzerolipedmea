@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ShieldCheck, Check, ChevronDown, Flame, Activity, Clock, Droplets, CircleSlash, RotateCw } from "lucide-react";
+import { ShieldCheck, Check, ChevronDown, Flame, Activity, Clock, Droplets, CircleSlash, RotateCw, Sunrise } from "lucide-react";
 import { PlanoBackground3D } from "@/components/PlanoBackground3D";
 import { MapaPopup } from "@/components/MapaPopup";
 import { DepoimentosWhatsapp } from "@/components/DepoimentosWhatsapp";
