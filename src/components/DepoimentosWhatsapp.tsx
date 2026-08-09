@@ -1,5 +1,5 @@
 /**
- * Prova social em formato de print de WhatsApp — DESLIGADA por padrão.
+ * Prova social em formato de print de WhatsApp: DESLIGADA por padrão.
  *
  * Por que existe assim: depoimento fabricado apresentado como real é
  * publicidade enganosa (CDC art. 37), expõe diretamente a nutricionista que
@@ -179,7 +179,7 @@ function CardConversa({ d, exemplo }: { d: Depoimento; exemplo: boolean }) {
 
 /**
  * Seção de prova social. Retorna `null` enquanto `REAIS` for false e a URL
- * não tiver `?preview` — é o que impede a estrutura vazia de ir ao ar.
+ * não tiver `?preview`. É o que impede a estrutura vazia de ir ao ar.
  */
 export function DepoimentosWhatsapp({ navy, navySoft, goldLabel }: {
   navy: string;
@@ -216,7 +216,7 @@ export function DepoimentosWhatsapp({ navy, navySoft, goldLabel }: {
       <p className="mt-6 text-[13px] leading-relaxed" style={{ color: REAIS ? navySoft : "#C0271F" }}>
         {REAIS
           ? "Mensagens reais, publicadas com autorização. Resultados variam de pessoa para pessoa."
-          : "Estrutura de exemplo. Nenhum depoimento real foi coletado ainda — não publique esta seção assim."}
+          : "Estrutura de exemplo. Nenhum depoimento real foi coletado ainda. Não publique esta seção assim."}
       </p>
     </section>
   );

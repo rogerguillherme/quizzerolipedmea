@@ -18,13 +18,13 @@ export const Route = createFileRoute("/plano")({
   component: PlanoPage,
   head: () => ({
     meta: [
-      { title: "Plano Zero Lipedema — 30 dias com a Dra. Gabriela Rosado" },
+      { title: "Plano Zero Lipedema · 30 dias com a Dra. Gabriela Rosado" },
       {
         name: "description",
         content:
           "Lipedema não responde a dieta comum. Veja o plano de 30 dias da nutricionista Gabriela Rosado (CRN 10582) por R$67, pagamento único e 7 dias de garantia.",
       },
-      { property: "og:title", content: "Plano Zero Lipedema — 30 dias" },
+      { property: "og:title", content: "Plano Zero Lipedema · 30 dias" },
       {
         property: "og:description",
         content:
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/plano")({
 /**
  * Paleta exclusiva da /plano, com amplitude tonal maior que a do app:
  * creme mais claro em cima, navy mais fundo embaixo, dourado mais saturado.
- * Não reaproveitar em outras rotas — aqui o alvo é brilho, não sobriedade.
+ * Não reaproveitar em outras rotas: aqui o alvo é brilho, não sobriedade.
  */
 const C = {
   navy: "#123050",
@@ -231,7 +231,7 @@ const CICLO = [
     n: "01",
     icone: Flame,
     t: "A gordura da perna inflama",
-    d: "Não é gordura comum. É um tecido inflamado que segura líquido — e por isso ele não responde como o resto do corpo.",
+    d: "Não é gordura comum. É um tecido inflamado que segura líquido. Por isso ele não responde como o resto do corpo.",
   },
   {
     n: "02",
@@ -398,7 +398,7 @@ const ESPELHO = [
   "De manhã a perna já acordou pesada, mesmo você tendo dormido.",
   "No fim da tarde a calça marcou, e você trocou de roupa.",
   "Alguém já te disse que era só fechar a boca e caminhar mais.",
-  "Você emagreceu de verdade em algum momento — e a perna continuou igual.",
+  "Você emagreceu de verdade em algum momento, e a perna continuou igual.",
   "Já gastou com chá, drenagem, dieta e academia.",
   "E toda segunda-feira você recomeça.",
 ];
@@ -409,13 +409,13 @@ const SEMANAS = [
     n: 1,
     rotulo: "Fase 1 · café da manhã",
     titulo: "O hábito mais automático",
-    texto: "Como você abre o dia define a inflamação das horas seguintes. É a troca mais fácil de sustentar — e onde vem o primeiro alívio.",
+    texto: "Como você abre o dia define a inflamação das horas seguintes. É a troca mais fácil de sustentar, e onde vem o primeiro alívio.",
   },
   {
     n: 2,
     rotulo: "Fase 2 · almoço",
     titulo: "A maior carga do dia",
-    texto: "É a refeição que mais carrega inflamação. Muda o que vai no prato, não o quanto — e a perna começa a pesar menos à tarde.",
+    texto: "É a refeição que mais carrega inflamação. Muda o que vai no prato, não o quanto. E a perna começa a pesar menos à tarde.",
   },
   {
     n: 3,
@@ -438,11 +438,11 @@ const FAQ = [
   },
   {
     q: "Vou conseguir manter?",
-    a: "É por isso que são quatro fases e não uma virada de chave. Na primeira fase você mexe em um único hábito — o resto do seu dia continua igual. A maioria das mulheres não falha no método, falha na manutenção: por isso o plano foi desenhado para sustentar.",
+    a: "É por isso que são quatro fases e não uma virada de chave. Na primeira fase você mexe em um único hábito, e o resto do seu dia continua igual. A maioria das mulheres não falha no método, falha na manutenção: por isso o plano foi desenhado para sustentar.",
   },
   {
     q: "Em quanto tempo eu sinto diferença?",
-    a: "Varia de pessoa para pessoa. O que a maioria relata primeiro é a perna amanhecer menos pesada e a calça marcar menos no fim do dia — sinais de inchaço, não de peso. Não é resultado garantido e não substitui acompanhamento médico.",
+    a: "Varia de pessoa para pessoa. O que a maioria relata primeiro é a perna amanhecer menos pesada e a calça marcar menos no fim do dia: sinais de inchaço, não de peso. Não é resultado garantido e não substitui acompanhamento médico.",
   },
   {
     q: "Já tentei de tudo. Por que agora seria diferente?",
@@ -517,7 +517,7 @@ function PlanoPage() {
       <div aria-hidden className="pl-luz" />
       <PlanoBackground3D />
 
-      {/* 1. Hero — celular: foto em cima, texto embaixo. Desktop: foto ao fundo. */}
+      {/* 1. Hero. Celular: foto em cima, texto embaixo. Desktop: foto ao fundo. */}
       <section className="pl-hero">
         <div className="pl-hero-foto">
           <img
@@ -547,7 +547,7 @@ function PlanoPage() {
               className="pl-hero-texto mt-5 text-[34px] leading-[1.08] sm:text-[52px]"
               style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, color: "#FFFDF6" }}
             >
-              Não é peso. É <em className="pl-em">inflamação</em> — e ela se retroalimenta.
+              Não é peso. É <em className="pl-em">inflamação</em> que se retroalimenta.
             </h1>
           </Reveal>
           <Reveal delay={2}>
@@ -556,7 +556,7 @@ function PlanoPage() {
               style={{ color: "rgba(255,253,246,.86)" }}
             >
               É por isso que você emagrece e a perna continua doendo. Não é falta de disciplina: é um
-              ciclo que dieta não quebra — e que tem um ponto de saída.
+              ciclo que dieta não quebra, e ele tem um ponto de saída.
             </p>
           </Reveal>
           <Reveal delay={3}>
@@ -597,9 +597,11 @@ function PlanoPage() {
             {ESPELHO.map((frase, i) => (
               <Reveal key={frase} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
                 <li className="flex gap-3 text-[17px] leading-relaxed" style={{ color: "#DCE6EF" }}>
-                  <span aria-hidden style={{ color: C.goldLight }}>
-                    —
-                  </span>
+                  <span
+                    aria-hidden
+                    className="mt-[9px] h-[5px] w-[5px] shrink-0 rounded-full"
+                    style={{ background: "#EFC96B" }}
+                  />
                   {frase}
                 </li>
               </Reveal>
@@ -607,14 +609,14 @@ function PlanoPage() {
           </ul>
           <Reveal delay={4}>
             <p className="mt-9 text-[18px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
-              Se eu acertei em três dessas, você não está com preguiça. Você está com lipedema — e ele
+              Se eu acertei em três dessas, você não está com preguiça. Você está com lipedema, e ele
               não responde ao que te mandaram fazer.
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* 3. O ciclo da inflamação — mecanismo antes da oferta. */}
+      {/* 3. O ciclo da inflamação: mecanismo antes da oferta. */}
       <section className="relative mx-auto max-w-5xl px-6 py-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[34px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -623,7 +625,7 @@ function PlanoPage() {
         </Reveal>
         <Reveal delay={1}>
           <p className="mt-5 max-w-2xl text-[17px] leading-relaxed" style={{ color: C.navySoft }}>
-            O lipedema não é um problema parado. É uma roda girando — e cada volta deixa a próxima mais
+            O lipedema não é um problema parado. É uma roda girando, e cada volta deixa a próxima mais
             difícil. Veja se você reconhece a sua.
           </p>
         </Reveal>
@@ -675,12 +677,12 @@ function PlanoPage() {
               Não na força de vontade. Na <em className="pl-em">inflamação</em>.
             </h3>
             <p className="mt-5 text-[16px] leading-relaxed" style={{ color: "#DCE6EF" }}>
-              Dieta restritiva ataca o passo 5 e alimenta o passo 1 — por isso falha. O que interrompe a
+              Dieta restritiva ataca o passo 5 e alimenta o passo 1. Por isso falha. O que interrompe a
               roda é reduzir a carga inflamatória da comida, mantendo você satisfeita e com energia para
               voltar a se mexer.
             </p>
             <p className="mt-5 text-[17px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
-              <strong>Quatro fases, um hábito por vez.</strong> Você não vai cortar comida — vai trocar o
+              <strong>Quatro fases, um hábito por vez.</strong> Você não vai cortar comida. Vai trocar o
               que alimenta a inflamação, começando pelo hábito mais fácil de mudar.
             </p>
           </div>
@@ -712,7 +714,7 @@ function PlanoPage() {
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
             Não é dieta. É um planejamento em quatro fases para moldar, um de cada vez, os hábitos que
-            alimentam a inflamação. Você não corta comida — troca o que inflama pelo que desinflama.
+            alimentam a inflamação. Você não corta comida. Troca o que inflama pelo que desinflama.
           </p>
           <p className="mt-2 text-[14px] leading-relaxed" style={{ color: C.navySoft, opacity: 0.85 }}>
             O objetivo nunca foi a balança. É menos dor, menos inchaço e menos peso nas pernas.
@@ -790,7 +792,7 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 5b. Prova social — desligada até haver print real (ver REAIS). */}
+      {/* 5b. Prova social: desligada até haver print real (ver REAIS). */}
       <DepoimentosWhatsapp navy={C.navy} navySoft={C.navySoft} goldLabel={C.goldLabel} />
 
       {/* 6. Gabriela */}
@@ -821,7 +823,7 @@ function PlanoPage() {
               </p>
               <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
                 Quase sempre ela vem de alguém que se esforçou de verdade, emagreceu, e mesmo assim
-                continuou com a perna doendo. O problema nunca foi o esforço dela — foi o tratamento,
+                continuou com a perna doendo. O problema nunca foi o esforço dela. Foi o tratamento,
                 que tratava gordura comum.
               </p>
               <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>

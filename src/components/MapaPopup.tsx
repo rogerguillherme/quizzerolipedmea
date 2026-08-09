@@ -18,7 +18,7 @@ const C = {
 /**
  * Popup do Mapa na landing /plano.
  *
- * Bottom sheet no celular, card centralizado no desktop. É aqui — e só aqui —
+ * Bottom sheet no celular, card centralizado no desktop. É aqui, e só aqui,
  * que o WhatsApp da lead é capturado e o acesso à plataforma é disparado.
  */
 export function MapaPopup({
