@@ -54,7 +54,8 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
     icone: Camera,
     titulo: "Registro de Refeições com Fotos",
     descricao:
-      "Fotografe o prato e receba na hora a leitura: o que ajuda, o que atrapalha e o que ajustar na próxima refeição.",
+      "Registro de refeições por foto no WhatsApp. Fotografa o prato, manda pra mim e recebe a leitura na hora: o que ajuda, o que atrapalha e o que ajustar na próxima.",
+
     foto: `${FOTOS_BASE}foto.jpg`,
     fotoAlt: "Mãos fotografando o prato de comida com o celular",
   },
