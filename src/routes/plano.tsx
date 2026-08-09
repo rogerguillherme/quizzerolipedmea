@@ -403,6 +403,25 @@ const ESPELHO = [
   "E toda segunda-feira você recomeça.",
 ];
 
+/** Sinais mais relatados perto do dia 30. Hedge obrigatório na seção. */
+const DIA30 = [
+  {
+    icone: Sunrise,
+    t: "A manhã",
+    d: "A perna amanhece mais leve, sem aquele peso de sempre ao pisar no chão.",
+  },
+  {
+    icone: Clock,
+    t: "O fim do dia",
+    d: "A calça marca menos e some a vontade de trocar de roupa às cinco da tarde.",
+  },
+  {
+    icone: Droplets,
+    t: "A tarde",
+    d: "A vontade de doce diminui sozinha, sem você precisar segurar a mão.",
+  },
+] as const;
+
 
 const SEMANAS = [
   {
