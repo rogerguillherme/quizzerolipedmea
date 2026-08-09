@@ -191,6 +191,7 @@ const PLANO_CSS = `
       linear-gradient(to right, #05131F 0%, rgba(5,19,31,.94) 34%, rgba(9,32,54,.55) 52%, transparent 72%);
   }
   .pl-hero-texto{ max-width:24ch; }
+  .pl-hero-wrap{ max-width:72rem; padding-bottom:5rem; padding-top:7rem; }
 }
 
 .pl-selo-escuro{
@@ -529,7 +530,7 @@ function PlanoPage() {
         </div>
         <div aria-hidden className="pl-hero-veu" />
 
-        <div className="relative mx-auto w-full max-w-3xl px-6 pb-14 pt-10 lg:max-w-6xl lg:pb-20 lg:pt-28">
+        <div className="pl-hero-wrap relative mx-auto w-full max-w-3xl px-6 pb-14 pt-10">
 
           <Reveal>
             <span
