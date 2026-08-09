@@ -514,19 +514,23 @@ function PlanoPage() {
       <div aria-hidden className="pl-luz" />
       <PlanoBackground3D />
 
-      {/* 1. Hero — a foto da Gabriela ocupa a tela; o texto senta embaixo, à esquerda. */}
-      <section className="pl-hero flex items-end">
-        <img
-          src={`${FOTOS_BASE}gabriela-retrato.jpg`}
-          alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
-          width={760}
-          height={950}
-          fetchPriority="high"
-          className="pl-hero-img"
-        />
+      {/* 1. Hero — celular: foto em cima, texto embaixo. Desktop: foto ao fundo. */}
+      <section className="pl-hero">
+        <div className="pl-hero-foto">
+          <img
+            src={`${FOTOS_BASE}gabriela-retrato.jpg`}
+            alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
+            width={760}
+            height={950}
+            fetchPriority="high"
+            className="pl-hero-img"
+          />
+          <div aria-hidden className="pl-hero-fade" />
+        </div>
         <div aria-hidden className="pl-hero-veu" />
 
-        <div className="relative mx-auto w-full max-w-3xl px-6 pb-14 pt-28 sm:pb-20">
+        <div className="relative mx-auto w-full max-w-3xl px-6 pb-14 pt-10 lg:pb-20 lg:pt-28">
+
           <Reveal>
             <span
               className="pl-selo-escuro inline-block rounded-full px-4 py-1.5 text-[12px] font-semibold uppercase tracking-wide"
