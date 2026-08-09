@@ -98,9 +98,10 @@ export const PREMIUM_FEATURES: readonly PremiumFeature[] = [
   {
     id: "evolucao",
     icone: ClipboardList,
-    titulo: "Quadro de Evolução",
+    titulo: "Resumo semanal de progresso",
     descricao:
-      "Seu progresso registrado semana a semana, com os feedbacks da sua rotina.",
+      "Resumo semanal de progresso no WhatsApp, com os seus dias cumpridos, sua sequência e o que mudou de uma fase para a outra.",
+
     foto: `${FOTOS_BASE}evolucao.jpg`,
     fotoAlt: "Mão segurando o celular com um gráfico de progresso dourado",
   },
