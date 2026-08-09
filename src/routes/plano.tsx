@@ -839,9 +839,48 @@ function PlanoPage() {
         </Reveal>
       </section>
 
+      {/* 6b. Como costuma ser o dia 30 */}
+      <section className="relative mx-auto max-w-4xl px-6 pb-20">
+        <Reveal>
+          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            Como costuma ser o <em className="pl-em">dia 30</em>
+          </h2>
+          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
+            A maioria das mulheres relata, nessa ordem: a perna amanhecendo mais leve, a calça
+            marcando menos no fim do dia, e a vontade de doce à tarde diminuindo sozinha.
+          </p>
+        </Reveal>
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {DIA30.map((c, i) => (
+            <Reveal key={c.t} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+              <div className="pl-card h-full rounded-2xl p-5">
+                <c.icone className="h-6 w-6" style={{ color: C.gold }} aria-hidden />
+                <h3 className="mt-3 text-[17px] font-semibold">{c.t}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                  {c.d}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal delay={2}>
+          <p className="mt-6 text-[14px] leading-relaxed" style={{ color: C.navySoft, opacity: 0.9 }}>
+            Não é promessa e não vale para todo mundo. É o que aparece com mais frequência quando a
+            inflamação começa a ceder.
+          </p>
+        </Reveal>
+      </section>
+
       {/* 7. Preço */}
-      <section className="relative px-4 pb-20">
-        <div className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
+      <section ref={precoRef} className="relative px-4 pb-20">
+        <div
+          className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12"
+          style={
+            precoEmDestaque
+              ? { boxShadow: "0 0 0 3px rgba(239,201,107,.85), 0 0 70px -10px rgba(239,201,107,.6)" }
+              : undefined
+          }
+        >
           <Reveal>
             <h2
               className="mb-6 text-[26px] leading-snug sm:text-[30px]"
@@ -850,8 +889,11 @@ function PlanoPage() {
               Comece hoje pela <em className="pl-em">primeira fase</em>
             </h2>
             <p className="mb-4 text-[15px] leading-relaxed" style={{ color: "#CBD9E6" }}>
-              Você provavelmente já gastou mais que isso em um mês de chá, drenagem ou numa consulta
-              que não olhou para o lipedema.
+              Uma sessão de drenagem sai entre R$100 e R$150. Uma consulta particular, entre R$300 e
+              R$400. Um mês de chá e suplemento sem orientação, mais que isso.
+            </p>
+            <p className="mb-4 text-[17px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
+              O plano completo, uma vez só: R$67.
             </p>
             <p className="text-[15px] line-through" style={{ color: "#8FA7BC" }}>
               De R$119,90
