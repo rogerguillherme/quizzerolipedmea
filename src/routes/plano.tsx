@@ -395,12 +395,14 @@ function PrecoAnimado() {
 
 // ---------------- Conteúdo ----------------
 const ESPELHO = [
-  "Você emagreceu e as pernas continuaram do mesmo jeito.",
-  "Já ouviu que era só fechar a boca.",
-  "A perna dói ao toque, e ninguém leva a sério.",
-  "Já gastou com chá, drenagem, dieta e treino.",
-  "Cansou de recomeçar toda segunda.",
+  "De manhã a perna já acordou pesada, mesmo você tendo dormido.",
+  "No fim da tarde a calça marcou, e você trocou de roupa.",
+  "Alguém já te disse que era só fechar a boca e caminhar mais.",
+  "Você emagreceu de verdade em algum momento — e a perna continuou igual.",
+  "Já gastou com chá, drenagem, dieta e academia.",
+  "E toda segunda-feira você recomeça.",
 ];
+
 
 const SEMANAS = [
   {
@@ -543,7 +545,7 @@ function PlanoPage() {
           <Reveal delay={1}>
             <h1
               className="pl-hero-texto mt-5 text-[34px] leading-[1.08] sm:text-[52px]"
-              style={{ fontFamily: "Georgia, serif", fontWeight: 600, color: "#FFFDF6" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, color: "#FFFDF6" }}
             >
               Não é peso. É <em className="pl-em">inflamação</em> — e ela se retroalimenta.
             </h1>
@@ -553,8 +555,8 @@ function PlanoPage() {
               className="pl-hero-texto mt-5 text-[17px] leading-relaxed sm:text-[19px]"
               style={{ color: "rgba(255,253,246,.86)" }}
             >
-              Por isso você emagrece e a perna continua doendo. Você não está fazendo nada de errado:
-              está presa num ciclo que dieta não quebra.
+              É por isso que você emagrece e a perna continua doendo. Não é falta de disciplina: é um
+              ciclo que dieta não quebra — e que tem um ponto de saída.
             </p>
           </Reveal>
           <Reveal delay={3}>
@@ -586,9 +588,9 @@ function PlanoPage() {
           <Reveal>
             <h2
               className="text-[26px] leading-snug sm:text-[32px]"
-              style={{ fontFamily: "Georgia, serif", color: "#fff" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#fff" }}
             >
-              Se você chegou até aqui, provavelmente:
+              Eu sei mais ou menos como foi o seu dia hoje.
             </h2>
           </Reveal>
           <ul className="mt-8 space-y-5">
@@ -604,8 +606,9 @@ function PlanoPage() {
             ))}
           </ul>
           <Reveal delay={4}>
-            <p className="mt-9 text-[19px] font-semibold" style={{ color: C.goldLight }}>
-              Nada disso é falta de esforço seu.
+            <p className="mt-9 text-[18px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
+              Se eu acertei em três dessas, você não está com preguiça. Você está com lipedema — e ele
+              não responde ao que te mandaram fazer.
             </p>
           </Reveal>
         </div>
@@ -614,7 +617,7 @@ function PlanoPage() {
       {/* 3. O ciclo da inflamação — mecanismo antes da oferta. */}
       <section className="relative mx-auto max-w-5xl px-6 py-20">
         <Reveal>
-          <h2 className="text-[26px] leading-snug sm:text-[34px]" style={{ fontFamily: "Georgia, serif" }}>
+          <h2 className="text-[26px] leading-snug sm:text-[34px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             Por que quanto mais você tenta, <em className="pl-em">pior fica</em>
           </h2>
         </Reveal>
@@ -636,7 +639,7 @@ function PlanoPage() {
                   <span className="text-[12px] font-semibold tracking-[.18em]" style={{ color: C.goldLabel }}>
                     {etapa.n}
                   </span>
-                  <h3 className="mt-1 text-[19px] leading-snug" style={{ fontFamily: "Georgia, serif" }}>
+                  <h3 className="mt-1 text-[19px] leading-snug" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                     {etapa.t}
                   </h3>
                   <p className="mt-2 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -668,7 +671,7 @@ function PlanoPage() {
 
         <Reveal>
           <div className="pl-espelho mt-6 rounded-3xl px-7 py-10 sm:px-10">
-            <h3 className="text-[24px] leading-snug sm:text-[28px]" style={{ fontFamily: "Georgia, serif", color: "#fff" }}>
+            <h3 className="text-[24px] leading-snug sm:text-[28px]" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#fff" }}>
               Não na força de vontade. Na <em className="pl-em">inflamação</em>.
             </h3>
             <p className="mt-5 text-[16px] leading-relaxed" style={{ color: "#DCE6EF" }}>
@@ -684,19 +687,27 @@ function PlanoPage() {
         </Reveal>
 
         <Reveal delay={1}>
-          <p
-            className="mx-auto mt-12 max-w-md text-center text-[18px] leading-relaxed"
-            style={{ fontFamily: "Georgia, serif", color: C.navy }}
-          >
-            Repare que em nenhum ponto desse ciclo você fez algo errado.
-          </p>
+          <div className="mx-auto mt-12 max-w-xl text-center">
+            <p
+              className="text-[20px] leading-relaxed"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
+            >
+              Eu preciso te dizer uma coisa que talvez ninguém tenha dito ainda:{" "}
+              <strong>você não fez nada errado.</strong>
+            </p>
+            <p className="mt-5 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
+              Cada passo desse ciclo é uma reação normal do seu corpo a um problema que te explicaram
+              errado.
+            </p>
+          </div>
         </Reveal>
+
       </section>
 
       {/* 4. As 4 fases */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
-          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "Georgia, serif" }}>
+          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             Quatro fases. <em className="pl-em">Nenhuma restrição.</em>
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -731,8 +742,8 @@ function PlanoPage() {
       {/* 5. Entregáveis */}
       <section className="relative mx-auto max-w-5xl px-6 pb-20">
         <Reveal>
-          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "Georgia, serif" }}>
-            O que você recebe hoje
+          <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            O que entra no seu celular hoje
           </h2>
         </Reveal>
 
@@ -748,7 +759,7 @@ function PlanoPage() {
               <Reveal delay={1} className="md:[direction:ltr]">
                 <div>
                   <f.icone className="h-7 w-7" style={{ color: C.gold }} aria-hidden />
-                  <h3 className="mt-4 text-[24px] leading-snug" style={{ fontFamily: "Georgia, serif" }}>
+                  <h3 className="mt-4 text-[24px] leading-snug" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                     {f.titulo}
                   </h3>
                   <p className="mt-3 text-[16px] leading-relaxed" style={{ color: C.navySoft }}>
@@ -789,27 +800,39 @@ function PlanoPage() {
           <div className="pl-card flex flex-col items-center gap-7 rounded-3xl p-7">
             <div
               className="pl-foto pl-foto-grande w-full max-w-[380px] overflow-hidden"
-              style={{ aspectRatio: "4 / 5", borderRadius: 22, background: C.creamDeep }}
+              style={{ aspectRatio: "1 / 1", borderRadius: 22, background: C.creamDeep }}
             >
               <img
-                src={`${FOTOS_BASE}gabriela-retrato.jpg`}
+                src={`${FOTOS_BASE}gabriela-quadrada.jpg`}
                 alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
                 loading="lazy"
-                width={760}
-                height={950}
+                width={640}
+                height={640}
                 className="h-full w-full object-cover"
               />
             </div>
             <div>
-              <h2 className="text-[22px]" style={{ fontFamily: "Georgia, serif" }}>
-                Quem te acompanha
+              <h2 className="text-[22px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                Por que eu montei isso
               </h2>
+              <p className="mt-4 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                Eu atendo mulheres com lipedema todos os dias. A frase que eu mais escuto é "eu já
+                tentei de tudo".
+              </p>
               <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
-                Gabriela Rosado é nutricionista (CRN 10582) e atende mulheres com lipedema. Este plano
-                é o mesmo caminho que ela usa no consultório para as primeiras semanas: ajustar uma
-                refeição por vez, sem restrição, até a rotina parar de doer.
+                Quase sempre ela vem de alguém que se esforçou de verdade, emagreceu, e mesmo assim
+                continuou com a perna doendo. O problema nunca foi o esforço dela — foi o tratamento,
+                que tratava gordura comum.
+              </p>
+              <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                A Rotina Zero Lipedema é o mesmo caminho que eu uso nas primeiras semanas de
+                consultório: um hábito por vez, sem restrição, até a inflamação ceder.
+              </p>
+              <p className="mt-5 text-[13px] font-semibold" style={{ color: C.goldLabel }}>
+                Gabriela Rosado · Nutricionista · CRN 10582
               </p>
             </div>
+
           </div>
         </Reveal>
       </section>
@@ -820,10 +843,14 @@ function PlanoPage() {
           <Reveal>
             <h2
               className="mb-6 text-[26px] leading-snug sm:text-[30px]"
-              style={{ fontFamily: "Georgia, serif", color: "#FFFDF6" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#FFFDF6" }}
             >
               Comece hoje pela <em className="pl-em">primeira fase</em>
             </h2>
+            <p className="mb-4 text-[15px] leading-relaxed" style={{ color: "#CBD9E6" }}>
+              Você provavelmente já gastou mais que isso em um mês de chá, drenagem ou numa consulta
+              que não olhou para o lipedema.
+            </p>
             <p className="text-[15px] line-through" style={{ color: "#8FA7BC" }}>
               De R$119,90
             </p>
@@ -863,7 +890,7 @@ function PlanoPage() {
       {/* 8. FAQ */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
-          <h2 className="text-[26px] sm:text-[32px]" style={{ fontFamily: "Georgia, serif" }}>
+          <h2 className="text-[26px] sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             Perguntas que sempre chegam
           </h2>
         </Reveal>
