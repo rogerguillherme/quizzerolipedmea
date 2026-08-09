@@ -937,13 +937,18 @@ function PlanoPage() {
             </p>
             <p className="text-[17px] font-semibold">R$67 à vista</p>
           </div>
-          <button
-            type="button"
-            onClick={() => irParaCheckout("barra")}
-            className="pl-btn-gold ml-auto w-full rounded-full px-6 py-4 text-[16px] font-semibold sm:w-auto"
-          >
-            Quero meu plano por R$67
-          </button>
+          <div className="ml-auto w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => irParaCheckout("barra")}
+              className="pl-btn-gold w-full rounded-full px-6 py-4 text-[16px] font-semibold sm:w-auto"
+            >
+              Quero meu plano por R$67
+            </button>
+            <p className="mt-1.5 text-center text-[11px]" style={{ color: C.navySoft }}>
+              7 dias de garantia. Não serviu, você me chama e eu devolvo.
+            </p>
+          </div>
         </div>
       </div>
 
