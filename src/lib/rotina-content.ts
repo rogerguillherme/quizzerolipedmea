@@ -25,7 +25,7 @@ export const ROTINA_SEMANAS: readonly SemanaRotina[] = [
     numero: 1,
     refeicao: "Café da manhã",
     objetivo:
-      "A refeição mais fácil de controlar. É aqui que vem a primeira vitória rápida.",
+      "Como você abre o dia define a inflamação das horas seguintes. É a troca mais fácil de sustentar — e onde vem o primeiro alívio.",
     entra: [
       "Uma proteína: ovos, frango desfiado, atum ou iogurte de coco",
       "Uma fruta",
