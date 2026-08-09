@@ -948,7 +948,12 @@ function PlanoPage() {
       </div>
 
       {sessao && (
-        <MapaPopup sessao={sessao} open={popupAberto} onClose={() => setPopupAberto(false)} />
+        <MapaPopup
+          sessao={sessao}
+          open={popupAberto}
+          onClose={() => setPopupAberto(false)}
+          onVerFases={verFasesDoPopup}
+        />
       )}
     </main>
   );
