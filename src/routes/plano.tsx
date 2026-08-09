@@ -590,7 +590,7 @@ function PlanoPage() {
               className="text-[26px] leading-snug sm:text-[32px]"
               style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#fff" }}
             >
-              Se você chegou até aqui, provavelmente:
+              Eu sei mais ou menos como foi o seu dia hoje.
             </h2>
           </Reveal>
           <ul className="mt-8 space-y-5">
