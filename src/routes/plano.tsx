@@ -230,9 +230,10 @@ function FotoZoom({ src, alt }: { src: string; alt: string }) {
   return (
     <div
       ref={ref}
-      className="overflow-hidden rounded-3xl"
+      className="pl-foto pl-foto-grande overflow-hidden rounded-3xl"
       style={{ aspectRatio: "16 / 10", background: C.creamDeep }}
     >
+
       <img
         src={src}
         alt={alt}
