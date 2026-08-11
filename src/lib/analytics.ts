@@ -50,6 +50,7 @@ export type FunnelEvent =
   | "whatsapp_capturado"
   | "vsl_progress"
   | "checkout_view"
+  | "checkout_click"
   | "checkout_error"
   | "bump_activated"
   | "purchase_completed"

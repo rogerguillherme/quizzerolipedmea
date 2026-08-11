@@ -54,6 +54,7 @@ export function OfertaPremiumInline({
   const primeiroNome = (nome || "").trim().split(/\s+/)[0];
 
   function handleCheckout() {
+    track("checkout_click", { origem, valor: 67, destino: "kiwify" });
     track("premium_upgrade_clicked", { origem, valor: 67 });
     trackMeta("InitiateCheckout", {
       content_name: "Plano Premium Zero Lipedema 30d",
