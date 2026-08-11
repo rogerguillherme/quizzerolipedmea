@@ -51,7 +51,7 @@ function MapaAdminPage() {
     };
   }, []);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading: queryLoading, error } = useQuery({
     queryKey: ["admin", "quiz-leads"],
     queryFn: () => fetchLeads(),
     enabled: sessionReady,
@@ -69,6 +69,7 @@ function MapaAdminPage() {
     onError: (e: Error) => alert(`Erro: ${e.message}`),
   });
 
+  const isLoading = !sessionReady || queryLoading;
   const leads = (data ?? []) as QuizLead[];
   const [busca, setBusca] = useState("");
   const [expandido, setExpandido] = useState<string | null>(null);
