@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Search, Loader2, Phone, Calendar, FileText, Crown, Check } from "lucide-react";
@@ -7,6 +7,7 @@ import { listQuizLeads } from "@/lib/admin-leads.functions";
 import { enviarAcessoPremium } from "@/lib/premium-access.functions";
 
 export const Route = createFileRoute("/admin/mapa")({
+  ssr: false,
   component: MapaAdminPage,
 });
 
@@ -35,9 +36,26 @@ function MapaAdminPage() {
   const fetchLeads = useServerFn(listQuizLeads);
   const liberarPremium = useServerFn(enviarAcessoPremium);
   const qc = useQueryClient();
+  // Só chamamos a server fn protegida depois que a sessão existe no cliente;
+  // sem isso o bearer não é anexado e o servidor responde "No authorization header".
+  const [sessionReady, setSessionReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.auth.getSession();
+      if (!cancelled) setSessionReady(!!data.session);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin", "quiz-leads"],
     queryFn: () => fetchLeads(),
+    enabled: sessionReady,
+    retry: false,
   });
 
   const premiumMut = useMutation({
