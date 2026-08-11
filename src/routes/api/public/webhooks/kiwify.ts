@@ -87,9 +87,20 @@ export const Route = createFileRoute("/api/public/webhooks/kiwify")({
 
         // Kiwify usa centavos em charge_amount.
         const amountCents = Number(payload.Commissions?.charge_amount ?? 0);
-        // Sem valor no payload, o plano é o de R$67: melhor um valor correto
-        // do que um Purchase sem `value`, que a Meta não consegue otimizar.
-        const value = amountCents > 0 ? amountCents / 100 : 67;
+        const temClienteReal = Boolean(payload.Customer?.email || payload.Customer?.mobile);
+
+        // Sem valor de cobrança real ou sem dados de cliente, é provável que
+        // seja um payload de teste (ex.: botão "Testar Webhook" da Kiwify) —
+        // não reportar Purchase fantasma pra Meta.
+        if (amountCents <= 0 || !temClienteReal) {
+          console.warn(
+            "[kiwify] payload sem valor de cobrança ou dados de cliente — provável teste, Purchase não disparado",
+            orderId,
+          );
+          return Response.json({ ok: true, ignored: "sem_dados_de_cobranca_real" });
+        }
+
+        const value = amountCents / 100;
         const currency = payload.Commissions?.currency ?? "BRL";
 
         const customer = payload.Customer ?? {};

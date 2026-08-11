@@ -90,11 +90,16 @@ export function MapaPopup({
           lead_id: sessao.leadId,
           funil: sessao.funil ?? "plano-direto",
         });
-        // Evento que a Meta usa para otimizar a campanha. Advanced matching
+        // Eventos que a Meta usa para otimizar a campanha. Advanced matching
         // vai por dentro do trackMeta (telefone/nome hasheados no servidor).
         trackMeta(
           "Lead",
           { content_name: "Mapa do Lipedema", lead_id: sessao.leadId },
+          { phone: r.telefone, firstName: sessao.nome, externalId: sessao.leadId },
+        );
+        trackMeta(
+          "CompleteRegistration",
+          { content_name: "Acesso ao app Zero Lipedema", status: "acesso_criado" },
           { phone: r.telefone, firstName: sessao.nome, externalId: sessao.leadId },
         );
         setSucesso(true);
