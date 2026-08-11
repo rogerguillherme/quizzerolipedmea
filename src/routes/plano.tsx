@@ -527,7 +527,8 @@ function PlanoPage() {
   }, []);
 
   function irParaCheckout(origem: "hero" | "ciclo" | "oferta" | "barra" | "popup") {
-    track("checkout_view", { origem, valor: 67, funil });
+    // Clique real no botão que leva ao checkout da Kiwify.
+    track("checkout_click", { origem, valor: 67, funil, destino: "kiwify" });
     trackMeta("InitiateCheckout", {
       content_name: "Plano Zero Lipedema 30d",
       content_type: "product",

@@ -141,6 +141,7 @@ function PremiumPlano() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => {
+            track("checkout_click", { origem: "app_derma", valor: 67, destino: "kiwify" });
             track("premium_upgrade_clicked");
             trackMeta("InitiateCheckout", { content_name: "Plano Premium Zero Lipedema 30d", content_type: "product", value: 67, currency: "BRL" });
           }}
