@@ -403,6 +403,46 @@ const ESPELHO = [
   "E toda segunda-feira você recomeça.",
 ];
 
+/** Novo degrau de conscientização: nomeia o problema antes de vender a solução. */
+const OQUE_E_LIPEDEMA = {
+  titulo: "Talvez ninguém tenha te dado esse nome.",
+  paragrafos: [
+    "Lipedema é um acúmulo de gordura inflamada que se concentra nas pernas e nos braços, quase sempre dos dois lados, e que não responde a dieta como a gordura comum.",
+    "Atinge principalmente mulheres, costuma aparecer ou piorar em fases hormonais como puberdade, gravidez e menopausa, e é muito confundido com sobrepeso.",
+    "É por isso que tanta mulher passa anos sendo mandada emagrecer, emagrece de verdade, e continua com a perna doendo.",
+  ],
+  aviso: "Só um médico fecha esse diagnóstico. O que dá para fazer aqui é reconhecer o padrão.",
+};
+
+/** Degrau emocional: impacto na vida, não só sintoma. */
+const IMPACTO_NA_VIDA = {
+  titulo: "E aí a vida vai encolhendo.",
+  linhas: [
+    "Você para de usar short no verão.",
+    "Escolhe a roupa pelo que esconde, não pelo que você gosta.",
+    "Some das fotos, ou fica sempre atrás de alguém.",
+    "Recusa convite que envolve andar muito ou ficar muito tempo em pé.",
+    "E no fim do dia, quando tira a roupa e vê a marca, vem aquela conversa com você mesma que ninguém escuta.",
+  ],
+  fecho: "O lipedema não dói só na perna.",
+};
+
+/** Degrau de decisão: mostrar os dois caminhos que não funcionam antes do terceiro. */
+const BIFURCACAO = {
+  titulo: "Existem dois caminhos daqui, e você já conhece os dois.",
+  cards: [
+    {
+      titulo: "Continuar como está",
+      texto: "A roda gira, cada volta um pouco pior, e daqui a dois anos você conta a mesma história com dois anos a mais.",
+    },
+    {
+      titulo: "Tentar de novo o que já não funcionou",
+      texto: "Outra dieta, outro corte, mais um mês de chá. Você já sabe onde isso termina, porque já esteve lá.",
+    },
+  ],
+  transicao: "Existe um terceiro caminho, e é o único que mexe no que está causando.",
+};
+
 /** Sinais mais relatados perto do dia 30. Hedge obrigatório na seção. */
 const DIA30 = [
   {
