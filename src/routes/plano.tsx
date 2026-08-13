@@ -676,10 +676,37 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 2. Espelho */}
+      {/* 2. O que é lipedema: nomeia o problema antes de qualquer oferta. */}
+      <section className="relative px-6 py-20" style={{ background: C.cream }}>
+        <div className="mx-auto max-w-2xl text-center">
+          <Reveal>
+            <h2
+              className="text-[26px] leading-snug sm:text-[34px]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
+            >
+              {OQUE_E_LIPEDEMA.titulo}
+            </h2>
+          </Reveal>
+          <div className="mt-8 space-y-5">
+            {OQUE_E_LIPEDEMA.paragrafos.map((p, i) => (
+              <Reveal key={i} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+                <p className="text-[17px] leading-relaxed" style={{ color: C.navySoft }}>
+                  {p}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={3}>
+            <p className="mt-8 text-[14px] leading-relaxed" style={{ color: C.navySoft, opacity: 0.85 }}>
+              {OQUE_E_LIPEDEMA.aviso}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 3. Espelho */}
       <section className="relative px-4 py-6">
         <div className="pl-espelho mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
-
           <Reveal>
             <h2
               className="text-[26px] leading-snug sm:text-[32px]"
@@ -706,6 +733,37 @@ function PlanoPage() {
             <p className="mt-9 text-[18px] font-semibold leading-relaxed" style={{ color: C.goldLight }}>
               Se eu acertei em três dessas, você não está com preguiça. Você está com lipedema, e ele
               não responde ao que te mandaram fazer.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 4. Impacto na vida: emocional, sem ícones, com respiro. */}
+      <section className="relative px-6 py-20" style={{ background: C.cream }}>
+        <div className="mx-auto max-w-2xl text-center">
+          <Reveal>
+            <h2
+              className="text-[26px] leading-snug sm:text-[34px]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
+            >
+              {IMPACTO_NA_VIDA.titulo}
+            </h2>
+          </Reveal>
+          <div className="mt-10 space-y-8">
+            {IMPACTO_NA_VIDA.linhas.map((linha, i) => (
+              <Reveal key={i} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+                <p className="text-[18px] leading-relaxed sm:text-[20px]" style={{ color: C.navy }}>
+                  {linha}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={3}>
+            <p
+              className="mt-12 text-[22px] font-semibold leading-snug sm:text-[26px]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
+            >
+              {IMPACTO_NA_VIDA.fecho}
             </p>
           </Reveal>
         </div>
