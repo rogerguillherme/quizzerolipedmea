@@ -18,6 +18,7 @@ import { Route as MeuMapaRouteImport } from './routes/meu-mapa'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -100,6 +101,11 @@ const EntrarRoute = EntrarRouteImport.update({
 const DefinirSenhaRoute = DefinirSenhaRouteImport.update({
   id: '/definir-senha',
   path: '/definir-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -300,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/crm': typeof CrmRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/crm': typeof CrmRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
@@ -397,6 +405,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/crm': typeof CrmRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/entrar': typeof EntrarRoute
   '/mapa': typeof MapaRoute
@@ -448,6 +457,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/auth'
+    | '/crm'
     | '/definir-senha'
     | '/entrar'
     | '/mapa'
@@ -495,6 +505,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/crm'
     | '/definir-senha'
     | '/entrar'
     | '/mapa'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/auth'
+    | '/crm'
     | '/definir-senha'
     | '/entrar'
     | '/mapa'
@@ -594,6 +606,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CrmRoute: typeof CrmRoute
   DefinirSenhaRoute: typeof DefinirSenhaRoute
   EntrarRoute: typeof EntrarRoute
   MapaRoute: typeof MapaRoute
@@ -676,6 +689,13 @@ declare module '@tanstack/react-router' {
       path: '/definir-senha'
       fullPath: '/definir-senha'
       preLoaderRoute: typeof DefinirSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1030,6 +1050,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  CrmRoute: CrmRoute,
   DefinirSenhaRoute: DefinirSenhaRoute,
   EntrarRoute: EntrarRoute,
   MapaRoute: MapaRoute,

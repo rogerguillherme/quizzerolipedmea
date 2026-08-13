@@ -6,6 +6,8 @@ import { ensureAdminUser } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/admin_/login")({
   component: AdminLoginPage,
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } =>
+    typeof search.redirect === "string" ? { redirect: search.redirect } : {},
   head: () => ({
     meta: [
       { title: "Painel · Zero Lipedema" },
@@ -16,6 +18,12 @@ export const Route = createFileRoute("/admin_/login")({
 
 function AdminLoginPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
+  // Só aceitamos caminhos internos: nada de redirecionar para fora do app.
+  const destino =
+    redirect && redirect.startsWith("/") && !redirect.startsWith("//")
+      ? redirect
+      : "/admin";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState<string | null>(null);
@@ -35,9 +43,9 @@ function AdminLoginPage() {
         .eq("user_id", data.session.user.id)
         .eq("role", "admin")
         .maybeSingle();
-      if (roles) navigate({ to: "/admin" });
+      if (roles) navigate({ to: destino });
     });
-  }, [navigate]);
+  }, [navigate, destino]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,7 +72,7 @@ function AdminLoginPage() {
       setErro("Este acesso é restrito à equipe. Alunas entram em /auth.");
       return;
     }
-    navigate({ to: "/admin" });
+    navigate({ to: destino });
   }
 
   return (
