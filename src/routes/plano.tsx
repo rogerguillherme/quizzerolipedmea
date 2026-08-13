@@ -403,6 +403,46 @@ const ESPELHO = [
   "E toda segunda-feira você recomeça.",
 ];
 
+/** Novo degrau de conscientização: nomeia o problema antes de vender a solução. */
+const OQUE_E_LIPEDEMA = {
+  titulo: "Talvez ninguém tenha te dado esse nome.",
+  paragrafos: [
+    "Lipedema é um acúmulo de gordura inflamada que se concentra nas pernas e nos braços, quase sempre dos dois lados, e que não responde a dieta como a gordura comum.",
+    "Atinge principalmente mulheres, costuma aparecer ou piorar em fases hormonais como puberdade, gravidez e menopausa, e é muito confundido com sobrepeso.",
+    "É por isso que tanta mulher passa anos sendo mandada emagrecer, emagrece de verdade, e continua com a perna doendo.",
+  ],
+  aviso: "Só um médico fecha esse diagnóstico. O que dá para fazer aqui é reconhecer o padrão.",
+};
+
+/** Degrau emocional: impacto na vida, não só sintoma. */
+const IMPACTO_NA_VIDA = {
+  titulo: "E aí a vida vai encolhendo.",
+  linhas: [
+    "Você para de usar short no verão.",
+    "Escolhe a roupa pelo que esconde, não pelo que você gosta.",
+    "Some das fotos, ou fica sempre atrás de alguém.",
+    "Recusa convite que envolve andar muito ou ficar muito tempo em pé.",
+    "E no fim do dia, quando tira a roupa e vê a marca, vem aquela conversa com você mesma que ninguém escuta.",
+  ],
+  fecho: "O lipedema não dói só na perna.",
+};
+
+/** Degrau de decisão: mostrar os dois caminhos que não funcionam antes do terceiro. */
+const BIFURCACAO = {
+  titulo: "Existem dois caminhos daqui, e você já conhece os dois.",
+  cards: [
+    {
+      titulo: "Continuar como está",
+      texto: "A roda gira, cada volta um pouco pior, e daqui a dois anos você conta a mesma história com dois anos a mais.",
+    },
+    {
+      titulo: "Tentar de novo o que já não funcionou",
+      texto: "Outra dieta, outro corte, mais um mês de chá. Você já sabe onde isso termina, porque já esteve lá.",
+    },
+  ],
+  transicao: "Existe um terceiro caminho, e é o único que mexe no que está causando.",
+};
+
 /** Sinais mais relatados perto do dia 30. Hedge obrigatório na seção. */
 const DIA30 = [
   {
@@ -636,10 +676,37 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 2. Espelho */}
+      {/* 2. O que é lipedema: nomeia o problema antes de qualquer oferta. */}
+      <section className="relative px-6 py-20" style={{ background: C.cream }}>
+        <div className="mx-auto max-w-2xl text-center">
+          <Reveal>
+            <h2
+              className="text-[26px] leading-snug sm:text-[34px]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
+            >
+              {OQUE_E_LIPEDEMA.titulo}
+            </h2>
+          </Reveal>
+          <div className="mt-8 space-y-5">
+            {OQUE_E_LIPEDEMA.paragrafos.map((p, i) => (
+              <Reveal key={i} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+                <p className="text-[17px] leading-relaxed" style={{ color: C.navySoft }}>
+                  {p}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={3}>
+            <p className="mt-8 text-[14px] leading-relaxed" style={{ color: C.navySoft, opacity: 0.85 }}>
+              {OQUE_E_LIPEDEMA.aviso}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 3. Espelho */}
       <section className="relative px-4 py-6">
         <div className="pl-espelho mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12">
-
           <Reveal>
             <h2
               className="text-[26px] leading-snug sm:text-[32px]"
@@ -671,7 +738,38 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 3. O ciclo da inflamação: mecanismo antes da oferta. */}
+      {/* 4. Impacto na vida: emocional, sem ícones, com respiro. */}
+      <section className="relative px-6 py-20" style={{ background: C.cream }}>
+        <div className="mx-auto max-w-2xl text-center">
+          <Reveal>
+            <h2
+              className="text-[26px] leading-snug sm:text-[34px]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
+            >
+              {IMPACTO_NA_VIDA.titulo}
+            </h2>
+          </Reveal>
+          <div className="mt-10 space-y-8">
+            {IMPACTO_NA_VIDA.linhas.map((linha, i) => (
+              <Reveal key={i} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+                <p className="text-[18px] leading-relaxed sm:text-[20px]" style={{ color: C.navy }}>
+                  {linha}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={3}>
+            <p
+              className="mt-12 text-[22px] font-semibold leading-snug sm:text-[26px]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: C.navy }}
+            >
+              {IMPACTO_NA_VIDA.fecho}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 5. O ciclo da inflamação: mecanismo antes da oferta. */}
       <section className="relative mx-auto max-w-5xl px-6 py-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[34px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -787,7 +885,50 @@ function PlanoPage() {
 
       </section>
 
-      {/* 4. As 4 fases */}
+      {/* 5. A bifurcação: os dois caminhos que não funcionam, antes do terceiro. */}
+      <section className="relative mx-auto max-w-5xl px-6 py-20">
+        <Reveal>
+          <h2 className="text-center text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            {BIFURCACAO.titulo}
+          </h2>
+        </Reveal>
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          {BIFURCACAO.cards.map((card, i) => (
+            <Reveal key={i} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+              <div
+                className="h-full rounded-2xl p-6"
+                style={{
+                  background: C.creamDeep,
+                  border: "1px solid rgba(18,48,80,.12)",
+                }}
+              >
+                <h3 className="text-[17px] font-semibold" style={{ color: "#5A6A7A" }}>
+                  {card.titulo}
+                </h3>
+                <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                  {card.texto}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal delay={2}>
+          <div
+            className="mx-auto mt-8 max-w-2xl rounded-2xl p-6 text-center"
+            style={{
+              background: "linear-gradient(135deg,#FBEBC4 0%,#F5DFA4 100%)",
+              border: "1px solid rgba(192,135,42,.45)",
+              boxShadow: "0 1px 0 rgba(255,255,255,.9) inset, 0 18px 34px -28px rgba(192,135,42,1)",
+            }}
+          >
+            <p className="text-[17px] font-semibold leading-relaxed" style={{ color: "#4A340E" }}>
+              {BIFURCACAO.transicao}
+            </p>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* 7. As 4 fases */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -822,7 +963,7 @@ function PlanoPage() {
         </Reveal>
       </section>
 
-      {/* 5. Entregáveis */}
+      {/* 8. O que você recebe */}
       <section className="relative mx-auto max-w-5xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -873,54 +1014,10 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 5b. Prova social: desligada até haver print real (ver REAIS). */}
+      {/* 7b. Prova social: desligada até haver print real (ver REAIS). */}
       <DepoimentosWhatsapp navy={C.navy} navySoft={C.navySoft} goldLabel={C.goldLabel} />
 
-      {/* 6. Gabriela */}
-
-      <section className="relative mx-auto max-w-3xl px-6 pb-20">
-        <Reveal>
-          <div className="pl-card flex flex-col items-center gap-7 rounded-3xl p-7">
-            <div
-              className="pl-foto pl-foto-grande w-full max-w-[380px] overflow-hidden"
-              style={{ aspectRatio: "1 / 1", borderRadius: 22, background: C.creamDeep }}
-            >
-              <img
-                src={`${FOTOS_BASE}gabriela-quadrada.jpg`}
-                alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
-                loading="lazy"
-                width={640}
-                height={640}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div>
-              <h2 className="text-[22px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                Por que eu montei isso
-              </h2>
-              <p className="mt-4 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
-                Eu atendo mulheres com lipedema todos os dias. A frase que eu mais escuto é "eu já
-                tentei de tudo".
-              </p>
-              <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
-                Quase sempre ela vem de alguém que se esforçou de verdade, emagreceu, e mesmo assim
-                continuou com a perna doendo. O problema nunca foi o esforço dela. Foi o tratamento,
-                que tratava gordura comum.
-              </p>
-              <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
-                A Rotina Zero Lipedema é o mesmo caminho que eu uso nas primeiras semanas de
-                consultório: um hábito por vez, sem restrição, até a inflamação ceder.
-              </p>
-              <p className="mt-5 text-[13px] font-semibold" style={{ color: C.goldLabel }}>
-                Gabriela Rosado · Nutricionista · CRN 10582
-              </p>
-            </div>
-
-          </div>
-        </Reveal>
-      </section>
-
-      {/* 6b. Como costuma ser o dia 30 */}
+      {/* 8. Como costuma ser o dia 30 */}
       <section className="relative mx-auto max-w-4xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -952,7 +1049,50 @@ function PlanoPage() {
         </Reveal>
       </section>
 
-      {/* 7. Preço */}
+      {/* 10. Gabriela */}
+      <section className="relative mx-auto max-w-3xl px-6 pb-20">
+        <Reveal>
+          <div className="pl-card flex flex-col items-center gap-7 rounded-3xl p-7">
+            <div
+              className="pl-foto pl-foto-grande w-full max-w-[380px] overflow-hidden"
+              style={{ aspectRatio: "1 / 1", borderRadius: 22, background: C.creamDeep }}
+            >
+              <img
+                src={`${FOTOS_BASE}gabriela-quadrada.jpg`}
+                alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
+                loading="lazy"
+                width={640}
+                height={640}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-[22px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                Por que eu montei isso
+              </h2>
+              <p className="mt-4 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                Eu atendo mulheres com lipedema todos os dias. A frase que eu mais escuto é "eu já
+                tentei de tudo".
+              </p>
+              <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                Quase sempre ela vem de alguém que se esforçou de verdade, emagreceu, e mesmo assim
+                continuou com a perna doendo. O problema nunca foi o esforço dela. Foi o plano que
+                tratava gordura comum.
+              </p>
+              <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                A Rotina Zero Lipedema é o mesmo caminho que eu uso nas primeiras semanas de
+                consultório: um hábito por vez, sem restrição, até a inflamação ceder.
+              </p>
+              <p className="mt-5 text-[13px] font-semibold" style={{ color: C.goldLabel }}>
+                Gabriela Rosado · CRN 10582
+              </p>
+            </div>
+
+          </div>
+        </Reveal>
+      </section>
+
+      {/* 11. Preço */}
       <section ref={precoRef} className="relative px-4 pb-20">
         <div
           className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12"
@@ -1024,7 +1164,7 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 8. FAQ */}
+      {/* 12. FAQ */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -1047,14 +1187,14 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 9. Rodapé */}
+      {/* 13. Rodapé */}
       <footer className="relative px-6 pb-36 pt-4">
         <p className="mx-auto max-w-3xl text-[12px] leading-relaxed" style={{ color: C.navySoft }}>
           Gabriela Rosado · CRN 10582
         </p>
       </footer>
 
-      {/* 10. Barra fixa */}
+      {/* 14. Barra fixa */}
       <div
         className="fixed inset-x-0 bottom-0 z-[90] border-t px-4 py-3 backdrop-blur"
         style={{
