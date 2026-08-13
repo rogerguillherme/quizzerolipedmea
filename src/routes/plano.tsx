@@ -1050,6 +1050,47 @@ function PlanoPage() {
       </section>
 
       {/* 10. Gabriela */}
+      <section className="relative mx-auto max-w-3xl px-6 pb-20">
+        <Reveal>
+          <div className="pl-card flex flex-col items-center gap-7 rounded-3xl p-7">
+            <div
+              className="pl-foto pl-foto-grande w-full max-w-[380px] overflow-hidden"
+              style={{ aspectRatio: "1 / 1", borderRadius: 22, background: C.creamDeep }}
+            >
+              <img
+                src={`${FOTOS_BASE}gabriela-quadrada.jpg`}
+                alt="Dra. Gabriela Rosado, nutricionista especialista em lipedema"
+                loading="lazy"
+                width={640}
+                height={640}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-[22px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                Por que eu montei isso
+              </h2>
+              <p className="mt-4 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                Eu atendo mulheres com lipedema todos os dias. A frase que eu mais escuto é "eu já
+                tentei de tudo".
+              </p>
+              <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                Quase sempre ela vem de alguém que se esforçou de verdade, emagreceu, e mesmo assim
+                continuou com a perna doendo. O problema nunca foi o esforço dela. Foi o plano que
+                tratava gordura comum.
+              </p>
+              <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                A Rotina Zero Lipedema é o mesmo caminho que eu uso nas primeiras semanas de
+                consultório: um hábito por vez, sem restrição, até a inflamação ceder.
+              </p>
+              <p className="mt-5 text-[13px] font-semibold" style={{ color: C.goldLabel }}>
+                Gabriela Rosado · Nutricionista · CRN 10582
+              </p>
+            </div>
+
+          </div>
+        </Reveal>
+      </section>
 
       {/* 11. Preço */}
       <section ref={precoRef} className="relative px-4 pb-20">
