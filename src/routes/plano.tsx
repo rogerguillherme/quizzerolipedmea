@@ -885,7 +885,50 @@ function PlanoPage() {
 
       </section>
 
-      {/* 4. As 4 fases */}
+      {/* 5. A bifurcação: os dois caminhos que não funcionam, antes do terceiro. */}
+      <section className="relative mx-auto max-w-5xl px-6 py-20">
+        <Reveal>
+          <h2 className="text-center text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            {BIFURCACAO.titulo}
+          </h2>
+        </Reveal>
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          {BIFURCACAO.cards.map((card, i) => (
+            <Reveal key={i} delay={(Math.min(i, 4) as 0 | 1 | 2 | 3 | 4)}>
+              <div
+                className="h-full rounded-2xl p-6"
+                style={{
+                  background: C.creamDeep,
+                  border: "1px solid rgba(18,48,80,.12)",
+                }}
+              >
+                <h3 className="text-[17px] font-semibold" style={{ color: "#5A6A7A" }}>
+                  {card.titulo}
+                </h3>
+                <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
+                  {card.texto}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal delay={2}>
+          <div
+            className="mx-auto mt-8 max-w-2xl rounded-2xl p-6 text-center"
+            style={{
+              background: "linear-gradient(135deg,#FBEBC4 0%,#F5DFA4 100%)",
+              border: "1px solid rgba(192,135,42,.45)",
+              boxShadow: "0 1px 0 rgba(255,255,255,.9) inset, 0 18px 34px -28px rgba(192,135,42,1)",
+            }}
+          >
+            <p className="text-[17px] font-semibold leading-relaxed" style={{ color: "#4A340E" }}>
+              {BIFURCACAO.transicao}
+            </p>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* 6. As 4 fases */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
