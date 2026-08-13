@@ -39,6 +39,8 @@ export type Database = {
         Row: {
           app_context: string
           created_at: string
+          etapa: string
+          etapa_manual: boolean
           id: string
           lead_id: string | null
           modo: string
@@ -54,6 +56,8 @@ export type Database = {
         Insert: {
           app_context?: string
           created_at?: string
+          etapa?: string
+          etapa_manual?: boolean
           id?: string
           lead_id?: string | null
           modo?: string
@@ -69,6 +73,8 @@ export type Database = {
         Update: {
           app_context?: string
           created_at?: string
+          etapa?: string
+          etapa_manual?: boolean
           id?: string
           lead_id?: string | null
           modo?: string
