@@ -191,3 +191,78 @@ export const setConversationTags = createServerFn({ method: "POST" })
     if (error) throw error;
     return { ok: true };
   });
+
+// ---------------------------------------------------------------------------
+// CRM profissional: lista enriquecida (lead vinculado + etapa) e Kanban.
+// ---------------------------------------------------------------------------
+
+export const listConversationsRich = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { montarConversas } = await import("./crm.server");
+    return montarConversas(context.supabase);
+  });
+
+export const setConversationEtapa = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        etapa: z.enum([
+          "mapa_feito",
+          "em_conversa",
+          "quer_saber_mais",
+          "cliente",
+          "sem_resposta",
+        ]),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase
+      .from("crm_conversations")
+      .update({ etapa: data.etapa, etapa_manual: true })
+      .eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
+export const searchLeads = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ termo: z.string().trim().min(2).max(80) }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const termo = data.termo.replace(/[%,]/g, "");
+    const { data: rows } = await context.supabase
+      .from("leads")
+      .select("id, nome, telefone, status, created_at")
+      .or(`nome.ilike.%${termo}%,telefone.ilike.%${termo}%`)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    return rows ?? [];
+  });
+
+export const linkConversationLead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        leadId: z.string().uuid().nullable(),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase
+      .from("crm_conversations")
+      .update({ lead_id: data.leadId })
+      .eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
