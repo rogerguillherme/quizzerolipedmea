@@ -769,7 +769,7 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 3. O ciclo da inflamação: mecanismo antes da oferta. */}
+      {/* 5. O ciclo da inflamação: mecanismo antes da oferta. */}
       <section className="relative mx-auto max-w-5xl px-6 py-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[34px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -928,7 +928,7 @@ function PlanoPage() {
         </Reveal>
       </section>
 
-      {/* 6. As 4 fases */}
+      {/* 7. As 4 fases */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -963,7 +963,7 @@ function PlanoPage() {
         </Reveal>
       </section>
 
-      {/* 5. Entregáveis */}
+      {/* 8. O que você recebe */}
       <section className="relative mx-auto max-w-5xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] leading-snug sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -1049,9 +1049,9 @@ function PlanoPage() {
         </Reveal>
       </section>
 
-      {/* 9. Gabriela */}
+      {/* 10. Gabriela */}
 
-      {/* 7. Preço */}
+      {/* 11. Preço */}
       <section ref={precoRef} className="relative px-4 pb-20">
         <div
           className="pl-preco mx-auto max-w-3xl rounded-3xl px-7 py-12 sm:px-12"
@@ -1123,7 +1123,7 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 8. FAQ */}
+      {/* 12. FAQ */}
       <section className="relative mx-auto max-w-3xl px-6 pb-20">
         <Reveal>
           <h2 className="text-[26px] sm:text-[32px]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -1146,14 +1146,14 @@ function PlanoPage() {
         </div>
       </section>
 
-      {/* 9. Rodapé */}
+      {/* 13. Rodapé */}
       <footer className="relative px-6 pb-36 pt-4">
         <p className="mx-auto max-w-3xl text-[12px] leading-relaxed" style={{ color: C.navySoft }}>
           Gabriela Rosado · CRN 10582
         </p>
       </footer>
 
-      {/* 10. Barra fixa */}
+      {/* 14. Barra fixa */}
       <div
         className="fixed inset-x-0 bottom-0 z-[90] border-t px-4 py-3 backdrop-blur"
         style={{
