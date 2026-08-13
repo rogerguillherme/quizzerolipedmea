@@ -186,8 +186,8 @@ export function MapaPopup({
                   Pronto, enviei pro seu WhatsApp.
                 </p>
                 <p className="mt-2 text-[14px] leading-relaxed" style={{ color: C.navySoft }}>
-                  Seu Mapa aponta {d.estagio}. Quer saber como começar a tratar a raiz do
-                  lipedema?
+                  Seu Mapa aponta {d.estagio}. Quer saber como começar a agir no que alimenta a
+                  inflamação do lipedema?
                 </p>
                 <button
                   type="button"

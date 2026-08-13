@@ -904,8 +904,8 @@ function PlanoPage() {
               </p>
               <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
                 Quase sempre ela vem de alguém que se esforçou de verdade, emagreceu, e mesmo assim
-                continuou com a perna doendo. O problema nunca foi o esforço dela. Foi o tratamento,
-                que tratava gordura comum.
+                continuou com a perna doendo. O problema nunca foi o esforço dela. Foi o plano que
+                tratava gordura comum.
               </p>
               <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.navySoft }}>
                 A Rotina Zero Lipedema é o mesmo caminho que eu uso nas primeiras semanas de
