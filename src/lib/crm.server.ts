@@ -82,7 +82,9 @@ export async function montarConversas(supabase: Any) {
     .limit(2000);
 
   const porChave = new Map<string, Any>();
+  const porId = new Map<string, Any>();
   for (const l of (leadsData ?? []) as Any[]) {
+    porId.set(l.id, l);
     const k = chaveTelefone(l.telefone);
     if (k.length === 8 && !porChave.has(k)) porChave.set(k, l);
   }
@@ -102,7 +104,10 @@ export async function montarConversas(supabase: Any) {
   }
 
   return conversas.map((c) => {
-    const lead = porChave.get(chaveTelefone(c.telefone)) ?? null;
+    const lead =
+      (c.lead_id ? porId.get(c.lead_id) : null) ??
+      porChave.get(chaveTelefone(c.telefone)) ??
+      null;
     const calculada = calcularEtapa({
       leadStatus: lead?.status ?? null,
       conversaStatus: c.status,
