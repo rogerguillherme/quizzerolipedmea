@@ -1084,7 +1084,7 @@ function PlanoPage() {
                 consultório: um hábito por vez, sem restrição, até a inflamação ceder.
               </p>
               <p className="mt-5 text-[13px] font-semibold" style={{ color: C.goldLabel }}>
-                Gabriela Rosado · Nutricionista · CRN 10582
+                Gabriela Rosado · CRN 10582
               </p>
             </div>
 
