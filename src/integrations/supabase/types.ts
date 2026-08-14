@@ -193,6 +193,8 @@ export type Database = {
           direcao: string
           erro: string | null
           id: string
+          midia_path: string | null
+          midia_tipo: string | null
           status: string
         }
         Insert: {
@@ -203,6 +205,8 @@ export type Database = {
           direcao: string
           erro?: string | null
           id?: string
+          midia_path?: string | null
+          midia_tipo?: string | null
           status?: string
         }
         Update: {
@@ -213,6 +217,8 @@ export type Database = {
           direcao?: string
           erro?: string | null
           id?: string
+          midia_path?: string | null
+          midia_tipo?: string | null
           status?: string
         }
         Relationships: [
