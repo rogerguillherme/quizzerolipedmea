@@ -201,17 +201,77 @@ function CRMPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pronto]);
 
+  // Abre a conversa: mostra o cache na hora e busca a página recente em seguida.
   useEffect(() => {
     if (!selected) return;
+    const id = selected;
+    const cache = threadCache.current.get(id);
+    if (cache) {
+      setThread(cache.msgs);
+      setTemMais(cache.temMais);
+      setCarregandoThread(false);
+    } else {
+      setThread([]);
+      setTemMais(false);
+      setCarregandoThread(true);
+    }
+    let vivo = true;
     (async () => {
-      const r = await fetchThread({ data: { id: selected } });
-      setThread((r?.messages ?? []) as Msg[]);
-      setTimeout(
-        () => endRef.current?.scrollIntoView({ behavior: "smooth" }),
-        30,
-      );
+      try {
+        const r = (await fetchThread({ data: { id, limit: 40 } })) as {
+          messages: Msg[];
+          temMais: boolean;
+        };
+        if (!vivo) return;
+        const msgs = (r?.messages ?? []) as Msg[];
+        threadCache.current.set(id, { msgs, temMais: !!r?.temMais });
+        setThread(msgs);
+        setTemMais(!!r?.temMais);
+        setConvs((old) =>
+          old.map((c) => (c.id === id ? { ...c, nao_lidas: 0 } : c)),
+        );
+      } finally {
+        if (vivo) setCarregandoThread(false);
+      }
     })();
+    return () => {
+      vivo = false;
+    };
   }, [selected, fetchThread]);
+
+  // Vai para o fim quando a conversa termina de carregar.
+  useEffect(() => {
+    if (carregandoThread) return;
+    endRef.current?.scrollIntoView({ block: "end" });
+  }, [selected, carregandoThread]);
+
+  /** Carrega o histórico anterior mantendo a posição de leitura. */
+  async function carregarAnteriores() {
+    if (!selected || carregandoMais || thread.length === 0) return;
+    setCarregandoMais(true);
+    const el = scrollRef.current;
+    const antes = el ? el.scrollHeight - el.scrollTop : 0;
+    try {
+      const r = (await fetchThread({
+        data: { id: selected, limit: 40, before: thread[0]!.created_at },
+      })) as { messages: Msg[]; temMais: boolean };
+      const novas = (r?.messages ?? []) as Msg[];
+      const juntas = [...novas, ...thread];
+      threadCache.current.set(selected, {
+        msgs: juntas,
+        temMais: !!r?.temMais,
+      });
+      setThread(juntas);
+      setTemMais(!!r?.temMais);
+      requestAnimationFrame(() => {
+        if (el) el.scrollTop = el.scrollHeight - antes;
+      });
+    } finally {
+      setCarregandoMais(false);
+    }
+  }
+
+
 
   const conv = useMemo(
     () => convs.find((c) => c.id === selected) ?? null,
