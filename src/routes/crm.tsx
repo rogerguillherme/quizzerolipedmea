@@ -327,11 +327,28 @@ function CRMPage() {
 
   async function handleSend() {
     if (!selected || !texto.trim() || enviando) return;
+    const id = selected;
+    const conteudo = texto.trim();
     setEnviando(true);
     setErroEnvio(null);
+
+    // Balão otimista: aparece na hora, como no WhatsApp.
+    const provisorio: Msg = {
+      id: `tmp-${Date.now()}`,
+      conversation_id: id,
+      direcao: "out",
+      autor: "humano",
+      conteudo,
+      status: "enviando",
+      created_at: new Date().toISOString(),
+    };
+    setThread((t) => [...t, provisorio]);
+    setTexto("");
+    requestAnimationFrame(() => endRef.current?.scrollIntoView({ block: "end" }));
+
     try {
       const r = (await send({
-        data: { conversationId: selected, conteudo: texto.trim() },
+        data: { conversationId: id, conteudo },
       })) as { ok: boolean; error?: string | null };
       if (!r?.ok) {
         setErroEnvio(
@@ -339,22 +356,38 @@ function CRMPage() {
             ? `Não consegui enviar: ${r.error}`
             : "Não consegui enviar essa mensagem pelo WhatsApp.",
         );
-      } else {
-        setTexto("");
       }
-      const t = await fetchThread({ data: { id: selected } });
-      setThread((t?.messages ?? []) as Msg[]);
-      await refreshList();
-      setTimeout(
-        () => endRef.current?.scrollIntoView({ behavior: "smooth" }),
-        30,
+      setThread((t) => {
+        const novo = t.map((m) =>
+          m.id === provisorio.id
+            ? { ...m, status: r?.ok ? "enviado" : "falhou" }
+            : m,
+        );
+        threadCache.current.set(id, { msgs: novo, temMais });
+        return novo;
+      });
+      setConvs((old) =>
+        old.map((c) =>
+          c.id === id
+            ? {
+                ...c,
+                ultima_mensagem: conteudo,
+                ultima_mensagem_em: provisorio.created_at,
+                modo: "humano",
+              }
+            : c,
+        ),
       );
     } catch {
       setErroEnvio("Falha de conexão ao enviar. Tente de novo.");
+      setThread((t) =>
+        t.map((m) => (m.id === provisorio.id ? { ...m, status: "falhou" } : m)),
+      );
     } finally {
       setEnviando(false);
     }
   }
+
 
   async function toggleMode() {
     if (!conv) return;
