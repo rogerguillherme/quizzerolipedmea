@@ -102,6 +102,38 @@ function Midia({ url, tipo }: { url: string; tipo: string }) {
 }
 
 
+/** Hora curta (HH:MM) do balão, no padrão do WhatsApp. */
+function hora(iso: string) {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? ""
+    : d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+/** Rótulo da faixa de data ("Hoje", "Ontem" ou a data). */
+function diaLabel(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const hoje = new Date();
+  const dia = (x: Date) =>
+    `${x.getFullYear()}-${x.getMonth()}-${x.getDate()}`;
+  const ontem = new Date(hoje.getTime() - 864e5);
+  if (dia(d) === dia(hoje)) return "Hoje";
+  if (dia(d) === dia(ontem)) return "Ontem";
+  return d.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+/** Iniciais para o avatar redondo da lista. */
+function iniciais(nome: string) {
+  const p = nome.trim().split(/\s+/).slice(0, 2);
+  return p.map((x) => x[0]?.toUpperCase() ?? "").join("") || "?";
+}
+
+
 function CRMPage() {
   const navigate = useNavigate();
   const [pronto, setPronto] = useState(false);
