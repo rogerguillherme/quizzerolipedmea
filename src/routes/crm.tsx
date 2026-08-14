@@ -441,103 +441,233 @@ function CRMPage() {
     </div>
   );
 
+  const kanbanEl = (
+    <CrmKanban
+      conversas={convs.map((c) => ({
+        id: c.id,
+        nome: c.nome || c.lead?.nome || null,
+        telefone: c.telefone,
+        ultima_mensagem: c.ultima_mensagem,
+        ultima_mensagem_em: c.ultima_mensagem_em,
+        nao_lidas: c.nao_lidas,
+        etapa: c.etapa,
+        temMapa: !!c.lead,
+      }))}
+      onAbrir={(id) => {
+        setSelected(id);
+        setVista("conversas");
+      }}
+      onMover={moverEtapa}
+    />
+  );
+
+  const NAV = [
+    { id: "geral", label: "Visão geral", icon: LayoutDashboard },
+    { id: "conversas", label: "Conversas", icon: MessageSquare },
+    { id: "funil", label: "Funil", icon: Columns3 },
+  ] as const;
+
   return (
     <div
-      className="flex h-[100dvh] flex-col overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(900px 500px at 0% 0%, #EFE5CE 0%, transparent 55%), #F7F2E8",
-        fontFamily: "'Nunito', sans-serif",
-      }}
+      className="flex h-[100dvh] overflow-hidden"
+      style={{ background: C.app, fontFamily: "'Nunito', sans-serif" }}
     >
-      {/* Topo */}
-      <header
-        className="flex shrink-0 items-center gap-3 px-4 py-2"
-        style={{ borderBottom: `1px solid ${BORDER}`, background: "#FFFDF7" }}
+      {/* Sidebar do painel */}
+      <aside
+        className="hidden w-60 shrink-0 flex-col md:flex"
+        style={{ background: C.surface, borderRight: `1px solid ${C.border}` }}
       >
-        <div className="min-w-0">
+        <div className="px-5 py-5" style={{ borderBottom: `1px solid ${C.border}` }}>
           <p
             className="text-[10px] font-bold uppercase"
-            style={{ letterSpacing: "0.22em", color: GOLD }}
+            style={{ letterSpacing: "0.22em", color: C.goldLabel }}
           >
             Zero Lipedema
           </p>
-          <h1
-            className="text-lg italic leading-tight"
-            style={{ fontFamily: '"Playfair Display", serif', color: NAVY }}
+          <p
+            className="mt-1 text-[20px] font-bold leading-tight"
+            style={{ color: C.textPrimary }}
           >
             CRM
-          </h1>
+          </p>
         </div>
-        <div
-          className="ml-auto flex rounded-full p-0.5"
-          style={{ background: "#EFE5CE" }}
-        >
-          {(
-            [
-              ["conversas", "Conversas", MessageSquare],
-              ["funil", "Funil", Columns3],
-            ] as const
-          ).map(([id, label, Icon]) => (
-            <button
-              key={id}
-              onClick={() => setVista(id)}
-              className="flex min-h-11 items-center gap-1.5 rounded-full px-4 text-xs font-bold"
-              style={
-                vista === id
-                  ? { background: NAVY, color: "#F7F2E8" }
-                  : { color: NAVY }
-              }
-            >
-              <Icon className="size-3.5" /> {label}
-            </button>
-          ))}
+        <nav className="flex-1 space-y-1 p-3">
+          {NAV.map((n) => {
+            const active = vista === n.id;
+            return (
+              <button
+                key={n.id}
+                onClick={() => setVista(n.id)}
+                className="flex min-h-11 w-full items-center gap-2 px-3 text-[13px] font-semibold transition-colors"
+                style={{
+                  borderRadius: R.md,
+                  background: active ? C.navy : "transparent",
+                  color: active ? C.onAccent : C.textSecondary,
+                }}
+              >
+                <n.icon className="size-4" /> {n.label}
+              </button>
+            );
+          })}
+        </nav>
+        <div className="p-3" style={{ borderTop: `1px solid ${C.border}` }}>
+          <p className="text-[12px]" style={{ color: C.textMuted }}>
+            {convs.length} conversas · {totais.naoLidas} não lidas
+          </p>
         </div>
-      </header>
+      </aside>
 
-      {vista === "funil" ? (
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <CrmKanban
-            conversas={convs.map((c) => ({
-              id: c.id,
-              nome: c.nome || c.lead?.nome || null,
-              telefone: c.telefone,
-              ultima_mensagem: c.ultima_mensagem,
-              ultima_mensagem_em: c.ultima_mensagem_em,
-              nao_lidas: c.nao_lidas,
-              etapa: c.etapa,
-              temMapa: !!c.lead,
-            }))}
-            onAbrir={(id) => {
-              setSelected(id);
-              setVista("conversas");
-            }}
-            onMover={moverEtapa}
-          />
-        </div>
-      ) : (
-        <div className="grid min-h-0 flex-1 md:grid-cols-[320px_1fr]">
-          {/* Lista: no celular some quando há conversa aberta */}
-          <div
-            className={[
-              selected ? "hidden md:flex" : "flex",
-              "min-h-0 flex-col",
-            ].join(" ")}
-            style={{ borderRight: `1px solid ${BORDER}`, background: "#FFFDF7" }}
-          >
-            {listaEl}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Topo */}
+        <header
+          className="flex shrink-0 items-center gap-3 px-4 py-2 md:px-6 md:py-3"
+          style={{ borderBottom: `1px solid ${C.border}`, background: C.surface }}
+        >
+          <div className="min-w-0">
+            <p
+              className="text-[10px] font-bold uppercase md:hidden"
+              style={{ letterSpacing: "0.22em", color: C.goldLabel }}
+            >
+              Zero Lipedema
+            </p>
+            <h1
+              className="truncate text-[18px] font-bold leading-tight md:text-[22px]"
+              style={{ color: C.textPrimary }}
+            >
+              {NAV.find((n) => n.id === vista)?.label}
+            </h1>
           </div>
-          <div
-            className={[
-              selected ? "flex" : "hidden md:flex",
-              "min-h-0 flex-col",
-            ].join(" ")}
-            style={{ background: "#FFFDF7" }}
-          >
-            {conversaEl}
+
+          {/* Abas com sublinhado (padrão dashboard) */}
+          <div className="ml-auto hidden gap-5 md:flex">
+            {NAV.map((n) => {
+              const active = vista === n.id;
+              return (
+                <button
+                  key={n.id}
+                  onClick={() => setVista(n.id)}
+                  className="relative flex min-h-11 items-center gap-1.5 text-[13px] font-bold"
+                  style={{ color: active ? C.textPrimary : C.textMuted }}
+                >
+                  <n.icon className="size-3.5" /> {n.label}
+                  <span
+                    aria-hidden
+                    className="absolute inset-x-0 -bottom-[13px] h-[2px]"
+                    style={{ background: active ? C.gold : "transparent" }}
+                  />
+                </button>
+              );
+            })}
           </div>
-        </div>
-      )}
+
+          {/* Mobile: pílulas */}
+          <div
+            className="ml-auto flex p-0.5 md:hidden"
+            style={{ background: C.track, borderRadius: R.pill }}
+          >
+            {NAV.map((n) => (
+              <button
+                key={n.id}
+                onClick={() => setVista(n.id)}
+                className="flex min-h-10 items-center gap-1 px-3 text-[12px] font-bold"
+                style={
+                  vista === n.id
+                    ? { background: C.navy, color: C.onAccent, borderRadius: R.pill }
+                    : { color: C.textPrimary }
+                }
+                aria-label={n.label}
+              >
+                <n.icon className="size-3.5" />
+              </button>
+            ))}
+          </div>
+        </header>
+
+        {vista === "geral" ? (
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
+            <CrmStats
+              total={convs.length}
+              naoLidas={totais.naoLidas}
+              comMapa={totais.comMapa}
+              clientes={totais.clientes}
+              porEtapa={totais.porEtapa}
+            />
+            <div className="mt-4" style={{ ...CARD, padding: 20 }}>
+              <p
+                className="text-[13px] font-bold uppercase"
+                style={{ letterSpacing: "0.14em", color: C.goldLabel }}
+              >
+                Precisam de resposta
+              </p>
+              <div className="mt-3 divide-y" style={{ borderColor: C.border }}>
+                {ordenadas
+                  .filter((c) => c.nao_lidas > 0)
+                  .slice(0, 6)
+                  .map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setSelected(c.id);
+                        setVista("conversas");
+                      }}
+                      className="flex w-full items-center gap-2 py-3 text-left"
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className="block truncate text-[13px] font-bold"
+                          style={{ color: C.textPrimary }}
+                        >
+                          {c.nome || c.lead?.nome || c.telefone}
+                        </span>
+                        <span
+                          className="block truncate text-[12px]"
+                          style={{ color: C.textSecondary }}
+                        >
+                          {c.ultima_mensagem || "Ainda sem mensagem"}
+                        </span>
+                      </span>
+                      <span
+                        className="shrink-0 text-[12px]"
+                        style={{ color: C.textMuted }}
+                      >
+                        {haQuantoTempo(c.ultima_mensagem_em)}
+                      </span>
+                    </button>
+                  ))}
+                {totais.naoLidas === 0 && (
+                  <p className="py-6 text-center text-[13px]" style={{ color: C.textMuted }}>
+                    Tudo respondido por aqui.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : vista === "funil" ? (
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">{kanbanEl}</div>
+        ) : (
+          <div className="grid min-h-0 flex-1 md:grid-cols-[320px_1fr]">
+            {/* Lista: no celular some quando há conversa aberta */}
+            <div
+              className={[
+                selected ? "hidden md:flex" : "flex",
+                "min-h-0 flex-col",
+              ].join(" ")}
+              style={{ borderRight: `1px solid ${C.border}`, background: C.surface }}
+            >
+              {listaEl}
+            </div>
+            <div
+              className={[
+                selected ? "flex" : "hidden md:flex",
+                "min-h-0 flex-col",
+              ].join(" ")}
+              style={{ background: C.surface }}
+            >
+              {conversaEl}
+            </div>
+          </div>
+        )}
+      </div>
 
       {painel && conv && (
         <LeadPanel
@@ -554,3 +684,4 @@ function CRMPage() {
     </div>
   );
 }
+
