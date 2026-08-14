@@ -43,13 +43,36 @@ export const getConversation = createServerFn({ method: "POST" })
       .select("*")
       .eq("conversation_id", data.id)
       .order("created_at", { ascending: true });
+
+    // Gera links temporários para as mídias (áudio/imagem) recebidas.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const lista = ((msgs ?? []) as any[]).slice();
+    const comMidia = lista.filter((m) => m.midia_path);
+    if (comMidia.length > 0) {
+      const { supabaseAdmin } = await import(
+        "@/integrations/supabase/client.server"
+      );
+      const { data: signed } = await supabaseAdmin.storage
+        .from("crm-midia")
+        .createSignedUrls(
+          comMidia.map((m) => m.midia_path as string),
+          60 * 60,
+        );
+      const mapa = new Map<string, string>();
+      for (const s of signed ?? []) {
+        if (s.path && s.signedUrl) mapa.set(s.path, s.signedUrl);
+      }
+      for (const m of comMidia) m.midia_url = mapa.get(m.midia_path) ?? null;
+    }
+
     // marca como lida
     await context.supabase
       .from("crm_conversations")
       .update({ nao_lidas: 0 })
       .eq("id", data.id);
-    return { conversation: conv, messages: msgs ?? [] };
+    return { conversation: conv, messages: lista };
   });
+
 
 export const sendMessage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
