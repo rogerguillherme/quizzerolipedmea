@@ -13,6 +13,7 @@ import {
   MessageSquare,
   Columns3,
   AlertTriangle,
+  LayoutDashboard,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -26,6 +27,8 @@ import {
 import { LeadPanel, type LeadCRM } from "@/components/crm/LeadPanel";
 import { CrmKanban } from "@/components/crm/CrmKanban";
 import { haQuantoTempo, type Etapa } from "@/lib/crm-labels";
+import { CrmStats } from "@/components/crm/CrmStats";
+import { C, R, CARD } from "@/components/crm/crm-ui";
 
 export const Route = createFileRoute("/crm")({
   ssr: false,
@@ -78,7 +81,7 @@ function CRMPage() {
   const changeStatus = useServerFn(setConversationStatus);
   const changeEtapa = useServerFn(setConversationEtapa);
 
-  const [vista, setVista] = useState<"conversas" | "funil">("conversas");
+  const [vista, setVista] = useState<"geral" | "conversas" | "funil">("geral");
   const [convs, setConvs] = useState<Conv[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [thread, setThread] = useState<Msg[]>([]);
@@ -159,6 +162,24 @@ function CRMPage() {
         return (b.nao_lidas > 0 ? 1 : 0) - (a.nao_lidas > 0 ? 1 : 0);
       return t(b) - t(a);
     });
+  }, [convs]);
+
+  const totais = useMemo(() => {
+    const porEtapa = {
+      mapa_feito: 0,
+      em_conversa: 0,
+      quer_saber_mais: 0,
+      cliente: 0,
+      sem_resposta: 0,
+    } as Record<Etapa, number>;
+    let naoLidas = 0;
+    let comMapa = 0;
+    for (const c of convs) {
+      if (porEtapa[c.etapa] !== undefined) porEtapa[c.etapa] += 1;
+      if (c.nao_lidas > 0) naoLidas += 1;
+      if (c.lead) comMapa += 1;
+    }
+    return { porEtapa, naoLidas, comMapa, clientes: porEtapa.cliente };
   }, [convs]);
 
   const filtered = useMemo(
