@@ -29,24 +29,42 @@ export const listConversations = createServerFn({ method: "GET" })
 export const getConversation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
-    z.object({ id: z.string().uuid() }).parse(i),
+    z
+      .object({
+        id: z.string().uuid(),
+        /** Carrega apenas a página mais recente por padrão. */
+        limit: z.number().int().min(10).max(200).optional(),
+        /** Cursor: busca mensagens anteriores a este ISO timestamp. */
+        before: z.string().optional(),
+      })
+      .parse(i),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
+    const limit = data.limit ?? 40;
+
     const { data: conv } = await context.supabase
       .from("crm_conversations")
       .select("*")
       .eq("id", data.id)
       .maybeSingle();
-    const { data: msgs } = await context.supabase
+
+    // Página mais recente primeiro (desc) e depois invertida para exibição.
+    let q = context.supabase
       .from("crm_messages")
       .select("*")
       .eq("conversation_id", data.id)
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: false })
+      .limit(limit + 1);
+    if (data.before) q = q.lt("created_at", data.before);
+    const { data: msgs } = await q;
 
-    // Gera links temporários para as mídias (áudio/imagem) recebidas.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const lista = ((msgs ?? []) as any[]).slice();
+    const desc = ((msgs ?? []) as any[]).slice();
+    const temMais = desc.length > limit;
+    const lista = desc.slice(0, limit).reverse();
+
+    // Gera links temporários apenas para as mídias desta página.
     const comMidia = lista.filter((m) => m.midia_path);
     if (comMidia.length > 0) {
       const { supabaseAdmin } = await import(
@@ -65,13 +83,16 @@ export const getConversation = createServerFn({ method: "POST" })
       for (const m of comMidia) m.midia_url = mapa.get(m.midia_path) ?? null;
     }
 
-    // marca como lida
-    await context.supabase
-      .from("crm_conversations")
-      .update({ nao_lidas: 0 })
-      .eq("id", data.id);
-    return { conversation: conv, messages: lista };
+    // marca como lida somente quando é a primeira página
+    if (!data.before) {
+      await context.supabase
+        .from("crm_conversations")
+        .update({ nao_lidas: 0 })
+        .eq("id", data.id);
+    }
+    return { conversation: conv, messages: lista, temMais };
   });
+
 
 
 export const sendMessage = createServerFn({ method: "POST" })

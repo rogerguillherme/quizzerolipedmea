@@ -8,6 +8,9 @@ import {
   Bot,
   User as UserIcon,
   CheckCircle2,
+  CheckCheck,
+  Clock,
+
   ClipboardList,
   ArrowLeft,
   MessageSquare,
@@ -102,6 +105,38 @@ function Midia({ url, tipo }: { url: string; tipo: string }) {
 }
 
 
+/** Hora curta (HH:MM) do balão, no padrão do WhatsApp. */
+function hora(iso: string) {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? ""
+    : d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+/** Rótulo da faixa de data ("Hoje", "Ontem" ou a data). */
+function diaLabel(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const hoje = new Date();
+  const dia = (x: Date) =>
+    `${x.getFullYear()}-${x.getMonth()}-${x.getDate()}`;
+  const ontem = new Date(hoje.getTime() - 864e5);
+  if (dia(d) === dia(hoje)) return "Hoje";
+  if (dia(d) === dia(ontem)) return "Ontem";
+  return d.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+/** Iniciais para o avatar redondo da lista. */
+function iniciais(nome: string) {
+  const p = nome.trim().split(/\s+/).slice(0, 2);
+  return p.map((x) => x[0]?.toUpperCase() ?? "").join("") || "?";
+}
+
+
 function CRMPage() {
   const navigate = useNavigate();
   const [pronto, setPronto] = useState(false);
@@ -117,6 +152,13 @@ function CRMPage() {
   const [convs, setConvs] = useState<Conv[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [thread, setThread] = useState<Msg[]>([]);
+  const [temMais, setTemMais] = useState(false);
+  const [carregandoThread, setCarregandoThread] = useState(false);
+  const [carregandoMais, setCarregandoMais] = useState(false);
+  /** Cache em memória por conversa: abre instantâneo ao voltar nela. */
+  const threadCache = useRef(
+    new Map<string, { msgs: Msg[]; temMais: boolean }>(),
+  );
   const [busca, setBusca] = useState("");
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -124,6 +166,8 @@ function CRMPage() {
   const [loading, setLoading] = useState(true);
   const [painel, setPainel] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
 
   // Guard de admin próprio da rota: volta pra /crm depois do login.
   useEffect(() => {
@@ -169,17 +213,77 @@ function CRMPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pronto]);
 
+  // Abre a conversa: mostra o cache na hora e busca a página recente em seguida.
   useEffect(() => {
     if (!selected) return;
+    const id = selected;
+    const cache = threadCache.current.get(id);
+    if (cache) {
+      setThread(cache.msgs);
+      setTemMais(cache.temMais);
+      setCarregandoThread(false);
+    } else {
+      setThread([]);
+      setTemMais(false);
+      setCarregandoThread(true);
+    }
+    let vivo = true;
     (async () => {
-      const r = await fetchThread({ data: { id: selected } });
-      setThread((r?.messages ?? []) as Msg[]);
-      setTimeout(
-        () => endRef.current?.scrollIntoView({ behavior: "smooth" }),
-        30,
-      );
+      try {
+        const r = (await fetchThread({ data: { id, limit: 40 } })) as {
+          messages: Msg[];
+          temMais: boolean;
+        };
+        if (!vivo) return;
+        const msgs = (r?.messages ?? []) as Msg[];
+        threadCache.current.set(id, { msgs, temMais: !!r?.temMais });
+        setThread(msgs);
+        setTemMais(!!r?.temMais);
+        setConvs((old) =>
+          old.map((c) => (c.id === id ? { ...c, nao_lidas: 0 } : c)),
+        );
+      } finally {
+        if (vivo) setCarregandoThread(false);
+      }
     })();
+    return () => {
+      vivo = false;
+    };
   }, [selected, fetchThread]);
+
+  // Vai para o fim quando a conversa termina de carregar.
+  useEffect(() => {
+    if (carregandoThread) return;
+    endRef.current?.scrollIntoView({ block: "end" });
+  }, [selected, carregandoThread]);
+
+  /** Carrega o histórico anterior mantendo a posição de leitura. */
+  async function carregarAnteriores() {
+    if (!selected || carregandoMais || thread.length === 0) return;
+    setCarregandoMais(true);
+    const el = scrollRef.current;
+    const antes = el ? el.scrollHeight - el.scrollTop : 0;
+    try {
+      const r = (await fetchThread({
+        data: { id: selected, limit: 40, before: thread[0]!.created_at },
+      })) as { messages: Msg[]; temMais: boolean };
+      const novas = (r?.messages ?? []) as Msg[];
+      const juntas = [...novas, ...thread];
+      threadCache.current.set(selected, {
+        msgs: juntas,
+        temMais: !!r?.temMais,
+      });
+      setThread(juntas);
+      setTemMais(!!r?.temMais);
+      requestAnimationFrame(() => {
+        if (el) el.scrollTop = el.scrollHeight - antes;
+      });
+    } finally {
+      setCarregandoMais(false);
+    }
+  }
+
+
 
   const conv = useMemo(
     () => convs.find((c) => c.id === selected) ?? null,
@@ -226,11 +330,28 @@ function CRMPage() {
 
   async function handleSend() {
     if (!selected || !texto.trim() || enviando) return;
+    const id = selected;
+    const conteudo = texto.trim();
     setEnviando(true);
     setErroEnvio(null);
+
+    // Balão otimista: aparece na hora, como no WhatsApp.
+    const provisorio: Msg = {
+      id: `tmp-${Date.now()}`,
+      conversation_id: id,
+      direcao: "out",
+      autor: "humano",
+      conteudo,
+      status: "enviando",
+      created_at: new Date().toISOString(),
+    };
+    setThread((t) => [...t, provisorio]);
+    setTexto("");
+    requestAnimationFrame(() => endRef.current?.scrollIntoView({ block: "end" }));
+
     try {
       const r = (await send({
-        data: { conversationId: selected, conteudo: texto.trim() },
+        data: { conversationId: id, conteudo },
       })) as { ok: boolean; error?: string | null };
       if (!r?.ok) {
         setErroEnvio(
@@ -238,22 +359,38 @@ function CRMPage() {
             ? `Não consegui enviar: ${r.error}`
             : "Não consegui enviar essa mensagem pelo WhatsApp.",
         );
-      } else {
-        setTexto("");
       }
-      const t = await fetchThread({ data: { id: selected } });
-      setThread((t?.messages ?? []) as Msg[]);
-      await refreshList();
-      setTimeout(
-        () => endRef.current?.scrollIntoView({ behavior: "smooth" }),
-        30,
+      setThread((t) => {
+        const novo = t.map((m) =>
+          m.id === provisorio.id
+            ? { ...m, status: r?.ok ? "enviado" : "falhou" }
+            : m,
+        );
+        threadCache.current.set(id, { msgs: novo, temMais });
+        return novo;
+      });
+      setConvs((old) =>
+        old.map((c) =>
+          c.id === id
+            ? {
+                ...c,
+                ultima_mensagem: conteudo,
+                ultima_mensagem_em: provisorio.created_at,
+                modo: "humano",
+              }
+            : c,
+        ),
       );
     } catch {
       setErroEnvio("Falha de conexão ao enviar. Tente de novo.");
+      setThread((t) =>
+        t.map((m) => (m.id === provisorio.id ? { ...m, status: "falhou" } : m)),
+      );
     } finally {
       setEnviando(false);
     }
   }
+
 
   async function toggleMode() {
     if (!conv) return;
@@ -299,49 +436,65 @@ function CRMPage() {
       <div className="min-h-0 flex-1 overflow-y-auto">
         {filtered.map((c) => {
           const active = selected === c.id;
+          const nome = c.nome || c.lead?.nome || c.telefone;
           return (
             <button
               key={c.id}
               onClick={() => setSelected(c.id)}
-              className="block w-full px-3 py-3 text-left transition-colors"
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors"
               style={{
                 borderBottom: `1px solid ${BORDER}`,
                 background: active ? "#EFE5CE" : "transparent",
-                minHeight: 64,
+                minHeight: 68,
               }}
             >
-              <div className="flex items-center gap-1.5">
-                {c.lead && (
+              <span
+                className="grid size-11 shrink-0 place-items-center rounded-full text-[13px] font-bold"
+                style={{ background: C.track, color: NAVY }}
+                aria-hidden
+              >
+                {iniciais(nome)}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-1.5">
+                  {c.lead && (
+                    <span
+                      className="size-2 shrink-0 rounded-full"
+                      style={{ background: GOLD }}
+                      title="Tem Mapa vinculado"
+                    />
+                  )}
                   <span
-                    className="size-2 shrink-0 rounded-full"
-                    style={{ background: GOLD }}
-                    title="Tem Mapa vinculado"
-                  />
-                )}
-                <p
-                  className="truncate text-sm font-bold"
-                  style={{ color: NAVY }}
-                >
-                  {c.nome || c.lead?.nome || c.telefone}
-                </p>
-                <span className="ml-auto shrink-0 text-[11px] text-[#8A7C5C]">
-                  {haQuantoTempo(c.ultima_mensagem_em)}
-                </span>
-                {c.nao_lidas > 0 && (
-                  <span
-                    className="shrink-0 rounded-full px-1.5 text-[10px] font-bold text-white"
-                    style={{ background: "#E85D75" }}
+                    className="truncate text-[15px] font-bold"
+                    style={{ color: NAVY }}
                   >
-                    {c.nao_lidas}
+                    {nome}
                   </span>
-                )}
-              </div>
-              <p className="mt-0.5 truncate text-xs text-[#5C5749]">
-                {c.ultima_mensagem || "Ainda sem mensagem trocada"}
-              </p>
+                  <span
+                    className="ml-auto shrink-0 text-[11px]"
+                    style={{ color: c.nao_lidas > 0 ? GOLD : "#8A7C5C" }}
+                  >
+                    {haQuantoTempo(c.ultima_mensagem_em)}
+                  </span>
+                </span>
+                <span className="mt-0.5 flex items-center gap-2">
+                  <span className="min-w-0 flex-1 truncate text-[13px] text-[#5C5749]">
+                    {c.ultima_mensagem || "Ainda sem mensagem trocada"}
+                  </span>
+                  {c.nao_lidas > 0 && (
+                    <span
+                      className="grid min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-bold text-white"
+                      style={{ background: "#E85D75" }}
+                    >
+                      {c.nao_lidas}
+                    </span>
+                  )}
+                </span>
+              </span>
             </button>
           );
         })}
+
         {filtered.length === 0 && (
           <p className="p-8 text-center text-[13px] text-[#8A7C5C]">
             {busca
@@ -406,52 +559,117 @@ function CRMPage() {
       </div>
 
       <div
-        className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3"
-        style={{ background: C.chatBg }}
+        ref={scrollRef}
+        className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-3"
+        style={{
+          background: C.chatBg,
+          backgroundImage:
+            "radial-gradient(rgba(22,50,79,0.05) 1px, transparent 1px)",
+          backgroundSize: "18px 18px",
+        }}
       >
-        {thread.map((m) => {
+        {temMais && (
+          <div className="flex justify-center pb-2">
+            <button
+              onClick={carregarAnteriores}
+              disabled={carregandoMais}
+              className="min-h-9 rounded-full px-4 text-[12px] font-bold"
+              style={{ background: C.surface, color: NAVY, border: `1px solid ${BORDER}` }}
+            >
+              {carregandoMais ? "Carregando..." : "Carregar mensagens anteriores"}
+            </button>
+          </div>
+        )}
+
+        {carregandoThread && thread.length === 0 && (
+          <div className="grid place-items-center py-10">
+            <Loader2 className="size-5 animate-spin" style={{ color: NAVY }} />
+          </div>
+        )}
+
+        {thread.map((m, i) => {
           const mine = m.direcao === "out";
           const soRotulo = /^\[(imagem|áudio|vídeo|documento|figurinha)\]$/.test(
             m.conteudo?.trim() ?? "",
           );
+          const anterior = thread[i - 1];
+          const novaData =
+            !anterior || diaLabel(anterior.created_at) !== diaLabel(m.created_at);
+          const agrupada =
+            !novaData &&
+            !!anterior &&
+            anterior.direcao === m.direcao &&
+            anterior.autor === m.autor;
           return (
-            <div
-              key={m.id}
-              className={mine ? "flex justify-end" : "flex justify-start"}
-            >
+            <div key={m.id}>
+              {novaData && (
+                <div className="flex justify-center py-3">
+                  <span
+                    className="rounded-full px-3 py-1 text-[11px] font-bold"
+                    style={{
+                      background: "rgba(255,253,247,0.9)",
+                      color: "#5C5749",
+                    }}
+                  >
+                    {diaLabel(m.created_at)}
+                  </span>
+                </div>
+              )}
               <div
-                className="max-w-[80%] space-y-1.5 rounded-2xl px-4 py-2 text-sm"
-                style={
-                  mine
-                    ? m.autor === "ia"
-                      ? { background: "rgba(175,127,53,0.22)", color: NAVY }
-                      : { background: NAVY, color: "#F7F2E8" }
-                    : { background: "#FFFDF7", color: NAVY }
-                }
+                className={mine ? "flex justify-end" : "flex justify-start"}
+                style={{ marginTop: agrupada ? 2 : 8 }}
               >
-                {mine && m.autor === "ia" && (
-                  <p className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider opacity-70">
-                    <Bot className="size-3" /> IA
-                  </p>
-                )}
-                {m.midia_url && (
-                  <Midia url={m.midia_url} tipo={m.midia_tipo ?? ""} />
-                )}
-                {!(m.midia_url && soRotulo) && (
-                  <p className="whitespace-pre-wrap">{m.conteudo}</p>
-                )}
-
-                {m.status === "falhou" && (
-                  <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-[#E85D75]">
-                    <AlertTriangle className="size-3" /> não chegou no WhatsApp
-                  </p>
-                )}
+                <div
+                  className="relative max-w-[85%] space-y-1 px-3 py-1.5 text-[14px] leading-snug md:max-w-[70%]"
+                  style={{
+                    borderRadius: 12,
+                    borderTopRightRadius: mine && !agrupada ? 2 : 12,
+                    borderTopLeftRadius: !mine && !agrupada ? 2 : 12,
+                    boxShadow: "0 1px 1px rgba(22,50,79,0.14)",
+                    ...(mine
+                      ? m.autor === "ia"
+                        ? { background: "#EADFC4", color: NAVY }
+                        : { background: "#DCF3E4", color: NAVY }
+                      : { background: "#FFFDF7", color: NAVY }),
+                  }}
+                >
+                  {mine && m.autor === "ia" && !agrupada && (
+                    <p className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider opacity-70">
+                      <Bot className="size-3" /> IA
+                    </p>
+                  )}
+                  {m.midia_url && (
+                    <Midia url={m.midia_url} tipo={m.midia_tipo ?? ""} />
+                  )}
+                  {!(m.midia_url && soRotulo) && (
+                    <p className="whitespace-pre-wrap break-words pr-12">
+                      {m.conteudo}
+                    </p>
+                  )}
+                  <span className="float-right -mt-3 ml-2 flex items-center gap-0.5 text-[10px] opacity-60">
+                    {hora(m.created_at)}
+                    {mine &&
+                      (m.status === "enviando" ? (
+                        <Clock className="size-3" />
+                      ) : m.status === "falhou" ? (
+                        <AlertTriangle className="size-3 text-[#E85D75]" />
+                      ) : (
+                        <CheckCheck className="size-3" />
+                      ))}
+                  </span>
+                  {m.status === "falhou" && (
+                    <p className="clear-both flex items-center gap-1 pt-1 text-[10px] font-bold text-[#E85D75]">
+                      <AlertTriangle className="size-3" /> não chegou no WhatsApp
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           );
         })}
         <div ref={endRef} />
       </div>
+
 
       <div
         className="sticky bottom-0 p-3"
