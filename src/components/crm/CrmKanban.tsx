@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { ETAPAS, type Etapa, haQuantoTempo, primeiroNome } from "@/lib/crm-labels";
 
-const NAVY = "#16324F";
-const GOLD = "#AF7F35";
-const BORDER = "rgba(216,198,160,0.6)";
+import { C, R, SHADOW_CARD } from "./crm-ui";
+
+const NAVY = C.navy;
+const GOLD = C.gold;
+const BORDER = C.border;
 
 export type CardConversa = {
   id: string;
@@ -33,11 +35,12 @@ export function CrmKanban({ conversas, onAbrir, onMover }: CrmKanbanProps) {
       draggable
       onDragStart={() => setArrastando(c.id)}
       onDragEnd={() => setArrastando(null)}
-      className="rounded-2xl p-3"
+      className="p-3"
       style={{
-        background: "#FFFDF7",
+        background: C.surface,
         border: `1px solid ${BORDER}`,
-        boxShadow: "0 10px 22px -20px rgba(22,50,79,0.5)",
+        borderRadius: R.card,
+        boxShadow: SHADOW_CARD,
         opacity: arrastando === c.id ? 0.5 : 1,
       }}
     >
@@ -136,8 +139,12 @@ export function CrmKanban({ conversas, onAbrir, onMover }: CrmKanbanProps) {
                 if (arrastando) onMover(arrastando, e.id);
                 setArrastando(null);
               }}
-              className="flex w-[260px] shrink-0 flex-col rounded-2xl p-2"
-              style={{ background: "rgba(239,229,206,0.5)", border: `1px solid ${BORDER}` }}
+              className="flex w-[268px] shrink-0 flex-col p-2.5"
+              style={{
+                background: C.surfaceElevated,
+                border: `1px solid ${BORDER}`,
+                borderRadius: R.card,
+              }}
             >
               <div className="flex items-center justify-between px-1 py-1.5">
                 <p
