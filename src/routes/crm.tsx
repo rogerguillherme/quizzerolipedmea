@@ -556,52 +556,117 @@ function CRMPage() {
       </div>
 
       <div
-        className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3"
-        style={{ background: C.chatBg }}
+        ref={scrollRef}
+        className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-3"
+        style={{
+          background: C.chatBg,
+          backgroundImage:
+            "radial-gradient(rgba(22,50,79,0.05) 1px, transparent 1px)",
+          backgroundSize: "18px 18px",
+        }}
       >
-        {thread.map((m) => {
+        {temMais && (
+          <div className="flex justify-center pb-2">
+            <button
+              onClick={carregarAnteriores}
+              disabled={carregandoMais}
+              className="min-h-9 rounded-full px-4 text-[12px] font-bold"
+              style={{ background: C.surface, color: NAVY, border: `1px solid ${BORDER}` }}
+            >
+              {carregandoMais ? "Carregando..." : "Carregar mensagens anteriores"}
+            </button>
+          </div>
+        )}
+
+        {carregandoThread && thread.length === 0 && (
+          <div className="grid place-items-center py-10">
+            <Loader2 className="size-5 animate-spin" style={{ color: NAVY }} />
+          </div>
+        )}
+
+        {thread.map((m, i) => {
           const mine = m.direcao === "out";
           const soRotulo = /^\[(imagem|áudio|vídeo|documento|figurinha)\]$/.test(
             m.conteudo?.trim() ?? "",
           );
+          const anterior = thread[i - 1];
+          const novaData =
+            !anterior || diaLabel(anterior.created_at) !== diaLabel(m.created_at);
+          const agrupada =
+            !novaData &&
+            !!anterior &&
+            anterior.direcao === m.direcao &&
+            anterior.autor === m.autor;
           return (
-            <div
-              key={m.id}
-              className={mine ? "flex justify-end" : "flex justify-start"}
-            >
+            <div key={m.id}>
+              {novaData && (
+                <div className="flex justify-center py-3">
+                  <span
+                    className="rounded-full px-3 py-1 text-[11px] font-bold"
+                    style={{
+                      background: "rgba(255,253,247,0.9)",
+                      color: "#5C5749",
+                    }}
+                  >
+                    {diaLabel(m.created_at)}
+                  </span>
+                </div>
+              )}
               <div
-                className="max-w-[80%] space-y-1.5 rounded-2xl px-4 py-2 text-sm"
-                style={
-                  mine
-                    ? m.autor === "ia"
-                      ? { background: "rgba(175,127,53,0.22)", color: NAVY }
-                      : { background: NAVY, color: "#F7F2E8" }
-                    : { background: "#FFFDF7", color: NAVY }
-                }
+                className={mine ? "flex justify-end" : "flex justify-start"}
+                style={{ marginTop: agrupada ? 2 : 8 }}
               >
-                {mine && m.autor === "ia" && (
-                  <p className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider opacity-70">
-                    <Bot className="size-3" /> IA
-                  </p>
-                )}
-                {m.midia_url && (
-                  <Midia url={m.midia_url} tipo={m.midia_tipo ?? ""} />
-                )}
-                {!(m.midia_url && soRotulo) && (
-                  <p className="whitespace-pre-wrap">{m.conteudo}</p>
-                )}
-
-                {m.status === "falhou" && (
-                  <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-[#E85D75]">
-                    <AlertTriangle className="size-3" /> não chegou no WhatsApp
-                  </p>
-                )}
+                <div
+                  className="relative max-w-[85%] space-y-1 px-3 py-1.5 text-[14px] leading-snug md:max-w-[70%]"
+                  style={{
+                    borderRadius: 12,
+                    borderTopRightRadius: mine && !agrupada ? 2 : 12,
+                    borderTopLeftRadius: !mine && !agrupada ? 2 : 12,
+                    boxShadow: "0 1px 1px rgba(22,50,79,0.14)",
+                    ...(mine
+                      ? m.autor === "ia"
+                        ? { background: "#EADFC4", color: NAVY }
+                        : { background: "#DCF3E4", color: NAVY }
+                      : { background: "#FFFDF7", color: NAVY }),
+                  }}
+                >
+                  {mine && m.autor === "ia" && !agrupada && (
+                    <p className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider opacity-70">
+                      <Bot className="size-3" /> IA
+                    </p>
+                  )}
+                  {m.midia_url && (
+                    <Midia url={m.midia_url} tipo={m.midia_tipo ?? ""} />
+                  )}
+                  {!(m.midia_url && soRotulo) && (
+                    <p className="whitespace-pre-wrap break-words pr-12">
+                      {m.conteudo}
+                    </p>
+                  )}
+                  <span className="float-right -mt-3 ml-2 flex items-center gap-0.5 text-[10px] opacity-60">
+                    {hora(m.created_at)}
+                    {mine &&
+                      (m.status === "enviando" ? (
+                        <Clock className="size-3" />
+                      ) : m.status === "falhou" ? (
+                        <AlertTriangle className="size-3 text-[#E85D75]" />
+                      ) : (
+                        <CheckCheck className="size-3" />
+                      ))}
+                  </span>
+                  {m.status === "falhou" && (
+                    <p className="clear-both flex items-center gap-1 pt-1 text-[10px] font-bold text-[#E85D75]">
+                      <AlertTriangle className="size-3" /> não chegou no WhatsApp
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           );
         })}
         <div ref={endRef} />
       </div>
+
 
       <div
         className="sticky bottom-0 p-3"
