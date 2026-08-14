@@ -68,7 +68,39 @@ type Msg = {
   conteudo: string;
   status: string;
   created_at: string;
+  midia_url?: string | null;
+  midia_tipo?: string | null;
 };
+
+/** Renderiza a mídia recebida no WhatsApp (imagem, áudio, vídeo ou arquivo). */
+function Midia({ url, tipo }: { url: string; tipo: string }) {
+  if (tipo.startsWith("image"))
+    return (
+      <a href={url} target="_blank" rel="noreferrer">
+        <img
+          src={url}
+          alt="Imagem enviada no WhatsApp"
+          className="max-h-64 w-full rounded-xl object-cover"
+          loading="lazy"
+        />
+      </a>
+    );
+  if (tipo.startsWith("audio"))
+    return <audio controls src={url} className="w-56 max-w-full" />;
+  if (tipo.startsWith("video"))
+    return <video controls src={url} className="max-h-64 w-full rounded-xl" />;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className="text-xs font-bold underline"
+    >
+      Abrir arquivo
+    </a>
+  );
+}
+
 
 function CRMPage() {
   const navigate = useNavigate();
