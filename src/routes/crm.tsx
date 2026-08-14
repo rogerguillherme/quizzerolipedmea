@@ -433,49 +433,65 @@ function CRMPage() {
       <div className="min-h-0 flex-1 overflow-y-auto">
         {filtered.map((c) => {
           const active = selected === c.id;
+          const nome = c.nome || c.lead?.nome || c.telefone;
           return (
             <button
               key={c.id}
               onClick={() => setSelected(c.id)}
-              className="block w-full px-3 py-3 text-left transition-colors"
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors"
               style={{
                 borderBottom: `1px solid ${BORDER}`,
                 background: active ? "#EFE5CE" : "transparent",
-                minHeight: 64,
+                minHeight: 68,
               }}
             >
-              <div className="flex items-center gap-1.5">
-                {c.lead && (
+              <span
+                className="grid size-11 shrink-0 place-items-center rounded-full text-[13px] font-bold"
+                style={{ background: C.track, color: NAVY }}
+                aria-hidden
+              >
+                {iniciais(nome)}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-1.5">
+                  {c.lead && (
+                    <span
+                      className="size-2 shrink-0 rounded-full"
+                      style={{ background: GOLD }}
+                      title="Tem Mapa vinculado"
+                    />
+                  )}
                   <span
-                    className="size-2 shrink-0 rounded-full"
-                    style={{ background: GOLD }}
-                    title="Tem Mapa vinculado"
-                  />
-                )}
-                <p
-                  className="truncate text-sm font-bold"
-                  style={{ color: NAVY }}
-                >
-                  {c.nome || c.lead?.nome || c.telefone}
-                </p>
-                <span className="ml-auto shrink-0 text-[11px] text-[#8A7C5C]">
-                  {haQuantoTempo(c.ultima_mensagem_em)}
-                </span>
-                {c.nao_lidas > 0 && (
-                  <span
-                    className="shrink-0 rounded-full px-1.5 text-[10px] font-bold text-white"
-                    style={{ background: "#E85D75" }}
+                    className="truncate text-[15px] font-bold"
+                    style={{ color: NAVY }}
                   >
-                    {c.nao_lidas}
+                    {nome}
                   </span>
-                )}
-              </div>
-              <p className="mt-0.5 truncate text-xs text-[#5C5749]">
-                {c.ultima_mensagem || "Ainda sem mensagem trocada"}
-              </p>
+                  <span
+                    className="ml-auto shrink-0 text-[11px]"
+                    style={{ color: c.nao_lidas > 0 ? GOLD : "#8A7C5C" }}
+                  >
+                    {haQuantoTempo(c.ultima_mensagem_em)}
+                  </span>
+                </span>
+                <span className="mt-0.5 flex items-center gap-2">
+                  <span className="min-w-0 flex-1 truncate text-[13px] text-[#5C5749]">
+                    {c.ultima_mensagem || "Ainda sem mensagem trocada"}
+                  </span>
+                  {c.nao_lidas > 0 && (
+                    <span
+                      className="grid min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-bold text-white"
+                      style={{ background: "#E85D75" }}
+                    >
+                      {c.nao_lidas}
+                    </span>
+                  )}
+                </span>
+              </span>
             </button>
           );
         })}
+
         {filtered.length === 0 && (
           <p className="p-8 text-center text-[13px] text-[#8A7C5C]">
             {busca
