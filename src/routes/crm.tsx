@@ -149,6 +149,13 @@ function CRMPage() {
   const [convs, setConvs] = useState<Conv[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [thread, setThread] = useState<Msg[]>([]);
+  const [temMais, setTemMais] = useState(false);
+  const [carregandoThread, setCarregandoThread] = useState(false);
+  const [carregandoMais, setCarregandoMais] = useState(false);
+  /** Cache em memória por conversa: abre instantâneo ao voltar nela. */
+  const threadCache = useRef(
+    new Map<string, { msgs: Msg[]; temMais: boolean }>(),
+  );
   const [busca, setBusca] = useState("");
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -156,6 +163,8 @@ function CRMPage() {
   const [loading, setLoading] = useState(true);
   const [painel, setPainel] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
 
   // Guard de admin próprio da rota: volta pra /crm depois do login.
   useEffect(() => {
