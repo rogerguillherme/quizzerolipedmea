@@ -15,6 +15,9 @@ export const C = {
   surface: "#FFFDF7",
   /** Superfície levemente destacada (cards, hover). */
   surfaceElevated: "#FBF5E8",
+  /** Fundo da área de mensagens (mais escuro que a superfície). */
+  chatBg: "#DCD0B4",
+
   /** Trilho neutro de barras de progresso e chips. */
   track: "#EFE5CE",
   border: "rgba(216,198,160,0.6)",

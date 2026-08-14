@@ -126,13 +126,70 @@ export const Route = createFileRoute("/api/public/webhooks/evolution")({
           conversationId = created.id;
         }
 
-        await supabaseAdmin.from("crm_messages").insert({
-          conversation_id: conversationId,
-          direcao: fromMe ? "out" : "in",
-          autor: fromMe ? "humano" : "lead",
-          conteudo,
-          status: "recebido",
-        });
+        const { data: msgRow } = await supabaseAdmin
+          .from("crm_messages")
+          .insert({
+            conversation_id: conversationId,
+            direcao: fromMe ? "out" : "in",
+            autor: fromMe ? "humano" : "lead",
+            conteudo,
+            status: "recebido",
+          })
+          .select("id")
+          .single();
+
+        // Guarda a mídia recebida (imagem/áudio/vídeo/documento) para que a
+        // Gabriela consiga abrir dentro do CRM, e não só ver "[áudio]".
+        const m = (msg ?? {}) as Record<string, unknown>;
+        const temMidia = Boolean(
+          m.imageMessage ||
+            m.audioMessage ||
+            m.pttMessage ||
+            m.videoMessage ||
+            m.documentMessage ||
+            m.documentWithCaptionMessage ||
+            m.stickerMessage,
+        );
+        if (temMidia && msgRow?.id) {
+          try {
+            const { downloadEvolutionMediaBase64 } = await import(
+              "@/lib/evolution.server"
+            );
+            const media = await downloadEvolutionMediaBase64(data);
+            if (media.ok && media.base64) {
+              const mime = media.mimetype ?? "application/octet-stream";
+              const ext = mime.includes("ogg")
+                ? "ogg"
+                : mime.includes("mpeg")
+                  ? "mp3"
+                  : mime.includes("mp4")
+                    ? "mp4"
+                    : mime.includes("png")
+                      ? "png"
+                      : mime.includes("webp")
+                        ? "webp"
+                        : mime.includes("pdf")
+                          ? "pdf"
+                          : "jpg";
+              const bin = Uint8Array.from(atob(media.base64), (ch) =>
+                ch.charCodeAt(0),
+              );
+              const path = `${conversationId}/${msgRow.id}.${ext}`;
+              const up = await supabaseAdmin.storage
+                .from("crm-midia")
+                .upload(path, bin, { contentType: mime, upsert: true });
+              if (!up.error) {
+                await supabaseAdmin
+                  .from("crm_messages")
+                  .update({ midia_path: path, midia_tipo: mime })
+                  .eq("id", msgRow.id);
+              }
+            }
+          } catch {
+            /* mídia nunca pode derrubar o webhook */
+          }
+        }
+
 
         // -------- Entrega pelo WhatsApp --------
         // Cliente paga (plano_ativo): análise de refeição ILIMITADA e cada

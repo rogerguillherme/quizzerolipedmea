@@ -68,7 +68,39 @@ type Msg = {
   conteudo: string;
   status: string;
   created_at: string;
+  midia_url?: string | null;
+  midia_tipo?: string | null;
 };
+
+/** Renderiza a mídia recebida no WhatsApp (imagem, áudio, vídeo ou arquivo). */
+function Midia({ url, tipo }: { url: string; tipo: string }) {
+  if (tipo.startsWith("image"))
+    return (
+      <a href={url} target="_blank" rel="noreferrer">
+        <img
+          src={url}
+          alt="Imagem enviada no WhatsApp"
+          className="max-h-64 w-full rounded-xl object-cover"
+          loading="lazy"
+        />
+      </a>
+    );
+  if (tipo.startsWith("audio"))
+    return <audio controls src={url} className="w-56 max-w-full" />;
+  if (tipo.startsWith("video"))
+    return <video controls src={url} className="max-h-64 w-full rounded-xl" />;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className="text-xs font-bold underline"
+    >
+      Abrir arquivo
+    </a>
+  );
+}
+
 
 function CRMPage() {
   const navigate = useNavigate();
@@ -373,22 +405,28 @@ function CRMPage() {
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
+      <div
+        className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3"
+        style={{ background: C.chatBg }}
+      >
         {thread.map((m) => {
           const mine = m.direcao === "out";
+          const soRotulo = /^\[(imagem|áudio|vídeo|documento|figurinha)\]$/.test(
+            m.conteudo?.trim() ?? "",
+          );
           return (
             <div
               key={m.id}
               className={mine ? "flex justify-end" : "flex justify-start"}
             >
               <div
-                className="max-w-[80%] rounded-2xl px-4 py-2 text-sm"
+                className="max-w-[80%] space-y-1.5 rounded-2xl px-4 py-2 text-sm"
                 style={
                   mine
                     ? m.autor === "ia"
                       ? { background: "rgba(175,127,53,0.22)", color: NAVY }
                       : { background: NAVY, color: "#F7F2E8" }
-                    : { background: "#F7F2E8", color: NAVY }
+                    : { background: "#FFFDF7", color: NAVY }
                 }
               >
                 {mine && m.autor === "ia" && (
@@ -396,7 +434,13 @@ function CRMPage() {
                     <Bot className="size-3" /> IA
                   </p>
                 )}
-                <p className="whitespace-pre-wrap">{m.conteudo}</p>
+                {m.midia_url && (
+                  <Midia url={m.midia_url} tipo={m.midia_tipo ?? ""} />
+                )}
+                {!(m.midia_url && soRotulo) && (
+                  <p className="whitespace-pre-wrap">{m.conteudo}</p>
+                )}
+
                 {m.status === "falhou" && (
                   <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-[#E85D75]">
                     <AlertTriangle className="size-3" /> não chegou no WhatsApp
