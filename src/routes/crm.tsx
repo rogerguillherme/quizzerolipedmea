@@ -559,28 +559,6 @@ function CRMPage() {
             </h1>
           </div>
 
-          {/* Abas com sublinhado (padrão dashboard) */}
-          <div className="ml-auto hidden gap-5 md:flex">
-            {NAV.map((n) => {
-              const active = vista === n.id;
-              return (
-                <button
-                  key={n.id}
-                  onClick={() => setVista(n.id)}
-                  className="relative flex min-h-11 items-center gap-1.5 text-[13px] font-bold"
-                  style={{ color: active ? C.textPrimary : C.textMuted }}
-                >
-                  <n.icon className="size-3.5" /> {n.label}
-                  <span
-                    aria-hidden
-                    className="absolute inset-x-0 -bottom-[13px] h-[2px]"
-                    style={{ background: active ? C.gold : "transparent" }}
-                  />
-                </button>
-              );
-            })}
-          </div>
-
           {/* Mobile: pílulas */}
           <div
             className="ml-auto flex p-0.5 md:hidden"
