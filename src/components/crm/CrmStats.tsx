@@ -14,9 +14,10 @@ export type CrmStatsProps = {
 type MetricaProps = {
   label: string;
   valor: number;
-  icone: React.ComponentType<{ className?: string }>;
+  icone: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   destaque?: boolean;
 };
+
 
 function Metrica({ label, valor, icone: Icon, destaque }: MetricaProps) {
   return (
