@@ -48,6 +48,7 @@ export type FunnelEvent =
   | "mapa_popup_aberto"
   | "mapa_popup_acessar"
   | "whatsapp_capturado"
+  | "whatsapp_cta_click"
   | "vsl_progress"
   | "checkout_view"
   | "checkout_click"
