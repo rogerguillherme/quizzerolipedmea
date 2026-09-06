@@ -173,6 +173,38 @@ Devolva o JSON conforme instruções.`;
       } catch (e) {
         console.error("[submitMapa] falha ao enviar Mapa no WhatsApp", e);
       }
+
+      // Avisa o Prime Chat (CRM da Gabriela) com o diagnóstico completo, pra
+      // IA de lá continuar a conversa já sabendo o contexto do Mapa em vez
+      // de começar do zero quando a lead chamar no WhatsApp.
+      try {
+        const { notifyPrimeChat } = await import("@/lib/prime-webhook.server");
+        const prime = await notifyPrimeChat({
+          nome: data.nome,
+          telefone: data.telefone,
+          metadata: {
+            origem: "Mapa do Lipedema",
+            funil: data.funil ?? null,
+            lead_id_zero_lipedema: inserted?.id ?? null,
+            estagio: diagnostico.estagio,
+            abertura_validadora: diagnostico.aberturaValidadora,
+            descricao_estagio: diagnostico.descricaoEstagio,
+            prioridades: (diagnostico.prioridades ?? []).join(" | "),
+            proximo_passo_titulo: diagnostico.proximoPassoTitulo,
+            proximo_passo_mensagem: diagnostico.proximoPassoMensagem,
+            tempo: r.tempo,
+            diagnostico_previo: r.diagnostico,
+            sintoma_maior: r.sintomaMaior,
+            dieta_exercicio: r.dietaExercicio,
+            objetivo: r.objetivo,
+          },
+        });
+        if (!prime.ok && !prime.skipped) {
+          console.error("[submitMapa] falha ao notificar Prime Chat", prime.error);
+        }
+      } catch (e) {
+        console.error("[submitMapa] falha ao notificar Prime Chat", e);
+      }
     }
 
     return { diagnostico, leadId: inserted?.id ?? null, metaEventId };

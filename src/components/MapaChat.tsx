@@ -161,6 +161,7 @@ type Msg =
 type Stage =
   | { kind: "asking-nome" }
   | { kind: "asking-telefone" }
+  | { kind: "asking-telefone-mapa" }
   | { kind: "asking-choice"; qIndex: number }
   | { kind: "submitting" }
   | { kind: "showing-report" }
@@ -226,7 +227,11 @@ export function MapaChat({
 
   // Foco no input
   useEffect(() => {
-    if (stage.kind === "asking-nome" || stage.kind === "asking-telefone") {
+    if (
+      stage.kind === "asking-nome" ||
+      stage.kind === "asking-telefone" ||
+      stage.kind === "asking-telefone-mapa"
+    ) {
       setTimeout(() => inputRef.current?.focus(), 250);
     }
   }, [stage.kind]);
@@ -277,8 +282,8 @@ export function MapaChat({
     pushUser(val);
     await gabiSay(`Prazer, ${primeiroNome} 💙`);
     if (destino === "plano") {
-      // No funil novo o WhatsApp é pedido depois, no popup da landing — aqui
-      // a gente não interrompe o quiz com pedido de contato.
+      // No funil novo o WhatsApp só é pedido no fim, depois da última
+      // pergunta (ver handleChoice) — aqui a gente não interrompe o quiz.
       await gabiSay(
         "Vou te fazer perguntinhas rápidas e no fim monto seu Mapa. Combinado?",
       );
@@ -342,11 +347,36 @@ export function MapaChat({
     if (next < QS.length) {
       await gabiSay(QS[next].gabi(nome));
       setStage({ kind: "asking-choice", qIndex: next });
+    } else if (destino === "plano") {
+      // Última pergunta respondida no funil novo: só agora pedimos o
+      // WhatsApp, porque é ele que vai receber o Mapa completo e também o
+      // que permite avisar a equipe (Prime) com o diagnóstico já em mãos.
+      await gabiSay(
+        `Já tenho tudo que preciso, ${nome}! Só uma última coisa: me passa seu WhatsApp com DDD (11) 9 8888-7777 — é pra lá que eu vou te chamar com seu Mapa completo 💙`,
+      );
+      setStage({ kind: "asking-telefone-mapa" });
     } else {
       // Todas respondidas — submeter
       await gabiSay(`Perfeito, ${nome}. Vou juntar tudo aqui e montar seu Mapa…`, 600);
       await enviarQuiz(updated);
     }
+  }
+
+  async function handleSendTelefoneMapa() {
+    const val = inputText.trim();
+    const normalizado = normalizePhoneBR(val);
+    if (!normalizado) {
+      setErro("Preciso do seu WhatsApp com DDD válido, tipo (11) 9 8888-7777.");
+      return;
+    }
+    const formatado = formatPhoneBR(val);
+    setErro(null);
+    setTelefone(normalizado);
+    setInputText("");
+    pushUser(formatado);
+    setStage({ kind: "submitting" });
+    await gabiSay(`Perfeito, ${nome}. Vou juntar tudo aqui e montar seu Mapa…`, 600);
+    await enviarQuiz(answers);
   }
 
   async function enviarQuiz(finalAnswers: Record<string, string> = answers) {
@@ -390,7 +420,13 @@ export function MapaChat({
           diagnostico: result.diagnostico,
           ...(funil ? { funil } : {}),
         });
+        track("whatsapp_capturado", { lead_id: result.leadId, funil: funil ?? "mapa-chat" });
         trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
+        trackMeta(
+          "Lead",
+          { content_name: "Mapa do Lipedema", status: "telefone_capturado" },
+          { phone: telefone, firstName: nome, externalId: result.leadId ?? undefined },
+        );
         setTyping(false);
         await gabiSay(`Prontinho, ${nome}! Seu Mapa já está pronto.`, 700);
         await gabiSay("Toque no botão abaixo pra me chamar no WhatsApp — é lá que eu te mando o Mapa completo. 👇");
@@ -581,6 +617,18 @@ export function MapaChat({
             value={inputText}
             onChange={(v) => setInputText(formatPhoneBR(v))}
             onSend={handleSendTelefone}
+            placeholder="(11) 9 8888-7777"
+            inputMode="tel"
+            disabled={typing}
+          />
+        )}
+
+        {stage.kind === "asking-telefone-mapa" && (
+          <TextComposer
+            inputRef={inputRef}
+            value={inputText}
+            onChange={(v) => setInputText(formatPhoneBR(v))}
+            onSend={handleSendTelefoneMapa}
             placeholder="(11) 9 8888-7777"
             inputMode="tel"
             disabled={typing}
