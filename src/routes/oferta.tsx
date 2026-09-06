@@ -17,17 +17,17 @@ export const Route = createFileRoute("/oferta")({
   component: OfertaPage,
   head: () => ({
     meta: [
-      { title: "Mapa do Lipedema, descubra seu perfil em 3 minutos" },
+      { title: "Mapa do Lipedema, descubra seu perfil em 2 minutos" },
       {
         name: "description",
         content:
-          "Não é falta de esforço, é lipedema. Responda 12 perguntas e receba seu mapa personalizado com a Dra. Gabriela Rosado (CRN 10582).",
+          "Não é falta de esforço, é lipedema. Responda 5 perguntas e receba seu mapa personalizado com a Dra. Gabriela Rosado (CRN 10582).",
       },
       { property: "og:title", content: "Mapa do Lipedema, Dra. Gabriela Rosado" },
       {
         property: "og:description",
         content:
-          "Leitura personalizada do seu lipedema em 3 min. Sem dieta restritiva. Direto no seu WhatsApp.",
+          "Leitura personalizada do seu lipedema em 2 min. Sem dieta restritiva. Direto no seu WhatsApp.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -135,7 +135,7 @@ function PhoneMockup() {
         aria-hidden
       >
         <span className="text-[13px]">✅</span>
-        <span className="text-[10.5px] font-semibold text-[hsl(213_60%_17%)]">Pronto em 3 min</span>
+        <span className="text-[10.5px] font-semibold text-[hsl(213_60%_17%)]">Pronto em 2 min</span>
       </div>
 
       {/* badge flutuante 2 */}
@@ -239,7 +239,7 @@ function OfertaPage() {
           <div className="relative z-10 mt-auto mx-auto w-full max-w-6xl px-5 md:px-8 pt-20 pb-32 md:pb-44">
             <div className="max-w-2xl">
               <p className="hidden md:block text-[11px] tracking-[0.32em] uppercase text-[hsl(38_65%_72%)] mb-7">
-                Mapa do Lipedema · Teste de 3 min
+                Mapa do Lipedema · Teste de 2 min
               </p>
               <h1 className="font-serif leading-[1.05] tracking-tight text-[clamp(1.75rem,6.8vw,3.4rem)] md:text-6xl text-[hsl(40_45%_95%)] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
                 Não é falta de esforço.{" "}
@@ -296,7 +296,7 @@ function OfertaPage() {
           <div className="relative mx-auto max-w-4xl px-5 md:px-8 py-16 md:py-28 flex flex-col items-center">
             <PhoneMockup />
             <p className="mt-7 max-w-md text-center text-[14px] md:text-base leading-relaxed text-[hsl(213_30%_28%)]">
-              É assim que fica o seu Mapa, pronto em 3 minutos e enviado no seu WhatsApp.
+              É assim que fica o seu Mapa, pronto em 2 minutos e enviado no seu WhatsApp.
             </p>
             <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-[hsl(38_45%_65%)]/70 bg-[hsl(40_45%_97%)] px-3.5 py-1.5 text-[11px] md:text-[12px] text-[hsl(38_45%_32%)]">
               🎁 Bônus incluso: teste grátis de análise de refeição por foto
@@ -384,7 +384,7 @@ function OfertaPage() {
               Pronta para entender o que está acontecendo com o seu corpo?
             </h2>
             <p className="mt-4 text-[14px] md:text-base text-[hsl(38_55%_82%)] max-w-lg mx-auto">
-              Responda as perguntas e em 3 minutos te envio o acesso ao seu mapa no seu WhatsApp
+              Responda as perguntas e em 2 minutos te envio o acesso ao seu mapa no seu WhatsApp
             </p>
             <div className="mt-8 flex justify-center">
               <button

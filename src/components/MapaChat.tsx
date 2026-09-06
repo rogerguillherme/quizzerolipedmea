@@ -33,9 +33,7 @@ const C = {
 // ------------- Perguntas (mesmas do quiz, adaptadas ao formato de chat) -------------
 type ChoiceOpt = { label: string; short: string; image?: string };
 type ChoiceQ = {
-  key:
-    | "tempo" | "diagnostico" | "sintomaMaior" | "pesoPernas"
-    | "dietaExercicio" | "atividade" | "exames" | "objetivo";
+  key: "tempo" | "diagnostico" | "sintomaMaior" | "dietaExercicio" | "objetivo";
   gabi: (nome: string) => string;
   options: ChoiceOpt[];
 };
@@ -71,40 +69,12 @@ const QS: ChoiceQ[] = [
     ],
   },
   {
-    key: "pesoPernas",
-    gabi: () => "Seu peso já variou bastante, mas as pernas quase não mudam?",
-    options: [
-      { label: "Sempre", short: "Sempre" },
-      { label: "Às vezes", short: "Às vezes" },
-      { label: "Não notei isso", short: "Não notei" },
-    ],
-  },
-  {
     key: "dietaExercicio",
     gabi: () => "Já tentou dieta e exercício sem ver diferença nas pernas?",
     options: [
       { label: "Muitas vezes", short: "Muitas vezes" },
       { label: "Um pouco", short: "Um pouco" },
       { label: "Ainda não tentei", short: "Não tentei" },
-    ],
-  },
-  {
-    key: "atividade",
-    gabi: () => "Como está seu nível de atividade física hoje?",
-    options: [
-      { label: "Sedentária", short: "Sedentária" },
-      { label: "Leve", short: "Leve" },
-      { label: "Moderada", short: "Moderada" },
-      { label: "Intensa", short: "Intensa" },
-    ],
-  },
-  {
-    key: "exames",
-    gabi: () => "Você tem exames recentes (sangue, hormonal)?",
-    options: [
-      { label: "Sim, tenho", short: "Tenho" },
-      { label: "Não tenho", short: "Não tenho" },
-      { label: "Não sei dizer", short: "Não sei" },
     ],
   },
   {
@@ -195,7 +165,17 @@ type Stage =
   | { kind: "submitting" }
   | { kind: "showing-report" }
   | { kind: "sending-access" }
+  | { kind: "whatsapp-cta" }
   | { kind: "done" };
+
+/** Número comercial (Evolution API) que recebe a lead vinda do quiz. */
+const WHATSAPP_NUMBER = "557376043053";
+
+/** Link wa.me com mensagem padrão já preenchida, personalizada com o nome. */
+function buildWhatsappLink(nome: string) {
+  const texto = `Oi! Acabei de responder o Mapa do Lipedema${nome ? `, meu nome é ${nome}` : ""} e quero receber meu resultado 💙`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
+}
 
 // ------------- Componente principal -------------
 export function MapaChat({
@@ -385,13 +365,13 @@ export function MapaChat({
             diagnostico: finalAnswers.diagnostico || "",
             sintomaMaior: finalAnswers.sintomaMaior || "",
             dorNivel: "Não informado",
-            pesoPernas: finalAnswers.pesoPernas || "",
+            pesoPernas: "Não informado",
             dietaExercicio: finalAnswers.dietaExercicio || "",
             sono: "Não informado",
             intestino: "Não informado",
-            atividade: finalAnswers.atividade || "",
+            atividade: "Não informado",
             sinaisNutricionais: "Não informado",
-            exames: finalAnswers.exames || "",
+            exames: "Não informado",
             objetivo: finalAnswers.objetivo || "",
           },
         },
@@ -401,8 +381,8 @@ export function MapaChat({
       setTrackLeadId(result.leadId ?? null);
       track("quiz_completed", funil ? { funil } : undefined);
       if (destino === "plano") {
-        // Guarda o Mapa na sessão e leva pra landing: o popup de lá mostra o
-        // resultado e pede o WhatsApp.
+        // Guarda o Mapa na sessão (a /plano ainda pode ler isso depois, vinda
+        // do WhatsApp) e leva a lead direto pro WhatsApp pra receber o Mapa.
         salvarMapaSessao({
           leadId: result.leadId ?? null,
           nome,
@@ -412,9 +392,9 @@ export function MapaChat({
         });
         trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
         setTyping(false);
-        await gabiSay("Prontinho, seu Mapa ficou pronto. Já te mostro aqui 💙", 700);
-        setStage({ kind: "done" });
-        navigate({ to: "/plano" });
+        await gabiSay(`Prontinho, ${nome}! Seu Mapa já está pronto.`, 700);
+        await gabiSay("Toque no botão abaixo pra me chamar no WhatsApp — é lá que eu te mando o Mapa completo. 👇");
+        setStage({ kind: "whatsapp-cta" });
         return;
       }
       trackMeta("QuizCompleto", { content_name: "Mapa do Lipedema" });
@@ -531,7 +511,7 @@ export function MapaChat({
         </div>
         <div className="flex-1 min-w-0">
           <p
-            className="text-[15px] leading-tight"
+            className="text-[16px] leading-tight"
             style={{ fontFamily: "'Fraunces', serif", color: C.ink, fontWeight: 500 }}
           >
             Dra. Gabriela Rosado
@@ -616,7 +596,7 @@ export function MapaChat({
         )}
 
         {stage.kind === "submitting" && (
-          <div className="flex items-center justify-center gap-2 py-3 text-[13px]" style={{ color: C.inkSoft }}>
+          <div className="flex items-center justify-center gap-2 py-3 text-[15px]" style={{ color: C.inkSoft }}>
             <Loader2 className="size-4 animate-spin" style={{ color: C.gold }} />
             Montando seu Mapa…
           </div>
@@ -657,9 +637,41 @@ export function MapaChat({
         )}
 
         {stage.kind === "sending-access" && (
-          <div className="flex items-center justify-center gap-2 py-3 text-[13px]" style={{ color: C.inkSoft }}>
+          <div className="flex items-center justify-center gap-2 py-3 text-[15px]" style={{ color: C.inkSoft }}>
             <Loader2 className="size-4 animate-spin" style={{ color: C.gold }} />
             Enviando no seu WhatsApp…
+          </div>
+        )}
+
+        {stage.kind === "whatsapp-cta" && (
+          <div className="grid grid-cols-1 gap-2">
+            <a
+              href={buildWhatsappLink(nome)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                track("whatsapp_cta_click", { funil, lead_id: leadId });
+                trackMeta(
+                  "Lead",
+                  { content_name: "Mapa do Lipedema", status: "whatsapp_cta" },
+                  { phone: telefone || undefined, firstName: nome, externalId: leadId ?? undefined },
+                );
+              }}
+              className="flex items-center justify-center gap-2 rounded-full px-5 py-4 text-[16px] font-semibold text-white transition active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(180deg, #2FE175, #22C35E)",
+                boxShadow: "0 12px 26px -12px rgba(34,195,94,0.55)",
+              }}
+            >
+              <MessageCircle className="size-5" /> Chamar no WhatsApp e receber meu Mapa
+            </a>
+            <button
+              onClick={onClose}
+              className="text-center text-[13px] underline"
+              style={{ color: C.inkSoft }}
+            >
+              Prefiro fechar por enquanto
+            </button>
           </div>
         )}
 
@@ -693,8 +705,6 @@ function reacaoParaResposta(key: string, resposta: string, nome: string): string
     return "A dor ao toque é um sinal muito característico. Anotei.";
   if (key === "sintomaMaior" && resposta.startsWith("Inchaço"))
     return "Inchaço que piora ao longo do dia é um marcador clássico. Anotei.";
-  if (key === "pesoPernas" && resposta === "Sempre")
-    return "Esse padrão é bem típico não é você, é o lipedema.";
   if (key === "dietaExercicio" && resposta === "Muitas vezes")
     return `${n}, isso não é falta de esforço seu. Prometo.`;
   return null;
@@ -712,7 +722,7 @@ function GabiBubble({ text }: { text: string }) {
         style={{ border: `1.5px solid ${C.line}` }}
       />
       <div
-        className="max-w-[78%] rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[14px] leading-snug"
+        className="max-w-[78%] rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[16px] leading-snug"
         style={{
           background: C.bubble,
           color: C.ink,
@@ -730,7 +740,7 @@ function UserBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
       <div
-        className="max-w-[78%] rounded-2xl rounded-br-md px-3.5 py-2.5 text-[14px] leading-snug"
+        className="max-w-[78%] rounded-2xl rounded-br-md px-3.5 py-2.5 text-[16px] leading-snug"
         style={{ background: C.bubbleUser, color: "#F5EFE1" }}
       >
         {text}
@@ -810,8 +820,8 @@ function TextComposer({
         disabled={disabled}
         className="flex-1 rounded-full border px-4 py-3 outline-none"
         style={{
-          // 16px evita o zoom automático do Safari/iOS ao focar o campo
-          fontSize: "16px",
+          // >=16px evita o zoom automático do Safari/iOS ao focar o campo
+          fontSize: "17px",
           borderColor: C.line,
           background: "#FFFFFF",
           color: C.ink,
@@ -869,13 +879,13 @@ function ChoiceComposer({
               />
             ) : (
               <div
-                className="grid h-24 sm:h-32 md:h-36 w-full place-items-center rounded-xl text-[11px]"
+                className="grid h-24 sm:h-32 md:h-36 w-full place-items-center rounded-xl text-[13px]"
                 style={{ background: C.creamSoft, color: C.inkSoft }}
               >
                 Não sei
               </div>
             )}
-            <span className="text-[12.5px] font-medium">{opt.short}</span>
+            <span className="text-[15px] font-medium">{opt.short}</span>
           </button>
         ))}
       </div>
@@ -888,7 +898,7 @@ function ChoiceComposer({
           key={opt.short}
           disabled={disabled}
           onClick={() => onChoose(opt)}
-          className="rounded-full border px-3.5 py-2 text-[13px] font-medium transition active:scale-95 disabled:opacity-40"
+          className="rounded-full border px-4 py-2.5 text-[15px] font-medium transition active:scale-95 disabled:opacity-40"
           style={{
             borderColor: C.gold,
             background: "#FFFBF2",

@@ -4,9 +4,9 @@ import { MapaChat } from "@/components/MapaChat";
 import { trackMeta } from "@/lib/meta-track";
 
 /**
- * Funil novo: mesmo quiz do /quizz (mesmo componente, mesmas 12 perguntas,
- * mesmo submitMapa). A única diferença é o destino: aqui a lead termina na
- * landing /plano, onde o popup entrega o Mapa e captura o WhatsApp.
+ * Funil novo: mesmo quiz do /quizz (mesmo componente, mesmas 5 perguntas,
+ * mesmo submitMapa). Ao final, a lead é levada direto pro WhatsApp pra
+ * receber o Mapa.
  */
 export const Route = createFileRoute("/meu-mapa")({
   component: MeuMapaPage,
@@ -16,13 +16,13 @@ export const Route = createFileRoute("/meu-mapa")({
       {
         name: "description",
         content:
-          "Responda 12 perguntas em 3 minutos e receba a leitura personalizada do seu lipedema, feita pela nutricionista Gabriela Rosado (CRN 10582).",
+          "Responda 5 perguntas em 2 minutos e receba a leitura personalizada do seu lipedema, feita pela nutricionista Gabriela Rosado (CRN 10582).",
       },
       { property: "og:title", content: "Mapa do Lipedema · Gabriela Rosado" },
       {
         property: "og:description",
         content:
-          "Responda 12 perguntas em 3 minutos e receba a leitura personalizada do seu lipedema, feita pela nutricionista Gabriela Rosado (CRN 10582).",
+          "Responda 5 perguntas em 2 minutos e receba a leitura personalizada do seu lipedema, feita pela nutricionista Gabriela Rosado (CRN 10582).",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://zerolipedema.com.br/meu-mapa" },
