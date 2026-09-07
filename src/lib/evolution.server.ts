@@ -47,43 +47,6 @@ export async function sendWhatsApp(
   }
 }
 
-/**
- * Envia um documento (ex: PDF) como anexo no WhatsApp.
- * `base64` é o conteúdo puro do arquivo (sem prefixo data:).
- */
-export async function sendWhatsAppDocument(
-  telefone: string,
-  base64: string,
-  fileName: string,
-  caption?: string,
-): Promise<{ ok: boolean; error?: string }> {
-  const cfg = evoConfig();
-  if (!cfg.ok) return { ok: false, error: cfg.error };
-
-  const number = normalizePhone(telefone);
-  try {
-    const res = await fetch(`${cfg.url}/message/sendMedia/${cfg.instance}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", apikey: cfg.key },
-      body: JSON.stringify({
-        number,
-        mediatype: "document",
-        mimetype: "application/pdf",
-        media: base64,
-        fileName,
-        caption: caption ?? "",
-      }),
-    });
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      return { ok: false, error: `HTTP ${res.status}: ${text.slice(0, 200)}` };
-    }
-    return { ok: true };
-  } catch (e) {
-    return { ok: false, error: (e as Error).message };
-  }
-}
-
 export async function checkEvolutionStatus(): Promise<{
   ok: boolean;
   state?: string;
