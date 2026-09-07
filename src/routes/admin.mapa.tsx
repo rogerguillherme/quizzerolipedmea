@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Search, Loader2, Phone, Calendar, FileText, Crown, Check } from "lucide-react";
 import { listQuizLeads } from "@/lib/admin-leads.functions";
 import { enviarAcessoPremium } from "@/lib/premium-access.functions";
+import { MapaHtmlDialog } from "@/components/MapaHtmlDialog";
 
 export const Route = createFileRoute("/admin/mapa")({
   ssr: false,
@@ -244,6 +245,7 @@ function MapaAdminPage() {
                             ? "Premium ativo"
                             : "Liberar Premium"}
                         </button>
+                        <MapaHtmlDialog leadId={l.id} nomeLead={l.nome} />
                       </div>
                     </div>
                   )}
