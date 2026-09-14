@@ -174,7 +174,7 @@ const WHATSAPP_NUMBER = "557376043053";
 
 /** Link wa.me com mensagem padrão já preenchida. */
 function buildWhatsappLink() {
-  const texto = "Oii, quero receber meu Mapa do Lipedema";
+  const texto = "Oii quero receber meu Mapa do Lipedema";
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
 }
 
