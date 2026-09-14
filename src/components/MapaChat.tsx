@@ -694,7 +694,7 @@ export function MapaChat({
         {stage.kind === "whatsapp-cta" && (
           <div className="grid grid-cols-1 gap-2">
             <a
-              href={buildWhatsappLink(nome)}
+              href={buildWhatsappLink()}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
