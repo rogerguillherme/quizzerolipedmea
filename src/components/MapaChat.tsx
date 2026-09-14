@@ -172,9 +172,9 @@ type Stage =
 /** Número comercial (Evolution API) que recebe a lead vinda do quiz. */
 const WHATSAPP_NUMBER = "557376043053";
 
-/** Link wa.me com mensagem padrão já preenchida, personalizada com o nome. */
-function buildWhatsappLink(nome: string) {
-  const texto = `Oi! Acabei de responder o Mapa do Lipedema${nome ? `, meu nome é ${nome}` : ""} e quero receber meu resultado 💙`;
+/** Link wa.me com mensagem padrão já preenchida. */
+function buildWhatsappLink() {
+  const texto = "Oii, quero receber meu Mapa do Lipedema";
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
 }
 
